@@ -13,6 +13,7 @@ static const size_t chunk_size = sizeof ( talloc_chunk ) / sizeof ( uintptr_t );
 #ifdef DEBUG
 static talloc_callback talloc_on_add;
 static talloc_callback talloc_on_del;
+
 void talloc_set_callback ( talloc_callback on_add, talloc_callback on_del ) {
     talloc_on_add = on_add;
     talloc_on_del = on_del;
