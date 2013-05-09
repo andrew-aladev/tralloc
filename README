@@ -1,0 +1,17 @@
+Samba talloc api is usefull, but its implementation is immortal heavy.
+1. Sizeof talloc_chunk is 88 bytes (amd64) + align is 16 bytes. So any leaf of the tree will weigh 96 bytes.
+2. Unnecessary features cannot be simply switched off.
+3. It depends on samba utils, which is very hard to dig out
+4. WAF build system
+
+This is lightweight implementation of cutted talloc api.
+License - LGPL v3.
+Minimum talloc_chunk size is 32 bytes (amd64)
+
+Implemented :
+```
+talloc_new ( void * ctx );
+talloc ( void * ctx, size_t length );
+talloc_free ( void * ctx );
+```
+Work is in progress.
