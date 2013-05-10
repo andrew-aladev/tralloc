@@ -8,8 +8,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-static const size_t chunk_size = sizeof ( talloc_chunk ) / sizeof ( uintptr_t );
-
 #ifdef DEBUG
 static talloc_callback talloc_on_add;
 static talloc_callback talloc_on_del;
@@ -22,12 +20,12 @@ void talloc_set_callback ( talloc_callback on_add, talloc_callback on_del ) {
 
 extern inline
 void * talloc_data_from_chunk ( talloc_chunk * chunk ) {
-    return ( void * ) ( ( uintptr_t ) chunk + chunk_size );
+    return ( void * ) ( ( uintptr_t ) chunk + sizeof ( talloc_chunk ) );
 }
 
 extern inline
 talloc_chunk * talloc_chunk_from_data ( const void * data ) {
-    return ( talloc_chunk * ) ( ( uintptr_t ) data - chunk_size );
+    return ( talloc_chunk * ) ( ( uintptr_t ) data - sizeof ( talloc_chunk ) );
 }
 
 void * talloc ( const void * parent_data, size_t length ) {
@@ -118,3 +116,5 @@ uint8_t talloc_free ( void * root_data ) {
 
     return 0;
 }
+
+

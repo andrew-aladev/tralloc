@@ -7,14 +7,32 @@
 #include <talloc/helpers.h>
 
 int main () {
-    char * full = talloc_strdup ( NULL, "Viktor Tsoi" );
-    char * part = talloc_strndup ( full, "Viktor Tsoi", 6 );
+    char * str = "Viktor Tsoi Star Called Sun";
+    
+    char * full   = talloc_strdup  ( NULL, str );
+    char * part_1 = talloc_strndup ( full, str, 6 );
+    str += 7;
+    char * part_2 = talloc_strndup ( full, str, 4 );
+    str += 5;
+    char * part_3 = talloc_strndup ( full, str, 4 );
+    str += 5;
+    char * part_4 = talloc_strndup ( full, str, 6 );
+    str += 7;
+    char * part_5 = talloc_strndup ( full, str, 3 );
     if (
         ! (
-            full != NULL &&
-            part != NULL &&
-            !strcmp ( full, "Viktor Tsoi" ) &&
-            !strcmp ( part, "Viktor" )
+            full   != NULL &&
+            part_1 != NULL &&
+            part_2 != NULL &&
+            part_3 != NULL &&
+            part_4 != NULL &&
+            part_5 != NULL &&
+            !strcmp ( full, "Viktor Tsoi Star Called Sun" ) &&
+            !strcmp ( part_1, "Viktor" ) &&
+            !strcmp ( part_2, "Tsoi" )   &&
+            !strcmp ( part_3, "Star" )   &&
+            !strcmp ( part_4, "Called" ) &&
+            !strcmp ( part_5, "Sun" )
         )
     ) {
         talloc_free ( full );

@@ -12,7 +12,7 @@
 
 extern inline
 char * talloc_strndup ( const void * parent_data, const char * str, size_t length ) {
-    char * child_data = talloc ( parent_data, length + 1 );
+    char * child_data = talloc ( parent_data, sizeof ( char ) * ( length + 1 ) );
     if ( child_data == NULL ) {
         return NULL;
     }
@@ -27,3 +27,6 @@ char * talloc_strdup ( const void * parent_data, const char * str ) {
 };
 
 #endif
+
+
+
