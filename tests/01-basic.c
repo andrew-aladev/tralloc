@@ -11,6 +11,7 @@
 #include <limits.h>
 
 #include <talloc/tree.h>
+#include <talloc/helpers.h>
 #include "utils/dynarr.h"
 
 #ifdef DEBUG

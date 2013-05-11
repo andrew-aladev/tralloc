@@ -30,17 +30,20 @@ talloc_chunk * talloc_chunk_from_data ( const void * data ) {
 
 static inline
 talloc_chunk * talloc_malloc ( size_t length ) {
-    talloc_chunk * child = malloc ( sizeof ( talloc_chunk ) + length );
-    if ( child == NULL ) {
-        return NULL;
-    }
-    memset ( child, 0, sizeof ( talloc_chunk ) );
-    return child;
+    return malloc ( sizeof ( talloc_chunk ) + length );
 }
 
 static inline
 talloc_chunk * talloc_calloc ( size_t length ) {
     return calloc ( 1, sizeof ( talloc_chunk ) + length );
+}
+
+static inline
+void talloc_init ( talloc_chunk * child ) {
+    child->parent      = NULL;
+    child->prev        = NULL;
+    child->next        = NULL;
+    child->first_child = NULL;
 }
 
 static inline
@@ -57,6 +60,11 @@ void talloc_set_child ( talloc_chunk * parent, talloc_chunk * child ) {
 
 static inline
 void * talloc_add ( const void * parent_data, talloc_chunk * child ) {
+    if ( child == NULL ) {
+        return NULL;
+    }
+    talloc_init ( child );
+
     if ( parent_data != NULL ) {
         void * parent = talloc_chunk_from_data ( parent_data );
         if ( parent == NULL ) {
@@ -83,11 +91,6 @@ void * talloc ( const void * parent_data, size_t length ) {
 void * talloc_zero ( const void * parent_data, size_t length ) {
     talloc_chunk * child = talloc_calloc ( length );
     return talloc_add ( parent_data, child );
-}
-
-extern inline
-void * talloc_new ( const void * parent_data ) {
-    return talloc ( parent_data, 0 );
 }
 
 static inline

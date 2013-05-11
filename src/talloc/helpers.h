@@ -11,6 +11,11 @@
 #include <string.h>
 
 extern inline
+void * talloc_new ( const void * parent_data ) {
+    return talloc ( parent_data, 0 );
+}
+
+extern inline
 char * talloc_strndup ( const void * parent_data, const char * str, size_t length ) {
     char * child_data = talloc ( parent_data, sizeof ( char ) * ( length + 1 ) );
     if ( child_data == NULL ) {
