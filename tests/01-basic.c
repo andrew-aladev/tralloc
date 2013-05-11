@@ -8,6 +8,7 @@
 #include <stdint.h>
 #include <string.h>
 #include <stdbool.h>
+#include <limits.h>
 
 #include <talloc/tree.h>
 #include "utils/dynarr.h"
@@ -56,11 +57,11 @@ int main () {
     // allocation will return NULL on error
     void *     root     = talloc_new ( NULL );
     int8_t *   data_0   = talloc ( root,    sizeof ( int8_t ) );
-    uint16_t * data_00  = talloc ( data_0,  sizeof ( uint16_t ) );
+    uint16_t * data_00  = talloc_zero ( data_0,  sizeof ( uint16_t ) );
     char *     data_01  = talloc ( data_0,  sizeof ( char ) * 3 );
-    uint32_t * data_02  = talloc ( data_0,  sizeof ( uint32_t ) );
+    uint32_t * data_02  = talloc_zero ( data_0,  sizeof ( uint32_t ) );
     size_t *   data_010 = talloc ( data_01, sizeof ( size_t ) );
-    size_t *   data_011 = talloc ( data_01, sizeof ( size_t ) );
+    size_t *   data_011 = talloc_zero ( data_01, sizeof ( size_t ) );
     size_t *   data_012 = talloc ( data_01, sizeof ( size_t ) );
     void *     empty    = talloc_new ( data_012 );
 
@@ -83,6 +84,32 @@ int main () {
 #endif
         return 1;
     }
+
+    // check data from talloc_zero is zero
+    if (
+        ! (
+            *data_00  == 0 &&
+            *data_02  == 0 &&
+            *data_011 == 0
+        )
+    ) {
+        talloc_free ( root );
+#ifdef DEBUG
+        talloc_dynarr_free ( arr, true );
+#endif
+        return 2;
+    }
+
+    // set all bits to 1
+    *data_0    = INT8_MAX;
+    *data_00   = UINT16_MAX;
+    data_01[0] = CHAR_MAX;
+    data_01[1] = CHAR_MAX;
+    data_01[2] = CHAR_MAX;
+    *data_02   = UINT32_MAX;
+    *data_010  = SIZE_MAX;
+    *data_011  = SIZE_MAX;
+    *data_012  = SIZE_MAX;
 
     // obtain chunks from data. chunks should be not NULL
     talloc_chunk * chunk_root  = talloc_chunk_from_data ( root );
@@ -112,9 +139,9 @@ int main () {
 #ifdef DEBUG
         talloc_dynarr_free ( arr, true );
 #endif
-        return 2;
+        return 3;
     }
-    
+
     // checking tree structure. see scheme above
     if (
         ! (
@@ -127,7 +154,7 @@ int main () {
             chunk_0->prev        == NULL       &&
             chunk_0->next        == NULL       &&
             chunk_0->first_child == chunk_02   &&
-            
+
             chunk_00->parent      == chunk_0  &&
             chunk_00->prev        == chunk_01 &&
             chunk_00->next        == NULL     &&
@@ -137,27 +164,27 @@ int main () {
             chunk_01->prev        == chunk_02  &&
             chunk_01->next        == chunk_00  &&
             chunk_01->first_child == chunk_012 &&
-            
+
             chunk_02->parent      == chunk_0  &&
             chunk_02->prev        == NULL     &&
             chunk_02->next        == chunk_01 &&
             chunk_02->first_child == NULL     &&
-            
+
             chunk_010->parent      == chunk_01  &&
             chunk_010->prev        == chunk_011 &&
             chunk_010->next        == NULL      &&
             chunk_010->first_child == NULL      &&
-            
+
             chunk_011->parent      == chunk_01  &&
             chunk_011->prev        == chunk_012 &&
             chunk_011->next        == chunk_010 &&
             chunk_011->first_child == NULL      &&
-            
+
             chunk_012->parent      == chunk_01    &&
             chunk_012->prev        == NULL        &&
             chunk_012->next        == chunk_011   &&
             chunk_012->first_child == chunk_empty &&
-            
+
             chunk_empty->parent      == chunk_012 &&
             chunk_empty->prev        == NULL      &&
             chunk_empty->next        == NULL      &&
@@ -168,7 +195,7 @@ int main () {
 #ifdef DEBUG
         talloc_dynarr_free ( arr, true );
 #endif
-        return 3;
+        return 4;
     }
 
     talloc_free ( data_01 );
@@ -190,7 +217,7 @@ int main () {
             chunk_00->prev        == chunk_02 &&
             chunk_00->next        == NULL     &&
             chunk_00->first_child == NULL     &&
-            
+
             chunk_02->parent      == chunk_0  &&
             chunk_02->prev        == NULL     &&
             chunk_02->next        == chunk_00 &&
@@ -201,7 +228,22 @@ int main () {
 #ifdef DEBUG
         talloc_dynarr_free ( arr, true );
 #endif
-        return 4;
+        return 5;
+    }
+
+    // check data
+    if (
+        ! (
+            *data_0  == INT8_MAX &&
+            *data_00 == UINT16_MAX &&
+            *data_02 == UINT32_MAX
+        )
+    ) {
+        talloc_free ( root );
+#ifdef DEBUG
+        talloc_dynarr_free ( arr, true );
+#endif
+        return 6;
     }
 
     talloc_free ( root );
@@ -235,7 +277,7 @@ int main () {
         )
     ) {
         talloc_dynarr_free ( arr, true );
-        return 5;
+        return 7;
     }
 
     talloc_dynarr_free ( arr, true );
@@ -243,3 +285,6 @@ int main () {
 
     return 0;
 }
+
+
+

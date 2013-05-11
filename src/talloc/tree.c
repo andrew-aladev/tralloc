@@ -28,29 +28,42 @@ talloc_chunk * talloc_chunk_from_data ( const void * data ) {
     return ( talloc_chunk * ) ( ( uintptr_t ) data - sizeof ( talloc_chunk ) );
 }
 
-void * talloc ( const void * parent_data, size_t length ) {
+static inline
+talloc_chunk * talloc_malloc ( size_t length ) {
     talloc_chunk * child = malloc ( sizeof ( talloc_chunk ) + length );
     if ( child == NULL ) {
         return NULL;
     }
     memset ( child, 0, sizeof ( talloc_chunk ) );
-    void * child_data = talloc_data_from_chunk ( child );
+    return child;
+}
 
+static inline
+talloc_chunk * talloc_calloc ( size_t length ) {
+    return calloc ( 1, sizeof ( talloc_chunk ) + length );
+}
+
+static inline
+void talloc_set_child ( talloc_chunk * parent, talloc_chunk * child ) {
+    child->parent = parent;
+
+    talloc_chunk * parent_first_child = parent->first_child;
+    if ( parent_first_child != NULL ) {
+        parent_first_child->prev = child;
+        child->next = parent_first_child;
+    }
+    parent->first_child = child;
+}
+
+static inline
+void * talloc_add ( const void * parent_data, talloc_chunk * child ) {
     if ( parent_data != NULL ) {
-        talloc_chunk * parent = talloc_chunk_from_data ( parent_data );
+        void * parent = talloc_chunk_from_data ( parent_data );
         if ( parent == NULL ) {
             free ( child );
             return NULL;
         }
-
-        child->parent = parent;
-
-        talloc_chunk * parent_first_child = parent->first_child;
-        if ( parent_first_child != NULL ) {
-            parent_first_child->prev = child;
-            child->next = parent_first_child;
-        }
-        parent->first_child = child;
+        talloc_set_child ( parent, child );
     }
 
 #ifdef DEBUG
@@ -59,7 +72,17 @@ void * talloc ( const void * parent_data, size_t length ) {
     }
 #endif
 
-    return child_data;
+    return talloc_data_from_chunk ( child );
+}
+
+void * talloc ( const void * parent_data, size_t length ) {
+    talloc_chunk * child = talloc_malloc ( length );
+    return talloc_add ( parent_data, child );
+}
+
+void * talloc_zero ( const void * parent_data, size_t length ) {
+    talloc_chunk * child = talloc_calloc ( length );
+    return talloc_add ( parent_data, child );
 }
 
 extern inline
