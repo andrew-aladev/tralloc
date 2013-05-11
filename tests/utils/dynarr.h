@@ -21,7 +21,7 @@ typedef struct talloc_dynarr_t {
 
 extern inline
 talloc_dynarr * talloc_dynarr_new ( size_t capacity ) {
-    talloc_dynarr * arr = calloc ( 1, sizeof ( talloc_dynarr ) );
+    talloc_dynarr * arr = malloc ( sizeof ( talloc_dynarr ) );
     if ( arr == NULL ) {
         return NULL;
     }
@@ -32,6 +32,7 @@ talloc_dynarr * talloc_dynarr_new ( size_t capacity ) {
         free ( arr );
         return NULL;
     }
+    arr->length = 0;
 
     return arr;
 }
