@@ -27,9 +27,9 @@ typedef struct talloc_chunk_t {
 void *         talloc_data_from_chunk ( talloc_chunk * chunk );
 talloc_chunk * talloc_chunk_from_data ( const void * data );
 
-void *  talloc_new ( const void * parent_data );
 void *  talloc ( const void * parent_data, size_t length );
 void *  talloc_zero ( const void * parent_data, size_t length );
+void *  talloc_realloc ( const void * parent_data, size_t length );
 uint8_t talloc_free ( void * root_data );
 
 #ifdef DEBUG

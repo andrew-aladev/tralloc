@@ -14,6 +14,29 @@
 #include <talloc/helpers.h>
 #include "utils/dynarr.h"
 
+/*
+           root
+            |
+            0
+           /|\
+       02  01   00
+           /|\
+      012  011  010
+       |
+    trivium
+*/
+
+static void     * root, * trivium;
+static int8_t   * data_0;
+static uint16_t * data_00;
+static char     * data_01;
+static uint32_t * data_02;
+static size_t   * data_010, * data_011, * data_012;
+
+talloc_chunk * chunk_root, * chunk_trivium,
+             * chunk_0, * chunk_00, * chunk_01, * chunk_02,
+             * chunk_010, * chunk_011, * chunk_012;
+
 #ifdef DEBUG
 static talloc_dynarr * arr;
 
@@ -36,36 +59,38 @@ void on_del ( talloc_chunk * chunk ) {
 }
 #endif
 
-/*
-           root
-            |
-            0
-           /|\
-       02  01   00
-           /|\
-      012  011  010
-       |
-     empty
-*/
-
-int main () {
-    // all history will be available here
+void init () {
 #ifdef DEBUG
-    arr = talloc_dynarr_new ( 128 );
+    // all history will be available here
+    arr = talloc_dynarr_new ( 16 );
     talloc_set_callback ( on_add, on_del );
 #endif
+}
 
-    // allocation will return NULL on error
-    void *     root     = talloc_new ( NULL );
-    int8_t *   data_0   = talloc ( root,    sizeof ( int8_t ) );
-    uint16_t * data_00  = talloc_zero ( data_0,  sizeof ( uint16_t ) );
-    char *     data_01  = talloc ( data_0,  sizeof ( char ) * 3 );
-    uint32_t * data_02  = talloc_zero ( data_0,  sizeof ( uint32_t ) );
-    size_t *   data_010 = talloc ( data_01, sizeof ( size_t ) );
-    size_t *   data_011 = talloc_zero ( data_01, sizeof ( size_t ) );
-    size_t *   data_012 = talloc ( data_01, sizeof ( size_t ) );
-    void *     empty    = talloc_new ( data_012 );
+void alloc () {
+    root     = talloc_new ( NULL );
+    data_0   = talloc ( root,    sizeof ( int8_t ) );
+    data_00  = talloc_zero ( data_0,  sizeof ( uint16_t ) );
+    data_01  = talloc ( data_0,  sizeof ( char ) * 3 );
+    data_02  = talloc_zero ( data_0,  sizeof ( uint32_t ) );
+    data_010 = talloc ( data_01, sizeof ( size_t ) );
+    data_011 = talloc_zero ( data_01, sizeof ( size_t ) );
+    data_012 = talloc ( data_01, sizeof ( size_t ) );
+    trivium  = talloc_new ( data_012 );
+}
 
+void free_data () {
+    if ( root != NULL ) {
+        talloc_free ( root );
+    }
+#ifdef DEBUG
+    if ( arr != NULL ) {
+        talloc_dynarr_free ( arr, true );
+    }
+#endif
+}
+
+bool test_alloc () {
     if (
         ! (
             root     != NULL &&
@@ -76,71 +101,91 @@ int main () {
             data_010 != NULL &&
             data_011 != NULL &&
             data_012 != NULL &&
-            empty    != NULL
-        )
-    ) {
-        talloc_free ( root );
-#ifdef DEBUG
-        talloc_dynarr_free ( arr, true );
-#endif
-        return 1;
-    }
+            trivium  != NULL &&
 
-    // check data from talloc_zero is zero
-    if (
-        ! (
             *data_00  == 0 &&
             *data_02  == 0 &&
             *data_011 == 0
         )
     ) {
-        talloc_free ( root );
-#ifdef DEBUG
-        talloc_dynarr_free ( arr, true );
-#endif
-        return 2;
+        return false;
+    }
+    return true;
+}
+
+bool test_realloc () {
+    data_01[0] = CHAR_MAX;
+    data_01[1] = CHAR_MAX;
+    data_01[2] = CHAR_MAX;
+
+    void * null = talloc_realloc ( NULL, 1 );
+    data_01     = talloc_realloc ( data_01, sizeof ( char ) * 4 );
+
+    if (
+        ! (
+            null       == NULL     &&
+            data_01    != NULL     &&
+            data_01[0] == CHAR_MAX &&
+            data_01[1] == CHAR_MAX &&
+            data_01[2] == CHAR_MAX
+        )
+    ) {
+        return false;
     }
 
-    // set all bits to 1
+    data_01[3] = CHAR_MAX;
+    data_01    = talloc_realloc ( data_01, sizeof ( char ) * 2 );
+
+    if (
+        ! (
+            data_01    != NULL     &&
+            data_01[0] == CHAR_MAX &&
+            data_01[1] == CHAR_MAX
+        )
+    ) {
+        return false;
+    }
+    return true;
+}
+
+void set_data () {
     *data_0    = INT8_MAX;
     *data_00   = UINT16_MAX;
     data_01[0] = CHAR_MAX;
     data_01[1] = CHAR_MAX;
-    data_01[2] = CHAR_MAX;
     *data_02   = UINT32_MAX;
     *data_010  = SIZE_MAX;
     *data_011  = SIZE_MAX;
     *data_012  = SIZE_MAX;
+}
 
-    // obtain chunks from data. chunks should be not NULL
-    talloc_chunk * chunk_root  = talloc_chunk_from_data ( root );
-    talloc_chunk * chunk_0     = talloc_chunk_from_data ( data_0 );
-    talloc_chunk * chunk_00    = talloc_chunk_from_data ( data_00 );
-    talloc_chunk * chunk_01    = talloc_chunk_from_data ( data_01 );
-    talloc_chunk * chunk_02    = talloc_chunk_from_data ( data_02 );
-    talloc_chunk * chunk_010   = talloc_chunk_from_data ( data_010 );
-    talloc_chunk * chunk_011   = talloc_chunk_from_data ( data_011 );
-    talloc_chunk * chunk_012   = talloc_chunk_from_data ( data_012 );
-    talloc_chunk * chunk_empty = talloc_chunk_from_data ( empty );
+void set_chunks () {
+    chunk_root    = talloc_chunk_from_data ( root );
+    chunk_0       = talloc_chunk_from_data ( data_0 );
+    chunk_00      = talloc_chunk_from_data ( data_00 );
+    chunk_01      = talloc_chunk_from_data ( data_01 );
+    chunk_02      = talloc_chunk_from_data ( data_02 );
+    chunk_010     = talloc_chunk_from_data ( data_010 );
+    chunk_011     = talloc_chunk_from_data ( data_011 );
+    chunk_012     = talloc_chunk_from_data ( data_012 );
+    chunk_trivium = talloc_chunk_from_data ( trivium );
+}
 
+bool test_chunks () {
     if (
         ! (
-            chunk_root  != NULL &&
-            chunk_0     != NULL &&
-            chunk_00    != NULL &&
-            chunk_01    != NULL &&
-            chunk_02    != NULL &&
-            chunk_010   != NULL &&
-            chunk_011   != NULL &&
-            chunk_012   != NULL &&
-            chunk_empty != NULL
+            chunk_root    != NULL &&
+            chunk_0       != NULL &&
+            chunk_00      != NULL &&
+            chunk_01      != NULL &&
+            chunk_02      != NULL &&
+            chunk_010     != NULL &&
+            chunk_011     != NULL &&
+            chunk_012     != NULL &&
+            chunk_trivium != NULL
         )
     ) {
-        talloc_free ( root );
-#ifdef DEBUG
-        talloc_dynarr_free ( arr, true );
-#endif
-        return 3;
+        return false;
     }
 
     // checking tree structure. see scheme above
@@ -181,26 +226,23 @@ int main () {
             chunk_011->next        == chunk_010 &&
             chunk_011->first_child == NULL      &&
 
-            chunk_012->parent      == chunk_01    &&
-            chunk_012->prev        == NULL        &&
-            chunk_012->next        == chunk_011   &&
-            chunk_012->first_child == chunk_empty &&
+            chunk_012->parent      == chunk_01      &&
+            chunk_012->prev        == NULL          &&
+            chunk_012->next        == chunk_011     &&
+            chunk_012->first_child == chunk_trivium &&
 
-            chunk_empty->parent      == chunk_012 &&
-            chunk_empty->prev        == NULL      &&
-            chunk_empty->next        == NULL      &&
-            chunk_empty->first_child == NULL
+            chunk_trivium->parent      == chunk_012 &&
+            chunk_trivium->prev        == NULL      &&
+            chunk_trivium->next        == NULL      &&
+            chunk_trivium->first_child == NULL
         )
     ) {
-        talloc_free ( root );
-#ifdef DEBUG
-        talloc_dynarr_free ( arr, true );
-#endif
-        return 4;
+        return false;
     }
+    return true;
+}
 
-    talloc_free ( data_01 );
-
+bool test_chunks_without_data_01 () {
     // checking tree structure after delete 01. see scheme above
     if (
         ! (
@@ -225,51 +267,45 @@ int main () {
             chunk_02->first_child == NULL
         )
     ) {
-        talloc_free ( root );
-#ifdef DEBUG
-        talloc_dynarr_free ( arr, true );
-#endif
-        return 5;
+        return false;
     }
+    return true;
+}
 
-    // check data
+bool test_data_without_data_01 () {
     if (
         ! (
-            *data_0  == INT8_MAX &&
+            *data_0  == INT8_MAX   &&
             *data_00 == UINT16_MAX &&
             *data_02 == UINT32_MAX
         )
     ) {
-        talloc_free ( root );
-#ifdef DEBUG
-        talloc_dynarr_free ( arr, true );
-#endif
-        return 6;
+        return false;
     }
+    return true;
+}
 
-    talloc_free ( root );
-
+bool test_history() {
 #ifdef DEBUG
-    // checking all history
     talloc_event * event;
     if (
         ! (
             arr->length == 18 &&
-            ( event = talloc_dynarr_get ( arr, 0 ) ) != NULL && event->is_add && event->chunk == chunk_root  &&
-            ( event = talloc_dynarr_get ( arr, 1 ) ) != NULL && event->is_add && event->chunk == chunk_0     &&
-            ( event = talloc_dynarr_get ( arr, 2 ) ) != NULL && event->is_add && event->chunk == chunk_00    &&
-            ( event = talloc_dynarr_get ( arr, 3 ) ) != NULL && event->is_add && event->chunk == chunk_01    &&
-            ( event = talloc_dynarr_get ( arr, 4 ) ) != NULL && event->is_add && event->chunk == chunk_02    &&
-            ( event = talloc_dynarr_get ( arr, 5 ) ) != NULL && event->is_add && event->chunk == chunk_010   &&
-            ( event = talloc_dynarr_get ( arr, 6 ) ) != NULL && event->is_add && event->chunk == chunk_011   &&
-            ( event = talloc_dynarr_get ( arr, 7 ) ) != NULL && event->is_add && event->chunk == chunk_012   &&
-            ( event = talloc_dynarr_get ( arr, 8 ) ) != NULL && event->is_add && event->chunk == chunk_empty &&
+            ( event = talloc_dynarr_get ( arr, 0 ) ) != NULL && event->is_add && event->chunk == chunk_root    &&
+            ( event = talloc_dynarr_get ( arr, 1 ) ) != NULL && event->is_add && event->chunk == chunk_0       &&
+            ( event = talloc_dynarr_get ( arr, 2 ) ) != NULL && event->is_add && event->chunk == chunk_00      &&
+            ( event = talloc_dynarr_get ( arr, 3 ) ) != NULL && event->is_add && event->chunk == chunk_01      &&
+            ( event = talloc_dynarr_get ( arr, 4 ) ) != NULL && event->is_add && event->chunk == chunk_02      &&
+            ( event = talloc_dynarr_get ( arr, 5 ) ) != NULL && event->is_add && event->chunk == chunk_010     &&
+            ( event = talloc_dynarr_get ( arr, 6 ) ) != NULL && event->is_add && event->chunk == chunk_011     &&
+            ( event = talloc_dynarr_get ( arr, 7 ) ) != NULL && event->is_add && event->chunk == chunk_012     &&
+            ( event = talloc_dynarr_get ( arr, 8 ) ) != NULL && event->is_add && event->chunk == chunk_trivium &&
 
-            ( event = talloc_dynarr_get ( arr, 9 ) )  != NULL && !event->is_add && event->chunk == chunk_01    &&
-            ( event = talloc_dynarr_get ( arr, 10 ) ) != NULL && !event->is_add && event->chunk == chunk_012   &&
-            ( event = talloc_dynarr_get ( arr, 11 ) ) != NULL && !event->is_add && event->chunk == chunk_empty &&
-            ( event = talloc_dynarr_get ( arr, 12 ) ) != NULL && !event->is_add && event->chunk == chunk_011   &&
-            ( event = talloc_dynarr_get ( arr, 13 ) ) != NULL && !event->is_add && event->chunk == chunk_010   &&
+            ( event = talloc_dynarr_get ( arr, 9 ) )  != NULL && !event->is_add && event->chunk == chunk_01      &&
+            ( event = talloc_dynarr_get ( arr, 10 ) ) != NULL && !event->is_add && event->chunk == chunk_012     &&
+            ( event = talloc_dynarr_get ( arr, 11 ) ) != NULL && !event->is_add && event->chunk == chunk_trivium &&
+            ( event = talloc_dynarr_get ( arr, 12 ) ) != NULL && !event->is_add && event->chunk == chunk_011     &&
+            ( event = talloc_dynarr_get ( arr, 13 ) ) != NULL && !event->is_add && event->chunk == chunk_010     &&
 
             ( event = talloc_dynarr_get ( arr, 14 ) ) != NULL && !event->is_add && event->chunk == chunk_root &&
             ( event = talloc_dynarr_get ( arr, 15 ) ) != NULL && !event->is_add && event->chunk == chunk_0    &&
@@ -277,15 +313,58 @@ int main () {
             ( event = talloc_dynarr_get ( arr, 17 ) ) != NULL && !event->is_add && event->chunk == chunk_00
         )
     ) {
-        talloc_dynarr_free ( arr, true );
-        return 7;
+        return false;
+    }
+#endif
+    return true;
+}
+
+int main () {
+    init();
+    alloc();
+
+    if ( !test_alloc() ) {
+        fprintf ( stderr, "%s\n", "test_alloc failed" );
+        free_data();
+        return 1;
+    }
+    if ( !test_realloc() ) {
+        fprintf ( stderr, "%s\n", "test_realloc failed" );
+        free_data();
+        return 2;
     }
 
-    talloc_dynarr_free ( arr, true );
-#endif
+    set_data();
+    set_chunks();
+
+    if ( !test_chunks() ) {
+        fprintf ( stderr, "%s\n", "test_chunks failed" );
+        free_data();
+        return 3;
+    }
+
+    talloc_free ( data_01 );
+
+    if ( !test_chunks_without_data_01() ) {
+        fprintf ( stderr, "%s\n", "test_chunks_without_data_01 failed" );
+        free_data();
+        return 4;
+    }
+
+    if ( !test_data_without_data_01() ) {
+        fprintf ( stderr, "%s\n", "test_data_without_data_01 failed" );
+        free_data();
+        return 5;
+    }
+
+    talloc_free ( root );
+    root = NULL;
+
+    if ( !test_history() ) {
+        fprintf ( stderr, "%s\n", "test_history failed" );
+        free_data();
+        return 6;
+    }
 
     return 0;
 }
-
-
-

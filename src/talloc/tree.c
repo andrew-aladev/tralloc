@@ -29,13 +29,18 @@ talloc_chunk * talloc_chunk_from_data ( const void * data ) {
 }
 
 static inline
-talloc_chunk * talloc_malloc ( size_t length ) {
+talloc_chunk * _talloc_malloc ( size_t length ) {
     return malloc ( sizeof ( talloc_chunk ) + length );
 }
 
 static inline
-talloc_chunk * talloc_calloc ( size_t length ) {
+talloc_chunk * _talloc_calloc ( size_t length ) {
     return calloc ( 1, sizeof ( talloc_chunk ) + length );
+}
+
+static inline
+void * _talloc_realloc ( talloc_chunk * child, size_t length ) {
+    return realloc ( child, sizeof ( talloc_chunk ) + length );
 }
 
 static inline
@@ -83,13 +88,25 @@ void * talloc_add ( const void * parent_data, talloc_chunk * child ) {
     return talloc_data_from_chunk ( child );
 }
 
+void * talloc_realloc ( const void * parent_data, size_t length ) {
+    if ( parent_data == NULL ) {
+        return NULL;
+    }
+    talloc_chunk * parent = talloc_chunk_from_data ( parent_data );
+    talloc_chunk * child = _talloc_realloc ( parent, length );
+    if ( child == NULL ) {
+        return NULL;
+    }
+    return talloc_data_from_chunk ( child );
+}
+
 void * talloc ( const void * parent_data, size_t length ) {
-    talloc_chunk * child = talloc_malloc ( length );
+    talloc_chunk * child = _talloc_malloc ( length );
     return talloc_add ( parent_data, child );
 }
 
 void * talloc_zero ( const void * parent_data, size_t length ) {
-    talloc_chunk * child = talloc_calloc ( length );
+    talloc_chunk * child = _talloc_calloc ( length );
     return talloc_add ( parent_data, child );
 }
 
@@ -142,5 +159,4 @@ uint8_t talloc_free ( void * root_data ) {
 
     return 0;
 }
-
 
