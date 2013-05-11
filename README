@@ -12,7 +12,7 @@ TODO:
 
 
 Implemented & covered by tests :
-```
+
 void *  talloc_new ( const void * ctx );
 void *  talloc ( const void * ctx, size_t length );
 void *  talloc_zero ( const void * ctx, size_t length );
@@ -21,5 +21,5 @@ uint8_t talloc_free ( void * ctx );
 
 char *  talloc_strdup ( const void * ctx, const char * str );
 char *  talloc_strndup ( const void * ctx, const char * str, size_t length );
-```
+
 Work is in progress.
