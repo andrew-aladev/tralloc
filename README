@@ -1,13 +1,12 @@
 Samba talloc api is usefull, but its implementation is infernal.
 1. Sizeof talloc_chunk is 88 bytes (amd64) + align is 16 bytes. So any leaf of the tree will weigh minimum 96 bytes.
 2. Unnecessary features cannot be simply switched off.
-3. It depends on samba utils, which is very hard to dig out.
-4. WAF build system.
+3. All-in-one. Ex : append_buffer is defected by design.
+4. It depends on samba utils, which is very hard to dig out.
+5. WAF build system.
 
 This is lightweight implementation of cutted talloc api. License - LGPL v3.
-TODO:
-1. Sizeof talloc_chunk - minimum 32 bytes (amd64).
-2. Features can be simply switched on/off.
+1. Sizeof talloc_chunk is 32 bytes (amd64).
 3. CMake build system. Project is ready to be added as git submodule to existing CMake project.
 
 
