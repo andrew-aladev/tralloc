@@ -53,10 +53,8 @@ extern inline
 uint8_t talloc_dynarr_append ( talloc_dynarr * arr, void * pointer ) {
     size_t index = arr->length;
     arr->length++;
-    if ( arr->length > arr->current_capacity ) {
-        if ( talloc_dynarr_grow ( arr ) ) {
-            return 1;
-        }
+    if ( arr->length > arr->current_capacity && talloc_dynarr_grow ( arr ) ) {
+        return 1;
     }
     arr->data[index] = pointer;
     return 0;
