@@ -40,21 +40,33 @@ talloc_chunk * chunk_root, * chunk_trivium,
 #ifdef DEBUG
 static talloc_dynarr * arr;
 
+enum {
+    ADD_MODE,
+    UPDATE_MODE,
+    DELETE_MODE
+};
+
 typedef struct talloc_event_t {
     talloc_chunk * chunk;
-    bool is_add;
+    uint8_t mode;
 } talloc_event;
 
 void on_add ( talloc_chunk * chunk ) {
     talloc_event * event = malloc ( sizeof ( talloc_event ) );
-    event->is_add = true;
-    event->chunk  = chunk;
+    event->mode  = ADD_MODE;
+    event->chunk = chunk;
+    talloc_dynarr_append ( arr, event );
+}
+void on_update ( talloc_chunk * chunk ) {
+    talloc_event * event = malloc ( sizeof ( talloc_event ) );
+    event->mode  = UPDATE_MODE;
+    event->chunk = chunk;
     talloc_dynarr_append ( arr, event );
 }
 void on_del ( talloc_chunk * chunk ) {
     talloc_event * event = malloc ( sizeof ( talloc_event ) );
-    event->is_add = false;
-    event->chunk  = chunk;
+    event->mode  = DELETE_MODE;
+    event->chunk = chunk;
     talloc_dynarr_append ( arr, event );
 }
 #endif
@@ -63,7 +75,7 @@ void init () {
 #ifdef DEBUG
     // all history will be available here
     arr = talloc_dynarr_new ( 16 );
-    talloc_set_callback ( on_add, on_del );
+    talloc_set_callback ( on_add, on_update, on_del );
 #endif
 }
 
@@ -120,6 +132,8 @@ bool test_realloc () {
 
     void * null = talloc_realloc ( NULL, 1 );
     data_01     = talloc_realloc ( data_01, sizeof ( char ) * 4 );
+    // realloc can change chunk pointer
+    chunk_01    = talloc_chunk_from_data ( data_01 );
 
     if (
         ! (
@@ -135,6 +149,7 @@ bool test_realloc () {
 
     data_01[3] = CHAR_MAX;
     data_01    = talloc_realloc ( data_01, sizeof ( char ) * 2 );
+    chunk_01   = talloc_chunk_from_data ( data_01 );
 
     if (
         ! (
@@ -145,6 +160,20 @@ bool test_realloc () {
     ) {
         return false;
     }
+    
+    data_01  = talloc_realloc ( data_01, sizeof ( char ) * 5 );
+    chunk_01 = talloc_chunk_from_data ( data_01 );
+    
+    if (
+        ! (
+            data_01    != NULL     &&
+            data_01[0] == CHAR_MAX &&
+            data_01[1] == CHAR_MAX
+        )
+    ) {
+        return false;
+    }
+    
     return true;
 }
 
@@ -153,6 +182,9 @@ void set_data () {
     *data_00   = UINT16_MAX;
     data_01[0] = CHAR_MAX;
     data_01[1] = CHAR_MAX;
+    data_01[2] = CHAR_MAX;
+    data_01[3] = CHAR_MAX;
+    data_01[4] = CHAR_MAX;
     *data_02   = UINT32_MAX;
     *data_010  = SIZE_MAX;
     *data_011  = SIZE_MAX;
@@ -290,27 +322,31 @@ bool test_history() {
     talloc_event * event;
     if (
         ! (
-            arr->length == 18 &&
-            ( event = talloc_dynarr_get ( arr, 0 ) ) != NULL && event->is_add && event->chunk == chunk_root    &&
-            ( event = talloc_dynarr_get ( arr, 1 ) ) != NULL && event->is_add && event->chunk == chunk_0       &&
-            ( event = talloc_dynarr_get ( arr, 2 ) ) != NULL && event->is_add && event->chunk == chunk_00      &&
-            ( event = talloc_dynarr_get ( arr, 3 ) ) != NULL && event->is_add && event->chunk == chunk_01      &&
-            ( event = talloc_dynarr_get ( arr, 4 ) ) != NULL && event->is_add && event->chunk == chunk_02      &&
-            ( event = talloc_dynarr_get ( arr, 5 ) ) != NULL && event->is_add && event->chunk == chunk_010     &&
-            ( event = talloc_dynarr_get ( arr, 6 ) ) != NULL && event->is_add && event->chunk == chunk_011     &&
-            ( event = talloc_dynarr_get ( arr, 7 ) ) != NULL && event->is_add && event->chunk == chunk_012     &&
-            ( event = talloc_dynarr_get ( arr, 8 ) ) != NULL && event->is_add && event->chunk == chunk_trivium &&
+            arr->length == 21 &&
+            ( event = talloc_dynarr_get ( arr, 0 ) ) != NULL && event->mode == ADD_MODE && event->chunk == chunk_root    &&
+            ( event = talloc_dynarr_get ( arr, 1 ) ) != NULL && event->mode == ADD_MODE && event->chunk == chunk_0       &&
+            ( event = talloc_dynarr_get ( arr, 2 ) ) != NULL && event->mode == ADD_MODE && event->chunk == chunk_00      &&
+            ( event = talloc_dynarr_get ( arr, 3 ) ) != NULL && event->mode == ADD_MODE && event->chunk == chunk_01      &&
+            ( event = talloc_dynarr_get ( arr, 4 ) ) != NULL && event->mode == ADD_MODE && event->chunk == chunk_02      &&
+            ( event = talloc_dynarr_get ( arr, 5 ) ) != NULL && event->mode == ADD_MODE && event->chunk == chunk_010     &&
+            ( event = talloc_dynarr_get ( arr, 6 ) ) != NULL && event->mode == ADD_MODE && event->chunk == chunk_011     &&
+            ( event = talloc_dynarr_get ( arr, 7 ) ) != NULL && event->mode == ADD_MODE && event->chunk == chunk_012     &&
+            ( event = talloc_dynarr_get ( arr, 8 ) ) != NULL && event->mode == ADD_MODE && event->chunk == chunk_trivium &&
 
-            ( event = talloc_dynarr_get ( arr, 9 ) )  != NULL && !event->is_add && event->chunk == chunk_01      &&
-            ( event = talloc_dynarr_get ( arr, 10 ) ) != NULL && !event->is_add && event->chunk == chunk_012     &&
-            ( event = talloc_dynarr_get ( arr, 11 ) ) != NULL && !event->is_add && event->chunk == chunk_trivium &&
-            ( event = talloc_dynarr_get ( arr, 12 ) ) != NULL && !event->is_add && event->chunk == chunk_011     &&
-            ( event = talloc_dynarr_get ( arr, 13 ) ) != NULL && !event->is_add && event->chunk == chunk_010     &&
+            ( event = talloc_dynarr_get ( arr, 9 ) ) != NULL && event->mode == UPDATE_MODE && event->chunk == chunk_01 &&
+            ( event = talloc_dynarr_get ( arr, 10 ) ) != NULL && event->mode == UPDATE_MODE && event->chunk == chunk_01 &&
+            ( event = talloc_dynarr_get ( arr, 11 ) ) != NULL && event->mode == UPDATE_MODE && event->chunk == chunk_01 &&
 
-            ( event = talloc_dynarr_get ( arr, 14 ) ) != NULL && !event->is_add && event->chunk == chunk_root &&
-            ( event = talloc_dynarr_get ( arr, 15 ) ) != NULL && !event->is_add && event->chunk == chunk_0    &&
-            ( event = talloc_dynarr_get ( arr, 16 ) ) != NULL && !event->is_add && event->chunk == chunk_02   &&
-            ( event = talloc_dynarr_get ( arr, 17 ) ) != NULL && !event->is_add && event->chunk == chunk_00
+            ( event = talloc_dynarr_get ( arr, 12 ) )  != NULL && event->mode == DELETE_MODE && event->chunk == chunk_01      &&
+            ( event = talloc_dynarr_get ( arr, 13 ) ) != NULL && event->mode == DELETE_MODE && event->chunk == chunk_012     &&
+            ( event = talloc_dynarr_get ( arr, 14 ) ) != NULL && event->mode == DELETE_MODE && event->chunk == chunk_trivium &&
+            ( event = talloc_dynarr_get ( arr, 15 ) ) != NULL && event->mode == DELETE_MODE && event->chunk == chunk_011     &&
+            ( event = talloc_dynarr_get ( arr, 16 ) ) != NULL && event->mode == DELETE_MODE && event->chunk == chunk_010     &&
+
+            ( event = talloc_dynarr_get ( arr, 17 ) ) != NULL && event->mode == DELETE_MODE && event->chunk == chunk_root &&
+            ( event = talloc_dynarr_get ( arr, 18 ) ) != NULL && event->mode == DELETE_MODE && event->chunk == chunk_0    &&
+            ( event = talloc_dynarr_get ( arr, 19 ) ) != NULL && event->mode == DELETE_MODE && event->chunk == chunk_02   &&
+            ( event = talloc_dynarr_get ( arr, 20 ) ) != NULL && event->mode == DELETE_MODE && event->chunk == chunk_00
         )
     ) {
         return false;

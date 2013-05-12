@@ -9,19 +9,11 @@
 #include <stddef.h>
 #include <stdint.h>
 
-// typedef uint8_t ( * talloc_destructor ) ( uintptr_t data );
-
-// typedef struct talloc_extensions_t {
-//     talloc_destructor destructor;
-// } talloc_extensions;
-
-// only pointers here. this struct is aligned by sizeof(uintptr_t)
 typedef struct talloc_chunk_t {
     struct talloc_chunk_t * parent;
     struct talloc_chunk_t * first_child;
     struct talloc_chunk_t * prev;
     struct talloc_chunk_t * next;
-    //talloc_extensions * extensions;
 } talloc_chunk;
 
 void *         talloc_data_from_chunk ( talloc_chunk * chunk );
@@ -29,12 +21,13 @@ talloc_chunk * talloc_chunk_from_data ( const void * data );
 
 void *  talloc ( const void * parent_data, size_t length );
 void *  talloc_zero ( const void * parent_data, size_t length );
-void *  talloc_realloc ( const void * parent_data, size_t length );
+void *  talloc_realloc ( const void * child_data, size_t length );
 uint8_t talloc_free ( void * root_data );
 
 #ifdef DEBUG
+// You can obtain full global history of talloc work
 typedef void ( * talloc_callback ) ( talloc_chunk * chunk );
-void talloc_set_callback ( talloc_callback on_add, talloc_callback on_del );
+void talloc_set_callback ( talloc_callback on_add, talloc_callback on_update, talloc_callback on_del );
 #endif
 
 #endif
