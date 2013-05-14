@@ -3,32 +3,20 @@
 // talloc is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Lesser Public License for more details.
 // You should have received a copy of the GNU General Lesser Public License along with talloc. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TALLOC_HELPERS_H
-#define TALLOC_HELPERS_H
-
 #include "tree.h"
+#include "helpers.h"
 
-#include <string.h>
+extern inline
+void * talloc_data_from_chunk ( talloc_chunk * chunk );
 
-inline
-void * talloc_new ( const void * parent_data ) {
-    return talloc ( parent_data, 0 );
-}
+extern inline
+talloc_chunk * talloc_chunk_from_data ( const void * data );
 
-inline
-char * talloc_strndup ( const void * parent_data, const char * str, size_t length ) {
-    char * child_data = talloc ( parent_data, sizeof ( char ) * ( length + 1 ) );
-    if ( child_data == NULL ) {
-        return NULL;
-    }
-    memcpy ( child_data, str, length );
-    child_data[length] = '\0';
-    return child_data;
-};
+extern inline
+void * talloc_new ( const void * parent_data );
 
-inline
-char * talloc_strdup ( const void * parent_data, const char * str ) {
-    return talloc_strndup ( parent_data, str, strlen ( str ) );
-};
+extern inline
+char * talloc_strndup ( const void * parent_data, const char * str, size_t length );
 
-#endif
+extern inline
+char * talloc_strdup ( const void * parent_data, const char * str );

@@ -21,12 +21,12 @@ void *  talloc_zero ( const void * parent_data, size_t length );
 void *  talloc_realloc ( const void * child_data, size_t length );
 uint8_t talloc_free ( void * root_data );
 
-extern inline
+inline
 void * talloc_data_from_chunk ( talloc_chunk * chunk ) {
     return ( void * ) ( ( uintptr_t ) chunk + sizeof ( talloc_chunk ) );
 }
 
-extern inline
+inline
 talloc_chunk * talloc_chunk_from_data ( const void * data ) {
     return ( talloc_chunk * ) ( ( uintptr_t ) data - sizeof ( talloc_chunk ) );
 }

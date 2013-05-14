@@ -5,7 +5,7 @@ set (CMAKE_VERBOSE_MAKEFILE on)
 set (CMAKE_BUILD_TYPE Debug)
 
 set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -Winline -std=gnu99")
-set (CMAKE_C_FLAGS_DEBUG "-g -DDEBUG")
+set (CMAKE_C_FLAGS_DEBUG "-O2 -g -DDEBUG")
 add_subdirectory (src)
 
 include_directories ("src/")
