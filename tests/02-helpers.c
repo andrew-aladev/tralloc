@@ -9,7 +9,7 @@
 #include <talloc/helpers.h>
 
 bool test_str ( void * ctx ) {
-    const char * str = "Viktor Tsoi Star Called Sun";
+    char * str = "Viktor Tsoi Star Called Sun";
     char * full = talloc_strdup ( ctx, str );
     
     char * walk = str;
