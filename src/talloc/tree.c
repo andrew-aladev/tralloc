@@ -145,7 +145,7 @@ void * talloc_realloc ( const void * child_data, size_t length ) {
     return talloc_data_from_chunk ( new_child );
 }
 
-static inline
+static
 void _free_recursive ( talloc_chunk * root ) {
     talloc_chunk * child = root->first_child;
     free ( root );
