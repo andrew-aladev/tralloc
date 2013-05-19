@@ -3,18 +3,32 @@
 // talloc is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Lesser Public License for more details.
 // You should have received a copy of the GNU General Lesser Public License along with talloc. If not, see <http://www.gnu.org/licenses/>.
 
-#include "ext.h"
+#ifndef TALLOC_EXT_DESTRUCTOR_H
+#define TALLOC_EXT_DESTRUCTOR_H
 
-#ifdef TALLOC_EXT_DESTRUCTOR
+#include "../ext.h"
+
+inline
+void talloc_destructor_on_del ( talloc_chunk * parent ) {
+    talloc_ext * ext = parent->ext;
+    talloc_destructor destructor = ext->destructor;
+    if ( destructor != NULL ) {
+        destructor ( talloc_data_from_chunk ( parent ) );
+    }
+}
+
+inline
 uint8_t talloc_set_destructor ( const void * parent_data, talloc_destructor destructor ) {
     talloc_chunk * parent = talloc_chunk_from_data ( parent_data );
     if ( parent == NULL ) {
         return 1;
     }
-    if ( parent->ext == NULL ) {
-        parent->ext = malloc ( sizeof ( talloc_ext ) );
+    talloc_ext * ext = get_ext ( parent );
+    if ( ext == NULL ) {
+        return 2;
     }
-    parent->ext->destructor = destructor;
+    ext->destructor = destructor;
     return 0;
 }
+
 #endif

@@ -3,39 +3,33 @@
 // talloc is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Lesser Public License for more details.
 // You should have received a copy of the GNU General Lesser Public License along with talloc. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TALLOC_EXT_H
-#define TALLOC_EXT_H
+#ifndef TALLOC_TYPES_H
+#define TALLOC_TYPES_H
 
-#include <stdlib.h>
-
-#include "types.h"
-
-inline
-talloc_ext * get_ext ( talloc_chunk * parent ) {
-    talloc_ext * ext = parent->ext;
-    if ( ext == NULL ) {
-        ext = parent->ext = malloc ( sizeof ( talloc_ext ) );
-#ifdef TALLOC_EXT_DESTRUCTOR
-        ext->destructor = NULL;
-#endif
-    }
-    return ext;
-}
+#include "config.h"
 
 #ifdef TALLOC_EXT_DESTRUCTOR
-#include "ext/destructor.h"
+typedef void ( * talloc_destructor ) ( void * parent_data );
 #endif
 
-inline
-void talloc_ext_on_del ( talloc_chunk * parent ) {
-    talloc_ext * ext = parent->ext;
-    if ( ext != NULL ) {
+#ifdef TALLOC_EXT
+
+typedef struct talloc_ext_t {
 #ifdef TALLOC_EXT_DESTRUCTOR
-        talloc_destructor_on_del ( parent );
+    talloc_destructor destructor;
 #endif
-        free ( ext );
-    }
-}
+} talloc_ext;
 
 #endif
 
+typedef struct talloc_chunk_t {
+    struct talloc_chunk_t * parent;
+    struct talloc_chunk_t * first_child;
+    struct talloc_chunk_t * prev;
+    struct talloc_chunk_t * next;
+#ifdef TALLOC_EXT
+    talloc_ext * ext;
+#endif
+} talloc_chunk;
+
+#endif

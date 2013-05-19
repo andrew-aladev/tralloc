@@ -9,17 +9,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include "config.h"
-
-typedef struct talloc_chunk_t {
-    struct talloc_chunk_t * parent;
-    struct talloc_chunk_t * first_child;
-    struct talloc_chunk_t * prev;
-    struct talloc_chunk_t * next;
-#ifdef TALLOC_EXT
-    struct talloc_ext_t * ext;
-#endif
-} talloc_chunk;
+#include "types.h"
 
 void *  talloc ( const void * parent_data, size_t length );
 void *  talloc_zero ( const void * parent_data, size_t length );
