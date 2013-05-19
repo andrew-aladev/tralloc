@@ -157,14 +157,13 @@ static
 void _free_recursive ( talloc_chunk * root ) {
     talloc_chunk * child = root->first_child;
 
+#ifdef TALLOC_EXT
+    talloc_ext_on_del ( root );
+#endif
 #ifdef TALLOC_DEBUG
     if ( talloc_on_del != NULL ) {
         talloc_on_del ( root );
     }
-#endif
-
-#ifdef TALLOC_EXT
-    talloc_ext_on_del ( root );
 #endif
 
     free ( root );
@@ -207,3 +206,4 @@ uint8_t talloc_free ( void * root_data ) {
 
     return 0;
 }
+

@@ -23,16 +23,16 @@ char * talloc_strdup ( const void * parent_data, const char * str );
 
 #ifdef TALLOC_EXT
 extern inline
-void talloc_ext_on_del ( talloc_chunk * parent );
+void talloc_ext_on_del ( talloc_chunk * child );
 
 extern inline
-talloc_ext * get_ext ( talloc_chunk * parent );
+talloc_ext * get_ext ( talloc_chunk * child );
 #endif
 
 #ifdef TALLOC_EXT_DESTRUCTOR
 extern inline
-uint8_t talloc_set_destructor ( const void * parent_data, talloc_destructor destructor );
+uint8_t talloc_set_destructor ( const void * child_data, talloc_destructor destructor );
 
 extern inline
-void talloc_destructor_on_del ( talloc_chunk * parent );
+void talloc_destructor_on_del ( talloc_chunk * child );
 #endif

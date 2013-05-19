@@ -11,10 +11,10 @@
 #include "types.h"
 
 inline
-talloc_ext * get_ext ( talloc_chunk * parent ) {
-    talloc_ext * ext = parent->ext;
+talloc_ext * get_ext ( talloc_chunk * child ) {
+    talloc_ext * ext = child->ext;
     if ( ext == NULL ) {
-        ext = parent->ext = malloc ( sizeof ( talloc_ext ) );
+        ext = child->ext = malloc ( sizeof ( talloc_ext ) );
 #ifdef TALLOC_EXT_DESTRUCTOR
         ext->destructor = NULL;
 #endif
@@ -27,11 +27,11 @@ talloc_ext * get_ext ( talloc_chunk * parent ) {
 #endif
 
 inline
-void talloc_ext_on_del ( talloc_chunk * parent ) {
-    talloc_ext * ext = parent->ext;
+void talloc_ext_on_del ( talloc_chunk * child ) {
+    talloc_ext * ext = child->ext;
     if ( ext != NULL ) {
 #ifdef TALLOC_EXT_DESTRUCTOR
-        talloc_destructor_on_del ( parent );
+        talloc_destructor_on_del ( child );
 #endif
         free ( ext );
     }

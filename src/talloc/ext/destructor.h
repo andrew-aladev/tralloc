@@ -9,21 +9,21 @@
 #include "../ext.h"
 
 inline
-void talloc_destructor_on_del ( talloc_chunk * parent ) {
-    talloc_ext * ext = parent->ext;
+void talloc_destructor_on_del ( talloc_chunk * child ) {
+    talloc_ext * ext = child->ext;
     talloc_destructor destructor = ext->destructor;
     if ( destructor != NULL ) {
-        destructor ( talloc_data_from_chunk ( parent ) );
+        destructor ( talloc_data_from_chunk ( child ) );
     }
 }
 
 inline
-uint8_t talloc_set_destructor ( const void * parent_data, talloc_destructor destructor ) {
-    talloc_chunk * parent = talloc_chunk_from_data ( parent_data );
-    if ( parent == NULL ) {
+uint8_t talloc_set_destructor ( const void * child_data, talloc_destructor destructor ) {
+    talloc_chunk * child = talloc_chunk_from_data ( child_data );
+    if ( child == NULL ) {
         return 1;
     }
-    talloc_ext * ext = get_ext ( parent );
+    talloc_ext * ext = get_ext ( child );
     if ( ext == NULL ) {
         return 2;
     }
