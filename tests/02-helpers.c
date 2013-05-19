@@ -5,7 +5,6 @@
 
 #include <stdbool.h>
 
-#include <talloc/tree.h>
 #include <talloc/helpers.h>
 
 bool test_str ( void * ctx ) {

@@ -3,32 +3,40 @@
 // talloc is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Lesser Public License for more details.
 // You should have received a copy of the GNU General Lesser Public License along with talloc. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TALLOC_HELPERS_H
-#define TALLOC_HELPERS_H
+#ifndef TALLOC_EXT_H
+#define TALLOC_EXT_H
 
-#include <string.h>
+#include <stdlib.h>
 
 #include "tree.h"
 
+#ifdef TALLOC_EXT_DESTRUCTOR
+typedef void ( * talloc_destructor ) ( void * parent_data );
+#endif
+
+typedef struct talloc_ext_t {
+#ifdef TALLOC_EXT_DESTRUCTOR
+    talloc_destructor destructor;
+#endif
+} talloc_ext;
+
+#ifdef TALLOC_EXT_DESTRUCTOR
+uint8_t talloc_set_destructor ( const void * parent_data, talloc_destructor destructor );
+#endif
+
 inline
-void * talloc_new ( const void * parent_data ) {
-    return talloc ( parent_data, 0 );
+void talloc_free_ext ( talloc_chunk * parent ) {
+    talloc_ext * ext = parent->ext;
+    if ( ext != NULL ) {
+#ifdef TALLOC_EXT_DESTRUCTOR
+        talloc_destructor destructor = ext->destructor;
+        if ( destructor != NULL ) {
+            destructor ( talloc_data_from_chunk ( parent ) );
+        }
+#endif
+        free ( ext );
+    }
 }
 
-inline
-char * talloc_strndup ( const void * parent_data, const char * str, size_t length ) {
-    char * child_data = talloc ( parent_data, sizeof ( char ) * ( length + 1 ) );
-    if ( child_data == NULL ) {
-        return NULL;
-    }
-    memcpy ( child_data, str, length );
-    child_data[length] = '\0';
-    return child_data;
-};
-
-inline
-char * talloc_strdup ( const void * parent_data, const char * str ) {
-    return talloc_strndup ( parent_data, str, strlen ( str ) );
-};
-
 #endif
+

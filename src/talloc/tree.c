@@ -3,12 +3,13 @@
 // talloc is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Lesser Public License for more details.
 // You should have received a copy of the GNU General Lesser Public License along with talloc. If not, see <http://www.gnu.org/licenses/>.
 
-#include "tree.h"
-
 #include <stdlib.h>
 #include <string.h>
 
-#ifdef DEBUG
+#include "tree.h"
+#include "ext.h"
+
+#ifdef TALLOC_DEBUG
 static talloc_callback talloc_on_add;
 static talloc_callback talloc_on_update;
 static talloc_callback talloc_on_del;
@@ -41,6 +42,10 @@ void _init ( talloc_chunk * child ) {
     child->prev        = NULL;
     child->next        = NULL;
     child->first_child = NULL;
+
+#ifdef TALLOC_EXT
+    child->ext = NULL;
+#endif
 }
 
 static inline
@@ -67,7 +72,7 @@ uint8_t _add ( const void * parent_data, talloc_chunk * child ) {
         _set_child ( parent, child );
     }
 
-#ifdef DEBUG
+#ifdef TALLOC_DEBUG
     if ( talloc_on_add != NULL ) {
         talloc_on_add ( child );
     }
@@ -136,7 +141,7 @@ void * talloc_realloc ( const void * child_data, size_t length ) {
         return NULL;
     }
 
-#ifdef DEBUG
+#ifdef TALLOC_DEBUG
     if ( talloc_on_update != NULL ) {
         talloc_on_update ( new_child );
     }
@@ -148,13 +153,18 @@ void * talloc_realloc ( const void * child_data, size_t length ) {
 static
 void _free_recursive ( talloc_chunk * root ) {
     talloc_chunk * child = root->first_child;
-    free ( root );
 
-#ifdef DEBUG
+#ifdef TALLOC_DEBUG
     if ( talloc_on_del != NULL ) {
         talloc_on_del ( root );
     }
 #endif
+
+#ifdef TALLOC_EXT
+    talloc_free_ext ( root );
+#endif
+
+    free ( root );
 
     talloc_chunk * new_child;
     while ( child != NULL ) {
@@ -194,4 +204,3 @@ uint8_t talloc_free ( void * root_data ) {
 
     return 0;
 }
-

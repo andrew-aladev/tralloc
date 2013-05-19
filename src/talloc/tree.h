@@ -9,11 +9,16 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include "config.h"
+
 typedef struct talloc_chunk_t {
     struct talloc_chunk_t * parent;
     struct talloc_chunk_t * first_child;
     struct talloc_chunk_t * prev;
     struct talloc_chunk_t * next;
+#ifdef TALLOC_EXT
+    struct talloc_ext_t * ext;
+#endif
 } talloc_chunk;
 
 void *  talloc ( const void * parent_data, size_t length );
@@ -31,7 +36,7 @@ talloc_chunk * talloc_chunk_from_data ( const void * data ) {
     return ( talloc_chunk * ) ( ( uintptr_t ) data - sizeof ( talloc_chunk ) );
 }
 
-#ifdef DEBUG
+#ifdef TALLOC_DEBUG
 // You can obtain full global history of talloc work
 typedef void ( * talloc_callback ) ( talloc_chunk * chunk );
 void talloc_set_callback ( talloc_callback on_add, talloc_callback on_update, talloc_callback on_del );
