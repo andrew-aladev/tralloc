@@ -3,7 +3,7 @@ project (talloc)
 
 set (TALLOC_EXT_DESTRUCTOR true)
 
-set (CMAKE_VERBOSE_MAKEFILE on)
+set (CMAKE_VERBOSE_MAKEFILE false)
 set (CMAKE_BUILD_TYPE DEBUG)
 
 set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -Winline -std=gnu99")
