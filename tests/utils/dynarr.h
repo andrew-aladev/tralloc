@@ -19,7 +19,7 @@ typedef struct talloc_dynarr_t {
     void ** data;
 } talloc_dynarr;
 
-inline
+extern inline
 talloc_dynarr * talloc_dynarr_new ( size_t capacity ) {
     talloc_dynarr * arr = malloc ( sizeof ( talloc_dynarr ) );
     if ( arr == NULL ) {
@@ -37,7 +37,7 @@ talloc_dynarr * talloc_dynarr_new ( size_t capacity ) {
     return arr;
 }
 
-inline
+extern inline
 uint8_t talloc_dynarr_grow ( talloc_dynarr * arr ) {
     // linear growth
     arr->current_capacity = arr->current_capacity + arr->start_capacity;
@@ -49,7 +49,7 @@ uint8_t talloc_dynarr_grow ( talloc_dynarr * arr ) {
     return 0;
 }
 
-inline
+extern inline
 uint8_t talloc_dynarr_append ( talloc_dynarr * arr, void * pointer ) {
     size_t index = arr->length;
     arr->length++;
@@ -60,22 +60,22 @@ uint8_t talloc_dynarr_append ( talloc_dynarr * arr, void * pointer ) {
     return 0;
 }
 
-inline
+extern inline
 void talloc_dynarr_set ( talloc_dynarr * arr, size_t position, void * pointer ) {
     arr->data[position] = pointer;
 }
 
-inline
+extern inline
 void * talloc_dynarr_get ( talloc_dynarr * arr, size_t position ) {
     return arr->data[position];
 }
 
-inline
+extern inline
 size_t talloc_dynarr_get_length ( talloc_dynarr * arr ) {
     return arr->length;
 }
 
-inline
+extern inline
 void talloc_dynarr_free ( talloc_dynarr * arr ) {
     free ( arr->data );
     free ( arr );

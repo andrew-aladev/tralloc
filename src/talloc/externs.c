@@ -3,8 +3,8 @@
 // talloc is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Lesser Public License for more details.
 // You should have received a copy of the GNU General Lesser Public License along with talloc. If not, see <http://www.gnu.org/licenses/>.
 
-#include "tree.h"
 #include "helpers.h"
+#include "ext.h"
 
 extern inline
 void * talloc_data_from_chunk ( talloc_chunk * chunk );
@@ -20,3 +20,6 @@ char * talloc_strndup ( const void * parent_data, const char * str, size_t lengt
 
 extern inline
 char * talloc_strdup ( const void * parent_data, const char * str );
+
+extern inline
+void talloc_free_ext ( talloc_chunk * parent );
