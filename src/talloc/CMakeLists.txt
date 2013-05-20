@@ -8,7 +8,7 @@ endif ()
 configure_file (${CMAKE_CURRENT_SOURCE_DIR}/config.h.in ${CMAKE_CURRENT_SOURCE_DIR}/config.h)
 
 set (INCLUDES config.h ext.h helpers.h tree.h types.h)
-set (SOURCES  tree.c externs.c)
+set (SOURCES  ext.c helpers.c tree.c)
 
 add_subdirectory (ext)
 

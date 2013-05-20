@@ -3,38 +3,19 @@
 // talloc is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Lesser Public License for more details.
 // You should have received a copy of the GNU General Lesser Public License along with talloc. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TALLOC_EXT_H
-#define TALLOC_EXT_H
+#include "helpers.h"
 
-#include <stdlib.h>
+extern inline
+void * talloc_data_from_chunk ( talloc_chunk * chunk );
 
-#include "types.h"
+extern inline
+talloc_chunk * talloc_chunk_from_data ( const void * data );
 
-#ifdef TALLOC_EXT
-inline
-talloc_ext * talloc_ext_get ( talloc_chunk * child ) {
-    talloc_ext * ext = child->ext;
-    if ( ext == NULL ) {
-        ext = child->ext = malloc ( sizeof ( talloc_ext ) );
-#ifdef TALLOC_EXT_DESTRUCTOR
-        ext->destructor = NULL;
-#endif
-    }
-    return ext;
-}
+extern inline
+void * talloc_new ( const void * parent_data );
 
-#include "ext/destructor.h"
+extern inline
+char * talloc_strndup ( const void * parent_data, const char * str, size_t length );
 
-inline
-void talloc_ext_on_del ( talloc_chunk * child ) {
-    talloc_ext * ext = child->ext;
-    if ( ext != NULL ) {
-#ifdef TALLOC_EXT_DESTRUCTOR
-        talloc_destructor_on_del ( child );
-#endif
-        free ( ext );
-    }
-}
-#endif
-
-#endif
+extern inline
+char * talloc_strdup ( const void * parent_data, const char * str );

@@ -7,10 +7,7 @@
 #include <string.h>
 
 #include "tree.h"
-
-#ifdef TALLOC_EXT
 #include "ext.h"
-#endif
 
 #ifdef TALLOC_DEBUG
 static talloc_callback talloc_on_add;

@@ -6,8 +6,9 @@
 #ifndef TALLOC_EXT_DESTRUCTOR_H
 #define TALLOC_EXT_DESTRUCTOR_H
 
-#include "../ext.h"
+#include "../tree.h"
 
+#ifdef TALLOC_EXT_DESTRUCTOR
 inline
 void talloc_destructor_on_del ( talloc_chunk * child ) {
     talloc_ext * ext = child->ext;
@@ -23,12 +24,13 @@ uint8_t talloc_set_destructor ( const void * child_data, talloc_destructor destr
     if ( child == NULL ) {
         return 1;
     }
-    talloc_ext * ext = get_ext ( child );
+    talloc_ext * ext = talloc_ext_get ( child );
     if ( ext == NULL ) {
         return 2;
     }
     ext->destructor = destructor;
     return 0;
 }
+#endif
 
 #endif
