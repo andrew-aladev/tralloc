@@ -11,30 +11,87 @@
 #include "types.h"
 
 #ifdef TALLOC_EXT
+
 inline
-talloc_ext * talloc_ext_get ( talloc_chunk * child ) {
-    talloc_ext * ext = child->ext;
+talloc_ext * talloc_ext_new ( uint8_t length ) {
+    talloc_ext * ext = malloc ( sizeof ( talloc_ext ) );
     if ( ext == NULL ) {
-        ext = child->ext = malloc ( sizeof ( talloc_ext ) );
-#ifdef TALLOC_EXT_DESTRUCTOR
-        ext->destructor = NULL;
-#endif
+        return NULL;
     }
+    void ** data = malloc ( sizeof ( uintptr_t ) * length );
+    if ( data == NULL ) {
+        free ( ext );
+        return NULL;
+    }
+    ext->data   = data;
+    ext->length = length;
     return ext;
 }
 
-#include "ext/destructor.h"
+inline
+uint8_t talloc_ext_grow ( talloc_ext * ext, uint8_t length ) {
+    if ( ext->length < length ) {
+        void ** data = realloc ( ext->data, sizeof ( uintptr_t ) * length );
+        if ( data == NULL ) {
+            return 1;
+        }
+        ext->data   = data;
+        ext->length = length;
+    }
+    return 0;
+}
 
 inline
-void talloc_ext_on_del ( talloc_chunk * child ) {
+uint8_t talloc_ext_set ( talloc_chunk * child, uint8_t mode, void * data ) {
+    uint8_t length   = mode + 1;
+    talloc_ext * ext = child->ext;
+
+    if ( ext == NULL ) {
+        ext = talloc_ext_new ( length );
+        if ( ext == NULL ) {
+            return 1;
+        }
+        child->ext = ext;
+    } else {
+        if ( talloc_ext_grow ( ext, length ) ) {
+            return 2;
+        }
+    }
+    ext->data[mode] = data;
+
+    return 0;
+}
+
+inline
+void * talloc_ext_get ( talloc_chunk * child, uint8_t mode ) {
+    talloc_ext * ext = child->ext;
+    if ( ext == NULL ) {
+        return NULL;
+    }
+
+    uint8_t length = mode + 1;
+    if ( ext->length < length ) {
+        return NULL;
+    }
+    return ext->data[mode];
+}
+
+inline
+void talloc_ext_free ( talloc_chunk * child ) {
+    if ( child == NULL ) {
+        return;
+    }
+
     talloc_ext * ext = child->ext;
     if ( ext != NULL ) {
-#ifdef TALLOC_EXT_DESTRUCTOR
-        talloc_destructor_on_del ( child );
-#endif
+        void ** data = ext->data;
+        if ( data != NULL ) {
+            free ( data );
+        }
         free ( ext );
     }
 }
+
 #endif
 
 #endif

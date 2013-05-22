@@ -7,8 +7,17 @@
 
 #ifdef TALLOC_EXT
 extern inline
-void talloc_ext_on_del ( talloc_chunk * child );
+talloc_ext * talloc_ext_new ( uint8_t length );
 
 extern inline
-talloc_ext * talloc_ext_get ( talloc_chunk * child );
+uint8_t talloc_ext_grow ( talloc_ext * ext, uint8_t length );
+
+extern inline
+uint8_t talloc_ext_set ( talloc_chunk * child, uint8_t mode, void * data );
+
+extern inline
+void * talloc_ext_get ( talloc_chunk * child, uint8_t mode );
+
+extern inline
+void talloc_ext_free ( talloc_chunk * child );
 #endif

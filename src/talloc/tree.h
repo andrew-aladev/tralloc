@@ -26,10 +26,4 @@ talloc_chunk * talloc_chunk_from_data ( const void * data ) {
     return ( talloc_chunk * ) ( ( uintptr_t ) data - sizeof ( talloc_chunk ) );
 }
 
-#ifdef TALLOC_DEBUG
-// You can obtain full global history of talloc work
-typedef void ( * talloc_callback ) ( talloc_chunk * chunk );
-void talloc_set_callback ( talloc_callback on_add, talloc_callback on_update, talloc_callback on_del );
-#endif
-
 #endif

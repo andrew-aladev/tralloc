@@ -10,7 +10,7 @@
 bool test_str ( void * ctx ) {
     char * str = "Viktor Tsoi Star Called Sun";
     char * full = talloc_strdup ( ctx, str );
-    
+
     char * walk = str;
     char * part_1 = talloc_strndup ( full, walk, 6 );
     walk += 7;
@@ -43,6 +43,8 @@ bool test_str ( void * ctx ) {
     talloc_free ( full );
     return true;
 }
+
+#include <math.h>
 
 int main () {
     void * ctx = talloc_new ( NULL );

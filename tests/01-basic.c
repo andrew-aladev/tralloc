@@ -11,6 +11,7 @@
 #include <limits.h>
 
 #include <talloc/helpers.h>
+#include <talloc/events.h>
 #include "utils/dynarr.h"
 
 /*

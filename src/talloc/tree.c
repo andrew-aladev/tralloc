@@ -7,19 +7,7 @@
 #include <string.h>
 
 #include "tree.h"
-#include "ext.h"
-
-#ifdef TALLOC_DEBUG
-static talloc_callback talloc_on_add;
-static talloc_callback talloc_on_update;
-static talloc_callback talloc_on_del;
-
-void talloc_set_callback ( talloc_callback on_add, talloc_callback on_update, talloc_callback on_del ) {
-    talloc_on_add    = on_add;
-    talloc_on_update = on_update;
-    talloc_on_del    = on_del;
-}
-#endif
+#include "events.h"
 
 static inline
 talloc_chunk * _malloc ( size_t length ) {
@@ -42,10 +30,6 @@ void _init ( talloc_chunk * child ) {
     child->prev        = NULL;
     child->next        = NULL;
     child->first_child = NULL;
-
-#ifdef TALLOC_EXT
-    child->ext = NULL;
-#endif
 }
 
 static inline
@@ -72,10 +56,8 @@ uint8_t _add ( const void * parent_data, talloc_chunk * child ) {
         _set_child ( parent, child );
     }
 
-#ifdef TALLOC_DEBUG
-    if ( talloc_on_add != NULL ) {
-        talloc_on_add ( child );
-    }
+#ifdef TALLOC_EVENTS
+    talloc_on_add ( child );
 #endif
 
     return 0;
@@ -141,10 +123,8 @@ void * talloc_realloc ( const void * child_data, size_t length ) {
         return NULL;
     }
 
-#ifdef TALLOC_DEBUG
-    if ( talloc_on_update != NULL ) {
-        talloc_on_update ( new_child );
-    }
+#ifdef TALLOC_EVENTS
+    talloc_on_update ( new_child );
 #endif
 
     return talloc_data_from_chunk ( new_child );
@@ -154,13 +134,8 @@ static
 void _free_recursive ( talloc_chunk * root ) {
     talloc_chunk * child = root->first_child;
 
-#ifdef TALLOC_EXT
-    talloc_ext_on_del ( root );
-#endif
-#ifdef TALLOC_DEBUG
-    if ( talloc_on_del != NULL ) {
-        talloc_on_del ( root );
-    }
+#ifdef TALLOC_EVENTS
+    talloc_on_del ( root );
 #endif
 
     free ( root );

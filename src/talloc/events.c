@@ -3,12 +3,22 @@
 // talloc is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Lesser Public License for more details.
 // You should have received a copy of the GNU General Lesser Public License along with talloc. If not, see <http://www.gnu.org/licenses/>.
 
-#include "destructor.h"
+#include "events.h"
 
-#ifdef TALLOC_EXT
+#ifdef TALLOC_EVENTS
+
+#ifdef TALLOC_DEBUG
 extern inline
-void talloc_destructor_on_del ( talloc_chunk * child );
+void talloc_set_callback ( talloc_callback on_add, talloc_callback on_update, talloc_callback on_del );
+#endif
 
 extern inline
-uint8_t talloc_set_destructor ( const void * child_data, talloc_destructor destructor );
+void talloc_on_add ( talloc_chunk * chunk );
+
+extern inline
+void talloc_on_update ( talloc_chunk * chunk );
+
+extern inline
+void talloc_on_del ( talloc_chunk * chunk );
+
 #endif

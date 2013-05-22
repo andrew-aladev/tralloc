@@ -6,8 +6,10 @@ Samba talloc api is usefull, but its implementation is infernal.
 5. WAF build system.
 
 This is lightweight implementation of cutted talloc api. License - LGPL v3.
-1. Sizeof talloc_chunk is 32 bytes (amd64).
-3. CMake build system. Project is ready to be added as git submodule to existing CMake project.
+1. Minimal sizeof talloc_chunk is 32 bytes (amd64).
+2. Save memory without performance penalties.
+2. Configurable extensions.
+3. Cake build system. Project is ready to be added as git submodule to existing CMake project.
 
 
 Implemented & covered by tests

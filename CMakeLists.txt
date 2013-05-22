@@ -1,7 +1,7 @@
 cmake_minimum_required (VERSION 2.8)
 project (talloc)
 
-set (TALLOC_EXT_DESTRUCTOR true)
+set (TALLOC_EXT true)
 
 set (CMAKE_VERBOSE_MAKEFILE false)
 set (CMAKE_BUILD_TYPE DEBUG)

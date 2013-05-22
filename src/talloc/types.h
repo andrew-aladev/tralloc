@@ -6,20 +6,23 @@
 #ifndef TALLOC_TYPES_H
 #define TALLOC_TYPES_H
 
+#include <stdint.h>
+
 #include "config.h"
 
-#ifdef TALLOC_EXT_DESTRUCTOR
-typedef void ( * talloc_destructor ) ( void * parent_data );
-#endif
-
 #ifdef TALLOC_EXT
+typedef void ( * talloc_destructor ) ( void * parent_data );
+
+// these are indexes in array, which will be reallocated
+// should be sorted by typical usage times. less index - more usage
+enum {
+    TALLOC_EXT_DESTRUCTOR = 0
+};
 
 typedef struct talloc_ext_t {
-#ifdef TALLOC_EXT_DESTRUCTOR
-    talloc_destructor destructor;
-#endif
+    void ** data;
+    uint8_t length;
 } talloc_ext;
-
 #endif
 
 typedef struct talloc_chunk_t {
