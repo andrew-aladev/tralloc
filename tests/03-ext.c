@@ -7,7 +7,7 @@
 #include <string.h>
 
 #include <talloc/helpers.h>
-#include <talloc/ext.h>
+#include <talloc/ext/destructor.h>
 
 #include "utils/dynarr.h"
 
