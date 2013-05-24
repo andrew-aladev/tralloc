@@ -20,7 +20,8 @@ typedef struct talloc_dynarr_t {
 } talloc_dynarr;
 
 extern inline
-talloc_dynarr * talloc_dynarr_new ( size_t capacity ) {
+talloc_dynarr * talloc_dynarr_new ( size_t capacity )
+{
     talloc_dynarr * arr = malloc ( sizeof ( talloc_dynarr ) );
     if ( arr == NULL ) {
         return NULL;
@@ -38,7 +39,8 @@ talloc_dynarr * talloc_dynarr_new ( size_t capacity ) {
 }
 
 extern inline
-uint8_t talloc_dynarr_grow ( talloc_dynarr * arr ) {
+uint8_t talloc_dynarr_grow ( talloc_dynarr * arr )
+{
     // linear growth
     arr->current_capacity = arr->current_capacity + arr->start_capacity;
     void ** reallocated_data = realloc ( arr->data, arr->current_capacity * sizeof ( uintptr_t ) );
@@ -50,7 +52,8 @@ uint8_t talloc_dynarr_grow ( talloc_dynarr * arr ) {
 }
 
 extern inline
-uint8_t talloc_dynarr_append ( talloc_dynarr * arr, void * pointer ) {
+uint8_t talloc_dynarr_append ( talloc_dynarr * arr, void * pointer )
+{
     size_t index = arr->length;
     arr->length++;
     if ( arr->length > arr->current_capacity && talloc_dynarr_grow ( arr ) ) {
@@ -61,22 +64,26 @@ uint8_t talloc_dynarr_append ( talloc_dynarr * arr, void * pointer ) {
 }
 
 extern inline
-void talloc_dynarr_set ( talloc_dynarr * arr, size_t position, void * pointer ) {
+void talloc_dynarr_set ( talloc_dynarr * arr, size_t position, void * pointer )
+{
     arr->data[position] = pointer;
 }
 
 extern inline
-void * talloc_dynarr_get ( talloc_dynarr * arr, size_t position ) {
+void * talloc_dynarr_get ( talloc_dynarr * arr, size_t position )
+{
     return arr->data[position];
 }
 
 extern inline
-size_t talloc_dynarr_get_length ( talloc_dynarr * arr ) {
+size_t talloc_dynarr_get_length ( talloc_dynarr * arr )
+{
     return arr->length;
 }
 
 extern inline
-void talloc_dynarr_free ( talloc_dynarr * arr ) {
+void talloc_dynarr_free ( talloc_dynarr * arr )
+{
     free ( arr->data );
     free ( arr );
 }

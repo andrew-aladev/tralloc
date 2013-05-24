@@ -1,0 +1,1 @@
+* : astyle --mode=c --style=kr --pad-oper --pad-paren --pad-header $TMPFILE $TMPFILE

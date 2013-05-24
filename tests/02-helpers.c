@@ -7,7 +7,8 @@
 
 #include <talloc/helpers.h>
 
-bool test_str ( void * ctx ) {
+bool test_str ( void * ctx )
+{
     char * str = "Viktor Tsoi Star Called Sun";
     char * full = talloc_strdup ( ctx, str );
 
@@ -46,7 +47,8 @@ bool test_str ( void * ctx ) {
 
 #include <math.h>
 
-int main () {
+int main ()
+{
     void * ctx = talloc_new ( NULL );
     if ( ctx == NULL ) {
         return 1;

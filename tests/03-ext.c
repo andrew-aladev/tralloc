@@ -14,7 +14,8 @@
 void * root;
 static talloc_dynarr * history;
 
-bool init_data () {
+bool init_data ()
+{
     root = talloc_new ( NULL );
     if ( root == NULL ) {
         return false;
@@ -27,11 +28,13 @@ bool init_data () {
     return true;
 }
 
-void destructor ( void * text ) {
+void destructor ( void * text )
+{
     talloc_dynarr_append ( history, text );
 }
 
-bool test_destructor () {
+bool test_destructor ()
+{
     char * text_01 = talloc_strdup ( root, "test text 01" );
     if ( text_01 == NULL ) {
         return false;
@@ -76,7 +79,8 @@ bool test_destructor () {
     return true;
 }
 
-void free_data () {
+void free_data ()
+{
     if ( root != NULL ) {
         talloc_free ( root );
     }
@@ -85,7 +89,8 @@ void free_data () {
     }
 }
 
-int main () {
+int main ()
+{
     if ( !init_data () ) {
         return 1;
     }

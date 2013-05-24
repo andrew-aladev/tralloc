@@ -10,22 +10,26 @@
 #include "events.h"
 
 static inline
-talloc_chunk * _malloc ( size_t length ) {
+talloc_chunk * _malloc ( size_t length )
+{
     return malloc ( sizeof ( talloc_chunk ) + length );
 }
 
 static inline
-talloc_chunk * _calloc ( size_t length ) {
+talloc_chunk * _calloc ( size_t length )
+{
     return calloc ( 1, sizeof ( talloc_chunk ) + length );
 }
 
 static inline
-void * _realloc ( talloc_chunk * child, size_t length ) {
+void * _realloc ( talloc_chunk * child, size_t length )
+{
     return realloc ( child, sizeof ( talloc_chunk ) + length );
 }
 
 static inline
-void _init ( talloc_chunk * child ) {
+void _init ( talloc_chunk * child )
+{
     child->parent      = NULL;
     child->prev        = NULL;
     child->next        = NULL;
@@ -33,7 +37,8 @@ void _init ( talloc_chunk * child ) {
 }
 
 static inline
-void _set_child ( talloc_chunk * parent, talloc_chunk * child ) {
+void _set_child ( talloc_chunk * parent, talloc_chunk * child )
+{
     child->parent = parent;
 
     talloc_chunk * parent_first_child = parent->first_child;
@@ -45,7 +50,8 @@ void _set_child ( talloc_chunk * parent, talloc_chunk * child ) {
 }
 
 static inline
-uint8_t _add ( const void * parent_data, talloc_chunk * child ) {
+uint8_t _add ( const void * parent_data, talloc_chunk * child )
+{
     _init ( child );
 
     if ( parent_data != NULL ) {
@@ -63,7 +69,8 @@ uint8_t _add ( const void * parent_data, talloc_chunk * child ) {
     return 0;
 }
 
-void * talloc ( const void * parent_data, size_t length ) {
+void * talloc ( const void * parent_data, size_t length )
+{
     talloc_chunk * child = _malloc ( length );
     if ( child == NULL ) {
         return NULL;
@@ -75,7 +82,8 @@ void * talloc ( const void * parent_data, size_t length ) {
     return talloc_data_from_chunk ( child );
 }
 
-void * talloc_zero ( const void * parent_data, size_t length ) {
+void * talloc_zero ( const void * parent_data, size_t length )
+{
     talloc_chunk * child = _calloc ( length );
     if ( child == NULL ) {
         return NULL;
@@ -88,7 +96,8 @@ void * talloc_zero ( const void * parent_data, size_t length ) {
 }
 
 static inline
-uint8_t _update ( talloc_chunk * child ) {
+uint8_t _update ( talloc_chunk * child )
+{
     talloc_chunk * prev = child->prev;
     if ( prev == NULL ) {
         talloc_chunk * parent = child->parent;
@@ -110,7 +119,8 @@ uint8_t _update ( talloc_chunk * child ) {
     return 0;
 }
 
-void * talloc_realloc ( const void * child_data, size_t length ) {
+void * talloc_realloc ( const void * child_data, size_t length )
+{
     if ( child_data == NULL ) {
         return NULL;
     }
@@ -131,7 +141,8 @@ void * talloc_realloc ( const void * child_data, size_t length ) {
 }
 
 static
-void _free_recursive ( talloc_chunk * root ) {
+void _free_recursive ( talloc_chunk * root )
+{
     talloc_chunk * child = root->first_child;
 
 #ifdef TALLOC_EVENTS
@@ -148,7 +159,8 @@ void _free_recursive ( talloc_chunk * root ) {
     }
 }
 
-uint8_t talloc_free ( void * root_data ) {
+uint8_t talloc_free ( void * root_data )
+{
     talloc_chunk * root = talloc_chunk_from_data ( root_data );
     if ( root == NULL ) {
         return 1;
@@ -178,4 +190,3 @@ uint8_t talloc_free ( void * root_data ) {
 
     return 0;
 }
-

@@ -12,7 +12,8 @@
 #ifdef TALLOC_EXT
 
 inline
-void talloc_destructor_on_del ( talloc_chunk * child ) {
+void talloc_destructor_on_del ( talloc_chunk * child )
+{
     if ( child == NULL ) {
         return;
     }
@@ -23,7 +24,8 @@ void talloc_destructor_on_del ( talloc_chunk * child ) {
 }
 
 inline
-uint8_t talloc_set_destructor ( const void * child_data, talloc_destructor destructor ) {
+uint8_t talloc_set_destructor ( const void * child_data, talloc_destructor destructor )
+{
     talloc_chunk * child = talloc_chunk_from_data ( child_data );
     if ( child == NULL ) {
         return 1;

@@ -13,7 +13,8 @@
 #ifdef TALLOC_EXT
 
 inline
-talloc_ext * talloc_ext_new ( uint8_t length ) {
+talloc_ext * talloc_ext_new ( uint8_t length )
+{
     talloc_ext * ext = malloc ( sizeof ( talloc_ext ) );
     if ( ext == NULL ) {
         return NULL;
@@ -29,7 +30,8 @@ talloc_ext * talloc_ext_new ( uint8_t length ) {
 }
 
 inline
-uint8_t talloc_ext_grow ( talloc_ext * ext, uint8_t length ) {
+uint8_t talloc_ext_grow ( talloc_ext * ext, uint8_t length )
+{
     if ( ext->length < length ) {
         void ** data = realloc ( ext->data, sizeof ( uintptr_t ) * length );
         if ( data == NULL ) {
@@ -42,7 +44,8 @@ uint8_t talloc_ext_grow ( talloc_ext * ext, uint8_t length ) {
 }
 
 inline
-uint8_t talloc_ext_set ( talloc_chunk * child, uint8_t mode, void * data ) {
+uint8_t talloc_ext_set ( talloc_chunk * child, uint8_t mode, void * data )
+{
     uint8_t length   = mode + 1;
     talloc_ext * ext = child->ext;
 
@@ -63,7 +66,8 @@ uint8_t talloc_ext_set ( talloc_chunk * child, uint8_t mode, void * data ) {
 }
 
 inline
-void * talloc_ext_get ( talloc_chunk * child, uint8_t mode ) {
+void * talloc_ext_get ( talloc_chunk * child, uint8_t mode )
+{
     talloc_ext * ext = child->ext;
     if ( ext == NULL ) {
         return NULL;
@@ -77,7 +81,8 @@ void * talloc_ext_get ( talloc_chunk * child, uint8_t mode ) {
 }
 
 inline
-void talloc_ext_free ( talloc_chunk * child ) {
+void talloc_ext_free ( talloc_chunk * child )
+{
     if ( child == NULL ) {
         return;
     }

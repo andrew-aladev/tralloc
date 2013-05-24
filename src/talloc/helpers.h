@@ -11,12 +11,14 @@
 #include "tree.h"
 
 inline
-void * talloc_new ( const void * parent_data ) {
+void * talloc_new ( const void * parent_data )
+{
     return talloc ( parent_data, 0 );
 }
 
 inline
-char * talloc_strndup ( const void * parent_data, const char * str, size_t length ) {
+char * talloc_strndup ( const void * parent_data, const char * str, size_t length )
+{
     char * child_data = talloc ( parent_data, sizeof ( char ) * ( length + 1 ) );
     if ( child_data == NULL ) {
         return NULL;
@@ -27,7 +29,8 @@ char * talloc_strndup ( const void * parent_data, const char * str, size_t lengt
 };
 
 inline
-char * talloc_strdup ( const void * parent_data, const char * str ) {
+char * talloc_strdup ( const void * parent_data, const char * str )
+{
     return talloc_strndup ( parent_data, str, strlen ( str ) );
 };
 

@@ -51,19 +51,22 @@ typedef struct talloc_event_t {
     uint8_t mode;
 } talloc_event;
 
-void on_add ( talloc_chunk * chunk ) {
+void on_add ( talloc_chunk * chunk )
+{
     talloc_event * event = malloc ( sizeof ( talloc_event ) );
     event->mode  = ADD_MODE;
     event->chunk = chunk;
     talloc_dynarr_append ( history, event );
 }
-void on_update ( talloc_chunk * chunk ) {
+void on_update ( talloc_chunk * chunk )
+{
     talloc_event * event = malloc ( sizeof ( talloc_event ) );
     event->mode  = UPDATE_MODE;
     event->chunk = chunk;
     talloc_dynarr_append ( history, event );
 }
-void on_del ( talloc_chunk * chunk ) {
+void on_del ( talloc_chunk * chunk )
+{
     talloc_event * event = malloc ( sizeof ( talloc_event ) );
     event->mode  = DELETE_MODE;
     event->chunk = chunk;
@@ -71,7 +74,8 @@ void on_del ( talloc_chunk * chunk ) {
 }
 #endif
 
-void init () {
+void init ()
+{
 #ifdef TALLOC_DEBUG
     // all history will be available here
     history = talloc_dynarr_new ( 16 );
@@ -79,7 +83,8 @@ void init () {
 #endif
 }
 
-void alloc () {
+void alloc ()
+{
     root     = talloc_new ( NULL );
     data_0   = talloc ( root,    sizeof ( int8_t ) );
     data_00  = talloc_zero ( data_0,  sizeof ( uint16_t ) );
@@ -91,7 +96,8 @@ void alloc () {
     trivium  = talloc_new ( data_012 );
 }
 
-void free_data () {
+void free_data ()
+{
     if ( root != NULL ) {
         talloc_free ( root );
     }
@@ -106,7 +112,8 @@ void free_data () {
 #endif
 }
 
-bool test_alloc () {
+bool test_alloc ()
+{
     if (
         ! (
             root     != NULL &&
@@ -129,7 +136,8 @@ bool test_alloc () {
     return true;
 }
 
-bool test_realloc () {
+bool test_realloc ()
+{
     data_01[0] = CHAR_MAX;
     data_01[1] = CHAR_MAX;
     data_01[2] = CHAR_MAX;
@@ -181,7 +189,8 @@ bool test_realloc () {
     return true;
 }
 
-void set_data () {
+void set_data ()
+{
     *data_0    = INT8_MAX;
     *data_00   = UINT16_MAX;
     data_01[0] = CHAR_MAX;
@@ -195,7 +204,8 @@ void set_data () {
     *data_012  = SIZE_MAX;
 }
 
-void set_chunks () {
+void set_chunks ()
+{
     chunk_root    = talloc_chunk_from_data ( root );
     chunk_0       = talloc_chunk_from_data ( data_0 );
     chunk_00      = talloc_chunk_from_data ( data_00 );
@@ -207,7 +217,8 @@ void set_chunks () {
     chunk_trivium = talloc_chunk_from_data ( trivium );
 }
 
-bool test_chunks () {
+bool test_chunks ()
+{
     if (
         ! (
             chunk_root    != NULL &&
@@ -278,7 +289,8 @@ bool test_chunks () {
     return true;
 }
 
-bool test_chunks_without_data_01 () {
+bool test_chunks_without_data_01 ()
+{
     // checking tree structure after delete 01. see scheme above
     if (
         ! (
@@ -308,7 +320,8 @@ bool test_chunks_without_data_01 () {
     return true;
 }
 
-bool test_data_without_data_01 () {
+bool test_data_without_data_01 ()
+{
     if (
         ! (
             *data_0  == INT8_MAX   &&
@@ -321,7 +334,8 @@ bool test_data_without_data_01 () {
     return true;
 }
 
-bool test_history() {
+bool test_history()
+{
 #ifdef TALLOC_DEBUG
     talloc_event * event;
     if (
@@ -359,7 +373,8 @@ bool test_history() {
     return true;
 }
 
-int main () {
+int main ()
+{
     init();
     alloc();
 

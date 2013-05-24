@@ -20,7 +20,8 @@ talloc_callback talloc_debug_on_update;
 talloc_callback talloc_debug_on_del;
 
 inline
-void talloc_set_callback ( talloc_callback on_add, talloc_callback on_update, talloc_callback on_del ) {
+void talloc_set_callback ( talloc_callback on_add, talloc_callback on_update, talloc_callback on_del )
+{
     talloc_debug_on_add    = on_add;
     talloc_debug_on_update = on_update;
     talloc_debug_on_del    = on_del;
@@ -28,7 +29,8 @@ void talloc_set_callback ( talloc_callback on_add, talloc_callback on_update, ta
 #endif
 
 inline
-void talloc_on_add ( talloc_chunk * child ) {
+void talloc_on_add ( talloc_chunk * child )
+{
 #ifdef TALLOC_DEBUG
     if ( talloc_debug_on_add != NULL ) {
         talloc_debug_on_add ( child );
@@ -41,7 +43,8 @@ void talloc_on_add ( talloc_chunk * child ) {
 }
 
 inline
-void talloc_on_update ( talloc_chunk * child ) {
+void talloc_on_update ( talloc_chunk * child )
+{
 #ifdef TALLOC_DEBUG
     if ( talloc_debug_on_update != NULL ) {
         talloc_debug_on_update ( child );
@@ -52,7 +55,8 @@ void talloc_on_update ( talloc_chunk * child ) {
 #include <stdio.h>
 
 inline
-void talloc_on_del ( talloc_chunk * child ) {
+void talloc_on_del ( talloc_chunk * child )
+{
 #ifdef TALLOC_DEBUG
     if ( talloc_debug_on_del != NULL ) {
         talloc_debug_on_del ( child );
