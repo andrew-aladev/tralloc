@@ -2,6 +2,7 @@ cmake_minimum_required (VERSION 2.8)
 project (talloc)
 
 set (TALLOC_EXT true)
+set (TALLOC_STATIC true)
 
 set (CMAKE_VERBOSE_MAKEFILE false)
 set (CMAKE_BUILD_TYPE DEBUG)
@@ -15,4 +16,3 @@ include_directories ("src/")
 
 enable_testing ()
 add_subdirectory (tests)
-# add_subdirectory (examples)
