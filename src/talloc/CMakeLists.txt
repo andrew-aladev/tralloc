@@ -12,7 +12,9 @@ set (SOURCES  events.c ext.c helpers.c tree.c)
 
 add_subdirectory (ext)
 
-add_library (talloc SHARED ${SOURCES})
+if (TALLOC_SHARED MATCHES true)
+    add_library (talloc SHARED ${SOURCES})
+endif ()
 
 if (TALLOC_STATIC MATCHES true)
     add_library (talloc_static STATIC ${SOURCES})

@@ -2,6 +2,7 @@ cmake_minimum_required (VERSION 2.8)
 project (talloc)
 
 set (TALLOC_EXT true)
+set (TALLOC_SHARED true)
 set (TALLOC_STATIC true)
 
 set (CMAKE_VERBOSE_MAKEFILE false)
