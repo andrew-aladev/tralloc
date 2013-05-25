@@ -1,11 +1,16 @@
 cmake_minimum_required (VERSION 2.8)
 project (talloc)
 
-set (TALLOC_EXT true)
-set (TALLOC_SHARED true)
-set (TALLOC_STATIC true)
+if (NOT DEFINED TALLOC_EXT)
+    set (TALLOC_EXT true)
+endif ()
+if (NOT DEFINED TALLOC_SHARED)
+    set (TALLOC_SHARED true)
+endif ()
+if (NOT DEFINED TALLOC_STATIC)
+    set (TALLOC_STATIC true)
+endif ()
 
-set (CMAKE_VERBOSE_MAKEFILE false)
 set (CMAKE_BUILD_TYPE DEBUG)
 
 set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -Winline -std=gnu99")
