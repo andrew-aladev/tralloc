@@ -7,15 +7,18 @@ This is lightweight implementation of talloc api. License - LGPL v3.
 
 Implemented & covered by tests
 core:
-void *  talloc ( const void * ctx, size_t length );
-void *  talloc_zero ( const void * ctx, size_t length );
+void *  talloc         ( const void * ctx, size_t length );
+void *  talloc_zero    ( const void * ctx, size_t length );
 void *  talloc_realloc ( const void * ctx, size_t length );
-uint8_t talloc_free ( void * ctx );
+uint8_t talloc_free    ( void * ctx );
 
 helpers:
-void *  talloc_new ( const void * ctx );
-char *  talloc_strdup ( const void * ctx, const char * str );
+void *  talloc_new     ( const void * ctx );
+char *  talloc_strdup  ( const void * ctx, const char * str );
 char *  talloc_strndup ( const void * ctx, const char * str, size_t length );
 
 extensions:
-uint8_t talloc_set_destructor ( const void * ctx, void ( * destructor ) ( void * parent_data ) );
+uint8_t talloc_set_destructor ( const void * ctx, uint8_t ( * destructor ) ( void * parent_data ) );
+void *  talloc_mode       ( const void * ctx, size_t length, uint8_t mode );
+void *  talloc_zero_mode  ( const void * ctx, size_t length, uint8_t mode );
+uint8_t talloc_get_length ( const void * ctx, size_t * result );

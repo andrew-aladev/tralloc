@@ -6,10 +6,10 @@
 #include "helpers.h"
 
 extern inline
-void * talloc_data_from_chunk ( talloc_chunk * chunk );
+void * talloc ( const void * parent_data, size_t length );
 
 extern inline
-talloc_chunk * talloc_chunk_from_data ( const void * data );
+void * talloc_zero ( const void * parent_data, size_t length );
 
 extern inline
 void * talloc_new ( const void * parent_data );

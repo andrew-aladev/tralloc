@@ -8,12 +8,13 @@
 
 #include "ext.h"
 #include "ext/destructor.h"
+#include "ext/length.h"
 
 #ifdef TALLOC_EVENTS
 
 #ifdef TALLOC_DEBUG
 // Full global history of operations
-typedef void ( * talloc_callback ) ( talloc_chunk * chunk );
+typedef uint8_t ( * talloc_callback ) ( talloc_chunk * chunk );
 
 talloc_callback talloc_debug_on_add;
 talloc_callback talloc_debug_on_update;
@@ -29,46 +30,72 @@ void talloc_set_callback ( talloc_callback on_add, talloc_callback on_update, ta
 #endif
 
 inline
-void talloc_on_add ( talloc_chunk * child )
+uint8_t talloc_on_add ( talloc_chunk * child, size_t length, uint8_t ext_mode )
 {
-#ifdef TALLOC_DEBUG
-    if ( talloc_debug_on_add != NULL ) {
-        talloc_debug_on_add ( child );
-    }
-#endif
-
 #ifdef TALLOC_EXT
     child->ext = NULL;
-#endif
-}
-
-inline
-void talloc_on_update ( talloc_chunk * child )
-{
-#ifdef TALLOC_DEBUG
-    if ( talloc_debug_on_update != NULL ) {
-        talloc_debug_on_update ( child );
+    if ( talloc_add_length ( child, length, ext_mode ) != 0 ) {
+        return 1;
+    }
+    if ( child->ext != NULL ) {
+        child->ext->mode = ext_mode;
     }
 #endif
+
+#ifdef TALLOC_DEBUG
+    if ( talloc_debug_on_add != NULL ) {
+        if ( talloc_debug_on_add ( child ) != 0 ) {
+            return 2;
+        }
+    }
+#endif
+
+    return 0;
 }
 
-#include <stdio.h>
+inline
+uint8_t talloc_on_update ( talloc_chunk * child, size_t length )
+{
+#ifdef TALLOC_EXT
+    talloc_set_length ( child, length );
+#endif
+
+#ifdef TALLOC_DEBUG
+    if ( talloc_debug_on_update != NULL ) {
+        if ( talloc_debug_on_update ( child ) != 0 ) {
+            return 1;
+        }
+    }
+#endif
+
+    return 0;
+}
 
 inline
-void talloc_on_del ( talloc_chunk * child )
+uint8_t talloc_on_del ( talloc_chunk * child )
 {
+#ifdef TALLOC_EXT
+    if ( talloc_destructor_on_del ( child ) != 0 ) {
+        return 1;
+    }
+#endif
+
 #ifdef TALLOC_DEBUG
     if ( talloc_debug_on_del != NULL ) {
-        talloc_debug_on_del ( child );
+        if ( talloc_debug_on_del ( child ) != 0 ) {
+            return 2;
+        }
     }
 #endif
 
 #ifdef TALLOC_EXT
-    talloc_destructor_on_del ( child );
     talloc_ext_free ( child );
 #endif
+
+    return 0;
 }
 
 #endif
 
 #endif
+

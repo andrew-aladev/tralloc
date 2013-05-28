@@ -8,6 +8,7 @@
 
 #include <talloc/helpers.h>
 #include <talloc/ext/destructor.h>
+#include <talloc/ext/length.h>
 
 #include "utils/dynarr.h"
 
@@ -28,9 +29,10 @@ bool init_data ()
     return true;
 }
 
-void destructor ( void * text )
+uint8_t destructor ( void * data )
 {
-    talloc_dynarr_append ( history, text );
+    talloc_dynarr_append ( history, data );
+    return 0;
 }
 
 bool test_destructor ()
@@ -48,7 +50,6 @@ bool test_destructor ()
         return false;
     }
 
-#ifdef TALLOC_EXT_DESTRUCTOR
     if (
         ! (
             !talloc_set_destructor ( text_01, destructor ) &&
@@ -58,13 +59,11 @@ bool test_destructor ()
     ) {
         return false;
     }
-#endif
 
     talloc_free ( text_02 );
     talloc_free ( text_01 );
     talloc_free ( text_03 );
 
-#ifdef TALLOC_EXT_DESTRUCTOR
     if (
         ! (
             !strcmp ( talloc_dynarr_get ( history, 0 ), "test text 02" ) &&
@@ -74,8 +73,37 @@ bool test_destructor ()
     ) {
         return false;
     }
-#endif
 
+    return true;
+}
+
+bool test_length ()
+{
+    size_t length;
+    char * str = talloc_zero_mode ( root, sizeof ( char ) * 200, TALLOC_MODE_LENGTH );
+    if ( str == NULL || talloc_get_length ( str, &length ) != 0 || length != 200 ) {
+        return false;
+    }
+    str = talloc_realloc ( str, sizeof ( char ) * 300 );
+    if ( str == NULL || talloc_get_length ( str, &length ) != 0 || length != 300 ) {
+        return false;
+    }
+    str = talloc_realloc ( str, sizeof ( char ) * 3 );
+    if ( str == NULL || talloc_get_length ( str, &length ) != 0 || length != 3 ) {
+        return false;
+    }
+    str[0] = 'a';
+    str[1] = 'b';
+    str[2] = '\0';
+    if (
+        ! (
+            talloc_set_destructor ( str, destructor ) == 0 &&
+            talloc_free ( str ) == 0 &&
+            strcmp ( talloc_dynarr_get ( history, 3 ), "ab" ) == 0
+        )
+    ) {
+        return false;
+    }
     return true;
 }
 
@@ -95,10 +123,14 @@ int main ()
         return 1;
     }
 
-#ifdef TALLOC_EXT_DESTRUCTOR
+#ifdef TALLOC_EXT
     if ( !test_destructor () ) {
         free_data ();
         return 2;
+    }
+    if ( !test_length () ) {
+        free_data ();
+        return 3;
     }
 #endif
 

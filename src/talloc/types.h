@@ -11,17 +11,24 @@
 #include "config.h"
 
 #ifdef TALLOC_EXT
-typedef void ( * talloc_destructor ) ( void * parent_data );
+typedef uint8_t ( * talloc_destructor ) ( void * parent_data );
+
+enum {
+    TALLOC_MODE_DESTRUCTOR = 1,
+    TALLOC_MODE_LENGTH     = 1 << 1
+};
 
 // these are indexes in array, which will be reallocated
 // should be sorted by typical usage times. less index - more usage
 enum {
-    TALLOC_EXT_DESTRUCTOR = 0
+    TALLOC_EXT_DESTRUCTOR = 0,
+    TALLOC_EXT_LENGTH
 };
 
 typedef struct talloc_ext_t {
     void ** data;
     uint8_t length;
+    uint8_t mode;
 } talloc_ext;
 #endif
 

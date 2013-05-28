@@ -7,7 +7,7 @@
 
 #ifdef TALLOC_EXT
 extern inline
-void talloc_destructor_on_del ( talloc_chunk * child );
+uint8_t talloc_destructor_on_del ( talloc_chunk * child );
 
 extern inline
 uint8_t talloc_set_destructor ( const void * child_data, talloc_destructor destructor );

@@ -51,26 +51,29 @@ typedef struct talloc_event_t {
     uint8_t mode;
 } talloc_event;
 
-void on_add ( talloc_chunk * chunk )
+uint8_t on_add ( talloc_chunk * chunk )
 {
     talloc_event * event = malloc ( sizeof ( talloc_event ) );
     event->mode  = ADD_MODE;
     event->chunk = chunk;
     talloc_dynarr_append ( history, event );
+    return 0;
 }
-void on_update ( talloc_chunk * chunk )
+uint8_t on_update ( talloc_chunk * chunk )
 {
     talloc_event * event = malloc ( sizeof ( talloc_event ) );
     event->mode  = UPDATE_MODE;
     event->chunk = chunk;
     talloc_dynarr_append ( history, event );
+    return 0;
 }
-void on_del ( talloc_chunk * chunk )
+uint8_t on_del ( talloc_chunk * chunk )
 {
     talloc_event * event = malloc ( sizeof ( talloc_event ) );
     event->mode  = DELETE_MODE;
     event->chunk = chunk;
     talloc_dynarr_append ( history, event );
+    return 0;
 }
 #endif
 
@@ -379,12 +382,10 @@ int main ()
     alloc();
 
     if ( !test_alloc() ) {
-        fprintf ( stderr, "%s\n", "test_alloc failed" );
         free_data();
         return 1;
     }
     if ( !test_realloc() ) {
-        fprintf ( stderr, "%s\n", "test_realloc failed" );
         free_data();
         return 2;
     }
@@ -393,30 +394,30 @@ int main ()
     set_chunks();
 
     if ( !test_chunks() ) {
-        fprintf ( stderr, "%s\n", "test_chunks failed" );
         free_data();
         return 3;
     }
 
-    talloc_free ( data_01 );
-
-    if ( !test_chunks_without_data_01() ) {
-        fprintf ( stderr, "%s\n", "test_chunks_without_data_01 failed" );
-        free_data();
+    if ( talloc_free ( data_01 ) != 0 ) {
         return 4;
     }
 
-    if ( !test_data_without_data_01() ) {
-        fprintf ( stderr, "%s\n", "test_data_without_data_01 failed" );
+    if ( !test_chunks_without_data_01() ) {
         free_data();
         return 5;
     }
 
-    talloc_free ( root );
+    if ( !test_data_without_data_01() ) {
+        free_data();
+        return 6;
+    }
+
+    if ( talloc_free ( root ) != 0 ) {
+        return 7;
+    }
     root = NULL;
 
     if ( !test_history() ) {
-        fprintf ( stderr, "%s\n", "test_history failed" );
         free_data();
         return 6;
     }

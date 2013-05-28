@@ -11,10 +11,10 @@
 
 #include "types.h"
 
-void *  talloc         ( const void * parent_data, size_t length );
-void *  talloc_zero    ( const void * parent_data, size_t length );
-void *  talloc_realloc ( const void * child_data,  size_t length );
-uint8_t talloc_free    ( void * root_data );
+void *  talloc_mode      ( const void * parent_data, size_t length, uint8_t ext_mode );
+void *  talloc_zero_mode ( const void * parent_data, size_t length, uint8_t ext_mode );
+void *  talloc_realloc   ( const void * child_data,  size_t length );
+uint8_t talloc_free      ( void * root_data );
 
 inline
 void * talloc_data_from_chunk ( talloc_chunk * chunk )

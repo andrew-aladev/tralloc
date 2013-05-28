@@ -83,10 +83,6 @@ void * talloc_ext_get ( talloc_chunk * child, uint8_t mode )
 inline
 void talloc_ext_free ( talloc_chunk * child )
 {
-    if ( child == NULL ) {
-        return;
-    }
-
     talloc_ext * ext = child->ext;
     if ( ext != NULL ) {
         void ** data = ext->data;
@@ -100,3 +96,4 @@ void talloc_ext_free ( talloc_chunk * child )
 #endif
 
 #endif
+
