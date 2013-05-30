@@ -6,15 +6,6 @@
 #include "helpers.h"
 
 extern inline
-void * talloc ( const void * parent_data, size_t length );
-
-extern inline
-void * talloc_zero ( const void * parent_data, size_t length );
-
-extern inline
-void * talloc_new ( const void * parent_data );
-
-extern inline
 char * talloc_strndup ( const void * parent_data, const char * str, size_t length );
 
 extern inline

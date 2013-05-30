@@ -11,24 +11,6 @@
 #include "tree.h"
 
 inline
-void * talloc ( const void * parent_data, size_t length )
-{
-    return talloc_mode ( parent_data, length, 0 );
-}
-
-inline
-void * talloc_zero ( const void * parent_data, size_t length )
-{
-    return talloc_zero_mode ( parent_data, length, 0 );
-}
-
-inline
-void * talloc_new ( const void * parent_data )
-{
-    return talloc_mode ( parent_data, 0, 0 );
-}
-
-inline
 char * talloc_strndup ( const void * parent_data, const char * str, size_t length )
 {
     char * child_data = talloc ( parent_data, sizeof ( char ) * ( length + 1 ) );

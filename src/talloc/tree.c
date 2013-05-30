@@ -184,6 +184,9 @@ bool free_recursive ( talloc_chunk * root )
 
 uint8_t talloc_free ( void * root_data )
 {
+    if ( root_data == NULL ) {
+        return 0;
+    }
     talloc_chunk * root = talloc_chunk_from_data ( root_data );
     if ( root == NULL ) {
         return 1;
@@ -208,7 +211,7 @@ uint8_t talloc_free ( void * root_data )
             parent->first_child = next;
         }
     }
-    
+
     if ( !free_recursive ( root ) ) {
         return 2;
     }
@@ -221,3 +224,12 @@ void * talloc_data_from_chunk ( talloc_chunk * chunk );
 
 extern inline
 talloc_chunk * talloc_chunk_from_data ( const void * data );
+
+extern inline
+void * talloc ( const void * parent_data, size_t length );
+
+extern inline
+void * talloc_zero ( const void * parent_data, size_t length );
+
+extern inline
+void * talloc_new ( const void * parent_data );

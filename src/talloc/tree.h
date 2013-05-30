@@ -28,4 +28,22 @@ talloc_chunk * talloc_chunk_from_data ( const void * data )
     return ( talloc_chunk * ) ( ( uintptr_t ) data - sizeof ( talloc_chunk ) );
 }
 
+inline
+void * talloc ( const void * parent_data, size_t length )
+{
+    return talloc_mode ( parent_data, length, 0 );
+}
+
+inline
+void * talloc_zero ( const void * parent_data, size_t length )
+{
+    return talloc_zero_mode ( parent_data, length, 0 );
+}
+
+inline
+void * talloc_new ( const void * parent_data )
+{
+    return talloc_mode ( parent_data, 0, 0 );
+}
+
 #endif

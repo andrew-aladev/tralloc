@@ -9,8 +9,11 @@
 
 bool test_str ( void * ctx )
 {
-    char * str = "Viktor Tsoi Star Called Sun";
+    char * str  = "Viktor Tsoi Star Called Sun";
     char * full = talloc_strdup ( ctx, str );
+    if ( full == NULL ) {
+        return false;
+    }
 
     char * walk = str;
     char * part_1 = talloc_strndup ( full, walk, 6 );
@@ -24,7 +27,6 @@ bool test_str ( void * ctx )
     char * part_5 = talloc_strndup ( full, walk, 3 );
     if (
         ! (
-            full   != NULL &&
             part_1 != NULL &&
             part_2 != NULL &&
             part_3 != NULL &&
@@ -41,11 +43,11 @@ bool test_str ( void * ctx )
         return false;
     }
 
-    talloc_free ( full );
+    if ( talloc_free ( full ) != 0 ) {
+        return false;
+    }
     return true;
 }
-
-#include <math.h>
 
 int main ()
 {
@@ -55,9 +57,12 @@ int main ()
     }
 
     if ( !test_str ( ctx ) ) {
+        talloc_free ( ctx );
         return 2;
     }
 
-    talloc_free ( ctx );
+    if ( talloc_free ( ctx ) != 0 ) {
+        return 3;
+    }
     return 0;
 }

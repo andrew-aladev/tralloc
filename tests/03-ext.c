@@ -31,45 +31,42 @@ bool init_data ()
 
 uint8_t destructor ( void * data )
 {
-    talloc_dynarr_append ( history, data );
+    if ( talloc_dynarr_append ( history, data ) != 0 ) {
+        return 1;
+    }
     return 0;
 }
 
+#ifdef TALLOC_EXT
 bool test_destructor ()
 {
     char * text_01 = talloc_strdup ( root, "test text 01" );
-    if ( text_01 == NULL ) {
-        return false;
-    }
     char * text_02 = talloc_strdup ( root, "test text 02" );
-    if ( text_02 == NULL ) {
-        return false;
-    }
     char * text_03 = talloc_strdup ( root, "test text 03" );
-    if ( text_03 == NULL ) {
+    if ( text_01 == NULL || text_02 == NULL || text_03 == NULL ) {
         return false;
     }
 
     if (
-        ! (
-            !talloc_set_destructor ( text_01, destructor ) &&
-            !talloc_set_destructor ( text_02, destructor ) &&
-            !talloc_set_destructor ( text_03, destructor )
-        )
+        talloc_set_destructor ( text_01, destructor ) != 0 ||
+        talloc_set_destructor ( text_02, destructor ) != 0 ||
+        talloc_set_destructor ( text_03, destructor ) != 0
     ) {
         return false;
     }
 
-    talloc_free ( text_02 );
-    talloc_free ( text_01 );
-    talloc_free ( text_03 );
+    if (
+        talloc_free ( text_02 ) != 0 ||
+        talloc_free ( text_01 ) != 0 ||
+        talloc_free ( text_03 )
+    ) {
+        return false;
+    }
 
     if (
-        ! (
-            !strcmp ( talloc_dynarr_get ( history, 0 ), "test text 02" ) &&
-            !strcmp ( talloc_dynarr_get ( history, 1 ), "test text 01" ) &&
-            !strcmp ( talloc_dynarr_get ( history, 2 ), "test text 03" )
-        )
+        strcmp ( talloc_dynarr_get ( history, 0 ), "test text 02" ) != 0 ||
+        strcmp ( talloc_dynarr_get ( history, 1 ), "test text 01" ) != 0 ||
+        strcmp ( talloc_dynarr_get ( history, 2 ), "test text 03" ) != 0
     ) {
         return false;
     }
@@ -96,22 +93,19 @@ bool test_length ()
     str[1] = 'b';
     str[2] = '\0';
     if (
-        ! (
-            talloc_set_destructor ( str, destructor ) == 0 &&
-            talloc_free ( str ) == 0 &&
-            strcmp ( talloc_dynarr_get ( history, 3 ), "ab" ) == 0
-        )
+        talloc_set_destructor ( str, destructor ) != 0 ||
+        talloc_free ( str ) != 0 ||
+        strcmp ( talloc_dynarr_get ( history, 3 ), "ab" ) != 0
     ) {
         return false;
     }
     return true;
 }
+#endif
 
 void free_data ()
 {
-    if ( root != NULL ) {
-        talloc_free ( root );
-    }
+    talloc_free ( root );
     if ( history != NULL ) {
         talloc_dynarr_free ( history );
     }
