@@ -5,6 +5,7 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 
 #include "tree.h"
 #include "events.h"
@@ -156,13 +157,14 @@ void * talloc_realloc ( const void * child_data, size_t length )
 }
 
 static
-uint8_t free_recursive ( talloc_chunk * root )
+bool free_recursive ( talloc_chunk * root )
 {
+    bool result = true;
     talloc_chunk * child = root->first_child;
 
 #ifdef TALLOC_EVENTS
     if ( talloc_on_del ( root ) != 0 ) {
-        return 1;
+        result = false;
     }
 #endif
 
@@ -171,13 +173,13 @@ uint8_t free_recursive ( talloc_chunk * root )
     talloc_chunk * new_child;
     while ( child != NULL ) {
         new_child = child->next;
-        if ( free_recursive ( child ) != 0 ) {
-            return 2;
+        if ( !free_recursive ( child ) ) {
+            result = false;
         }
         child = new_child;
     }
 
-    return 0;
+    return result;
 }
 
 uint8_t talloc_free ( void * root_data )
@@ -190,10 +192,6 @@ uint8_t talloc_free ( void * root_data )
     talloc_chunk * prev   = root->prev;
     talloc_chunk * next   = root->next;
     talloc_chunk * parent = root->parent;
-
-    if ( free_recursive ( root ) != 0 ) {
-        return 2;
-    }
 
     if ( prev != NULL ) {
         if ( next != NULL ) {
@@ -209,6 +207,10 @@ uint8_t talloc_free ( void * root_data )
         if ( parent != NULL ) {
             parent->first_child = next;
         }
+    }
+    
+    if ( !free_recursive ( root ) ) {
+        return 2;
     }
 
     return 0;
