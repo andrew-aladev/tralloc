@@ -57,13 +57,15 @@ inline
 uint8_t talloc_on_update ( talloc_chunk * child, size_t length )
 {
 #ifdef TALLOC_EXT
-    talloc_set_length ( child, length );
+    if ( talloc_set_length ( child, length ) != 0 ) {
+        return 1;
+    }
 #endif
 
 #ifdef TALLOC_DEBUG
     if ( talloc_debug_on_update != NULL ) {
         if ( talloc_debug_on_update ( child ) != 0 ) {
-            return 1;
+            return 2;
         }
     }
 #endif

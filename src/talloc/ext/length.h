@@ -16,8 +16,11 @@ uint8_t talloc_add_length ( talloc_chunk * child, size_t user_length, uint8_t ex
 {
     if ( ext_mode & TALLOC_MODE_LENGTH ) {
         size_t * length = malloc ( sizeof ( size_t ) );
-        if ( talloc_ext_set ( child, TALLOC_EXT_LENGTH, length ) != 0 ) {
+        if ( length == NULL ) {
             return 1;
+        }
+        if ( talloc_ext_set ( child, TALLOC_EXT_LENGTH, length ) != 0 ) {
+            return 2;
         }
         * length = user_length;
     }
