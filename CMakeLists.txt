@@ -1,5 +1,5 @@
 cmake_minimum_required (VERSION 2.8)
-project (talloc)
+project (talloc2)
 
 if (NOT DEFINED TALLOC_EXT)
     set (TALLOC_EXT true)

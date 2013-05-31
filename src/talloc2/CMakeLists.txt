@@ -13,10 +13,10 @@ set (SOURCES  events.c ext.c helpers.c tree.c)
 add_subdirectory (ext)
 
 if (TALLOC_SHARED MATCHES true)
-    add_library (talloc SHARED ${SOURCES})
+    add_library (${CMAKE_PROJECT_NAME} SHARED ${SOURCES})
 endif ()
 
 if (TALLOC_STATIC MATCHES true)
-    add_library (talloc_static STATIC ${SOURCES})
-    set_target_properties (talloc_static PROPERTIES OUTPUT_NAME talloc)
+    add_library (${CMAKE_PROJECT_NAME}_static STATIC ${SOURCES})
+    set_target_properties (talloc2_static PROPERTIES OUTPUT_NAME ${CMAKE_PROJECT_NAME})
 endif ()
