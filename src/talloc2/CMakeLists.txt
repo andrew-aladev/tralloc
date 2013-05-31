@@ -18,5 +18,5 @@ endif ()
 
 if (TALLOC_STATIC MATCHES true)
     add_library (${PROJECT_NAME}_static STATIC ${SOURCES})
-    set_target_properties (talloc2_static PROPERTIES OUTPUT_NAME ${PROJECT_NAME})
+    set_target_properties (${PROJECT_NAME}_static PROPERTIES OUTPUT_NAME ${PROJECT_NAME})
 endif ()
