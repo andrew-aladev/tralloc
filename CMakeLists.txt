@@ -11,6 +11,10 @@ if (NOT DEFINED TALLOC_STATIC)
     set (TALLOC_STATIC true)
 endif ()
 
+if (NOT DEFINED TALLOC_TARGET)
+    set (TALLOC_TARGET ${PROJECT_NAME})
+endif ()
+
 set (CMAKE_BUILD_TYPE DEBUG)
 
 set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -Winline -std=gnu99")
