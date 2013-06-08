@@ -29,15 +29,6 @@ void * _realloc ( talloc_chunk * child, size_t length )
 }
 
 static inline
-void _init ( talloc_chunk * child )
-{
-    child->parent      = NULL;
-    child->prev        = NULL;
-    child->next        = NULL;
-    child->first_child = NULL;
-}
-
-static inline
 void _set_child ( talloc_chunk * parent, talloc_chunk * child )
 {
     child->parent = parent;
@@ -46,6 +37,10 @@ void _set_child ( talloc_chunk * parent, talloc_chunk * child )
     if ( parent_first_child != NULL ) {
         parent_first_child->prev = child;
         child->next = parent_first_child;
+        child->prev = NULL;
+    } else {
+        child->next = NULL;
+        child->prev = NULL;
     }
     parent->first_child = child;
 }
@@ -53,11 +48,15 @@ void _set_child ( talloc_chunk * parent, talloc_chunk * child )
 static inline
 uint8_t _add ( const void * parent_data, talloc_chunk * child )
 {
-    _init ( child );
+    child->first_child = NULL;
 
     if ( parent_data != NULL ) {
         void * parent = talloc_chunk_from_data ( parent_data );
         _set_child ( parent, child );
+    } else {
+        child->parent = NULL;
+        child->prev   = NULL;
+        child->next   = NULL;
     }
 
     return 0;

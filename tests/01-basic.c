@@ -247,13 +247,13 @@ bool test_move ()
     if (
         talloc_move ( trivium, data_00 ) != 0 ||
         chunk_trivium->parent != chunk_00 ||
-        
+
         talloc_move ( trivium, data_012 ) != 0 ||
         chunk_trivium->parent != chunk_012
     ) {
         return false;
     }
-    
+
     return true;
 }
 
@@ -428,7 +428,7 @@ bool test_history()
             test_history_event ( 9,  UPDATE_MODE, chunk_01 ) &&
             test_history_event ( 10, UPDATE_MODE, chunk_01 ) &&
             test_history_event ( 11, UPDATE_MODE, chunk_01 ) &&
-            
+
             test_history_event ( 12, MOVE_MODE, chunk_trivium ) &&
             test_history_event ( 13, MOVE_MODE, chunk_trivium ) &&
 
@@ -469,7 +469,7 @@ int main ()
         free_data();
         return 4;
     }
-    
+
     set_chunks();
     if ( !test_move() ) {
         free_data();
