@@ -9,7 +9,7 @@
 
 #ifdef TALLOC_DEBUG
 extern inline
-void talloc_set_callback ( talloc_callback on_add, talloc_callback on_update, talloc_callback on_del );
+void talloc_set_callback ( talloc_callback on_add, talloc_callback on_update, talloc_callback on_move, talloc_callback on_del );
 #endif
 
 extern inline
@@ -17,6 +17,9 @@ uint8_t talloc_on_add ( talloc_chunk * chunk, size_t length, uint8_t mode );
 
 extern inline
 uint8_t talloc_on_update ( talloc_chunk * chunk, size_t length );
+
+extern inline
+uint8_t talloc_on_move ( talloc_chunk * child );
 
 extern inline
 uint8_t talloc_on_del ( talloc_chunk * chunk );

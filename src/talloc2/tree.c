@@ -57,9 +57,6 @@ uint8_t _add ( const void * parent_data, talloc_chunk * child )
 
     if ( parent_data != NULL ) {
         void * parent = talloc_chunk_from_data ( parent_data );
-        if ( parent == NULL ) {
-            return 1;
-        }
         _set_child ( parent, child );
     }
 
@@ -156,6 +153,50 @@ void * talloc_realloc ( const void * child_data, size_t length )
     return talloc_data_from_chunk ( new_child );
 }
 
+static inline
+void _detach ( talloc_chunk * chunk )
+{
+    talloc_chunk * prev   = chunk->prev;
+    talloc_chunk * next   = chunk->next;
+    talloc_chunk * parent = chunk->parent;
+
+    if ( prev != NULL ) {
+        if ( next != NULL ) {
+            prev->next = next;
+            next->prev = prev;
+        } else {
+            prev->next = NULL;
+        }
+    } else {
+        if ( next != NULL ) {
+            next->prev = NULL;
+        }
+        if ( parent != NULL ) {
+            parent->first_child = next;
+        }
+    }
+}
+
+uint8_t talloc_move ( const void * child_data, const void * parent_data )
+{
+    if ( child_data == NULL ) {
+        return 1;
+    }
+    talloc_chunk * child      = talloc_chunk_from_data ( child_data );
+    talloc_chunk * new_parent = talloc_chunk_from_data ( parent_data );
+
+    _detach ( child );
+    _set_child ( new_parent, child );
+
+#ifdef TALLOC_EVENTS
+    if ( talloc_on_move ( child ) != 0 ) {
+        return 2;
+    }
+#endif
+
+    return 0;
+}
+
 static
 bool free_recursive ( talloc_chunk * root )
 {
@@ -188,29 +229,8 @@ uint8_t talloc_free ( void * root_data )
         return 0;
     }
     talloc_chunk * root = talloc_chunk_from_data ( root_data );
-    if ( root == NULL ) {
-        return 1;
-    }
 
-    talloc_chunk * prev   = root->prev;
-    talloc_chunk * next   = root->next;
-    talloc_chunk * parent = root->parent;
-
-    if ( prev != NULL ) {
-        if ( next != NULL ) {
-            prev->next = next;
-            next->prev = prev;
-        } else {
-            prev->next = NULL;
-        }
-    } else {
-        if ( next != NULL ) {
-            next->prev = NULL;
-        }
-        if ( parent != NULL ) {
-            parent->first_child = next;
-        }
-    }
+    _detach ( root );
 
     if ( !free_recursive ( root ) ) {
         return 2;

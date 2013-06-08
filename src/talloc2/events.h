@@ -18,13 +18,15 @@ typedef uint8_t ( * talloc_callback ) ( talloc_chunk * chunk );
 
 talloc_callback talloc_debug_on_add;
 talloc_callback talloc_debug_on_update;
+talloc_callback talloc_debug_on_move;
 talloc_callback talloc_debug_on_del;
 
 inline
-void talloc_set_callback ( talloc_callback on_add, talloc_callback on_update, talloc_callback on_del )
+void talloc_set_callback ( talloc_callback on_add, talloc_callback on_update, talloc_callback on_move, talloc_callback on_del )
 {
     talloc_debug_on_add    = on_add;
     talloc_debug_on_update = on_update;
+    talloc_debug_on_move   = on_move;
     talloc_debug_on_del    = on_del;
 }
 #endif
@@ -65,6 +67,20 @@ uint8_t talloc_on_update ( talloc_chunk * child, size_t length )
 #ifdef TALLOC_DEBUG
     if ( talloc_debug_on_update != NULL ) {
         if ( talloc_debug_on_update ( child ) != 0 ) {
+            return 2;
+        }
+    }
+#endif
+
+    return 0;
+}
+
+inline
+uint8_t talloc_on_move ( talloc_chunk * child )
+{
+#ifdef TALLOC_DEBUG
+    if ( talloc_debug_on_move != NULL ) {
+        if ( talloc_debug_on_move ( child ) != 0 ) {
             return 2;
         }
     }

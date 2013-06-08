@@ -52,6 +52,7 @@ static talloc_dynarr * history;
 enum {
     ADD_MODE = 0,
     UPDATE_MODE,
+    MOVE_MODE,
     DELETE_MODE
 };
 
@@ -82,6 +83,10 @@ uint8_t on_update ( talloc_chunk * chunk )
 {
     return history_append ( chunk, UPDATE_MODE );
 }
+uint8_t on_move ( talloc_chunk * chunk )
+{
+    return history_append ( chunk, MOVE_MODE );
+}
 uint8_t on_del ( talloc_chunk * chunk )
 {
     return history_append ( chunk, DELETE_MODE );
@@ -96,7 +101,7 @@ bool init ()
     if ( history == NULL ) {
         return false;
     }
-    talloc_set_callback ( on_add, on_update, on_del );
+    talloc_set_callback ( on_add, on_update, on_move, on_del );
 #endif
     return true;
 }
@@ -234,6 +239,21 @@ bool test_realloc ()
         return false;
     }
 
+    return true;
+}
+
+bool test_move ()
+{
+    if (
+        talloc_move ( trivium, data_00 ) != 0 ||
+        chunk_trivium->parent != chunk_00 ||
+        
+        talloc_move ( trivium, data_012 ) != 0 ||
+        chunk_trivium->parent != chunk_012
+    ) {
+        return false;
+    }
+    
     return true;
 }
 
@@ -394,7 +414,7 @@ bool test_history()
 {
     if (
         ! (
-            history->length == 21 &&
+            history->length == 23 &&
             test_history_event ( 0, ADD_MODE, chunk_root )    &&
             test_history_event ( 1, ADD_MODE, chunk_0 )       &&
             test_history_event ( 2, ADD_MODE, chunk_00 )      &&
@@ -408,17 +428,20 @@ bool test_history()
             test_history_event ( 9,  UPDATE_MODE, chunk_01 ) &&
             test_history_event ( 10, UPDATE_MODE, chunk_01 ) &&
             test_history_event ( 11, UPDATE_MODE, chunk_01 ) &&
+            
+            test_history_event ( 12, MOVE_MODE, chunk_trivium ) &&
+            test_history_event ( 13, MOVE_MODE, chunk_trivium ) &&
 
-            test_history_event ( 12, DELETE_MODE, chunk_01 )      &&
-            test_history_event ( 13, DELETE_MODE, chunk_012 )     &&
-            test_history_event ( 14, DELETE_MODE, chunk_trivium ) &&
-            test_history_event ( 15, DELETE_MODE, chunk_011 )     &&
-            test_history_event ( 16, DELETE_MODE, chunk_010 )     &&
+            test_history_event ( 14, DELETE_MODE, chunk_01 )      &&
+            test_history_event ( 15, DELETE_MODE, chunk_012 )     &&
+            test_history_event ( 16, DELETE_MODE, chunk_trivium ) &&
+            test_history_event ( 17, DELETE_MODE, chunk_011 )     &&
+            test_history_event ( 18, DELETE_MODE, chunk_010 )     &&
 
-            test_history_event ( 17, DELETE_MODE, chunk_root ) &&
-            test_history_event ( 18, DELETE_MODE, chunk_0 )    &&
-            test_history_event ( 19, DELETE_MODE, chunk_02 )   &&
-            test_history_event ( 20, DELETE_MODE, chunk_00 )
+            test_history_event ( 19, DELETE_MODE, chunk_root ) &&
+            test_history_event ( 20, DELETE_MODE, chunk_0 )    &&
+            test_history_event ( 21, DELETE_MODE, chunk_02 )   &&
+            test_history_event ( 22, DELETE_MODE, chunk_00 )
         )
     ) {
         return false;
@@ -446,44 +469,52 @@ int main ()
         free_data();
         return 4;
     }
+    
+    set_chunks();
+    if ( !test_move() ) {
+        free_data();
+        return 5;
+    }
 
     set_data();
     set_chunks();
 
     if ( !test_chunks() ) {
         free_data();
-        return 5;
+        return 6;
     }
 
     if ( talloc_free ( data_01 ) != 0 ) {
-        return 6;
+        return 7;
     }
 
     if ( !test_chunks_without_data_01() ) {
         free_data();
-        return 7;
+        return 8;
     }
 
     if ( !test_data_without_data_01() ) {
         free_data();
-        return 8;
+        return 9;
     }
 
     if ( talloc_free ( root ) != 0 ) {
-        return 9;
+        return 10;
     }
     root = NULL;
 
 #ifdef TALLOC_DEBUG
     if ( !test_history() ) {
         free_data();
-        return 10;
+        return 11;
     }
 #endif
 
     if ( !free_data() ) {
-        return 11;
+        return 12;
     }
 
     return 0;
 }
+
+

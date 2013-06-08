@@ -31,10 +31,10 @@ uint8_t talloc_destructor_on_del ( talloc_chunk * child )
 inline
 uint8_t talloc_set_destructor ( const void * child_data, talloc_destructor destructor )
 {
-    talloc_chunk * child = talloc_chunk_from_data ( child_data );
-    if ( child == NULL ) {
+    if ( child_data == NULL ) {
         return 1;
     }
+    talloc_chunk * child = talloc_chunk_from_data ( child_data );
     if ( talloc_ext_set ( child, TALLOC_EXT_DESTRUCTOR, destructor ) ) {
         return 2;
     }

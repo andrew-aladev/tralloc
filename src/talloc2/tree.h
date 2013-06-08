@@ -14,6 +14,7 @@
 void *  talloc_mode      ( const void * parent_data, size_t length, uint8_t ext_mode );
 void *  talloc_zero_mode ( const void * parent_data, size_t length, uint8_t ext_mode );
 void *  talloc_realloc   ( const void * child_data,  size_t length );
+uint8_t talloc_move      ( const void * child_data, const void * parent_data );
 uint8_t talloc_free      ( void * root_data );
 
 inline
