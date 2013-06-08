@@ -11,6 +11,7 @@ set (INCLUDES config.h events.h ext.h helpers.h tree.h types.h)
 set (SOURCES  events.c ext.c helpers.c tree.c)
 
 add_subdirectory (ext)
+add_subdirectory (utils)
 
 if (TALLOC_SHARED MATCHES true)
     add_library (${TALLOC_TARGET} SHARED ${SOURCES})
