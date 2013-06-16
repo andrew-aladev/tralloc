@@ -12,7 +12,7 @@
 inline
 uint8_t talloc_add_length ( talloc_chunk * child, size_t user_length, uint8_t ext_mode )
 {
-    if ( ext_mode & TALLOC_MODE_LENGTH ) {
+    if ( ( ext_mode & TALLOC_MODE_LENGTH ) != 0 ) {
         size_t * length = malloc ( sizeof ( size_t ) );
         if ( length == NULL ) {
             return 1;
@@ -28,7 +28,7 @@ uint8_t talloc_add_length ( talloc_chunk * child, size_t user_length, uint8_t ex
 inline
 uint8_t talloc_set_length ( talloc_chunk * child, size_t user_length )
 {
-    if ( child->ext != NULL && child->ext->mode & TALLOC_MODE_LENGTH ) {
+    if ( child->ext != NULL && ( child->ext->mode & TALLOC_MODE_LENGTH ) != 0 ) {
         size_t * length = talloc_ext_get ( child, TALLOC_EXT_INDEX_LENGTH );
         if ( length == NULL ) {
             return 1;

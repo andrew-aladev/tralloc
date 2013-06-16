@@ -14,7 +14,7 @@
 inline
 uint8_t talloc_destructor_on_del ( talloc_chunk * child )
 {
-    if ( child->ext != NULL && child->ext->mode & TALLOC_MODE_DESTRUCTOR ) {
+    if ( child->ext != NULL && ( child->ext->mode & TALLOC_MODE_DESTRUCTOR ) != 0 ) {
         talloc_destructor destructor = talloc_ext_get ( child, TALLOC_EXT_INDEX_DESTRUCTOR );
         if ( destructor == NULL ) {
             return 1;

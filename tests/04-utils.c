@@ -15,6 +15,10 @@
 #include <talloc2/utils/dynarr.h>
 #endif
 
+#ifdef TALLOC_UTILS_LIST
+#include <talloc2/utils/list.h>
+#endif
+
 #ifdef TALLOC_UTILS_BUFFER
 bool test_buffer ( void * ctx )
 {
@@ -62,17 +66,17 @@ bool test_buffer ( void * ctx )
         return false;
     }
     buf[0] = '6';
-    buf[0] = '7';
-    buf[0] = '8';
-    buf[0] = '9';
+    buf[1] = '7';
+    buf[2] = '8';
+    buf[3] = '9';
     if ( talloc_buffer_cut ( buffer, 6 ) != 0 ) {
         talloc_free ( buffer );
         return false;
     }
 
     if (
-        buffer->length == 10 ||
-        strncmp ( buffer->buf, "1234567890", 10 ) != 0
+        buffer->length != 10 ||
+        strncmp ( buffer->buf, "0123456789", 10 ) != 0
     ) {
         talloc_free ( buffer );
         return false;
@@ -86,6 +90,10 @@ bool test_dynarr ( void * ctx )
 {
     size_t a, b;
     talloc_dynarr * arr = talloc_dynarr_new ( ctx, 0 );
+    if ( arr != NULL ) {
+        return false;
+    }
+    arr = talloc_dynarr_new ( ctx, 3 );
     if ( arr == NULL ) {
         return false;
     }
@@ -100,12 +108,13 @@ bool test_dynarr ( void * ctx )
         talloc_dynarr_append ( arr, &b ) != 0 ||
         talloc_dynarr_append ( arr, &b ) != 0
     ) {
+        talloc_free ( arr );
         return false;
     }
-    
+
     talloc_dynarr_set ( arr, 3, &b );
     talloc_dynarr_set ( arr, 2, &a );
-    
+
     if (
         talloc_dynarr_get_length ( arr ) != 9 ||
         talloc_dynarr_get ( arr, 0 ) != &a ||
@@ -118,9 +127,80 @@ bool test_dynarr ( void * ctx )
         talloc_dynarr_get ( arr, 7 ) != &b ||
         talloc_dynarr_get ( arr, 8 ) != &b
     ) {
+        talloc_free ( arr );
         return false;
     }
+
+    talloc_free ( arr );
+    return true;
+}
+#endif
+
+#ifdef TALLOC_UTILS_LIST
+bool test_list ( void * ctx )
+{
+    size_t a, b;
+    talloc_list * list = talloc_list_new ( ctx );
+    if ( list == NULL ) {
+        return false;
+    }
+
+    if (
+        talloc_list_append ( list, &a ) != 0 ||
+        talloc_list_append ( list, &a ) != 0 ||
+        talloc_list_append ( list, &b ) != 0 ||
+        talloc_list_append ( list, &a ) != 0 ||
+        talloc_list_append ( list, &a ) != 0 ||
+        talloc_list_append ( list, &b ) != 0 ||
+        talloc_list_append ( list, &a ) != 0 ||
+        talloc_list_append ( list, &b ) != 0 ||
+        talloc_list_append ( list, &b ) != 0
+    ) {
+        talloc_free ( list );
+        return false;
+    }
+
+    talloc_list_item * item = list->last_item;
+    if (
+        talloc_list_get_length ( list ) != 9 ||
+        item == NULL ||
+
+        item->data != &b || ( item = item->prev ) == NULL ||
+        item->data != &b || ( item = item->prev ) == NULL ||
+        item->data != &a || ( item = item->prev ) == NULL ||
+        item->data != &b || ( item = item->prev ) == NULL ||
+        item->data != &a || ( item = item->prev ) == NULL ||
+        item->data != &a || ( item = item->prev ) == NULL ||
+        item->data != &b || ( item = item->prev ) == NULL ||
+        item->data != &a || ( item = item->prev ) == NULL ||
+        item->data != &a
+    ) {
+        talloc_free ( list );
+        return false;
+    }
+
+    talloc_list_pop ( list );
+    talloc_list_pop ( list );
+    talloc_list_pop ( list );
+    talloc_list_pop ( list );
+    talloc_list_pop ( list );
     
+    item = list->last_item;
+    
+    if (
+        talloc_list_get_length ( list ) != 4 ||
+        item == NULL ||
+
+        item->data != &a || ( item = item->prev ) == NULL ||
+        item->data != &b || ( item = item->prev ) == NULL ||
+        item->data != &a || ( item = item->prev ) == NULL ||
+        item->data != &a
+    ) {
+        talloc_free ( list );
+        return false;
+    }
+
+    talloc_free ( list );
     return true;
 }
 #endif
@@ -133,14 +213,23 @@ int main ()
     }
 
 #ifdef TALLOC_UTILS_BUFFER
-    if ( test_buffer ( ctx ) ) {
+    if ( !test_buffer ( ctx ) ) {
+        talloc_free ( ctx );
         return 2;
     }
 #endif
 
 #ifdef TALLOC_UTILS_DYNARR
-    if ( test_dynarr ( ctx ) ) {
+    if ( !test_dynarr ( ctx ) ) {
+        talloc_free ( ctx );
         return 3;
+    }
+#endif
+
+#ifdef TALLOC_UTILS_LIST
+    if ( !test_list ( ctx ) ) {
+        talloc_free ( ctx );
+        return 4;
     }
 #endif
 
