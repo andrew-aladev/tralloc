@@ -43,7 +43,7 @@ uint8_t destructor ( void * data )
     return 0;
 }
 
-#ifdef TALLOC_EXT_DESTRUCTOR
+
 bool test_destructor ()
 {
     char * text_01 = talloc_strdup ( root, "test text 01" );
@@ -53,6 +53,7 @@ bool test_destructor ()
         return false;
     }
 
+#ifdef TALLOC_EXT_DESTRUCTOR
     if (
         talloc_set_destructor ( text_01, destructor ) != 0 ||
         talloc_set_destructor ( text_02, destructor ) != 0 ||
@@ -60,6 +61,7 @@ bool test_destructor ()
     ) {
         return false;
     }
+#endif
 
     if (
         talloc_free ( text_02 ) != 0 ||
@@ -69,6 +71,7 @@ bool test_destructor ()
         return false;
     }
 
+#ifdef TALLOC_EXT_DESTRUCTOR
     if (
         strcmp ( malloc_dynarr_get ( history, 0 ), "test text 02" ) != 0 ||
         strcmp ( malloc_dynarr_get ( history, 1 ), "test text 01" ) != 0 ||
@@ -76,40 +79,64 @@ bool test_destructor ()
     ) {
         return false;
     }
+#endif
 
     return true;
 }
-#endif
 
-#if defined (TALLOC_EXT_DESTRUCTOR) && defined (TALLOC_EXT_LENGTH)
 bool test_length ()
 {
     size_t length;
     char * str = talloc_zero_mode ( root, sizeof ( char ) * 200, TALLOC_MODE_LENGTH );
-    if ( str == NULL || talloc_get_length ( str, &length ) != 0 || length != 200 ) {
+    if ( str == NULL ) {
         return false;
     }
+#ifdef TALLOC_EXT_LENGTH
+    if ( talloc_get_length ( str, &length ) != 0 || length != 200 ) {
+        return false;
+    }
+#endif
     str = talloc_realloc ( str, sizeof ( char ) * 300 );
-    if ( str == NULL || talloc_get_length ( str, &length ) != 0 || length != 300 ) {
+    if ( str == NULL ) {
         return false;
     }
+#ifdef TALLOC_EXT_LENGTH
+    if ( talloc_get_length ( str, &length ) != 0 || length != 300 ) {
+        return false;
+    }
+#endif
     str = talloc_realloc ( str, sizeof ( char ) * 3 );
-    if ( str == NULL || talloc_get_length ( str, &length ) != 0 || length != 3 ) {
+    if ( str == NULL ) {
         return false;
     }
+#ifdef TALLOC_EXT_LENGTH
+    if ( talloc_get_length ( str, &length ) != 0 || length != 3 ) {
+        return false;
+    }
+#endif
+
     str[0] = 'a';
     str[1] = 'b';
     str[2] = '\0';
-    if (
-        talloc_set_destructor ( str, destructor ) != 0 ||
-        talloc_free ( str ) != 0 ||
-        strcmp ( malloc_dynarr_get ( history, 3 ), "ab" ) != 0
-    ) {
+
+#ifdef TALLOC_EXT_DESTRUCTOR
+    if ( talloc_set_destructor ( str, destructor ) != 0 ) {
         return false;
     }
+#endif
+
+    if ( talloc_free ( str ) != 0 ) {
+        return false;
+    }
+
+#ifdef TALLOC_EXT_DESTRUCTOR
+    if ( strcmp ( malloc_dynarr_get ( history, 3 ), "ab" ) != 0 ) {
+        return false;
+    }
+#endif
+
     return true;
 }
-#endif
 
 void free_data ()
 {
@@ -125,18 +152,14 @@ int main ()
         return 1;
     }
 
-#ifdef TALLOC_EXT_DESTRUCTOR
     if ( !test_destructor () ) {
         free_data ();
         return 2;
     }
-#endif
-#if defined (TALLOC_EXT_DESTRUCTOR) && defined (TALLOC_EXT_LENGTH)
     if ( !test_length () ) {
         free_data ();
         return 3;
     }
-#endif
 
     free_data ();
     return 0;
