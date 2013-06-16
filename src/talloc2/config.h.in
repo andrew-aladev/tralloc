@@ -4,4 +4,5 @@
 #cmakedefine TALLOC_EXT_LENGTH
 #cmakedefine TALLOC_EXT
 #cmakedefine TALLOC_UTILS_BUFFER
+#cmakedefine TALLOC_UTILS_DYNARR
 #cmakedefine TALLOC_UTILS

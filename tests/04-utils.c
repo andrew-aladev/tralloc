@@ -11,6 +11,10 @@
 #include <talloc2/utils/buffer.h>
 #endif
 
+#ifdef TALLOC_UTILS_DYNARR
+#include <talloc2/utils/dynarr.h>
+#endif
+
 #ifdef TALLOC_UTILS_BUFFER
 bool test_buffer ( void * ctx )
 {
@@ -77,6 +81,50 @@ bool test_buffer ( void * ctx )
 }
 #endif
 
+#ifdef TALLOC_UTILS_DYNARR
+bool test_dynarr ( void * ctx )
+{
+    size_t a, b;
+    talloc_dynarr * arr = talloc_dynarr_new ( ctx, 0 );
+    if ( arr == NULL ) {
+        return false;
+    }
+    if (
+        talloc_dynarr_append ( arr, &a ) != 0 ||
+        talloc_dynarr_append ( arr, &a ) != 0 ||
+        talloc_dynarr_append ( arr, &b ) != 0 ||
+        talloc_dynarr_append ( arr, &a ) != 0 ||
+        talloc_dynarr_append ( arr, &a ) != 0 ||
+        talloc_dynarr_append ( arr, &b ) != 0 ||
+        talloc_dynarr_append ( arr, &a ) != 0 ||
+        talloc_dynarr_append ( arr, &b ) != 0 ||
+        talloc_dynarr_append ( arr, &b ) != 0
+    ) {
+        return false;
+    }
+    
+    talloc_dynarr_set ( arr, 3, &b );
+    talloc_dynarr_set ( arr, 2, &a );
+    
+    if (
+        talloc_dynarr_get_length ( arr ) != 9 ||
+        talloc_dynarr_get ( arr, 0 ) != &a ||
+        talloc_dynarr_get ( arr, 1 ) != &a ||
+        talloc_dynarr_get ( arr, 2 ) != &a ||
+        talloc_dynarr_get ( arr, 3 ) != &b ||
+        talloc_dynarr_get ( arr, 4 ) != &a ||
+        talloc_dynarr_get ( arr, 5 ) != &b ||
+        talloc_dynarr_get ( arr, 6 ) != &a ||
+        talloc_dynarr_get ( arr, 7 ) != &b ||
+        talloc_dynarr_get ( arr, 8 ) != &b
+    ) {
+        return false;
+    }
+    
+    return true;
+}
+#endif
+
 int main ()
 {
     void * ctx = talloc_new ( NULL );
@@ -87,6 +135,12 @@ int main ()
 #ifdef TALLOC_UTILS_BUFFER
     if ( test_buffer ( ctx ) ) {
         return 2;
+    }
+#endif
+
+#ifdef TALLOC_UTILS_DYNARR
+    if ( test_dynarr ( ctx ) ) {
+        return 3;
     }
 #endif
 
