@@ -7,11 +7,19 @@ endif ()
 
 configure_file (${CMAKE_CURRENT_SOURCE_DIR}/config.h.in ${CMAKE_CURRENT_SOURCE_DIR}/config.h)
 
-set (INCLUDES config.h events.h ext.h helpers.h tree.h types.h)
-set (SOURCES  events.c ext.c helpers.c tree.c)
+set (INCLUDES helpers.h tree.h types.h config.h)
+set (SOURCES  helpers.c tree.c)
 
-add_subdirectory (ext)
-add_subdirectory (utils)
+if (TALLOC_EVENTS MATCHES true)
+    set (INCLUDES ${INCLUDES} events.h)
+    set (SOURCES  ${SOURCES}  events.c)
+endif ()
+if (TALLOC_EXT MATCHES true)
+    add_subdirectory (ext)
+endif ()
+if (TALLOC_UTILS MATCHES true)
+    add_subdirectory (utils)
+endif ()
 
 if (TALLOC_SHARED MATCHES true)
     add_library (${TALLOC_TARGET} SHARED ${SOURCES})

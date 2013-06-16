@@ -7,9 +7,7 @@
 #define TALLOC_EXT_DESTRUCTOR_H
 
 #include "../tree.h"
-#include "../ext.h"
-
-#ifdef TALLOC_EXT
+#include "core.h"
 
 #include <stdio.h>
 
@@ -17,7 +15,7 @@ inline
 uint8_t talloc_destructor_on_del ( talloc_chunk * child )
 {
     if ( child->ext != NULL && child->ext->mode & TALLOC_MODE_DESTRUCTOR ) {
-        talloc_destructor destructor = talloc_ext_get ( child, TALLOC_EXT_DESTRUCTOR );
+        talloc_destructor destructor = talloc_ext_get ( child, TALLOC_EXT_INDEX_DESTRUCTOR );
         if ( destructor == NULL ) {
             return 1;
         }
@@ -35,7 +33,7 @@ uint8_t talloc_set_destructor ( const void * child_data, talloc_destructor destr
         return 1;
     }
     talloc_chunk * child = talloc_chunk_from_data ( child_data );
-    if ( talloc_ext_set ( child, TALLOC_EXT_DESTRUCTOR, destructor ) ) {
+    if ( talloc_ext_set ( child, TALLOC_EXT_INDEX_DESTRUCTOR, destructor ) ) {
         return 2;
     }
     child->ext->mode |= TALLOC_MODE_DESTRUCTOR;
@@ -43,6 +41,3 @@ uint8_t talloc_set_destructor ( const void * child_data, talloc_destructor destr
 }
 
 #endif
-
-#endif
-

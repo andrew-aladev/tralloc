@@ -6,8 +6,12 @@
 #include <stdbool.h>
 
 #include <talloc2/tree.h>
-#include <talloc2/utils/buffer.h>
 
+#ifdef TALLOC_UTILS_BUFFER
+#include <talloc2/utils/buffer.h>
+#endif
+
+#ifdef TALLOC_UTILS_BUFFER
 bool test_buffer ( void * ctx )
 {
     talloc_buffer * buffer = talloc_buffer_new ( ctx );
@@ -71,6 +75,7 @@ bool test_buffer ( void * ctx )
     }
     return true;
 }
+#endif
 
 int main ()
 {
@@ -78,9 +83,13 @@ int main ()
     if ( ctx == NULL ) {
         return 1;
     }
+
+#ifdef TALLOC_UTILS_BUFFER
     if ( test_buffer ( ctx ) ) {
         return 2;
     }
+#endif
+
     talloc_free ( ctx );
     return 0;
 }

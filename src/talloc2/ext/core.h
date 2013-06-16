@@ -8,9 +8,7 @@
 
 #include <stdlib.h>
 
-#include "types.h"
-
-#ifdef TALLOC_EXT
+#include "../types.h"
 
 inline
 talloc_ext * talloc_ext_new ( uint8_t length )
@@ -94,6 +92,3 @@ void talloc_ext_free ( talloc_chunk * child )
 }
 
 #endif
-
-#endif
-

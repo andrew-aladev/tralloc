@@ -21,8 +21,8 @@ enum {
 // these are indexes in array, which will be reallocated
 // should be sorted by typical usage times. less index - more usage
 enum {
-    TALLOC_EXT_DESTRUCTOR = 0,
-    TALLOC_EXT_LENGTH
+    TALLOC_EXT_INDEX_DESTRUCTOR = 0,
+    TALLOC_EXT_INDEX_LENGTH
 };
 
 typedef struct talloc_ext_t {

@@ -5,8 +5,6 @@
 
 #include "events.h"
 
-#ifdef TALLOC_EVENTS
-
 #ifdef TALLOC_DEBUG
 extern inline
 void talloc_set_callback ( talloc_callback on_add, talloc_callback on_update, talloc_callback on_move, talloc_callback on_del );
@@ -23,5 +21,3 @@ uint8_t talloc_on_move ( talloc_chunk * child );
 
 extern inline
 uint8_t talloc_on_del ( talloc_chunk * chunk );
-
-#endif

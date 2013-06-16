@@ -7,9 +7,7 @@
 #define TALLOC_EXT_LENGTH_H
 
 #include "../tree.h"
-#include "../ext.h"
-
-#ifdef TALLOC_EXT
+#include "core.h"
 
 inline
 uint8_t talloc_add_length ( talloc_chunk * child, size_t user_length, uint8_t ext_mode )
@@ -19,7 +17,7 @@ uint8_t talloc_add_length ( talloc_chunk * child, size_t user_length, uint8_t ex
         if ( length == NULL ) {
             return 1;
         }
-        if ( talloc_ext_set ( child, TALLOC_EXT_LENGTH, length ) != 0 ) {
+        if ( talloc_ext_set ( child, TALLOC_EXT_INDEX_LENGTH, length ) != 0 ) {
             return 2;
         }
         * length = user_length;
@@ -31,7 +29,7 @@ inline
 uint8_t talloc_set_length ( talloc_chunk * child, size_t user_length )
 {
     if ( child->ext != NULL && child->ext->mode & TALLOC_MODE_LENGTH ) {
-        size_t * length = talloc_ext_get ( child, TALLOC_EXT_LENGTH );
+        size_t * length = talloc_ext_get ( child, TALLOC_EXT_INDEX_LENGTH );
         if ( length == NULL ) {
             return 1;
         }
@@ -47,7 +45,7 @@ uint8_t talloc_get_length ( const void * child_data, size_t * result_length )
         return 1;
     }
     talloc_chunk * child = talloc_chunk_from_data ( child_data );
-    size_t * length = talloc_ext_get ( child, TALLOC_EXT_LENGTH );
+    size_t * length = talloc_ext_get ( child, TALLOC_EXT_INDEX_LENGTH );
     if ( length == NULL ) {
         return 2;
     }
@@ -56,6 +54,3 @@ uint8_t talloc_get_length ( const void * child_data, size_t * result_length )
 }
 
 #endif
-
-#endif
-

@@ -7,8 +7,14 @@
 #include <string.h>
 
 #include <talloc2/helpers.h>
+
+#ifdef TALLOC_EXT_DESTRUCTOR
 #include <talloc2/ext/destructor.h>
+#endif
+
+#ifdef TALLOC_EXT_LENGTH
 #include <talloc2/ext/length.h>
+#endif
 
 #include "utils/dynarr.h"
 
@@ -37,7 +43,7 @@ uint8_t destructor ( void * data )
     return 0;
 }
 
-#ifdef TALLOC_EXT
+#ifdef TALLOC_EXT_DESTRUCTOR
 bool test_destructor ()
 {
     char * text_01 = talloc_strdup ( root, "test text 01" );
@@ -73,7 +79,9 @@ bool test_destructor ()
 
     return true;
 }
+#endif
 
+#if defined (TALLOC_EXT_DESTRUCTOR) && defined (TALLOC_EXT_LENGTH)
 bool test_length ()
 {
     size_t length;
@@ -117,11 +125,13 @@ int main ()
         return 1;
     }
 
-#ifdef TALLOC_EXT
+#ifdef TALLOC_EXT_DESTRUCTOR
     if ( !test_destructor () ) {
         free_data ();
         return 2;
     }
+#endif
+#if defined (TALLOC_EXT_DESTRUCTOR) && defined (TALLOC_EXT_LENGTH)
     if ( !test_length () ) {
         free_data ();
         return 3;

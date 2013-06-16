@@ -5,8 +5,6 @@
 
 #include "length.h"
 
-#ifdef TALLOC_EXT
-
 extern inline
 uint8_t talloc_add_length ( talloc_chunk * child, size_t user_length, uint8_t mode );
 
@@ -15,5 +13,3 @@ uint8_t talloc_set_length ( talloc_chunk * child, size_t user_length );
 
 extern inline
 uint8_t talloc_get_length ( const void * child_data, size_t * result_length );
-
-#endif

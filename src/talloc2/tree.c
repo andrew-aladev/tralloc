@@ -8,7 +8,10 @@
 #include <stdbool.h>
 
 #include "tree.h"
+
+#ifdef TALLOC_EVENTS
 #include "events.h"
+#endif
 
 static inline
 talloc_chunk * _malloc ( size_t length )
