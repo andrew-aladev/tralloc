@@ -15,8 +15,8 @@
 #include <talloc2/utils/dynarr.h>
 #endif
 
-#ifdef TALLOC_UTILS_LIST
-#include <talloc2/utils/list.h>
+#ifdef TALLOC_UTILS_STACK
+#include <talloc2/utils/stack.h>
 #endif
 
 #ifdef TALLOC_UTILS_BUFFER
@@ -136,33 +136,33 @@ bool test_dynarr ( void * ctx )
 }
 #endif
 
-#ifdef TALLOC_UTILS_LIST
-bool test_list ( void * ctx )
+#ifdef TALLOC_UTILS_STACK
+bool test_stack ( void * ctx )
 {
     size_t a, b;
-    talloc_list * list = talloc_list_new ( ctx );
-    if ( list == NULL ) {
+    talloc_stack * stack = talloc_stack_new ( ctx );
+    if ( stack == NULL ) {
         return false;
     }
 
     if (
-        talloc_list_append ( list, &a ) != 0 ||
-        talloc_list_append ( list, &a ) != 0 ||
-        talloc_list_append ( list, &b ) != 0 ||
-        talloc_list_append ( list, &a ) != 0 ||
-        talloc_list_append ( list, &a ) != 0 ||
-        talloc_list_append ( list, &b ) != 0 ||
-        talloc_list_append ( list, &a ) != 0 ||
-        talloc_list_append ( list, &b ) != 0 ||
-        talloc_list_append ( list, &b ) != 0
+        talloc_stack_push ( stack, &a ) != 0 ||
+        talloc_stack_push ( stack, &a ) != 0 ||
+        talloc_stack_push ( stack, &b ) != 0 ||
+        talloc_stack_push ( stack, &a ) != 0 ||
+        talloc_stack_push ( stack, &a ) != 0 ||
+        talloc_stack_push ( stack, &b ) != 0 ||
+        talloc_stack_push ( stack, &a ) != 0 ||
+        talloc_stack_push ( stack, &b ) != 0 ||
+        talloc_stack_push ( stack, &b ) != 0
     ) {
-        talloc_free ( list );
+        talloc_free ( stack );
         return false;
     }
 
-    talloc_list_item * item = list->last_item;
+    talloc_stack_item * item = stack->last_item;
     if (
-        talloc_list_get_length ( list ) != 9 ||
+        talloc_stack_get_length ( stack ) != 9 ||
         item == NULL ||
 
         item->data != &b || ( item = item->prev ) == NULL ||
@@ -175,20 +175,20 @@ bool test_list ( void * ctx )
         item->data != &a || ( item = item->prev ) == NULL ||
         item->data != &a
     ) {
-        talloc_free ( list );
+        talloc_free ( stack );
         return false;
     }
 
-    talloc_list_pop ( list );
-    talloc_list_pop ( list );
-    talloc_list_pop ( list );
-    talloc_list_pop ( list );
-    talloc_list_pop ( list );
+    talloc_stack_pop ( stack );
+    talloc_stack_pop ( stack );
+    talloc_stack_pop ( stack );
+    talloc_stack_pop ( stack );
+    talloc_stack_pop ( stack );
     
-    item = list->last_item;
+    item = stack->last_item;
     
     if (
-        talloc_list_get_length ( list ) != 4 ||
+        talloc_stack_get_length ( stack ) != 4 ||
         item == NULL ||
 
         item->data != &a || ( item = item->prev ) == NULL ||
@@ -196,11 +196,11 @@ bool test_list ( void * ctx )
         item->data != &a || ( item = item->prev ) == NULL ||
         item->data != &a
     ) {
-        talloc_free ( list );
+        talloc_free ( stack );
         return false;
     }
 
-    talloc_free ( list );
+    talloc_free ( stack );
     return true;
 }
 #endif
@@ -226,8 +226,8 @@ int main ()
     }
 #endif
 
-#ifdef TALLOC_UTILS_LIST
-    if ( !test_list ( ctx ) ) {
+#ifdef TALLOC_UTILS_STACK
+    if ( !test_stack ( ctx ) ) {
         talloc_free ( ctx );
         return 4;
     }

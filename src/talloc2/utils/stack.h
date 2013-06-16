@@ -3,30 +3,30 @@
 // talloc2 is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Lesser Public License for more details.
 // You should have received a copy of the GNU General Lesser Public License along with talloc2. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TALLOC_UTILS_LIST_H
-#define TALLOC_UTILS_LIST_H
+#ifndef TALLOC_UTILS_STACK_H
+#define TALLOC_UTILS_STACK_H
 
 #include "../tree.h"
 #include "../ext/destructor.h"
 
 #include <stdbool.h>
 
-typedef struct talloc_list_item_t {
-    struct talloc_list_item_t * prev;
+typedef struct talloc_stack_item_t {
+    struct talloc_stack_item_t * prev;
     void * data;
-} talloc_list_item;
+} talloc_stack_item;
 
-typedef struct talloc_list_t {
-    struct talloc_list_item_t * last_item;
+typedef struct talloc_stack_t {
+    struct talloc_stack_item_t * last_item;
     size_t length;
-} talloc_list;
+} talloc_stack;
 
 inline
-uint8_t talloc_list_free ( void * current_list )
+uint8_t talloc_stack_free ( void * current_stack )
 {
-    talloc_list * list      = current_list;
-    talloc_list_item * item = list->last_item;
-    talloc_list_item * prev_item;
+    talloc_stack * stack      = current_stack;
+    talloc_stack_item * item = stack->last_item;
+    talloc_stack_item * prev_item;
     while ( item != NULL ) {
         prev_item = item->prev;
         free ( item );
@@ -36,51 +36,51 @@ uint8_t talloc_list_free ( void * current_list )
 }
 
 inline
-talloc_list * talloc_list_new ( void * ctx )
+talloc_stack * talloc_stack_new ( void * ctx )
 {
-    talloc_list * list = talloc ( ctx, sizeof ( talloc_list ) );
-    if ( list == NULL ) {
+    talloc_stack * stack = talloc ( ctx, sizeof ( talloc_stack ) );
+    if ( stack == NULL ) {
         return NULL;
     }
-    talloc_set_destructor ( list, talloc_list_free );
+    talloc_set_destructor ( stack, talloc_stack_free );
 
-    list->last_item = NULL;
-    list->length    = 0;
-    return list;
+    stack->last_item = NULL;
+    stack->length    = 0;
+    return stack;
 }
 
 inline
-uint8_t talloc_list_append ( talloc_list * list, void * data )
+uint8_t talloc_stack_push ( talloc_stack * stack, void * data )
 {
-    talloc_list_item * item = malloc ( sizeof ( talloc_list_item ) );
+    talloc_stack_item * item = malloc ( sizeof ( talloc_stack_item ) );
     if ( item == NULL ) {
         return 1;
     }
-    item->prev = list->last_item;
+    item->prev = stack->last_item;
     item->data = data;
 
-    list->last_item = item;
-    list->length++;
+    stack->last_item = item;
+    stack->length++;
 
     return 0;
 }
 
 inline
-void talloc_list_pop ( talloc_list * list )
+void talloc_stack_pop ( talloc_stack * stack )
 {
-    talloc_list_item * item = list->last_item;
+    talloc_stack_item * item = stack->last_item;
     if ( item == NULL ) {
         return;
     }
-    list->last_item = item->prev;
-    list->length--;
+    stack->last_item = item->prev;
+    stack->length--;
     free ( item );
 }
 
 inline
-size_t talloc_list_get_length ( talloc_list * list )
+size_t talloc_stack_get_length ( talloc_stack * stack )
 {
-    return list->length;
+    return stack->length;
 }
 
 #endif

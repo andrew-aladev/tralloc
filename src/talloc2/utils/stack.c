@@ -3,19 +3,19 @@
 // talloc2 is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Lesser Public License for more details.
 // You should have received a copy of the GNU General Lesser Public License along with talloc2. If not, see <http://www.gnu.org/licenses/>.
 
-#include "list.h"
+#include "stack.h"
 
 extern inline
-talloc_list * talloc_list_new ( void * ctx );
+talloc_stack * talloc_stack_new ( void * ctx );
 
 extern inline
-uint8_t talloc_list_append ( talloc_list * list, void * data );
+uint8_t talloc_stack_push ( talloc_stack * stack, void * data );
 
 extern inline
-uint8_t talloc_list_free ( void * current_list );
+uint8_t talloc_stack_free ( void * current_stack );
 
 extern inline
-size_t talloc_list_get_length ( talloc_list * list );
+size_t talloc_stack_get_length ( talloc_stack * stack );
 
 extern inline
-void talloc_list_pop ( talloc_list * list );
+void talloc_stack_pop ( talloc_stack * stack );
