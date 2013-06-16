@@ -1,6 +1,6 @@
-set (BASIC   01-basic.c)
+set (BASIC   01-basic.c utils/malloc_dynarr.c)
 set (HELPERS 02-helpers.c)
-set (EXT     03-ext.c)
+set (EXT     03-ext.c utils/malloc_dynarr.c)
 set (UTILS   04-utils.c)
 
 if (TALLOC_SHARED MATCHES true)

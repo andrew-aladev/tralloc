@@ -12,7 +12,7 @@
 
 #include <talloc2/tree.h>
 #include <talloc2/events.h>
-#include "utils/dynarr.h"
+#include "utils/malloc_dynarr.h"
 
 /*
            root
@@ -47,7 +47,7 @@ talloc_chunk * chunk_011     = NULL;
 talloc_chunk * chunk_012     = NULL;
 
 #ifdef TALLOC_DEBUG
-static talloc_dynarr * history;
+static malloc_dynarr * history;
 
 enum {
     ADD_MODE = 0,
@@ -69,7 +69,7 @@ uint8_t history_append ( talloc_chunk * chunk, uint8_t mode )
     }
     event->mode  = mode;
     event->chunk = chunk;
-    if ( talloc_dynarr_append ( history, event ) != 0 ) {
+    if ( malloc_dynarr_append ( history, event ) != 0 ) {
         return 2;
     }
     return 0;
@@ -97,7 +97,7 @@ bool init ()
 {
 #ifdef TALLOC_DEBUG
     // all history will be available here
-    history = talloc_dynarr_new ( 16 );
+    history = malloc_dynarr_new ( 16 );
     if ( history == NULL ) {
         return false;
     }
@@ -151,11 +151,11 @@ bool free_data ()
     }
 #ifdef TALLOC_DEBUG
     if ( history != NULL ) {
-        size_t length = talloc_dynarr_get_length ( history );
+        size_t length = malloc_dynarr_get_length ( history );
         for ( size_t index = 0; index < length; index ++ ) {
-            free ( talloc_dynarr_get ( history, index ) );
+            free ( malloc_dynarr_get ( history, index ) );
         }
-        talloc_dynarr_free ( history );
+        malloc_dynarr_free ( history );
     }
 #endif
     return result;
@@ -403,7 +403,7 @@ bool test_data_without_data_01 ()
 #ifdef TALLOC_DEBUG
 bool test_history_event ( uint8_t index, uint8_t mode, talloc_chunk * chunk )
 {
-    talloc_event * event = talloc_dynarr_get ( history, index );
+    talloc_event * event = malloc_dynarr_get ( history, index );
     if ( event == NULL ) {
         return false;
     }

@@ -16,10 +16,10 @@
 #include <talloc2/ext/length.h>
 #endif
 
-#include "utils/dynarr.h"
+#include "utils/malloc_dynarr.h"
 
 void * root;
-static talloc_dynarr * history;
+static malloc_dynarr * history;
 
 bool init_data ()
 {
@@ -27,7 +27,7 @@ bool init_data ()
     if ( root == NULL ) {
         return false;
     }
-    history = talloc_dynarr_new ( 16 );
+    history = malloc_dynarr_new ( 16 );
     if ( history == NULL ) {
         talloc_free ( root );
         return false;
@@ -37,7 +37,7 @@ bool init_data ()
 
 uint8_t destructor ( void * data )
 {
-    if ( talloc_dynarr_append ( history, data ) != 0 ) {
+    if ( malloc_dynarr_append ( history, data ) != 0 ) {
         return 1;
     }
     return 0;
@@ -70,9 +70,9 @@ bool test_destructor ()
     }
 
     if (
-        strcmp ( talloc_dynarr_get ( history, 0 ), "test text 02" ) != 0 ||
-        strcmp ( talloc_dynarr_get ( history, 1 ), "test text 01" ) != 0 ||
-        strcmp ( talloc_dynarr_get ( history, 2 ), "test text 03" ) != 0
+        strcmp ( malloc_dynarr_get ( history, 0 ), "test text 02" ) != 0 ||
+        strcmp ( malloc_dynarr_get ( history, 1 ), "test text 01" ) != 0 ||
+        strcmp ( malloc_dynarr_get ( history, 2 ), "test text 03" ) != 0
     ) {
         return false;
     }
@@ -103,7 +103,7 @@ bool test_length ()
     if (
         talloc_set_destructor ( str, destructor ) != 0 ||
         talloc_free ( str ) != 0 ||
-        strcmp ( talloc_dynarr_get ( history, 3 ), "ab" ) != 0
+        strcmp ( malloc_dynarr_get ( history, 3 ), "ab" ) != 0
     ) {
         return false;
     }
@@ -115,7 +115,7 @@ void free_data ()
 {
     talloc_free ( root );
     if ( history != NULL ) {
-        talloc_dynarr_free ( history );
+        malloc_dynarr_free ( history );
     }
 }
 
