@@ -11,5 +11,16 @@ uint8_t talloc_add_length ( talloc_chunk * child, size_t user_length, uint8_t mo
 extern inline
 uint8_t talloc_set_length ( talloc_chunk * child, size_t user_length );
 
-extern inline
-uint8_t talloc_get_length ( const void * child_data, size_t * result_length );
+uint8_t talloc_get_length ( const void * child_data, size_t * result_length )
+{
+    if ( child_data == NULL ) {
+        return 1;
+    }
+    talloc_chunk * child = talloc_chunk_from_data ( child_data );
+    size_t * length = talloc_ext_get ( child, TALLOC_EXT_INDEX_LENGTH );
+    if ( length == NULL ) {
+        return 2;
+    }
+    * result_length = * length;
+    return 0;
+}

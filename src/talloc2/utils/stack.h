@@ -42,7 +42,7 @@ talloc_stack * talloc_stack_new ( void * ctx )
     if ( stack == NULL ) {
         return NULL;
     }
-    talloc_set_destructor ( stack, talloc_stack_free, NULL );
+    talloc_add_destructor ( stack, talloc_stack_free, NULL );
 
     stack->last_item = NULL;
     stack->length    = 0;

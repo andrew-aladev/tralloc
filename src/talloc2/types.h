@@ -11,7 +11,12 @@
 #include "config.h"
 
 #ifdef TALLOC_EXT
-typedef uint8_t ( * talloc_destructor ) ( void * parent_data, void * user_data );
+typedef struct talloc_destructor_items_t {
+    void ** data;
+    uint8_t length;
+} talloc_destructor_items;
+
+typedef uint8_t ( * talloc_destructor ) ( void * child_data, void * user_data );
 typedef struct talloc_destructor_item_t {
     talloc_destructor destructor;
     void * user_data;

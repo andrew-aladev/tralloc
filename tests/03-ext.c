@@ -53,15 +53,20 @@ bool test_destructor ()
     char * text_01 = talloc_strdup ( root, "test text 01" );
     char * text_02 = talloc_strdup ( root, "test text 02" );
     char * text_03 = talloc_strdup ( root, "test text 03" );
-    if ( text_01 == NULL || text_02 == NULL || text_03 == NULL ) {
+    char * text_04 = talloc_strdup ( root, "test text 04" );
+    if ( text_01 == NULL || text_02 == NULL || text_03 == NULL || text_04 == NULL ) {
         return false;
     }
 
 #ifdef TALLOC_EXT_DESTRUCTOR
     if (
-        talloc_set_destructor ( text_01, destructor, &user_data ) != 0 ||
-        talloc_set_destructor ( text_02, destructor, &user_data ) != 0 ||
-        talloc_set_destructor ( text_03, destructor, &user_data ) != 0
+        talloc_add_destructor ( text_01, destructor, &user_data ) != 0 ||
+        talloc_add_destructor ( text_02, destructor, &user_data ) != 0 ||
+        talloc_add_destructor ( text_03, destructor, &user_data ) != 0 ||
+        talloc_add_destructor ( text_04, destructor, &user_data ) != 0 ||
+        talloc_add_destructor ( text_04, destructor, &user_data ) != 0 ||
+        talloc_add_destructor ( text_04, destructor, &user_data ) != 0 ||
+        talloc_add_destructor ( text_04, destructor, &user_data ) != 0
     ) {
         return false;
     }
@@ -70,7 +75,8 @@ bool test_destructor ()
     if (
         talloc_free ( text_02 ) != 0 ||
         talloc_free ( text_01 ) != 0 ||
-        talloc_free ( text_03 )
+        talloc_free ( text_03 ) != 0 ||
+        talloc_free ( text_04 ) != 0
     ) {
         return false;
     }
@@ -79,7 +85,11 @@ bool test_destructor ()
     if (
         strcmp ( malloc_dynarr_get ( history, 0 ), "test text 02" ) != 0 ||
         strcmp ( malloc_dynarr_get ( history, 1 ), "test text 01" ) != 0 ||
-        strcmp ( malloc_dynarr_get ( history, 2 ), "test text 03" ) != 0
+        strcmp ( malloc_dynarr_get ( history, 2 ), "test text 03" ) != 0 ||
+        strcmp ( malloc_dynarr_get ( history, 3 ), "test text 04" ) != 0 ||
+        strcmp ( malloc_dynarr_get ( history, 4 ), "test text 04" ) != 0 ||
+        strcmp ( malloc_dynarr_get ( history, 5 ), "test text 04" ) != 0 ||
+        strcmp ( malloc_dynarr_get ( history, 6 ), "test text 04" ) != 0
     ) {
         return false;
     }
@@ -124,7 +134,7 @@ bool test_length ()
     str[2] = '\0';
 
 #ifdef TALLOC_EXT_DESTRUCTOR
-    if ( talloc_set_destructor ( str, destructor, &user_data ) != 0 ) {
+    if ( talloc_add_destructor ( str, destructor, &user_data ) != 0 ) {
         return false;
     }
 #endif
@@ -134,7 +144,7 @@ bool test_length ()
     }
 
 #ifdef TALLOC_EXT_DESTRUCTOR
-    if ( strcmp ( malloc_dynarr_get ( history, 3 ), "ab" ) != 0 ) {
+    if ( strcmp ( malloc_dynarr_get ( history, 7 ), "ab" ) != 0 ) {
         return false;
     }
 #endif
