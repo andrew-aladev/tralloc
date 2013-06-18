@@ -35,14 +35,18 @@ bool init_data ()
     return true;
 }
 
-uint8_t destructor ( void * data )
+uint32_t user_data = 123456789;
+uint8_t destructor ( void * data, void * user_data_ptr )
 {
-    if ( malloc_dynarr_append ( history, data ) != 0 ) {
+    uint32_t * data_ptr = user_data_ptr;
+    if ( data_ptr != &user_data || * data_ptr != user_data ) {
         return 1;
+    }
+    if ( malloc_dynarr_append ( history, data ) != 0 ) {
+        return 2;
     }
     return 0;
 }
-
 
 bool test_destructor ()
 {
@@ -55,9 +59,9 @@ bool test_destructor ()
 
 #ifdef TALLOC_EXT_DESTRUCTOR
     if (
-        talloc_set_destructor ( text_01, destructor ) != 0 ||
-        talloc_set_destructor ( text_02, destructor ) != 0 ||
-        talloc_set_destructor ( text_03, destructor ) != 0
+        talloc_set_destructor ( text_01, destructor, &user_data ) != 0 ||
+        talloc_set_destructor ( text_02, destructor, &user_data ) != 0 ||
+        talloc_set_destructor ( text_03, destructor, &user_data ) != 0
     ) {
         return false;
     }
@@ -120,7 +124,7 @@ bool test_length ()
     str[2] = '\0';
 
 #ifdef TALLOC_EXT_DESTRUCTOR
-    if ( talloc_set_destructor ( str, destructor ) != 0 ) {
+    if ( talloc_set_destructor ( str, destructor, &user_data ) != 0 ) {
         return false;
     }
 #endif

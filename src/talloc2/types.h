@@ -11,7 +11,11 @@
 #include "config.h"
 
 #ifdef TALLOC_EXT
-typedef uint8_t ( * talloc_destructor ) ( void * parent_data );
+typedef uint8_t ( * talloc_destructor ) ( void * parent_data, void * user_data );
+typedef struct talloc_destructor_item_t {
+    talloc_destructor destructor;
+    void * user_data;
+} talloc_destructor_item;
 
 enum {
     TALLOC_MODE_DESTRUCTOR = 1,

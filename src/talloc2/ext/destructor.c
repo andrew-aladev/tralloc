@@ -9,4 +9,4 @@ extern inline
 uint8_t talloc_destructor_on_del ( talloc_chunk * child );
 
 extern inline
-uint8_t talloc_set_destructor ( const void * child_data, talloc_destructor destructor );
+uint8_t talloc_set_destructor ( const void * child_data, talloc_destructor destructor, void * user_data );

@@ -22,7 +22,7 @@ typedef struct talloc_stack_t {
 } talloc_stack;
 
 inline
-uint8_t talloc_stack_free ( void * current_stack )
+uint8_t talloc_stack_free ( void * current_stack, void * user_data )
 {
     talloc_stack * stack      = current_stack;
     talloc_stack_item * item = stack->last_item;
@@ -42,7 +42,7 @@ talloc_stack * talloc_stack_new ( void * ctx )
     if ( stack == NULL ) {
         return NULL;
     }
-    talloc_set_destructor ( stack, talloc_stack_free );
+    talloc_set_destructor ( stack, talloc_stack_free, NULL );
 
     stack->last_item = NULL;
     stack->length    = 0;

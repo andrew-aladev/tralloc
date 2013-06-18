@@ -12,7 +12,7 @@ extern inline
 uint8_t talloc_stack_push ( talloc_stack * stack, void * data );
 
 extern inline
-uint8_t talloc_stack_free ( void * current_stack );
+uint8_t talloc_stack_free ( void * current_stack, void * user_data );
 
 extern inline
 size_t talloc_stack_get_length ( talloc_stack * stack );

@@ -22,6 +22,10 @@ talloc_ext * talloc_ext_new ( uint8_t length )
         free ( ext );
         return NULL;
     }
+    uint8_t index;
+    for ( index = 0; index < length; index ++ ) {
+        data[index] = NULL;
+    }
     ext->data   = data;
     ext->length = length;
     return ext;
@@ -30,10 +34,15 @@ talloc_ext * talloc_ext_new ( uint8_t length )
 inline
 uint8_t talloc_ext_grow ( talloc_ext * ext, uint8_t length )
 {
-    if ( ext->length < length ) {
+    uint8_t current_length = ext->length;
+    if ( current_length < length ) {
         void ** data = realloc ( ext->data, sizeof ( uintptr_t ) * length );
         if ( data == NULL ) {
             return 1;
+        }
+        uint8_t index;
+        for ( index = current_length; index < length; index ++ ) {
+            data[index] = NULL;
         }
         ext->data   = data;
         ext->length = length;
@@ -42,9 +51,9 @@ uint8_t talloc_ext_grow ( talloc_ext * ext, uint8_t length )
 }
 
 inline
-uint8_t talloc_ext_set ( talloc_chunk * child, uint8_t mode, void * data )
+uint8_t talloc_ext_set ( talloc_chunk * child, uint8_t mode_index, void * data )
 {
-    uint8_t length   = mode + 1;
+    uint8_t length   = mode_index + 1;
     talloc_ext * ext = child->ext;
 
     if ( ext == NULL ) {
@@ -58,24 +67,24 @@ uint8_t talloc_ext_set ( talloc_chunk * child, uint8_t mode, void * data )
             return 2;
         }
     }
-    ext->data[mode] = data;
+    ext->data[mode_index] = data;
 
     return 0;
 }
 
 inline
-void * talloc_ext_get ( talloc_chunk * child, uint8_t mode )
+void * talloc_ext_get ( talloc_chunk * child, uint8_t mode_index )
 {
     talloc_ext * ext = child->ext;
     if ( ext == NULL ) {
         return NULL;
     }
 
-    uint8_t length = mode + 1;
+    uint8_t length = mode_index + 1;
     if ( ext->length < length ) {
         return NULL;
     }
-    return ext->data[mode];
+    return ext->data[mode_index];
 }
 
 inline
