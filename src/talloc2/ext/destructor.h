@@ -53,6 +53,7 @@ uint8_t talloc_set_destructor ( const void * child_data, talloc_destructor destr
     item->user_data  = user_data;
 
     if ( talloc_ext_set ( child, TALLOC_EXT_INDEX_DESTRUCTOR, item ) != 0 ) {
+        free ( item );
         return 3;
     }
     child->ext->mode |= TALLOC_MODE_DESTRUCTOR;
