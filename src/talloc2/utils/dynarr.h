@@ -28,7 +28,7 @@ talloc_dynarr * talloc_dynarr_new ( void * ctx, size_t capacity )
     }
 
     arr->start_capacity = arr->current_capacity = capacity;
-    void ** data = talloc ( arr, arr->current_capacity * sizeof ( uintptr_t ) );
+    void ** data = talloc ( arr, capacity * sizeof ( uintptr_t ) );
     if ( data == NULL ) {
         talloc_free ( arr );
         return NULL;
@@ -39,32 +39,8 @@ talloc_dynarr * talloc_dynarr_new ( void * ctx, size_t capacity )
     return arr;
 }
 
-inline
-uint8_t talloc_dynarr_grow ( talloc_dynarr * arr )
-{
-    // linear growth
-    arr->current_capacity = arr->current_capacity + arr->start_capacity;
-    void ** reallocated_data = talloc_realloc ( arr->data, arr->current_capacity * sizeof ( uintptr_t ) );
-    if ( reallocated_data == NULL ) {
-        return 1;
-    }
-    arr->data = reallocated_data;
-    return 0;
-}
-
-inline
-uint8_t talloc_dynarr_append ( talloc_dynarr * arr, void * data )
-{
-    size_t index = arr->length;
-    arr->length++;
-    if ( arr->length > arr->current_capacity ) {
-        if ( talloc_dynarr_grow ( arr ) != 0 ) {
-            return 1;
-        }
-    }
-    arr->data[index] = data;
-    return 0;
-}
+uint8_t talloc_dynarr_push ( talloc_dynarr * arr, void * data );
+uint8_t talloc_dynarr_pop  ( talloc_dynarr * arr );
 
 inline
 void talloc_dynarr_set ( talloc_dynarr * arr, size_t position, void * pointer )
@@ -85,4 +61,3 @@ size_t talloc_dynarr_get_length ( talloc_dynarr * arr )
 }
 
 #endif
-
