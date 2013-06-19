@@ -84,16 +84,16 @@ uint8_t talloc_add_destructor ( const void * child_data, talloc_destructor destr
         if ( items == NULL ) {
             return 2;
         }
-    } else {
-        if ( talloc_destructor_append ( items, destructor, user_data ) != 0 ) {
+        if ( talloc_ext_set ( child, TALLOC_EXT_INDEX_DESTRUCTOR, items ) != 0 ) {
+            talloc_destructor_items_free ( items );
             return 3;
         }
-    }
-
-    if ( talloc_ext_set ( child, TALLOC_EXT_INDEX_DESTRUCTOR, items ) != 0 ) {
-        talloc_destructor_items_free ( items );
-        child->ext->mode ^= TALLOC_MODE_DESTRUCTOR;
-        return 4;
+    } else {
+        if ( talloc_destructor_append ( items, destructor, user_data ) != 0 ) {
+            talloc_destructor_items_free ( items );
+            child->ext->mode ^= TALLOC_MODE_DESTRUCTOR;
+            return 4;
+        }
     }
 
     child->ext->mode |= TALLOC_MODE_DESTRUCTOR;
