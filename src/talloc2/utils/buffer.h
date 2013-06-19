@@ -27,7 +27,7 @@ talloc_buffer * talloc_buffer_new ( void * ctx )
     return buffer;
 }
 
-char *          talloc_buffer_get ( talloc_buffer * buffer, size_t length );
-uint8_t         talloc_buffer_cut ( talloc_buffer * buffer, size_t diff );
+char *  talloc_buffer_get ( talloc_buffer * buffer, size_t length );
+uint8_t talloc_buffer_cut ( talloc_buffer * buffer, size_t diff );
 
 #endif

@@ -7,6 +7,7 @@
 #define TALLOC_TYPES_H
 
 #include <stdint.h>
+#include <stddef.h>
 
 #include "config.h"
 

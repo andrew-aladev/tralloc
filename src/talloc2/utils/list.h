@@ -6,6 +6,29 @@
 #ifndef TALLOC_UTILS_LIST_H
 #define TALLOC_UTILS_LIST_H
 
+#include "../tree.h"
 
+#include <stdbool.h>
+
+typedef struct talloc_list_t {
+    struct talloc_list_item_t * first_item, * last_item;
+    size_t length;
+} talloc_list;
+
+typedef struct talloc_list_item_t {
+    struct talloc_list_t * parent;
+    struct talloc_list_item_t * prev, * next;
+    void * data;
+} talloc_list_item;
+
+talloc_list * talloc_list_new     ( void * ctx );
+uint8_t       talloc_list_push    ( talloc_list * list, void * data, bool auto_delete_on_free );
+uint8_t       talloc_list_unshift ( talloc_list * list, void * data, bool auto_delete_on_free );
+
+inline
+size_t talloc_list_get_length ( talloc_list * list )
+{
+    return list->length;
+}
 
 #endif

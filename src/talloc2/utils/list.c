@@ -4,3 +4,116 @@
 // You should have received a copy of the GNU General Lesser Public License along with talloc2. If not, see <http://www.gnu.org/licenses/>.
 
 #include "list.h"
+#include "../ext/destructor.h"
+
+#include <stdlib.h>
+
+static inline
+uint8_t list_free ( void * child_data, void * user_data )
+{
+    talloc_list * list      = child_data;
+    talloc_list_item * item = list->first_item;
+    talloc_list_item * next_item;
+    while ( item != NULL ) {
+        next_item = item->next;
+        free ( item );
+        item = next_item;
+    }
+
+    return 0;
+}
+
+talloc_list * talloc_list_new ( void * ctx )
+{
+    talloc_list * list = talloc ( ctx, sizeof ( talloc_list ) );
+    if ( list == NULL ) {
+        return NULL;
+    }
+    list->first_item = NULL;
+    list->last_item  = NULL;
+    list->length     = 0;
+
+    if ( talloc_add_destructor ( list, list_free, NULL ) != 0 ) {
+        talloc_free ( list );
+        return NULL;
+    }
+
+    return list;
+}
+
+static
+uint8_t delete_on_free ( void * child_data, void * user_data )
+{
+    talloc_list_item * item = user_data;
+    // check if item was already freed;
+    return 0;
+}
+
+uint8_t talloc_list_push ( talloc_list * list, void * data, bool auto_delete_on_free )
+{
+    talloc_list_item * item = malloc ( sizeof ( talloc_list_item ) );
+    if ( item == NULL ) {
+        return 1;
+    }
+    item->parent = list;
+    item->next   = NULL;
+    item->data   = data;
+
+    talloc_list_item * last_item = list->last_item;
+    if ( last_item == NULL ) {
+        item->prev = NULL;
+    } else {
+        last_item->next = item;
+        item->prev      = last_item;
+    }
+
+    list->last_item = item;
+    if ( list->first_item == NULL ) {
+        list->first_item = item;
+    }
+    list->length++;
+
+    if ( auto_delete_on_free ) {
+        if ( talloc_add_destructor ( data, delete_on_free, item ) != 0 ) {
+            return 2;
+        }
+    }
+
+    return 0;
+}
+
+uint8_t talloc_list_unshift ( talloc_list * list, void * data, bool auto_delete_on_free )
+{
+    talloc_list_item * item = malloc ( sizeof ( talloc_list_item ) );
+    if ( item == NULL ) {
+        return 1;
+    }
+    item->parent = list;
+    item->prev   = NULL;
+    item->data   = data;
+
+    talloc_list_item * first_item = list->first_item;
+    if ( first_item == NULL ) {
+        item->next = NULL;
+    } else {
+        first_item->prev = item;
+        item->next       = first_item;
+    }
+
+    list->first_item = item;
+    if ( list->last_item == NULL ) {
+        list->last_item = item;
+    }
+    list->length++;
+
+    if ( auto_delete_on_free ) {
+        if ( talloc_add_destructor ( data, delete_on_free, item ) != 0 ) {
+            return 2;
+        }
+    }
+
+    return 0;
+}
+
+extern inline
+size_t talloc_list_get_length ( talloc_list * list );

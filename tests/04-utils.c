@@ -6,6 +6,7 @@
 #include <stdbool.h>
 
 #include <talloc2/tree.h>
+#include <talloc2/helpers.h>
 
 #ifdef TALLOC_UTILS_BUFFER
 #include <talloc2/utils/buffer.h>
@@ -157,6 +158,33 @@ bool test_dynarr ( void * ctx )
 #ifdef TALLOC_UTILS_LIST
 bool test_list ( void * ctx )
 {
+    size_t a, b;
+    talloc_list * list = talloc_list_new ( ctx );
+    char * str_1       = talloc_strdup ( list, "str_1" );
+    char * str_2       = talloc_strdup ( list, "str_2" );
+    if ( list == NULL || str_1 == NULL || str_2 == NULL ) {
+        return false;
+    }
+
+    if (
+        talloc_list_push       ( list, str_1, true )  != 0 ||
+        talloc_list_push       ( list, str_1, true )  != 0 ||
+        talloc_list_push       ( list, str_1, true )  != 0 ||
+        talloc_list_push       ( list, &a, false )    != 0 ||
+        talloc_list_push       ( list, &b, false )    != 0 ||
+        talloc_list_unshift    ( list, str_2, true )  != 0 ||
+        talloc_list_unshift    ( list, str_2, true )  != 0 ||
+        talloc_list_unshift    ( list, str_2, true )  != 0 ||
+        talloc_list_get_length ( list ) != 8
+    ) {
+        talloc_free ( list );
+        return false;
+    }
+
+    if ( talloc_free ( list ) != 0 ) {
+        return false;
+    }
+
     return true;
 }
 #endif
@@ -189,7 +217,9 @@ int main ()
     }
 #endif
 
-    talloc_free ( ctx );
+    if ( talloc_free ( ctx ) != 0 ) {
+        return 5;
+    }
     return 0;
 }
 
