@@ -5,6 +5,8 @@
 
 #include "destructor.h"
 
+#include <stdbool.h>
+
 extern inline
 void talloc_destructor_items_free ( talloc_destructor_items * items );
 
@@ -97,5 +99,155 @@ uint8_t talloc_add_destructor ( const void * child_data, talloc_destructor destr
     }
 
     child->ext->mode |= TALLOC_MODE_DESTRUCTOR;
+    return 0;
+}
+
+static inline
+bool destructor_comparator_by_function ( talloc_destructor_item * item, talloc_destructor destructor, void * user_data )
+{
+    return item->destructor == destructor;
+}
+
+static inline
+bool destructor_comparator_by_data ( talloc_destructor_item * item, talloc_destructor destructor, void * user_data )
+{
+    return item->user_data == user_data;
+}
+
+static inline
+bool destructor_comparator_strict ( talloc_destructor_item * item, talloc_destructor destructor, void * user_data )
+{
+    return item->destructor == destructor && item->user_data == user_data;
+}
+
+typedef bool ( * destructor_comparator ) ( talloc_destructor_item * item, talloc_destructor destructor, void * user_data );
+
+static inline
+bool delete_destructors ( talloc_chunk * child, talloc_destructor_items * items, destructor_comparator comparator, talloc_destructor destructor, void * user_data )
+{
+    uint8_t length = items->length;
+    void ** data   = items->data;
+
+    if ( length == 1 ) {
+        talloc_destructor_item * item = ( talloc_destructor_item * ) data;
+        if ( comparator ( item, destructor, user_data ) ) {
+            free ( item );
+            free ( items );
+            child->ext->mode ^= TALLOC_MODE_DESTRUCTOR;
+            if ( talloc_ext_set ( child, TALLOC_EXT_INDEX_DESTRUCTOR, NULL ) != 0 ) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    uint8_t diff = 0;
+    for ( uint8_t index = 0; index < length; index ++ ) {
+        talloc_destructor_item * item = data[index];
+        if ( comparator ( item, destructor, user_data ) ) {
+            free ( item );
+            diff ++;
+        } else if ( diff != 0 ) {
+            data[index - diff] = item;
+        }
+    }
+
+    items->length = length -= diff;
+    if ( length == 0 ) {
+        free ( items );
+        child->ext->mode ^= TALLOC_MODE_DESTRUCTOR;
+        if ( talloc_ext_set ( child, TALLOC_EXT_INDEX_DESTRUCTOR, NULL ) != 0 ) {
+            return false;
+        }
+    } else if ( length == 1 ) {
+        talloc_destructor_item * item = data[0];
+        free ( data );
+        items->data = ( void ** ) item;
+    } else {
+        void ** new_data = realloc ( data, sizeof ( uintptr_t ) * length );
+        if ( new_data == NULL ) {
+            return false;
+        }
+        items->data = new_data;
+    }
+
+    return true;
+}
+
+uint8_t talloc_del_destructor ( const void * child_data, talloc_destructor destructor, void * user_data )
+{
+    if ( child_data == NULL ) {
+        return 1;
+    }
+    talloc_chunk * child = talloc_chunk_from_data ( child_data );
+
+    if ( child->ext != NULL && ( child->ext->mode & TALLOC_MODE_DESTRUCTOR ) != 0 ) {
+        talloc_destructor_items * items = talloc_ext_get ( child, TALLOC_EXT_INDEX_DESTRUCTOR );
+        if ( items == NULL ) {
+            return 2;
+        }
+        if ( !delete_destructors ( child, items, destructor_comparator_strict, destructor, user_data ) ) {
+            return 3;
+        }
+    }
+    return 0;
+}
+
+uint8_t talloc_del_destructor_by_function ( const void * child_data, talloc_destructor destructor )
+{
+    if ( child_data == NULL ) {
+        return 1;
+    }
+    talloc_chunk * child = talloc_chunk_from_data ( child_data );
+
+    if ( child->ext != NULL && ( child->ext->mode & TALLOC_MODE_DESTRUCTOR ) != 0 ) {
+        talloc_destructor_items * items = talloc_ext_get ( child, TALLOC_EXT_INDEX_DESTRUCTOR );
+        if ( items == NULL ) {
+            return 2;
+        }
+        if ( !delete_destructors ( child, items, destructor_comparator_by_function, destructor, NULL ) ) {
+            return 3;
+        }
+    }
+    return 0;
+}
+
+uint8_t talloc_del_destructor_by_data ( const void * child_data, void * user_data )
+{
+    if ( child_data == NULL ) {
+        return 1;
+    }
+    talloc_chunk * child = talloc_chunk_from_data ( child_data );
+
+    if ( child->ext != NULL && ( child->ext->mode & TALLOC_MODE_DESTRUCTOR ) != 0 ) {
+        talloc_destructor_items * items = talloc_ext_get ( child, TALLOC_EXT_INDEX_DESTRUCTOR );
+        if ( items == NULL ) {
+            return 2;
+        }
+        if ( !delete_destructors ( child, items, destructor_comparator_by_data, NULL, user_data ) ) {
+            return 3;
+        }
+    }
+    return 0;
+}
+
+uint8_t talloc_clear_destructors ( const void * child_data )
+{
+    if ( child_data == NULL ) {
+        return 1;
+    }
+    talloc_chunk * child = talloc_chunk_from_data ( child_data );
+
+    if ( child->ext != NULL && ( child->ext->mode & TALLOC_MODE_DESTRUCTOR ) != 0 ) {
+        talloc_destructor_items * items = talloc_ext_get ( child, TALLOC_EXT_INDEX_DESTRUCTOR );
+        if ( items == NULL ) {
+            return 2;
+        }
+        talloc_destructor_items_free ( items );
+        if ( talloc_ext_set ( child, TALLOC_EXT_INDEX_DESTRUCTOR, NULL ) != 0 ) {
+            return 3;
+        }
+        child->ext->mode ^= TALLOC_MODE_DESTRUCTOR;
+    }
     return 0;
 }

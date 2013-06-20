@@ -17,7 +17,7 @@ uint8_t talloc_get_length ( const void * child_data, size_t * result_length )
         return 1;
     }
     talloc_chunk * child = talloc_chunk_from_data ( child_data );
-    size_t * length = talloc_ext_get ( child, TALLOC_EXT_INDEX_LENGTH );
+    size_t * length      = talloc_ext_get ( child, TALLOC_EXT_INDEX_LENGTH );
     if ( length == NULL ) {
         return 2;
     }

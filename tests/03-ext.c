@@ -35,6 +35,7 @@ bool init_data ()
     return true;
 }
 
+#ifdef TALLOC_EXT_DESTRUCTOR
 uint32_t user_data = 123456789;
 uint8_t destructor ( void * data, void * user_data_ptr )
 {
@@ -48,29 +49,115 @@ uint8_t destructor ( void * data, void * user_data_ptr )
     return 0;
 }
 
+uint8_t destructor_empty_1 ( void * data, void * user_data_ptr )
+{
+    return 0;
+}
+
+uint8_t destructor_empty_2 ( void * data, void * user_data_ptr )
+{
+    return 0;
+}
+
 bool test_destructor ()
 {
-    char * text_01 = talloc_strdup ( root, "test text 01" );
-    char * text_02 = talloc_strdup ( root, "test text 02" );
-    char * text_03 = talloc_strdup ( root, "test text 03" );
-    char * text_04 = talloc_strdup ( root, "test text 04" );
-    if ( text_01 == NULL || text_02 == NULL || text_03 == NULL || text_04 == NULL ) {
+    void * strings = talloc_new ( root );
+    char * text_01 = talloc_strdup ( strings, "test text 01" );
+    char * text_02 = talloc_strdup ( strings, "test text 02" );
+    char * text_03 = talloc_strdup ( strings, "test text 03" );
+    char * text_04 = talloc_strdup ( strings, "test text 04" );
+    if ( strings == NULL || text_01 == NULL || text_02 == NULL || text_03 == NULL || text_04 == NULL ) {
         return false;
     }
 
-#ifdef TALLOC_EXT_DESTRUCTOR
     if (
         talloc_add_destructor ( text_01, destructor, &user_data ) != 0 ||
         talloc_add_destructor ( text_02, destructor, &user_data ) != 0 ||
+        talloc_add_destructor ( text_03, destructor, &user_data ) != 0 ||
         talloc_add_destructor ( text_03, destructor, &user_data ) != 0 ||
         talloc_add_destructor ( text_04, destructor, &user_data ) != 0 ||
         talloc_add_destructor ( text_04, destructor, &user_data ) != 0 ||
         talloc_add_destructor ( text_04, destructor, &user_data ) != 0 ||
         talloc_add_destructor ( text_04, destructor, &user_data ) != 0
     ) {
+        talloc_free ( strings );
         return false;
     }
-#endif
+
+    if ( talloc_clear_destructors ( text_03 ) != 0 ) {
+        talloc_free ( strings );
+        return false;
+    }
+
+    if (
+        talloc_add_destructor ( text_03, destructor_empty_2, &user_data ) != 0 ||
+        talloc_add_destructor ( text_03, destructor_empty_1, NULL )       != 0 ||
+        talloc_add_destructor ( text_03, destructor_empty_2, NULL )       != 0 ||
+        talloc_add_destructor ( text_03, destructor_empty_2, &user_data ) != 0 ||
+        talloc_add_destructor ( text_03, destructor_empty_1, &user_data ) != 0 ||
+        talloc_add_destructor ( text_03, destructor_empty_1, NULL )       != 0
+    ) {
+        talloc_free ( strings );
+        return false;
+    }
+
+    talloc_chunk * chunk_03 = talloc_chunk_from_data ( text_03 );
+    talloc_destructor_items * items = talloc_ext_get ( chunk_03, TALLOC_EXT_INDEX_DESTRUCTOR );
+    talloc_destructor_item * item;
+
+    if (
+        items->length != 6 ||
+        ( item = items->data[0] ) == NULL || item->destructor != destructor_empty_2 || item->user_data != &user_data ||
+        ( item = items->data[1] ) == NULL || item->destructor != destructor_empty_1 || item->user_data != NULL ||
+        ( item = items->data[2] ) == NULL || item->destructor != destructor_empty_2 || item->user_data != NULL ||
+        ( item = items->data[3] ) == NULL || item->destructor != destructor_empty_2 || item->user_data != &user_data ||
+        ( item = items->data[4] ) == NULL || item->destructor != destructor_empty_1 || item->user_data != &user_data ||
+        ( item = items->data[5] ) == NULL || item->destructor != destructor_empty_1 || item->user_data != NULL
+    ) {
+        talloc_free ( strings );
+        return false;
+    }
+
+    if (
+        talloc_del_destructor ( text_03, destructor_empty_2, NULL ) != 0 ||
+        items->length != 5 ||
+        ( item = items->data[0] ) == NULL || item->destructor != destructor_empty_2 || item->user_data != &user_data ||
+        ( item = items->data[1] ) == NULL || item->destructor != destructor_empty_1 || item->user_data != NULL ||
+        ( item = items->data[2] ) == NULL || item->destructor != destructor_empty_2 || item->user_data != &user_data ||
+        ( item = items->data[3] ) == NULL || item->destructor != destructor_empty_1 || item->user_data != &user_data ||
+        ( item = items->data[4] ) == NULL || item->destructor != destructor_empty_1 || item->user_data != NULL
+    ) {
+        talloc_free ( strings );
+        return false;
+    }
+
+    if (
+        talloc_del_destructor_by_function ( text_03, destructor_empty_2 ) != 0 ||
+        items->length != 3 ||
+        ( item = items->data[0] ) == NULL || item->destructor != destructor_empty_1 || item->user_data != NULL ||
+        ( item = items->data[1] ) == NULL || item->destructor != destructor_empty_1 || item->user_data != &user_data ||
+        ( item = items->data[2] ) == NULL || item->destructor != destructor_empty_1 || item->user_data != NULL
+    ) {
+        talloc_free ( strings );
+        return false;
+    }
+
+    if (
+        talloc_del_destructor_by_data ( text_03, NULL ) != 0 ||
+        items->length != 1 ||
+        ( item = items->data ) == NULL || item->destructor != destructor_empty_1 || item->user_data != &user_data
+    ) {
+        talloc_free ( strings );
+        return false;
+    }
+
+    if (
+        talloc_del_destructor_by_data ( text_03, &user_data ) != 0 ||
+        talloc_ext_get ( chunk_03, TALLOC_EXT_INDEX_DESTRUCTOR ) != NULL
+    ) {
+        talloc_free ( strings );
+        return false;
+    }
 
     if (
         talloc_free ( text_02 ) != 0 ||
@@ -78,26 +165,31 @@ bool test_destructor ()
         talloc_free ( text_03 ) != 0 ||
         talloc_free ( text_04 ) != 0
     ) {
+        talloc_free ( strings );
         return false;
     }
 
-#ifdef TALLOC_EXT_DESTRUCTOR
     if (
+        malloc_dynarr_get_length ( history ) != 6 ||
         strcmp ( malloc_dynarr_get ( history, 0 ), "test text 02" ) != 0 ||
         strcmp ( malloc_dynarr_get ( history, 1 ), "test text 01" ) != 0 ||
-        strcmp ( malloc_dynarr_get ( history, 2 ), "test text 03" ) != 0 ||
+        strcmp ( malloc_dynarr_get ( history, 2 ), "test text 04" ) != 0 ||
         strcmp ( malloc_dynarr_get ( history, 3 ), "test text 04" ) != 0 ||
         strcmp ( malloc_dynarr_get ( history, 4 ), "test text 04" ) != 0 ||
-        strcmp ( malloc_dynarr_get ( history, 5 ), "test text 04" ) != 0 ||
-        strcmp ( malloc_dynarr_get ( history, 6 ), "test text 04" ) != 0
+        strcmp ( malloc_dynarr_get ( history, 5 ), "test text 04" ) != 0
     ) {
+        talloc_free ( strings );
         return false;
     }
-#endif
 
+    if ( talloc_free ( strings ) != 0 ) {
+        return false;
+    }
     return true;
 }
+#endif
 
+#ifdef TALLOC_EXT_LENGTH
 bool test_length ()
 {
     size_t length;
@@ -105,52 +197,35 @@ bool test_length ()
     if ( str == NULL ) {
         return false;
     }
-#ifdef TALLOC_EXT_LENGTH
     if ( talloc_get_length ( str, &length ) != 0 || length != 200 ) {
         return false;
     }
-#endif
     str = talloc_realloc ( str, sizeof ( char ) * 300 );
     if ( str == NULL ) {
         return false;
     }
-#ifdef TALLOC_EXT_LENGTH
     if ( talloc_get_length ( str, &length ) != 0 || length != 300 ) {
         return false;
     }
-#endif
     str = talloc_realloc ( str, sizeof ( char ) * 3 );
     if ( str == NULL ) {
         return false;
     }
-#ifdef TALLOC_EXT_LENGTH
     if ( talloc_get_length ( str, &length ) != 0 || length != 3 ) {
         return false;
     }
-#endif
 
     str[0] = 'a';
     str[1] = 'b';
     str[2] = '\0';
 
-#ifdef TALLOC_EXT_DESTRUCTOR
-    if ( talloc_add_destructor ( str, destructor, &user_data ) != 0 ) {
-        return false;
-    }
-#endif
-
     if ( talloc_free ( str ) != 0 ) {
         return false;
     }
 
-#ifdef TALLOC_EXT_DESTRUCTOR
-    if ( strcmp ( malloc_dynarr_get ( history, 7 ), "ab" ) != 0 ) {
-        return false;
-    }
-#endif
-
     return true;
 }
+#endif
 
 void free_data ()
 {
@@ -166,14 +241,19 @@ int main ()
         return 1;
     }
 
+#ifdef TALLOC_EXT_DESTRUCTOR
     if ( !test_destructor () ) {
         free_data ();
         return 2;
     }
+#endif
+
+#ifdef TALLOC_EXT_LENGTH
     if ( !test_length () ) {
         free_data ();
         return 3;
     }
+#endif
 
     free_data ();
     return 0;
