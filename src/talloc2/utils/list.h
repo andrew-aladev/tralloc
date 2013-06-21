@@ -8,8 +8,6 @@
 
 #include "../tree.h"
 
-#include <stdbool.h>
-
 typedef struct talloc_list_t {
     struct talloc_list_item_t * first_item, * last_item;
     size_t length;
@@ -22,8 +20,8 @@ typedef struct talloc_list_item_t {
 } talloc_list_item;
 
 talloc_list * talloc_list_new     ( void * ctx );
-uint8_t       talloc_list_push    ( talloc_list * list, void * data, bool auto_delete_on_free );
-uint8_t       talloc_list_unshift ( talloc_list * list, void * data, bool auto_delete_on_free );
+uint8_t       talloc_list_push    ( talloc_list * list, void * data );
+uint8_t       talloc_list_unshift ( talloc_list * list, void * data );
 
 inline
 size_t talloc_list_get_length ( talloc_list * list )

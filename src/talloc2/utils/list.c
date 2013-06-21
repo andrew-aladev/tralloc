@@ -8,19 +8,48 @@
 
 #include <stdlib.h>
 
+static
+uint8_t delete_on_free ( void * child_data, void * user_data )
+{
+    talloc_list_item * item = user_data;
+    if ( item == NULL ) {
+        return 1;
+    }
+    talloc_list *          items = item->parent;
+    talloc_list_item * next_item = item->next;
+    talloc_list_item * prev_item = item->prev;
+    if ( next_item == NULL ) {
+        items->last_item = prev_item;
+    } else {
+        next_item->prev = prev_item;
+    }
+    if ( prev_item == NULL ) {
+        items->first_item = next_item;
+    } else {
+        prev_item->next = next_item;
+    }
+    items->length--;
+    free ( item );
+    return 0;
+}
+
 static inline
 uint8_t list_free ( void * child_data, void * user_data )
 {
+    uint8_t result = 0;
     talloc_list * list      = child_data;
     talloc_list_item * item = list->first_item;
     talloc_list_item * next_item;
     while ( item != NULL ) {
         next_item = item->next;
+        if ( talloc_del_destructor ( item->data, delete_on_free, item ) != 0 ) {
+            result = 1;
+        }
         free ( item );
         item = next_item;
     }
 
-    return 0;
+    return result;
 }
 
 talloc_list * talloc_list_new ( void * ctx )
@@ -41,15 +70,7 @@ talloc_list * talloc_list_new ( void * ctx )
     return list;
 }
 
-static
-uint8_t delete_on_free ( void * child_data, void * user_data )
-{
-    talloc_list_item * item = user_data;
-    // check if item was already freed;
-    return 0;
-}
-
-uint8_t talloc_list_push ( talloc_list * list, void * data, bool auto_delete_on_free )
+uint8_t talloc_list_push ( talloc_list * list, void * data )
 {
     talloc_list_item * item = malloc ( sizeof ( talloc_list_item ) );
     if ( item == NULL ) {
@@ -73,16 +94,14 @@ uint8_t talloc_list_push ( talloc_list * list, void * data, bool auto_delete_on_
     }
     list->length++;
 
-    if ( auto_delete_on_free ) {
-        if ( talloc_add_destructor ( data, delete_on_free, item ) != 0 ) {
-            return 2;
-        }
+    if ( talloc_add_destructor ( data, delete_on_free, item ) != 0 ) {
+        return 2;
     }
 
     return 0;
 }
 
-uint8_t talloc_list_unshift ( talloc_list * list, void * data, bool auto_delete_on_free )
+uint8_t talloc_list_unshift ( talloc_list * list, void * data )
 {
     talloc_list_item * item = malloc ( sizeof ( talloc_list_item ) );
     if ( item == NULL ) {
@@ -106,10 +125,8 @@ uint8_t talloc_list_unshift ( talloc_list * list, void * data, bool auto_delete_
     }
     list->length++;
 
-    if ( auto_delete_on_free ) {
-        if ( talloc_add_destructor ( data, delete_on_free, item ) != 0 ) {
-            return 2;
-        }
+    if ( talloc_add_destructor ( data, delete_on_free, item ) != 0 ) {
+        return 2;
     }
 
     return 0;

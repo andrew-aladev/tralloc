@@ -158,24 +158,84 @@ bool test_dynarr ( void * ctx )
 #ifdef TALLOC_UTILS_LIST
 bool test_list ( void * ctx )
 {
-    size_t a, b;
     talloc_list * list = talloc_list_new ( ctx );
     char * str_1       = talloc_strdup ( list, "str_1" );
     char * str_2       = talloc_strdup ( list, "str_2" );
-    if ( list == NULL || str_1 == NULL || str_2 == NULL ) {
+    char * str_3       = talloc_strdup ( list, "str_3" );
+    if ( list == NULL || str_1 == NULL || str_2 == NULL || str_3 == NULL ) {
         return false;
     }
 
     if (
-        talloc_list_push       ( list, str_1, true )  != 0 ||
-        talloc_list_push       ( list, str_1, true )  != 0 ||
-        talloc_list_push       ( list, str_1, true )  != 0 ||
-        talloc_list_push       ( list, &a, false )    != 0 ||
-        talloc_list_push       ( list, &b, false )    != 0 ||
-        talloc_list_unshift    ( list, str_2, true )  != 0 ||
-        talloc_list_unshift    ( list, str_2, true )  != 0 ||
-        talloc_list_unshift    ( list, str_2, true )  != 0 ||
-        talloc_list_get_length ( list ) != 8
+        talloc_list_push       ( list, str_2 ) != 0 ||
+        talloc_list_push       ( list, str_1 ) != 0 ||
+        talloc_list_push       ( list, str_2 ) != 0 ||
+        talloc_list_push       ( list, str_3 ) != 0 ||
+        talloc_list_unshift    ( list, str_2 ) != 0 ||
+        talloc_list_unshift    ( list, str_2 ) != 0 ||
+        talloc_list_unshift    ( list, str_3 ) != 0
+    ) {
+        talloc_free ( list );
+        return false;
+    }
+
+    talloc_list_item * item = list->first_item;
+
+    if (
+        talloc_list_get_length ( list ) != 7 ||
+        item->data != str_3 || ( item = item->next ) == NULL ||
+        item->data != str_2 || ( item = item->next ) == NULL ||
+        item->data != str_2 || ( item = item->next ) == NULL ||
+        item->data != str_2 || ( item = item->next ) == NULL ||
+        item->data != str_1 || ( item = item->next ) == NULL ||
+        item->data != str_2 || ( item = item->next ) == NULL ||
+        item->data != str_3
+    ) {
+        talloc_free ( list );
+        return false;
+    }
+    
+    if ( talloc_free ( str_3 ) != 0 ) {
+        talloc_free ( list );
+        return false;
+    }
+    
+    item = list->first_item;
+    
+    if (
+        talloc_list_get_length ( list ) != 5 ||
+        item->data != str_2 || ( item = item->next ) == NULL ||
+        item->data != str_2 || ( item = item->next ) == NULL ||
+        item->data != str_2 || ( item = item->next ) == NULL ||
+        item->data != str_1 || ( item = item->next ) == NULL ||
+        item->data != str_2
+    ) {
+        talloc_free ( list );
+        return false;
+    }
+    
+    if ( talloc_free ( str_2 ) != 0 ) {
+        talloc_free ( list );
+        return false;
+    }
+    
+    item = list->first_item;
+    
+    if (
+        talloc_list_get_length ( list ) != 1 ||
+        item->data != str_1
+    ) {
+        talloc_free ( list );
+        return false;
+    }
+    
+    if ( talloc_free ( str_1 ) != 0 ) {
+        talloc_free ( list );
+        return false;
+    }
+    
+    if (
+        talloc_list_get_length ( list ) != 0
     ) {
         talloc_free ( list );
         return false;
