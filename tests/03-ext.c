@@ -145,7 +145,7 @@ bool test_destructor ()
     if (
         talloc_del_destructor_by_data ( text_03, NULL ) != 0 ||
         items->length != 1 ||
-        ( item = items->data ) == NULL || item->destructor != destructor_empty_1 || item->user_data != &user_data
+        ( item = ( talloc_destructor_item * ) items->data ) == NULL || item->destructor != destructor_empty_1 || item->user_data != &user_data
     ) {
         talloc_free ( strings );
         return false;

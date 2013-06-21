@@ -1,28 +1,31 @@
-Talloc2 is lightweight implementation of talloc api. License - LGPL v3.
+Talloc2 is lightweight implementation of a part of talloc api. License - LGPL v3.
 1. Minimal sizeof talloc_chunk is 32 bytes (amd64).
 2. Save memory without performance penalties.
 2. Configurable extensions.
 3. CMake build system. Project is ready to be added as git submodule to existing CMake project.
 
 
-Implemented & covered by tests
 core:
-void *  talloc         ( const void * ctx, size_t length );
-void *  talloc_zero    ( const void * ctx, size_t length );
-void *  talloc_realloc ( const void * ctx, size_t length );
-uint8_t talloc_move    ( const void * ctx, const void * ctx );
-uint8_t talloc_free    ( void * ctx );
+void *  talloc_new     ( const void * parent )
+void *  talloc         ( const void * parent, size_t length )
+void *  talloc_zero    ( const void * parent, size_t length )
+void *  talloc_realloc ( const void * child,  size_t length )
+uint8_t talloc_move    ( const void * child,  const void * parent )
+uint8_t talloc_free    ( void * root )
 
 helpers:
-void *  talloc_new     ( const void * ctx );
-char *  talloc_strdup  ( const void * ctx, const char * str );
-char *  talloc_strndup ( const void * ctx, const char * str, size_t length );
+char * talloc_strndup ( const void * parent, const char * str, size_t length )
+char * talloc_strdup  ( const void * parent, const char * str )
 
-extensions:
-uint8_t talloc_add_destructor ( const void * ctx, uint8_t ( * destructor ) ( void * child_data, void * user_data ) );
-uint8_t talloc_get_length     ( const void * ctx, size_t * result );
-void *  talloc_mode           ( const void * ctx, size_t length, uint8_t mode );
-void *  talloc_zero_mode      ( const void * ctx, size_t length, uint8_t mode );
+destructor extension:
+uint8_t talloc_add_destructor             ( const void * child, talloc_destructor destructor, void * data )
+uint8_t talloc_del_destructor             ( const void * child, talloc_destructor destructor, void * data )
+uint8_t talloc_del_destructor_by_function ( const void * child, talloc_destructor destructor )
+uint8_t talloc_del_destructor_by_data     ( const void * child, void * data )
+uint8_t talloc_clear_destructors          ( const void * child )
 
-modes:
-TALLOC_MODE_LENGTH
+length extension:
+uint8_t talloc_get_length ( const void * child, size_t * length )
+node should be create with
+void *  talloc_mode      ( const void * parent_data, size_t length, TALLOC_MODE_LENGTH )
+void *  talloc_zero_mode ( const void * parent_data, size_t length, TALLOC_MODE_LENGTH )
