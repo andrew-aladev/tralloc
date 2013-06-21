@@ -113,6 +113,12 @@ uint8_t talloc_on_del ( talloc_chunk * child )
     }
 #endif
 
+#ifdef TALLOC_EXT_LENGTH
+    if ( talloc_length_on_del ( child ) != 0 ) {
+        return 1;
+    }
+#endif
+
 #ifdef TALLOC_DEBUG
     if ( talloc_debug_on_del != NULL ) {
         if ( talloc_debug_on_del ( child ) != 0 ) {

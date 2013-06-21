@@ -6,6 +6,9 @@
 #include "length.h"
 
 extern inline
+uint8_t talloc_length_on_del ( talloc_chunk * child );
+
+extern inline
 uint8_t talloc_add_length ( talloc_chunk * child, size_t user_length, uint8_t mode );
 
 extern inline
