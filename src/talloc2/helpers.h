@@ -17,7 +17,7 @@ char * talloc_strndup ( const void * parent_data, const char * str, size_t lengt
     if ( child_data == NULL ) {
         return NULL;
     }
-    memcpy ( child_data, str, length );
+    memmove ( child_data, str, length );
     child_data[length] = '\0';
     return child_data;
 };
