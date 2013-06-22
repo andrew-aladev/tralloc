@@ -21,7 +21,10 @@ typedef struct talloc_list_item_t {
 
 talloc_list * talloc_list_new     ( void * ctx );
 uint8_t       talloc_list_push    ( talloc_list * list, void * data );
+uint8_t       talloc_list_pop     ( talloc_list * list );
 uint8_t       talloc_list_unshift ( talloc_list * list, void * data );
+uint8_t       talloc_list_shift   ( talloc_list * list );
+void          talloc_list_delete  ( talloc_list * list, talloc_list_item * item );
 
 inline
 size_t talloc_list_get_length ( talloc_list * list )

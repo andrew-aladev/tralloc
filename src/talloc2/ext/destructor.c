@@ -90,15 +90,15 @@ uint8_t talloc_add_destructor ( const void * child_data, talloc_destructor destr
             talloc_destructor_items_free ( items );
             return 3;
         }
+        child->ext->mode |= TALLOC_MODE_DESTRUCTOR;
     } else {
         if ( talloc_destructor_append ( items, destructor, user_data ) != 0 ) {
             talloc_destructor_items_free ( items );
-            child->ext->mode ^= TALLOC_MODE_DESTRUCTOR;
+            child->ext->mode &= ~ TALLOC_MODE_DESTRUCTOR;
             return 4;
         }
     }
 
-    child->ext->mode |= TALLOC_MODE_DESTRUCTOR;
     return 0;
 }
 
@@ -133,7 +133,7 @@ bool process_destructors ( talloc_chunk * child, talloc_destructor_items * items
         if ( comparator ( item, destructor, user_data ) ) {
             free ( item );
             free ( items );
-            child->ext->mode ^= TALLOC_MODE_DESTRUCTOR;
+            child->ext->mode &= ~ TALLOC_MODE_DESTRUCTOR;
             if ( talloc_ext_set ( child, TALLOC_EXT_INDEX_DESTRUCTOR, NULL ) != 0 ) {
                 return false;
             }
@@ -155,7 +155,7 @@ bool process_destructors ( talloc_chunk * child, talloc_destructor_items * items
     items->length = length -= diff;
     if ( length == 0 ) {
         free ( items );
-        child->ext->mode ^= TALLOC_MODE_DESTRUCTOR;
+        child->ext->mode &= ~ TALLOC_MODE_DESTRUCTOR;
         if ( talloc_ext_set ( child, TALLOC_EXT_INDEX_DESTRUCTOR, NULL ) != 0 ) {
             return false;
         }
@@ -225,7 +225,7 @@ uint8_t talloc_clear_destructors ( const void * child_data )
         if ( talloc_ext_set ( child, TALLOC_EXT_INDEX_DESTRUCTOR, NULL ) != 0 ) {
             return 3;
         }
-        child->ext->mode ^= TALLOC_MODE_DESTRUCTOR;
+        child->ext->mode &= ~ TALLOC_MODE_DESTRUCTOR;
     }
     return 0;
 }

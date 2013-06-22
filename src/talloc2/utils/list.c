@@ -8,6 +8,24 @@
 
 #include <stdlib.h>
 
+void talloc_list_delete ( talloc_list * list, talloc_list_item * item )
+{
+    talloc_list_item * next_item = item->next;
+    talloc_list_item * prev_item = item->prev;
+    if ( next_item == NULL ) {
+        list->last_item = prev_item;
+    } else {
+        next_item->prev = prev_item;
+    }
+    if ( prev_item == NULL ) {
+        list->first_item = next_item;
+    } else {
+        prev_item->next = next_item;
+    }
+    list->length--;
+    free ( item );
+}
+
 static
 uint8_t delete_on_free ( void * child_data, void * user_data )
 {
@@ -15,21 +33,8 @@ uint8_t delete_on_free ( void * child_data, void * user_data )
     if ( item == NULL ) {
         return 1;
     }
-    talloc_list *          items = item->parent;
-    talloc_list_item * next_item = item->next;
-    talloc_list_item * prev_item = item->prev;
-    if ( next_item == NULL ) {
-        items->last_item = prev_item;
-    } else {
-        next_item->prev = prev_item;
-    }
-    if ( prev_item == NULL ) {
-        items->first_item = next_item;
-    } else {
-        prev_item->next = next_item;
-    }
-    items->length--;
-    free ( item );
+    talloc_list * list = item->parent;
+    talloc_list_delete ( list, item );
     return 0;
 }
 
@@ -101,6 +106,19 @@ uint8_t talloc_list_push ( talloc_list * list, void * data )
     return 0;
 }
 
+uint8_t talloc_list_pop ( talloc_list * list )
+{
+    talloc_list_item * item = list->last_item;
+    if ( item == NULL ) {
+        return 1;
+    }
+    if ( talloc_del_destructor ( item->data, delete_on_free, item ) != 0 ) {
+        return 2;
+    }
+    talloc_list_delete ( list, item );
+    return 0;
+}
+
 uint8_t talloc_list_unshift ( talloc_list * list, void * data )
 {
     talloc_list_item * item = malloc ( sizeof ( talloc_list_item ) );
@@ -129,6 +147,19 @@ uint8_t talloc_list_unshift ( talloc_list * list, void * data )
         return 2;
     }
 
+    return 0;
+}
+
+uint8_t talloc_list_shift ( talloc_list* list )
+{
+    talloc_list_item * item = list->first_item;
+    if ( item == NULL ) {
+        return 1;
+    }
+    if ( talloc_del_destructor ( item->data, delete_on_free, item ) != 0 ) {
+        return 2;
+    }
+    talloc_list_delete ( list, item );
     return 0;
 }
 

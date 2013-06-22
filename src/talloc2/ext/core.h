@@ -32,6 +32,7 @@ talloc_ext * talloc_ext_new ( uint8_t length )
     }
 
     ext->length = length;
+    ext->mode   = 0;
     return ext;
 }
 

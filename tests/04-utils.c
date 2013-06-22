@@ -167,13 +167,13 @@ bool test_list ( void * ctx )
     }
 
     if (
-        talloc_list_push       ( list, str_2 ) != 0 ||
-        talloc_list_push       ( list, str_1 ) != 0 ||
-        talloc_list_push       ( list, str_2 ) != 0 ||
-        talloc_list_push       ( list, str_3 ) != 0 ||
-        talloc_list_unshift    ( list, str_2 ) != 0 ||
-        talloc_list_unshift    ( list, str_2 ) != 0 ||
-        talloc_list_unshift    ( list, str_3 ) != 0
+        talloc_list_push    ( list, str_2 ) != 0 ||
+        talloc_list_push    ( list, str_1 ) != 0 ||
+        talloc_list_push    ( list, str_2 ) != 0 ||
+        talloc_list_push    ( list, str_3 ) != 0 ||
+        talloc_list_unshift ( list, str_2 ) != 0 ||
+        talloc_list_unshift ( list, str_2 ) != 0 ||
+        talloc_list_unshift ( list, str_3 ) != 0
     ) {
         talloc_free ( list );
         return false;
@@ -194,14 +194,14 @@ bool test_list ( void * ctx )
         talloc_free ( list );
         return false;
     }
-    
+
     if ( talloc_free ( str_3 ) != 0 ) {
         talloc_free ( list );
         return false;
     }
-    
+
     item = list->first_item;
-    
+
     if (
         talloc_list_get_length ( list ) != 5 ||
         item->data != str_2 || ( item = item->next ) == NULL ||
@@ -213,8 +213,87 @@ bool test_list ( void * ctx )
         talloc_free ( list );
         return false;
     }
-    
+
     if ( talloc_free ( str_2 ) != 0 ) {
+        talloc_free ( list );
+        return false;
+    }
+
+    item = list->first_item;
+
+    if (
+        talloc_list_get_length ( list ) != 1 ||
+        item->data != str_1
+    ) {
+        talloc_free ( list );
+        return false;
+    }
+
+    if ( talloc_free ( str_1 ) != 0 ) {
+        talloc_free ( list );
+        return false;
+    }
+
+    if (
+        talloc_list_get_length ( list ) != 0
+    ) {
+        talloc_free ( list );
+        return false;
+    }
+
+    char * str_4 = talloc_strdup ( list, "str_4" );
+    char * str_5 = talloc_strdup ( list, "str_5" );
+    char * str_6 = talloc_strdup ( list, "str_6" );
+
+    if (
+        talloc_list_push    ( list, str_4 ) != 0 ||
+        talloc_list_push    ( list, str_6 ) != 0 ||
+        talloc_list_push    ( list, str_5 ) != 0 ||
+        talloc_list_unshift ( list, str_5 ) != 0 ||
+        talloc_list_unshift ( list, str_6 ) != 0 ||
+        talloc_list_unshift ( list, str_4 ) != 0
+    ) {
+        talloc_free ( list );
+        return false;
+    }
+
+    item = list->first_item;
+
+    if (
+        talloc_list_get_length ( list ) != 6 ||
+        item->data != str_4 || ( item = item->next ) == NULL ||
+        item->data != str_6 || ( item = item->next ) == NULL ||
+        item->data != str_5 || ( item = item->next ) == NULL ||
+        item->data != str_4 || ( item = item->next ) == NULL ||
+        item->data != str_6 || ( item = item->next ) == NULL ||
+        item->data != str_5
+    ) {
+        talloc_free ( list );
+        return false;
+    }
+
+    if (
+        talloc_list_pop   ( list ) != 0 ||
+        talloc_list_pop   ( list ) != 0 ||
+        talloc_list_shift ( list ) != 0 ||
+        talloc_list_shift ( list ) != 0
+    ) {
+        talloc_free ( list );
+        return false;
+    }
+
+    item = list->first_item;
+
+    if (
+        talloc_list_get_length ( list ) != 2 ||
+        item->data != str_5 || ( item = item->next ) == NULL ||
+        item->data != str_4
+    ) {
+        talloc_free ( list );
+        return false;
+    }
+
+    if ( talloc_free ( str_4 ) != 0 ) {
         talloc_free ( list );
         return false;
     }
@@ -223,19 +302,7 @@ bool test_list ( void * ctx )
     
     if (
         talloc_list_get_length ( list ) != 1 ||
-        item->data != str_1
-    ) {
-        talloc_free ( list );
-        return false;
-    }
-    
-    if ( talloc_free ( str_1 ) != 0 ) {
-        talloc_free ( list );
-        return false;
-    }
-    
-    if (
-        talloc_list_get_length ( list ) != 0
+        item->data != str_5
     ) {
         talloc_free ( list );
         return false;
