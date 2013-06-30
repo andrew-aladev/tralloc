@@ -3,39 +3,14 @@
 // talloc2 is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with talloc2. If not, see <http://www.gnu.org/licenses/>.
 
-#include <stdbool.h>
-#include <string.h>
-
 #include <talloc2/helpers.h>
-
-#ifdef TALLOC_EXT_DESTRUCTOR
 #include <talloc2/ext/destructor.h>
-#endif
 
-#ifdef TALLOC_EXT_LENGTH
-#include <talloc2/ext/length.h>
-#endif
+#include "../lib/malloc_dynarr.h"
 
-#include "utils/malloc_dynarr.h"
+extern void * root;
+extern malloc_dynarr * history;
 
-void * root;
-static malloc_dynarr * history;
-
-bool init_data ()
-{
-    root = talloc_new ( NULL );
-    if ( root == NULL ) {
-        return false;
-    }
-    history = malloc_dynarr_new ( 16 );
-    if ( history == NULL ) {
-        talloc_free ( root );
-        return false;
-    }
-    return true;
-}
-
-#ifdef TALLOC_EXT_DESTRUCTOR
 uint32_t user_data = 123456789;
 uint8_t destructor ( void * data, void * user_data_ptr )
 {
@@ -187,75 +162,3 @@ bool test_destructor ()
     }
     return true;
 }
-#endif
-
-#ifdef TALLOC_EXT_LENGTH
-bool test_length ()
-{
-    size_t length;
-    char * str = talloc_zero_mode ( root, sizeof ( char ) * 200, TALLOC_MODE_LENGTH );
-    if ( str == NULL ) {
-        return false;
-    }
-    if ( talloc_get_length ( str, &length ) != 0 || length != 200 ) {
-        return false;
-    }
-    str = talloc_realloc ( str, sizeof ( char ) * 300 );
-    if ( str == NULL ) {
-        return false;
-    }
-    if ( talloc_get_length ( str, &length ) != 0 || length != 300 ) {
-        return false;
-    }
-    str = talloc_realloc ( str, sizeof ( char ) * 3 );
-    if ( str == NULL ) {
-        return false;
-    }
-    if ( talloc_get_length ( str, &length ) != 0 || length != 3 ) {
-        return false;
-    }
-
-    str[0] = 'a';
-    str[1] = 'b';
-    str[2] = '\0';
-
-    if ( talloc_free ( str ) != 0 ) {
-        return false;
-    }
-
-    return true;
-}
-#endif
-
-void free_data ()
-{
-    talloc_free ( root );
-    if ( history != NULL ) {
-        malloc_dynarr_free ( history );
-    }
-}
-
-int main ()
-{
-    if ( !init_data () ) {
-        return 1;
-    }
-
-#ifdef TALLOC_EXT_DESTRUCTOR
-    if ( !test_destructor () ) {
-        free_data ();
-        return 2;
-    }
-#endif
-
-#ifdef TALLOC_EXT_LENGTH
-    if ( !test_length () ) {
-        free_data ();
-        return 3;
-    }
-#endif
-
-    free_data ();
-    return 0;
-}
-

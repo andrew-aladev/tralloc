@@ -12,7 +12,7 @@
 
 #include <talloc2/tree.h>
 #include <talloc2/events.h>
-#include "utils/malloc_dynarr.h"
+#include "../lib/malloc_dynarr.h"
 
 /*
            root
@@ -520,5 +520,3 @@ int main ()
 
     return 0;
 }
-
-
