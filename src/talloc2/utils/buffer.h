@@ -27,45 +27,7 @@ talloc_buffer * talloc_buffer_new ( void * ctx )
     return buffer;
 }
 
-inline
-char * talloc_buffer_get ( talloc_buffer * buffer, size_t length )
-{
-    char * buf = buffer->buf;
-    if ( buf == NULL ) {
-        buf = talloc ( buffer, sizeof ( char ) * length );
-        if ( buf == NULL ) {
-            return NULL;
-        }
-        buffer->buf    = buf;
-        buffer->length = length;
-    } else {
-        size_t current_length = buffer->length;
-        buf = talloc_realloc ( buf, sizeof ( char ) * ( current_length + length ) );
-        if ( buf == NULL ) {
-            return NULL;
-        }
-        buffer->buf    = buf;
-        buffer->length = current_length + length;
-        buf += current_length;
-    }
-    return buf;
-}
-
-inline
-uint8_t talloc_buffer_cut ( talloc_buffer * buffer, size_t diff )
-{
-    char * buf = buffer->buf;
-    if ( buf == NULL ) {
-        return 1;
-    }
-    size_t current_length = buffer->length - diff;
-    buf = talloc_realloc ( buf, sizeof ( char ) * ( current_length ) );
-    if ( buf == NULL ) {
-        return 2;
-    }
-    buffer->buf    = buf;
-    buffer->length = current_length;
-    return 0;
-}
+char *  talloc_buffer_get ( talloc_buffer * buffer, size_t length );
+uint8_t talloc_buffer_cut ( talloc_buffer * buffer, size_t diff );
 
 #endif

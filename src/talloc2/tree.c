@@ -184,11 +184,15 @@ uint8_t talloc_move ( const void * child_data, const void * parent_data )
     if ( child_data == NULL ) {
         return 1;
     }
-    talloc_chunk * child      = talloc_chunk_from_data ( child_data );
-    talloc_chunk * new_parent = talloc_chunk_from_data ( parent_data );
-
+    talloc_chunk * child = talloc_chunk_from_data ( child_data );
     _detach ( child );
-    _set_child ( new_parent, child );
+
+    if ( parent_data == NULL ) {
+        child->parent = NULL;
+    } else {
+        talloc_chunk * new_parent = talloc_chunk_from_data ( parent_data );
+        _set_child ( new_parent, child );
+    }
 
 #ifdef TALLOC_EVENTS
     if ( talloc_on_move ( child ) != 0 ) {
@@ -235,7 +239,7 @@ uint8_t talloc_free ( void * root_data )
     _detach ( root );
 
     if ( !free_recursive ( root ) ) {
-        return 2;
+        return 1;
     }
 
     return 0;

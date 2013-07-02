@@ -12,7 +12,7 @@
 
 #include <talloc2/tree.h>
 #include <talloc2/events.h>
-#include "utils/malloc_dynarr.h"
+#include "../lib/malloc_dynarr.h"
 
 /*
            root
@@ -247,6 +247,9 @@ bool test_move ()
     if (
         talloc_move ( trivium, data_00 ) != 0 ||
         chunk_trivium->parent != chunk_00 ||
+        
+        talloc_move ( trivium, NULL ) != 0 ||
+        chunk_trivium->parent != NULL ||
 
         talloc_move ( trivium, data_012 ) != 0 ||
         chunk_trivium->parent != chunk_012
@@ -259,17 +262,17 @@ bool test_move ()
 
 void set_data ()
 {
-    * data_0    = INT8_MAX;
-    * data_00   = UINT16_MAX;
+    * data_0   = INT8_MAX;
+    * data_00  = UINT16_MAX;
     data_01[0] = CHAR_MAX;
     data_01[1] = CHAR_MAX;
     data_01[2] = CHAR_MAX;
     data_01[3] = CHAR_MAX;
     data_01[4] = CHAR_MAX;
-    * data_02   = UINT32_MAX;
-    * data_010  = SIZE_MAX;
-    * data_011  = SIZE_MAX;
-    * data_012  = SIZE_MAX;
+    * data_02  = UINT32_MAX;
+    * data_010 = SIZE_MAX;
+    * data_011 = SIZE_MAX;
+    * data_012 = SIZE_MAX;
 }
 
 void set_chunks ()
@@ -414,7 +417,7 @@ bool test_history()
 {
     if (
         ! (
-            history->length == 23 &&
+            history->length == 24 &&
             test_history_event ( 0, ADD_MODE, chunk_root )    &&
             test_history_event ( 1, ADD_MODE, chunk_0 )       &&
             test_history_event ( 2, ADD_MODE, chunk_00 )      &&
@@ -431,17 +434,18 @@ bool test_history()
 
             test_history_event ( 12, MOVE_MODE, chunk_trivium ) &&
             test_history_event ( 13, MOVE_MODE, chunk_trivium ) &&
+            test_history_event ( 14, MOVE_MODE, chunk_trivium ) &&
 
-            test_history_event ( 14, DELETE_MODE, chunk_01 )      &&
-            test_history_event ( 15, DELETE_MODE, chunk_012 )     &&
-            test_history_event ( 16, DELETE_MODE, chunk_trivium ) &&
-            test_history_event ( 17, DELETE_MODE, chunk_011 )     &&
-            test_history_event ( 18, DELETE_MODE, chunk_010 )     &&
+            test_history_event ( 15, DELETE_MODE, chunk_01 )      &&
+            test_history_event ( 16, DELETE_MODE, chunk_012 )     &&
+            test_history_event ( 17, DELETE_MODE, chunk_trivium ) &&
+            test_history_event ( 18, DELETE_MODE, chunk_011 )     &&
+            test_history_event ( 19, DELETE_MODE, chunk_010 )     &&
 
-            test_history_event ( 19, DELETE_MODE, chunk_root ) &&
-            test_history_event ( 20, DELETE_MODE, chunk_0 )    &&
-            test_history_event ( 21, DELETE_MODE, chunk_02 )   &&
-            test_history_event ( 22, DELETE_MODE, chunk_00 )
+            test_history_event ( 20, DELETE_MODE, chunk_root ) &&
+            test_history_event ( 21, DELETE_MODE, chunk_0 )    &&
+            test_history_event ( 22, DELETE_MODE, chunk_02 )   &&
+            test_history_event ( 23, DELETE_MODE, chunk_00 )
         )
     ) {
         return false;
@@ -516,5 +520,3 @@ int main ()
 
     return 0;
 }
-
-

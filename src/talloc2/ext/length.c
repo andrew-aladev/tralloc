@@ -6,6 +6,9 @@
 #include "length.h"
 
 extern inline
+uint8_t talloc_length_on_del ( talloc_chunk * child );
+
+extern inline
 uint8_t talloc_add_length ( talloc_chunk * child, size_t user_length, uint8_t mode );
 
 extern inline
@@ -17,7 +20,7 @@ uint8_t talloc_get_length ( const void * child_data, size_t * result_length )
         return 1;
     }
     talloc_chunk * child = talloc_chunk_from_data ( child_data );
-    size_t * length = talloc_ext_get ( child, TALLOC_EXT_INDEX_LENGTH );
+    size_t * length      = talloc_ext_get ( child, TALLOC_EXT_INDEX_LENGTH );
     if ( length == NULL ) {
         return 2;
     }

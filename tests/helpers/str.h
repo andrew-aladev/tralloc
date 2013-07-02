@@ -3,8 +3,6 @@
 // talloc2 is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with talloc2. If not, see <http://www.gnu.org/licenses/>.
 
-#include <stdbool.h>
-
 #include <talloc2/helpers.h>
 
 bool test_str ( void * ctx )
@@ -47,22 +45,4 @@ bool test_str ( void * ctx )
         return false;
     }
     return true;
-}
-
-int main ()
-{
-    void * ctx = talloc_new ( NULL );
-    if ( ctx == NULL ) {
-        return 1;
-    }
-
-    if ( !test_str ( ctx ) ) {
-        talloc_free ( ctx );
-        return 2;
-    }
-
-    if ( talloc_free ( ctx ) != 0 ) {
-        return 3;
-    }
-    return 0;
 }

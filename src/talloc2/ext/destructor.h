@@ -75,8 +75,9 @@ uint8_t talloc_destructor_on_del ( talloc_chunk * child )
 }
 
 uint8_t talloc_add_destructor ( const void * child_data, talloc_destructor destructor, void * user_data );
+uint8_t talloc_del_destructor ( const void * child_data, talloc_destructor destructor, void * user_data );
+uint8_t talloc_del_destructor_by_function ( const void * child_data, talloc_destructor destructor );
+uint8_t talloc_del_destructor_by_data ( const void * child_data, void * user_data );
+uint8_t talloc_clear_destructors ( const void * child_data );
 
 #endif
-
-
-

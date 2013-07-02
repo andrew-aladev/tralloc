@@ -4,7 +4,7 @@ project (talloc2)
 set (
     BOOLEANS
     TALLOC_EXT_DESTRUCTOR TALLOC_EXT_LENGTH
-    TALLOC_UTILS_BUFFER TALLOC_UTILS_DYNARR TALLOC_UTILS_STACK
+    TALLOC_UTILS_BUFFER TALLOC_UTILS_DYNARR TALLOC_UTILS_LIST
     TALLOC_SHARED TALLOC_STATIC TALLOC_TEST
 )
 foreach (bool ${BOOLEANS})
@@ -17,13 +17,13 @@ if (TALLOC_EXT_DESTRUCTOR MATCHES true OR TALLOC_EXT_LENGTH MATCHES true)
     set (TALLOC_EXT true)
 endif ()
 
-if (TALLOC_UTILS_STACK MATCHES true)
+if (TALLOC_UTILS_LIST MATCHES true)
     if (TALLOC_EXT_DESTRUCTOR MATCHES false)
-        set (TALLOC_UTILS_STACK false)
-        message ("talloc_stack cannot be compiled, it depends on TALLOC_EXT_DESTRUCTOR")
+        set (TALLOC_UTILS_LIST false)
+        message ("talloc_list cannot be compiled, it depends on TALLOC_EXT_DESTRUCTOR")
     endif ()
 endif ()
-if (TALLOC_UTILS_BUFFER MATCHES true OR TALLOC_UTILS_DYNARR MATCHES true OR TALLOC_UTILS_STACK)
+if (TALLOC_UTILS_BUFFER MATCHES true OR TALLOC_UTILS_DYNARR MATCHES true OR TALLOC_UTILS_LIST)
     set (TALLOC_UTILS true)
 endif ()
 
@@ -34,7 +34,10 @@ endif ()
 set (CMAKE_BUILD_TYPE DEBUG)
 
 set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -Winline -std=gnu99")
-set (CMAKE_C_FLAGS_DEBUG "-O0 -g")
+set (CMAKE_C_FLAGS_DEBUG    "-O0 -g")
+
+set (CMAKE_C_FLAGS_RELEASE  "-O2 -flto")
+set (CMAKE_LD_FLAGS_RELEASE "-flto")
 
 add_subdirectory (src)
 

@@ -10,6 +10,19 @@
 #include "core.h"
 
 inline
+uint8_t talloc_length_on_del ( talloc_chunk * child )
+{
+    if ( child->ext != NULL && ( child->ext->mode & TALLOC_MODE_LENGTH ) != 0 ) {
+        size_t * length = talloc_ext_get ( child, TALLOC_EXT_INDEX_LENGTH );
+        if ( length == NULL ) {
+            return 1;
+        }
+        free ( length );
+    }
+    return 0;
+}
+
+inline
 uint8_t talloc_add_length ( talloc_chunk * child, size_t user_length, uint8_t ext_mode )
 {
     if ( ( ext_mode & TALLOC_MODE_LENGTH ) != 0 ) {
@@ -18,6 +31,7 @@ uint8_t talloc_add_length ( talloc_chunk * child, size_t user_length, uint8_t ex
             return 1;
         }
         if ( talloc_ext_set ( child, TALLOC_EXT_INDEX_LENGTH, length ) != 0 ) {
+            free ( length );
             return 2;
         }
         * length = user_length;
