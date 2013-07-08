@@ -8,41 +8,69 @@
 extern inline
 talloc_buffer * talloc_buffer_new ( void * ctx );
 
+extern inline
+void talloc_buffer_add ( talloc_buffer * buffer, size_t length );
+
+extern inline
+char * talloc_buffer_get_result ( talloc_buffer * buffer );
+
 char * talloc_buffer_get ( talloc_buffer * buffer, size_t length )
 {
     char * buf = buffer->buf;
+    char * new_buf;
+
     if ( buf == NULL ) {
-        buf = talloc ( buffer, sizeof ( char ) * length );
-        if ( buf == NULL ) {
+        new_buf = talloc ( buffer, sizeof ( char ) * length );
+        if ( new_buf == NULL ) {
             return NULL;
         }
-        buffer->buf    = buf;
+        buffer->buf    = new_buf;
         buffer->length = length;
+        return new_buf;
     } else {
-        size_t current_length = buffer->length;
-        buf = talloc_realloc ( buf, sizeof ( char ) * ( current_length + length ) );
-        if ( buf == NULL ) {
+        size_t data_length = buffer->data_length;
+        size_t diff        = buffer->length - data_length;
+        if ( diff >= length ) {
+            return buf + data_length;
+        }
+
+        size_t new_length = data_length + length;
+        new_buf = talloc_realloc ( buf, sizeof ( char ) * new_length );
+        if ( new_buf == NULL ) {
             return NULL;
         }
-        buffer->buf    = buf;
-        buffer->length = current_length + length;
-        buf += current_length;
+        if ( new_buf != buf ) {
+            buffer->buf = new_buf;
+        }
+        buffer->length = new_length;
+        return new_buf + data_length;
     }
-    return buf;
 }
 
-uint8_t talloc_buffer_cut ( talloc_buffer * buffer, size_t diff )
+uint8_t talloc_buffer_trim ( talloc_buffer * buffer )
 {
     char * buf = buffer->buf;
     if ( buf == NULL ) {
-        return 1;
+        return 0;
     }
-    size_t current_length = buffer->length - diff;
-    buf = talloc_realloc ( buf, sizeof ( char ) * ( current_length ) );
-    if ( buf == NULL ) {
+
+    size_t data_length = buffer->data_length;
+    if ( data_length == 0 ) {
+        if ( talloc_free ( buf ) != 0 ) {
+            return 1;
+        }
+        buffer->buf    = NULL;
+        buffer->length = 0;
+        return 0;
+    }
+
+    char * new_buf = talloc_realloc ( buf, sizeof ( char ) * data_length );
+    if ( new_buf == NULL ) {
         return 2;
     }
-    buffer->buf    = buf;
-    buffer->length = current_length;
+    if ( new_buf != buf ) {
+        buffer->buf = new_buf;
+    }
+    buffer->length = data_length;
     return 0;
 }

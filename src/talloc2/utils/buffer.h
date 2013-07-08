@@ -12,6 +12,7 @@
 
 typedef struct talloc_buffer_t {
     char * buf;
+    size_t data_length;
     size_t length;
 } talloc_buffer;
 
@@ -22,12 +23,25 @@ talloc_buffer * talloc_buffer_new ( void * ctx )
     if ( buffer == NULL ) {
         return NULL;
     }
-    buffer->buf    = NULL;
-    buffer->length = 0;
+    buffer->buf         = NULL;
+    buffer->data_length = 0;
+    buffer->length      = 0;
     return buffer;
 }
 
-char *  talloc_buffer_get ( talloc_buffer * buffer, size_t length );
-uint8_t talloc_buffer_cut ( talloc_buffer * buffer, size_t diff );
+char *  talloc_buffer_get  ( talloc_buffer * buffer, size_t length );
+uint8_t talloc_buffer_trim ( talloc_buffer * buffer );
+
+inline
+void talloc_buffer_add ( talloc_buffer * buffer, size_t length )
+{
+    buffer->data_length += length;
+}
+
+inline
+char * talloc_buffer_get_result ( talloc_buffer * buffer )
+{
+    return buffer->buf;
+}
 
 #endif
