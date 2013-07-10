@@ -8,12 +8,11 @@
 
 #include "../tree.h"
 
-#include <string.h>
-
 typedef struct talloc_buffer_t {
-    char * buf;
-    size_t data_length;
-    size_t length;
+    uint8_t * buf;
+    size_t    data_offset;
+    size_t    data_length;
+    size_t    length;
 } talloc_buffer;
 
 inline
@@ -24,24 +23,42 @@ talloc_buffer * talloc_buffer_new ( void * ctx )
         return NULL;
     }
     buffer->buf         = NULL;
+    buffer->data_offset = 0;
     buffer->data_length = 0;
     buffer->length      = 0;
     return buffer;
 }
 
-char *  talloc_buffer_get  ( talloc_buffer * buffer, size_t length );
-uint8_t talloc_buffer_trim ( talloc_buffer * buffer );
+uint8_t * talloc_buffer_prepare  ( talloc_buffer * buffer, size_t length );
+uint8_t   talloc_buffer_trim ( talloc_buffer * buffer );
 
 inline
-void talloc_buffer_add ( talloc_buffer * buffer, size_t length )
+void talloc_buffer_written ( talloc_buffer * buffer, size_t length )
 {
     buffer->data_length += length;
 }
 
 inline
-char * talloc_buffer_get_result ( talloc_buffer * buffer )
+uint8_t talloc_buffer_readed ( talloc_buffer * buffer, size_t length )
 {
-    return buffer->buf;
+    if ( buffer->data_length < length ) {
+        return 1;
+    }
+    buffer->data_offset += length;
+    buffer->data_length -= length;
+    return 0;
+}
+
+inline
+uint8_t * talloc_buffer_get ( talloc_buffer * buffer )
+{
+    return buffer->buf + buffer->data_offset;
+}
+
+inline
+size_t talloc_buffer_get_length ( talloc_buffer * buffer )
+{
+    return buffer->data_length;
 }
 
 #endif
