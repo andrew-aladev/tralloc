@@ -56,10 +56,10 @@ uint8_t talloc_dynarr_insert_before ( talloc_dynarr * arr, size_t index, void * 
     if ( tail_length == 0 ) {
         return talloc_dynarr_push ( arr, data );
     }
-    void ** tail = arr->data + index;
     if ( talloc_dynarr_grow ( arr, length + 1 ) != 0 ) {
         return 1;
     }
+    void ** tail = arr->data + index;
     memmove ( tail + 1, tail, sizeof ( uintptr_t ) * tail_length );
     arr->data[index] = data;
     return 0;
