@@ -18,12 +18,12 @@ bool test_dynarr ( void * ctx )
     }
     if (
         arr->current_capacity != 3 || talloc_dynarr_push ( arr, &a ) != 0 ||
-        arr->current_capacity != 3 || talloc_dynarr_push ( arr, &a ) != 0 ||
-        arr->current_capacity != 3 || talloc_dynarr_push ( arr, &b ) != 0 ||
+        arr->current_capacity != 3 || talloc_dynarr_insert_after  ( arr, 0, &b ) != 0 ||
+        arr->current_capacity != 3 || talloc_dynarr_insert_before ( arr, 1, &a ) != 0 ||
         arr->current_capacity != 3 || talloc_dynarr_push ( arr, &a ) != 0 ||
         arr->current_capacity != 6 || talloc_dynarr_push ( arr, &a ) != 0 ||
-        arr->current_capacity != 6 || talloc_dynarr_push ( arr, &b ) != 0 ||
         arr->current_capacity != 6 || talloc_dynarr_push ( arr, &a ) != 0 ||
+        arr->current_capacity != 6 || talloc_dynarr_insert_before ( arr, 5, &b ) != 0 ||
         arr->current_capacity != 9 || talloc_dynarr_push ( arr, &b ) != 0 ||
         arr->current_capacity != 9 || talloc_dynarr_push ( arr, &b ) != 0 ||
         arr->current_capacity != 9
@@ -52,8 +52,28 @@ bool test_dynarr ( void * ctx )
     }
 
     if (
-        arr->current_capacity != 9 || talloc_dynarr_pop ( arr ) != 0 ||
-        arr->current_capacity != 9 || talloc_dynarr_pop ( arr ) != 0 ||
+        talloc_dynarr_delete ( arr, 2 ) != 0 ||
+        talloc_dynarr_delete ( arr, 5 ) != 0
+    ) {
+        talloc_free ( arr );
+        return false;
+    }
+
+    if (
+        talloc_dynarr_get_length ( arr ) != 7 ||
+        talloc_dynarr_get ( arr, 0 ) != &a ||
+        talloc_dynarr_get ( arr, 1 ) != &a ||
+        talloc_dynarr_get ( arr, 2 ) != &b ||
+        talloc_dynarr_get ( arr, 3 ) != &a ||
+        talloc_dynarr_get ( arr, 4 ) != &b ||
+        talloc_dynarr_get ( arr, 5 ) != &b ||
+        talloc_dynarr_get ( arr, 6 ) != &b
+    ) {
+        talloc_free ( arr );
+        return false;
+    }
+
+    if (
         arr->current_capacity != 9 || talloc_dynarr_pop ( arr ) != 0 ||
         arr->current_capacity != 6 || talloc_dynarr_pop ( arr ) != 0 ||
         arr->current_capacity != 6 || talloc_dynarr_pop ( arr ) != 0 ||

@@ -5,6 +5,8 @@
 
 #include "dynarr.h"
 
+#include <string.h>
+
 extern inline
 talloc_dynarr * talloc_dynarr_new ( void * ctx, size_t capacity );
 
@@ -37,6 +39,22 @@ uint8_t talloc_dynarr_push ( talloc_dynarr * arr, void * data )
     return 0;
 }
 
+uint8_t talloc_dynarr_insert_before ( talloc_dynarr * arr, size_t index, void * data )
+{
+    size_t tail_length = arr->length - index;
+    if ( tail_length == 0 ) {
+        return talloc_dynarr_push ( arr, data );
+    }
+    void ** tail = arr->data + index;
+    arr->length++;
+    if ( talloc_dynarr_grow ( arr ) != 0 ) {
+        return 1;
+    }
+    memmove ( tail + 1, tail, sizeof ( uintptr_t ) * tail_length );
+    arr->data[index] = data;
+    return 0;
+}
+
 static inline
 uint8_t talloc_dynarr_reduction ( talloc_dynarr * arr )
 {
@@ -64,6 +82,22 @@ uint8_t talloc_dynarr_pop ( talloc_dynarr * arr )
     }
     return 0;
 }
+
+uint8_t talloc_dynarr_delete ( talloc_dynarr * arr, size_t index )
+{
+    index ++;
+    size_t tail_length = arr->length - index;
+    if ( tail_length == 0 ) {
+        return talloc_dynarr_pop ( arr );
+    }
+    void ** tail = arr->data + index;
+    memmove ( tail - 1, tail, sizeof ( uintptr_t ) * tail_length );
+
+    return talloc_dynarr_pop ( arr );
+}
+
+extern inline
+uint8_t talloc_dynarr_insert_after ( talloc_dynarr * arr, size_t index, void * data );
 
 extern inline
 void talloc_dynarr_set ( talloc_dynarr * arr, size_t position, void * pointer );
