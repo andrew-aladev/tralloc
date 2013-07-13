@@ -50,6 +50,8 @@ uint8_t talloc_dynarr_insert_after ( talloc_dynarr * arr, size_t index, void * d
     return talloc_dynarr_insert_before ( arr, index + 1, data );
 }
 
+uint8_t talloc_dynarr_grow_and_set ( talloc_dynarr * arr, size_t position, void * pointer );
+
 inline
 void talloc_dynarr_set ( talloc_dynarr * arr, size_t position, void * pointer )
 {

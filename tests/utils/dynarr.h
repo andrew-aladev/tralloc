@@ -86,6 +86,24 @@ bool test_dynarr ( void * ctx )
         return false;
     }
 
+    if (
+        talloc_dynarr_grow_and_set ( arr, 3, &a ) != 0 ||
+        talloc_dynarr_grow_and_set ( arr, 6, &b ) != 0
+    ) {
+        talloc_free ( arr );
+        return false;
+    }
+
+    if (
+        talloc_dynarr_get_length ( arr ) != 7 ||
+        arr->current_capacity != 9 ||
+        talloc_dynarr_get ( arr, 3 ) != &a ||
+        talloc_dynarr_get ( arr, 6 ) != &b
+    ) {
+        talloc_free ( arr );
+        return false;
+    }
+
     if ( talloc_free ( arr ) != 0 ) {
         return false;
     }

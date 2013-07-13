@@ -13,17 +13,21 @@ talloc_dynarr * talloc_dynarr_new ( void * ctx, size_t capacity );
 static inline
 uint8_t talloc_dynarr_grow ( talloc_dynarr * arr )
 {
+    size_t length   = arr->length;
     size_t capacity = arr->current_capacity;
-    if ( capacity >= arr->length ) {
+    if ( capacity >= length ) {
         return 0;
     }
 
-    capacity += arr->start_capacity;
+    size_t start_capacity = arr->start_capacity;
+    capacity = ( length / start_capacity + 1 ) * start_capacity;
     void ** data = talloc_realloc ( arr->data, capacity * sizeof ( uintptr_t ) );
     if ( data == NULL ) {
         return 1;
     }
-    arr->data             = data;
+    if ( arr->data != data ) {
+        arr->data = data;
+    }
     arr->current_capacity = capacity;
     return 0;
 }
@@ -94,6 +98,19 @@ uint8_t talloc_dynarr_delete ( talloc_dynarr * arr, size_t index )
     memmove ( tail - 1, tail, sizeof ( uintptr_t ) * tail_length );
 
     return talloc_dynarr_pop ( arr );
+}
+
+uint8_t talloc_dynarr_grow_and_set ( talloc_dynarr * arr, size_t position, void * pointer )
+{
+    size_t new_length = position + 1;
+    if ( arr->length < new_length ) {
+        arr->length = new_length;
+        if ( talloc_dynarr_grow ( arr ) != 0 ) {
+            return 1;
+        }
+    }
+    arr->data[position] = pointer;
+    return 0;
 }
 
 extern inline
