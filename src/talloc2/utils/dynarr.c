@@ -5,13 +5,14 @@
 
 #include "dynarr.h"
 
+#include <stdbool.h>
 #include <string.h>
 
 extern inline
 talloc_dynarr * talloc_dynarr_new ( void * ctx, size_t capacity );
 
 static inline
-uint8_t talloc_dynarr_grow ( talloc_dynarr * arr, size_t new_length )
+uint8_t talloc_dynarr_grow ( talloc_dynarr * arr, size_t new_length, bool null_on_init )
 {
     size_t length   = arr->length;
     arr->length     = new_length;
@@ -27,9 +28,11 @@ uint8_t talloc_dynarr_grow ( talloc_dynarr * arr, size_t new_length )
     if ( data == NULL ) {
         return 1;
     }
-    size_t index;
-    for ( index = length; index < new_length; index ++ ) {
-        data[index] = NULL;
+    if ( null_on_init ) {
+        size_t index;
+        for ( index = length; index < new_length; index ++ ) {
+            data[index] = NULL;
+        }
     }
 
     if ( arr->data != data ) {
@@ -42,7 +45,7 @@ uint8_t talloc_dynarr_grow ( talloc_dynarr * arr, size_t new_length )
 uint8_t talloc_dynarr_push ( talloc_dynarr * arr, void * data )
 {
     size_t index = arr->length;
-    if ( talloc_dynarr_grow ( arr, index + 1 ) != 0 ) {
+    if ( talloc_dynarr_grow ( arr, index + 1, false ) != 0 ) {
         return 1;
     }
     arr->data[index] = data;
@@ -56,7 +59,7 @@ uint8_t talloc_dynarr_insert_before ( talloc_dynarr * arr, size_t index, void * 
     if ( tail_length == 0 ) {
         return talloc_dynarr_push ( arr, data );
     }
-    if ( talloc_dynarr_grow ( arr, length + 1 ) != 0 ) {
+    if ( talloc_dynarr_grow ( arr, length + 1, false ) != 0 ) {
         return 1;
     }
     void ** tail = arr->data + index;
@@ -110,7 +113,7 @@ uint8_t talloc_dynarr_grow_and_set ( talloc_dynarr * arr, size_t position, void 
 {
     size_t new_length = position + 1;
     if ( arr->length < new_length ) {
-        if ( talloc_dynarr_grow ( arr, new_length ) != 0 ) {
+        if ( talloc_dynarr_grow ( arr, new_length, true ) != 0 ) {
             return 1;
         }
     }
