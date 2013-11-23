@@ -65,7 +65,7 @@ uint8_t _add ( const void * parent_data, talloc_chunk * child )
     return 0;
 }
 
-void * talloc_mode ( const void * parent_data, size_t length, uint8_t ext_mode )
+void * talloc ( const void * parent_data, size_t length )
 {
     talloc_chunk * child = _malloc ( length );
     if ( child == NULL ) {
@@ -78,7 +78,7 @@ void * talloc_mode ( const void * parent_data, size_t length, uint8_t ext_mode )
     }
 
 #ifdef TALLOC_EVENTS
-    if ( talloc_on_add ( child, length, ext_mode ) != 0 ) {
+    if ( talloc_on_add ( child, length ) != 0 ) {
         return NULL;
     }
 #endif
@@ -86,7 +86,7 @@ void * talloc_mode ( const void * parent_data, size_t length, uint8_t ext_mode )
     return talloc_data_from_chunk ( child );
 }
 
-void * talloc_zero_mode ( const void * parent_data, size_t length, uint8_t ext_mode )
+void * talloc_zero ( const void * parent_data, size_t length )
 {
     talloc_chunk * child = _calloc ( length );
     if ( child == NULL ) {
@@ -98,7 +98,7 @@ void * talloc_zero_mode ( const void * parent_data, size_t length, uint8_t ext_m
     }
 
 #ifdef TALLOC_EVENTS
-    if ( talloc_on_add ( child, length, ext_mode ) != 0 ) {
+    if ( talloc_on_add ( child, length ) != 0 ) {
         return NULL;
     }
 #endif
@@ -250,12 +250,6 @@ void * talloc_data_from_chunk ( talloc_chunk * chunk );
 
 extern inline
 talloc_chunk * talloc_chunk_from_data ( const void * data );
-
-extern inline
-void * talloc ( const void * parent_data, size_t length );
-
-extern inline
-void * talloc_zero ( const void * parent_data, size_t length );
 
 extern inline
 void * talloc_new ( const void * parent_data );

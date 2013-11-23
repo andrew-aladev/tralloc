@@ -11,7 +11,7 @@ void talloc_set_callback ( talloc_callback on_add, talloc_callback on_update, ta
 #endif
 
 extern inline
-uint8_t talloc_on_add ( talloc_chunk * chunk, size_t length, uint8_t mode );
+uint8_t talloc_on_add ( talloc_chunk * chunk, size_t length );
 
 extern inline
 uint8_t talloc_on_update ( talloc_chunk * chunk, size_t length );

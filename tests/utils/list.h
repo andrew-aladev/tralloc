@@ -146,9 +146,9 @@ bool test_list ( void * ctx )
         talloc_free ( list );
         return false;
     }
-    
+
     item = list->first_item;
-    
+
     if (
         talloc_list_get_length ( list ) != 1 ||
         item->data != str_5

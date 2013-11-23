@@ -7,10 +7,7 @@
 
 #include <talloc2/helpers.h>
 
-#ifdef TALLOC_EXT_DESTRUCTOR
 #include "destructor.h"
-#endif
-
 #include "../lib/malloc_dynarr.h"
 
 void * root;
@@ -44,12 +41,10 @@ int main ()
         return 1;
     }
 
-#ifdef TALLOC_EXT_DESTRUCTOR
     if ( !test_destructor () ) {
         free_data ();
         return 2;
     }
-#endif
 
     free_data ();
     return 0;

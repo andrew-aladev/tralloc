@@ -4,7 +4,7 @@
 // You should have received a copy of the GNU General Public License along with talloc2. If not, see <http://www.gnu.org/licenses/>.
 
 #include <talloc2/helpers.h>
-#include <talloc2/ext/destructor.h>
+#include <talloc2/destructor.h>
 
 #include "../lib/malloc_dynarr.h"
 
@@ -77,7 +77,7 @@ bool test_destructor ()
     }
 
     talloc_chunk * chunk_03 = talloc_chunk_from_data ( text_03 );
-    talloc_destructor_items * items = talloc_ext_get ( chunk_03, TALLOC_EXT_INDEX_DESTRUCTOR );
+    talloc_destructor_items * items = chunk_03->destructors;
     talloc_destructor_item * item;
 
     if (
@@ -128,7 +128,7 @@ bool test_destructor ()
 
     if (
         talloc_del_destructor_by_data ( text_03, &user_data ) != 0 ||
-        talloc_ext_get ( chunk_03, TALLOC_EXT_INDEX_DESTRUCTOR ) != NULL
+        chunk_03->destructors != NULL
     ) {
         talloc_free ( strings );
         return false;

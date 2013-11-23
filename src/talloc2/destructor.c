@@ -7,15 +7,6 @@
 
 #include <stdbool.h>
 
-extern inline
-void talloc_destructor_items_free ( talloc_destructor_items * items );
-
-extern inline
-uint8_t talloc_destructor_run ( void * child_data, talloc_destructor_item * item );
-
-extern inline
-uint8_t talloc_destructor_on_del ( talloc_chunk * child );
-
 static inline
 talloc_destructor_items * talloc_destructor_items_new ( talloc_destructor destructor, void * user_data )
 {
@@ -31,7 +22,7 @@ talloc_destructor_items * talloc_destructor_items_new ( talloc_destructor destru
     item->destructor = destructor;
     item->user_data  = user_data;
 
-    items->data   = ( void * ) item;
+    items->data   = ( void ** ) item;
     items->length = 1;
     return items;
 }
@@ -46,10 +37,11 @@ uint8_t talloc_destructor_append ( talloc_destructor_items * items, talloc_destr
     new_item->destructor = destructor;
     new_item->user_data  = user_data;
 
-    uint8_t length = items->length;
+    size_t length = items->length;
     if ( length == 1 ) {
         void ** data = malloc ( sizeof ( uintptr_t ) * 2 );
         if ( data == NULL ) {
+            free ( new_item );
             return 2;
         }
         talloc_destructor_item * old_item = ( talloc_destructor_item * ) items->data;
@@ -62,6 +54,7 @@ uint8_t talloc_destructor_append ( talloc_destructor_items * items, talloc_destr
         length ++;
         void ** data = realloc ( items->data, sizeof ( uintptr_t ) * length );
         if ( data == NULL ) {
+            free ( new_item );
             return 3;
         }
         data[length - 1] = new_item;
@@ -80,22 +73,16 @@ uint8_t talloc_add_destructor ( const void * child_data, talloc_destructor destr
     }
     talloc_chunk * child = talloc_chunk_from_data ( child_data );
 
-    talloc_destructor_items * items = talloc_ext_get ( child, TALLOC_EXT_INDEX_DESTRUCTOR );
+    talloc_destructor_items * items = child->destructors;
     if ( items == NULL ) {
         items = talloc_destructor_items_new ( destructor, user_data );
         if ( items == NULL ) {
             return 2;
         }
-        if ( talloc_ext_set ( child, TALLOC_EXT_INDEX_DESTRUCTOR, items ) != 0 ) {
-            talloc_destructor_items_free ( items );
-            return 3;
-        }
-        child->ext->mode |= TALLOC_MODE_DESTRUCTOR;
+        child->destructors = items;
     } else {
         if ( talloc_destructor_append ( items, destructor, user_data ) != 0 ) {
-            talloc_destructor_items_free ( items );
-            child->ext->mode &= ~ TALLOC_MODE_DESTRUCTOR;
-            return 4;
+            return 3;
         }
     }
 
@@ -123,26 +110,22 @@ bool destructor_comparator_strict ( talloc_destructor_item * item, talloc_destru
 typedef bool ( * destructor_comparator ) ( talloc_destructor_item * item, talloc_destructor destructor, void * user_data );
 
 static inline
-bool process_destructors ( talloc_chunk * child, talloc_destructor_items * items, destructor_comparator comparator, talloc_destructor destructor, void * user_data )
+bool delete_destructors_by_comparator ( talloc_chunk * child, talloc_destructor_items * items, destructor_comparator comparator, talloc_destructor destructor, void * user_data )
 {
-    uint8_t length = items->length;
-    void ** data   = items->data;
+    size_t length = items->length;
+    void ** data  = items->data;
 
     if ( length == 1 ) {
         talloc_destructor_item * item = ( talloc_destructor_item * ) data;
         if ( comparator ( item, destructor, user_data ) ) {
-            free ( item );
-            free ( items );
-            child->ext->mode &= ~ TALLOC_MODE_DESTRUCTOR;
-            if ( talloc_ext_set ( child, TALLOC_EXT_INDEX_DESTRUCTOR, NULL ) != 0 ) {
-                return false;
-            }
+            talloc_destructor_items_free ( items );
+            child->destructors = NULL;
         }
         return true;
     }
 
-    uint8_t diff = 0;
-    for ( uint8_t index = 0; index < length; index ++ ) {
+    size_t diff = 0;
+    for ( size_t index = 0; index < length; index ++ ) {
         talloc_destructor_item * item = data[index];
         if ( comparator ( item, destructor, user_data ) ) {
             free ( item );
@@ -154,11 +137,8 @@ bool process_destructors ( talloc_chunk * child, talloc_destructor_items * items
 
     items->length = length -= diff;
     if ( length == 0 ) {
-        free ( items );
-        child->ext->mode &= ~ TALLOC_MODE_DESTRUCTOR;
-        if ( talloc_ext_set ( child, TALLOC_EXT_INDEX_DESTRUCTOR, NULL ) != 0 ) {
-            return false;
-        }
+        talloc_destructor_items_free ( items );
+        child->destructors = NULL;
     } else if ( length == 1 ) {
         talloc_destructor_item * item = data[0];
         free ( data );
@@ -182,13 +162,10 @@ uint8_t delete_destructors ( const void * child_data, destructor_comparator comp
     }
     talloc_chunk * child = talloc_chunk_from_data ( child_data );
 
-    if ( child->ext != NULL && ( child->ext->mode & TALLOC_MODE_DESTRUCTOR ) != 0 ) {
-        talloc_destructor_items * items = talloc_ext_get ( child, TALLOC_EXT_INDEX_DESTRUCTOR );
-        if ( items == NULL ) {
+    talloc_destructor_items * items = child->destructors;
+    if ( items != NULL ) {
+        if ( !delete_destructors_by_comparator ( child, items, comparator, destructor, user_data ) ) {
             return 2;
-        }
-        if ( !process_destructors ( child, items, comparator, destructor, user_data ) ) {
-            return 3;
         }
     }
     return 0;
@@ -216,16 +193,22 @@ uint8_t talloc_clear_destructors ( const void * child_data )
     }
     talloc_chunk * child = talloc_chunk_from_data ( child_data );
 
-    if ( child->ext != NULL && ( child->ext->mode & TALLOC_MODE_DESTRUCTOR ) != 0 ) {
-        talloc_destructor_items * items = talloc_ext_get ( child, TALLOC_EXT_INDEX_DESTRUCTOR );
-        if ( items == NULL ) {
-            return 2;
-        }
+    talloc_destructor_items * items = child->destructors;
+    if ( items != NULL ) {
         talloc_destructor_items_free ( items );
-        if ( talloc_ext_set ( child, TALLOC_EXT_INDEX_DESTRUCTOR, NULL ) != 0 ) {
-            return 3;
-        }
-        child->ext->mode &= ~ TALLOC_MODE_DESTRUCTOR;
+        child->destructors = NULL;
     }
     return 0;
 }
+
+extern inline
+void talloc_destructor_items_free ( talloc_destructor_items * items );
+
+extern inline
+uint8_t talloc_destructor_run ( void * child_data, talloc_destructor_item * item );
+
+extern inline
+void talloc_destructor_on_add ( talloc_chunk * child );
+
+extern inline
+uint8_t talloc_destructor_on_del ( talloc_chunk * child );

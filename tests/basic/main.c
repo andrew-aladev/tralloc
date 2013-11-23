@@ -404,7 +404,7 @@ bool test_data_without_data_01 ()
 }
 
 #ifdef TALLOC_DEBUG
-bool test_history_event ( uint8_t index, uint8_t mode, talloc_chunk * chunk )
+bool test_history_event ( size_t index, uint8_t mode, talloc_chunk * chunk )
 {
     talloc_event * event = malloc_dynarr_get ( history, index );
     if ( event == NULL ) {
