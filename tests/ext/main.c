@@ -11,10 +11,6 @@
 #include "destructor.h"
 #endif
 
-#ifdef TALLOC_EXT_LENGTH
-#include "length.h"
-#endif
-
 #include "../lib/malloc_dynarr.h"
 
 void * root;
@@ -52,13 +48,6 @@ int main ()
     if ( !test_destructor () ) {
         free_data ();
         return 2;
-    }
-#endif
-
-#ifdef TALLOC_EXT_LENGTH
-    if ( !test_length () ) {
-        free_data ();
-        return 3;
     }
 #endif
 

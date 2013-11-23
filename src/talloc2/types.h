@@ -24,15 +24,13 @@ typedef struct talloc_destructor_item_t {
 } talloc_destructor_item;
 
 enum {
-    TALLOC_MODE_DESTRUCTOR = 1,
-    TALLOC_MODE_LENGTH     = 1 << 1
+    TALLOC_MODE_DESTRUCTOR = 1
 };
 
 // these are indexes in array, which will be reallocated
 // should be sorted by typical usage times. less index - more usage
 enum {
-    TALLOC_EXT_INDEX_DESTRUCTOR = 0,
-    TALLOC_EXT_INDEX_LENGTH
+    TALLOC_EXT_INDEX_DESTRUCTOR = 0
 };
 
 typedef struct talloc_ext_t {

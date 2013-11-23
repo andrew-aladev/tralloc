@@ -19,10 +19,6 @@
 #include "ext/destructor.h"
 #endif
 
-#ifdef TALLOC_EXT_LENGTH
-#include "ext/length.h"
-#endif
-
 #ifdef TALLOC_DEBUG
 // Full global history of operations
 typedef uint8_t ( * talloc_callback ) ( talloc_chunk * chunk );
@@ -48,12 +44,6 @@ uint8_t talloc_on_add ( talloc_chunk * child, size_t length, uint8_t ext_mode )
 #ifdef TALLOC_EXT
     child->ext = NULL;
 
-#ifdef TALLOC_EXT_LENGTH
-    if ( talloc_add_length ( child, length, ext_mode ) != 0 ) {
-        return 1;
-    }
-#endif
-
     if ( child->ext != NULL ) {
         child->ext->mode = ext_mode;
     }
@@ -73,11 +63,6 @@ uint8_t talloc_on_add ( talloc_chunk * child, size_t length, uint8_t ext_mode )
 inline
 uint8_t talloc_on_update ( talloc_chunk * child, size_t length )
 {
-#ifdef TALLOC_EXT_LENGTH
-    if ( talloc_set_length ( child, length ) != 0 ) {
-        return 1;
-    }
-#endif
 
 #ifdef TALLOC_DEBUG
     if ( talloc_debug_on_update != NULL ) {
@@ -109,12 +94,6 @@ uint8_t talloc_on_del ( talloc_chunk * child )
 {
 #ifdef TALLOC_EXT_DESTRUCTOR
     if ( talloc_destructor_on_del ( child ) != 0 ) {
-        return 1;
-    }
-#endif
-
-#ifdef TALLOC_EXT_LENGTH
-    if ( talloc_length_on_del ( child ) != 0 ) {
         return 1;
     }
 #endif
