@@ -8,62 +8,21 @@
 #include <stdbool.h>
 
 static inline
-talloc_destructor_items * talloc_destructor_items_new ( talloc_destructor destructor, void * user_data )
-{
-    talloc_destructor_items * items = malloc ( sizeof ( talloc_destructor_items ) );
-    if ( items == NULL ) {
-        return NULL;
-    }
-    talloc_destructor_item * item = malloc ( sizeof ( talloc_destructor_item ) );
-    if ( item == NULL ) {
-        free ( items );
-        return NULL;
-    }
-    item->destructor = destructor;
-    item->user_data  = user_data;
-
-    items->data   = ( void ** ) item;
-    items->length = 1;
-    return items;
-}
-
-static inline
-uint8_t talloc_destructor_append ( talloc_destructor_items * items, talloc_destructor destructor, void * user_data )
+bool talloc_destructor_append ( talloc_chunk * child, talloc_destructor destructor, void * user_data )
 {
     talloc_destructor_item * new_item = malloc ( sizeof ( talloc_destructor_item ) );
     if ( new_item == NULL ) {
-        return 1;
+        return false;
     }
     new_item->destructor = destructor;
     new_item->user_data  = user_data;
+    new_item->next       = NULL;
 
-    size_t length = items->length;
-    if ( length == 1 ) {
-        void ** data = malloc ( sizeof ( uintptr_t ) * 2 );
-        if ( data == NULL ) {
-            free ( new_item );
-            return 2;
-        }
-        talloc_destructor_item * old_item = ( talloc_destructor_item * ) items->data;
-        data[0] = old_item;
-        data[1] = new_item;
+    talloc_destructor_item * first_item = child->first_destructor_item;
+    child->first_destructor_item        = new_item;
+    new_item->next                      = first_item;
 
-        items->data   = data;
-        items->length = 2;
-    } else {
-        length ++;
-        void ** data = realloc ( items->data, sizeof ( uintptr_t ) * length );
-        if ( data == NULL ) {
-            free ( new_item );
-            return 3;
-        }
-        data[length - 1] = new_item;
-
-        items->data   = data;
-        items->length = length;
-    }
-
-    return 0;
+    return true;
 }
 
 uint8_t talloc_add_destructor ( const void * child_data, talloc_destructor destructor, void * user_data )
@@ -73,17 +32,8 @@ uint8_t talloc_add_destructor ( const void * child_data, talloc_destructor destr
     }
     talloc_chunk * child = talloc_chunk_from_data ( child_data );
 
-    talloc_destructor_items * items = child->destructors;
-    if ( items == NULL ) {
-        items = talloc_destructor_items_new ( destructor, user_data );
-        if ( items == NULL ) {
-            return 2;
-        }
-        child->destructors = items;
-    } else {
-        if ( talloc_destructor_append ( items, destructor, user_data ) != 0 ) {
-            return 3;
-        }
+    if ( !talloc_destructor_append ( child, destructor, user_data ) ) {
+        return 2;
     }
 
     return 0;
@@ -110,45 +60,25 @@ bool destructor_comparator_strict ( talloc_destructor_item * item, talloc_destru
 typedef bool ( * destructor_comparator ) ( talloc_destructor_item * item, talloc_destructor destructor, void * user_data );
 
 static inline
-bool delete_destructors_by_comparator ( talloc_chunk * child, talloc_destructor_items * items, destructor_comparator comparator, talloc_destructor destructor, void * user_data )
+void delete_destructors_by_comparator ( talloc_chunk * child, destructor_comparator comparator, talloc_destructor destructor, void * user_data )
 {
-    size_t length = items->length;
-    void ** data  = items->data;
+    talloc_destructor_item * item = child->first_destructor_item;
+    talloc_destructor_item * next;
+    talloc_destructor_item * prev = NULL;
 
-    if ( length == 1 ) {
-        talloc_destructor_item * item = ( talloc_destructor_item * ) data;
-        if ( comparator ( item, destructor, user_data ) ) {
-            talloc_destructor_items_free ( items );
-            child->destructors = NULL;
-        }
-        return true;
-    }
-
-    size_t diff = 0;
-    for ( size_t index = 0; index < length; index ++ ) {
-        talloc_destructor_item * item = data[index];
+    while ( item != NULL ) {
+        next = item->next;
         if ( comparator ( item, destructor, user_data ) ) {
             free ( item );
-            diff ++;
-        } else if ( diff != 0 ) {
-            data[index - diff] = item;
+            if ( prev == NULL ) {
+                child->first_destructor_item = next;
+            } else {
+                prev->next = next;
+            }
+        } else {
+            prev = item;
         }
-    }
-
-    items->length = length -= diff;
-    if ( length == 0 ) {
-        talloc_destructor_items_free ( items );
-        child->destructors = NULL;
-    } else if ( length == 1 ) {
-        talloc_destructor_item * item = data[0];
-        free ( data );
-        items->data = ( void ** ) item;
-    } else {
-        void ** new_data = realloc ( data, sizeof ( uintptr_t ) * length );
-        if ( new_data == NULL ) {
-            return false;
-        }
-        items->data = new_data;
+        item = next;
     }
 
     return true;
@@ -162,12 +92,7 @@ uint8_t delete_destructors ( const void * child_data, destructor_comparator comp
     }
     talloc_chunk * child = talloc_chunk_from_data ( child_data );
 
-    talloc_destructor_items * items = child->destructors;
-    if ( items != NULL ) {
-        if ( !delete_destructors_by_comparator ( child, items, comparator, destructor, user_data ) ) {
-            return 2;
-        }
-    }
+    delete_destructors_by_comparator ( child, comparator, destructor, user_data );
     return 0;
 }
 
@@ -193,16 +118,13 @@ uint8_t talloc_clear_destructors ( const void * child_data )
     }
     talloc_chunk * child = talloc_chunk_from_data ( child_data );
 
-    talloc_destructor_items * items = child->destructors;
-    if ( items != NULL ) {
-        talloc_destructor_items_free ( items );
-        child->destructors = NULL;
-    }
+    talloc_destructor_free ( child->first_destructor_item );
+    child->first_destructor_item = NULL;
     return 0;
 }
 
 extern inline
-void talloc_destructor_items_free ( talloc_destructor_items * items );
+void talloc_destructor_free ( talloc_destructor_item * item );
 
 extern inline
 uint8_t talloc_destructor_run ( void * child_data, talloc_destructor_item * item );

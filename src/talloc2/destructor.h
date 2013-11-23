@@ -14,27 +14,18 @@
 inline
 void talloc_destructor_on_add ( talloc_chunk * child )
 {
-    child->destructors = NULL;
+    child->first_destructor_item = NULL;
 }
 
 inline
-void talloc_destructor_items_free ( talloc_destructor_items * items )
+void talloc_destructor_free ( talloc_destructor_item * current )
 {
-    if ( items == NULL ) {
-        return;
+    talloc_destructor_item * next;
+    while ( current != NULL ) {
+        next = current->next;
+        free ( current );
+        current = next;
     }
-
-    if ( items->length == 1 ) {
-        free ( items->data );
-    } else {
-        size_t index;
-        for ( index = 0; index < items->length; index ++ ) {
-            free ( items->data[index] );
-        }
-        free ( items->data );
-    }
-
-    free ( items );
 }
 
 inline
@@ -53,26 +44,19 @@ uint8_t talloc_destructor_run ( void * child_data, talloc_destructor_item * item
 inline
 uint8_t talloc_destructor_on_del ( talloc_chunk * child )
 {
-    talloc_destructor_items * items = child->destructors;
-    if ( items != NULL ) {
-        void * child_data = talloc_data_from_chunk ( child );
-        if ( items->length == 1 ) {
-            if ( talloc_destructor_run ( child_data, ( talloc_destructor_item * ) items->data ) != 0 ) {
-                talloc_destructor_items_free ( items );
-                return 2;
-            }
-        } else {
-            size_t index;
-            for ( index = 0; index < items->length; index ++ ) {
-                if ( talloc_destructor_run ( child_data, ( talloc_destructor_item * ) items->data[index] ) != 0 ) {
-                    talloc_destructor_items_free ( items );
-                    return 3;
-                }
-            }
-        }
+    void * child_data = talloc_data_from_chunk ( child );
+    talloc_destructor_item * first_item = child->first_destructor_item;
+    talloc_destructor_item * item       = first_item;
 
-        talloc_destructor_items_free ( items );
+    while ( item != NULL ) {
+        if ( talloc_destructor_run ( child_data, item ) != 0 ) {
+            talloc_destructor_free ( first_item );
+            return 1;
+        }
+        item = item->next;
     }
+
+    talloc_destructor_free ( first_item );
     return 0;
 }
 

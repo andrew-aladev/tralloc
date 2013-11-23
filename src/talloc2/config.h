@@ -1,4 +1,4 @@
-/* #undef TALLOC_DEBUG */
+#define TALLOC_DEBUG
 #define TALLOC_EVENTS
 #define TALLOC_DESTRUCTOR
 #define TALLOC_UTILS_BUFFER

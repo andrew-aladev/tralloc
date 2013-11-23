@@ -77,17 +77,17 @@ bool test_destructor ()
     }
 
     talloc_chunk * chunk_03 = talloc_chunk_from_data ( text_03 );
-    talloc_destructor_items * items = chunk_03->destructors;
     talloc_destructor_item * item;
 
     if (
-        items->length != 6 ||
-        ( item = items->data[0] ) == NULL || item->destructor != destructor_empty_2 || item->user_data != &user_data ||
-        ( item = items->data[1] ) == NULL || item->destructor != destructor_empty_1 || item->user_data != NULL ||
-        ( item = items->data[2] ) == NULL || item->destructor != destructor_empty_2 || item->user_data != NULL ||
-        ( item = items->data[3] ) == NULL || item->destructor != destructor_empty_2 || item->user_data != &user_data ||
-        ( item = items->data[4] ) == NULL || item->destructor != destructor_empty_1 || item->user_data != &user_data ||
-        ( item = items->data[5] ) == NULL || item->destructor != destructor_empty_1 || item->user_data != NULL
+        ( item = chunk_03->first_destructor_item ) == NULL ||
+        item->destructor != destructor_empty_1 || item->user_data != NULL       || ( item = item->next ) == NULL ||
+        item->destructor != destructor_empty_1 || item->user_data != &user_data || ( item = item->next ) == NULL ||
+        item->destructor != destructor_empty_2 || item->user_data != &user_data || ( item = item->next ) == NULL ||
+        item->destructor != destructor_empty_2 || item->user_data != NULL       || ( item = item->next ) == NULL ||
+        item->destructor != destructor_empty_1 || item->user_data != NULL       || ( item = item->next ) == NULL ||
+        item->destructor != destructor_empty_2 || item->user_data != &user_data ||
+        item->next != NULL
     ) {
         talloc_free ( strings );
         return false;
@@ -95,12 +95,13 @@ bool test_destructor ()
 
     if (
         talloc_del_destructor ( text_03, destructor_empty_2, NULL ) != 0 ||
-        items->length != 5 ||
-        ( item = items->data[0] ) == NULL || item->destructor != destructor_empty_2 || item->user_data != &user_data ||
-        ( item = items->data[1] ) == NULL || item->destructor != destructor_empty_1 || item->user_data != NULL ||
-        ( item = items->data[2] ) == NULL || item->destructor != destructor_empty_2 || item->user_data != &user_data ||
-        ( item = items->data[3] ) == NULL || item->destructor != destructor_empty_1 || item->user_data != &user_data ||
-        ( item = items->data[4] ) == NULL || item->destructor != destructor_empty_1 || item->user_data != NULL
+        ( item = chunk_03->first_destructor_item ) == NULL ||
+        item->destructor != destructor_empty_1 || item->user_data != NULL       || ( item = item->next ) == NULL ||
+        item->destructor != destructor_empty_1 || item->user_data != &user_data || ( item = item->next ) == NULL ||
+        item->destructor != destructor_empty_2 || item->user_data != &user_data || ( item = item->next ) == NULL ||
+        item->destructor != destructor_empty_1 || item->user_data != NULL       || ( item = item->next ) == NULL ||
+        item->destructor != destructor_empty_2 || item->user_data != &user_data ||
+        item->next != NULL
     ) {
         talloc_free ( strings );
         return false;
@@ -108,10 +109,11 @@ bool test_destructor ()
 
     if (
         talloc_del_destructor_by_function ( text_03, destructor_empty_2 ) != 0 ||
-        items->length != 3 ||
-        ( item = items->data[0] ) == NULL || item->destructor != destructor_empty_1 || item->user_data != NULL ||
-        ( item = items->data[1] ) == NULL || item->destructor != destructor_empty_1 || item->user_data != &user_data ||
-        ( item = items->data[2] ) == NULL || item->destructor != destructor_empty_1 || item->user_data != NULL
+        ( item = chunk_03->first_destructor_item ) == NULL ||
+        item->destructor != destructor_empty_1 || item->user_data != NULL       || ( item = item->next ) == NULL ||
+        item->destructor != destructor_empty_1 || item->user_data != &user_data || ( item = item->next ) == NULL ||
+        item->destructor != destructor_empty_1 || item->user_data != NULL       ||
+        item->next != NULL
     ) {
         talloc_free ( strings );
         return false;
@@ -119,8 +121,9 @@ bool test_destructor ()
 
     if (
         talloc_del_destructor_by_data ( text_03, NULL ) != 0 ||
-        items->length != 1 ||
-        ( item = ( talloc_destructor_item * ) items->data ) == NULL || item->destructor != destructor_empty_1 || item->user_data != &user_data
+        ( item = chunk_03->first_destructor_item ) == NULL ||
+        item->destructor != destructor_empty_1 || item->user_data != &user_data ||
+        item->next != NULL
     ) {
         talloc_free ( strings );
         return false;
@@ -128,7 +131,7 @@ bool test_destructor ()
 
     if (
         talloc_del_destructor_by_data ( text_03, &user_data ) != 0 ||
-        chunk_03->destructors != NULL
+        chunk_03->first_destructor_item != NULL
     ) {
         talloc_free ( strings );
         return false;
