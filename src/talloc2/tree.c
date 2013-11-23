@@ -206,7 +206,7 @@ uint8_t talloc_move ( const void * child_data, const void * parent_data )
 static
 bool free_recursive ( talloc_chunk * root )
 {
-    bool result = true;
+    bool result          = true;
     talloc_chunk * child = root->first_child;
 
 #ifdef TALLOC_EVENTS
@@ -253,3 +253,6 @@ talloc_chunk * talloc_chunk_from_data ( const void * data );
 
 extern inline
 void * talloc_new ( const void * parent_data );
+
+
+

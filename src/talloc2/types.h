@@ -25,9 +25,11 @@ typedef struct talloc_chunk_t {
     struct talloc_chunk_t * first_child;
     struct talloc_chunk_t * prev;
     struct talloc_chunk_t * next;
+
 #ifdef TALLOC_DESTRUCTOR
     talloc_destructor_item * first_destructor_item;
 #endif
+
 } talloc_chunk;
 
 #endif
