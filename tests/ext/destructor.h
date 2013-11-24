@@ -5,6 +5,7 @@
 
 #include <talloc2/helpers.h>
 #include <talloc2/ext/main.h>
+#include <talloc2/ext/destructor.h>
 
 #include "../lib/malloc_dynarr.h"
 

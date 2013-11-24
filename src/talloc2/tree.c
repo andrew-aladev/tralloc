@@ -13,6 +13,10 @@
 #include "events.h"
 #endif
 
+#ifdef TALLOC_REFERENCE
+#include "reference/main.h"
+#endif
+
 static inline
 talloc_chunk * _malloc ( size_t length )
 {
@@ -50,8 +54,19 @@ talloc_chunk * _realloc ( talloc_chunk * chunk, size_t length )
 static inline
 void _free ( talloc_chunk * chunk )
 {
-    void * memory = talloc_memory_from_chunk ( chunk );
-    free ( memory );
+
+#ifdef TALLOC_MODE
+
+    if ( chunk->mode == TALLOC_MODE_USUAL ) {
+        free ( talloc_memory_from_chunk ( chunk ) );
+    } else {
+        talloc_reference_free ( chunk );
+    }
+
+#else
+    free ( talloc_memory_from_chunk ( chunk ) );
+#endif
+
 }
 
 static inline
@@ -85,8 +100,8 @@ uint8_t _add ( const void * parent_data, talloc_chunk * child )
         child->next   = NULL;
     }
 
-#ifdef TALLOC_EXT
-    child->mode = TALLOC_MODE_EXT;
+#ifdef TALLOC_MODE
+    child->mode = TALLOC_MODE_USUAL;
 #endif
 
     return 0;

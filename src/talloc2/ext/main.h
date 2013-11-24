@@ -6,6 +6,7 @@
 #ifndef TALLOC_EXT_MAIN_H
 #define TALLOC_EXT_MAIN_H
 
+#include "../tree.h"
 #include "destructor.h"
 
 inline

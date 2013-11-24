@@ -12,7 +12,12 @@
 #include "types.h"
 
 #ifdef TALLOC_EXT
+
 #include "ext/main.h"
+#ifdef TALLOC_EXT_DESTRUCTOR
+#include "ext/destructor.h"
+#endif
+
 #endif
 
 #ifdef TALLOC_DEBUG

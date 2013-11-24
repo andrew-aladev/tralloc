@@ -8,6 +8,8 @@
 
 #include "../tree.h"
 
+#include "stdlib.h"
+
 inline
 talloc_reference * talloc_reference_from_chunk ( talloc_chunk * chunk )
 {
@@ -19,5 +21,15 @@ talloc_chunk * talloc_chunk_from_reference ( talloc_reference * reference )
 {
     return ( talloc_chunk * ) ( ( uintptr_t ) reference + sizeof ( talloc_reference ) );
 }
+
+inline
+void talloc_reference_free ( talloc_chunk * chunk )
+{
+    talloc_reference * reference = talloc_reference_from_chunk ( chunk );
+    free ( reference );
+}
+
+uint8_t talloc_add_reference ( const void * parent_data, const void * child_data );
+uint8_t talloc_del_reference ( const void * parent_data, const void * child_data );
 
 #endif
