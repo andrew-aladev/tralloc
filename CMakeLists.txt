@@ -3,7 +3,7 @@ project (talloc2)
 
 set (
     BOOLEANS
-    TALLOC_DESTRUCTOR
+    TALLOC_EXT_DESTRUCTOR
     TALLOC_UTILS_BUFFER TALLOC_UTILS_DYNARR TALLOC_UTILS_LIST
     TALLOC_SHARED TALLOC_STATIC TALLOC_TEST
 )
@@ -14,13 +14,17 @@ foreach (bool ${BOOLEANS})
 endforeach()
 
 if (TALLOC_UTILS_LIST MATCHES true)
-    if (TALLOC_DESTRUCTOR MATCHES false)
+    if (TALLOC_EXT_DESTRUCTOR MATCHES false)
         set (TALLOC_UTILS_LIST false)
-        message ("talloc_list cannot be compiled, it depends on TALLOC_DESTRUCTOR")
+        message ("talloc_list cannot be compiled, it depends on TALLOC_EXT_DESTRUCTOR")
     endif ()
 endif ()
+
 if (TALLOC_UTILS_BUFFER MATCHES true OR TALLOC_UTILS_DYNARR MATCHES true OR TALLOC_UTILS_LIST)
     set (TALLOC_UTILS true)
+endif ()
+if (TALLOC_EXT_DESTRUCTOR MATCHES true)
+    set (TALLOC_EXT true)
 endif ()
 
 if (NOT DEFINED TALLOC_TARGET)

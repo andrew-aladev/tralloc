@@ -3,10 +3,10 @@
 // talloc2 is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Lesser Public License for more details.
 // You should have received a copy of the GNU General Lesser Public License along with talloc2. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TALLOC_DESTRUCTOR_H
-#define TALLOC_DESTRUCTOR_H
+#ifndef TALLOC_EXT_DESTRUCTOR_H
+#define TALLOC_EXT_DESTRUCTOR_H
 
-#include "tree.h"
+#include "../tree.h"
 
 #include <stdlib.h>
 #include <stdio.h>

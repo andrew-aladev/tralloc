@@ -11,8 +11,8 @@
 
 #include "types.h"
 
-#ifdef TALLOC_DESTRUCTOR
-#include "destructor.h"
+#ifdef TALLOC_EXT_DESTRUCTOR
+#include "ext/destructor.h"
 #endif
 
 #ifdef TALLOC_DEBUG
@@ -46,7 +46,7 @@ uint8_t talloc_on_add ( talloc_chunk * child, size_t length )
     }
 #endif
 
-#ifdef TALLOC_DESTRUCTOR
+#ifdef TALLOC_EXT_DESTRUCTOR
     talloc_destructor_on_add ( child );
 #endif
 
@@ -87,7 +87,7 @@ inline
 uint8_t talloc_on_del ( talloc_chunk * child )
 {
 
-#ifdef TALLOC_DESTRUCTOR
+#ifdef TALLOC_EXT_DESTRUCTOR
     if ( talloc_destructor_on_del ( child ) != 0 ) {
         return 1;
     }

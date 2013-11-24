@@ -4,7 +4,7 @@
 // You should have received a copy of the GNU General Lesser Public License along with talloc2. If not, see <http://www.gnu.org/licenses/>.
 
 #include "list.h"
-#include "../destructor.h"
+#include "../ext/destructor.h"
 
 #include <stdlib.h>
 
