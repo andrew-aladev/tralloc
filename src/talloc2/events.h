@@ -6,9 +6,6 @@
 #ifndef TALLOC_EVENTS_H
 #define TALLOC_EVENTS_H
 
-#include <stdint.h>
-#include <stddef.h>
-
 #include "types.h"
 
 #ifdef TALLOC_EXT
@@ -52,7 +49,9 @@ uint8_t talloc_on_add ( talloc_chunk * chunk )
 #endif
 
 #ifdef TALLOC_EXT
-    talloc_ext_on_add ( chunk );
+    if ( chunk->mode == TALLOC_MODE_EXT ) {
+        talloc_ext_on_add ( chunk );
+    }
 #endif
 
     return 0;
@@ -93,8 +92,10 @@ uint8_t talloc_on_del ( talloc_chunk * chunk )
 {
 
 #ifdef TALLOC_EXT
-    if ( talloc_ext_on_del ( chunk ) != 0 ) {
-        return 1;
+    if ( chunk->mode == TALLOC_MODE_EXT ) {
+        if ( talloc_ext_on_del ( chunk ) != 0 ) {
+            return 1;
+        }
     }
 #endif
 

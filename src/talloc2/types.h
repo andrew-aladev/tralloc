@@ -45,7 +45,12 @@ typedef struct talloc_ext_t {
 
 #ifdef TALLOC_MODE
 enum {
+
+#ifdef TALLOC_EXT
+    TALLOC_MODE_EXT = 0,
+#else
     TALLOC_MODE_USUAL = 0,
+#endif
 
 #ifdef TALLOC_REFERENCE
     TALLOC_MODE_REFERENCE
@@ -65,13 +70,5 @@ typedef struct talloc_chunk_t {
 #endif
 
 } talloc_chunk;
-
-#ifdef TALLOC_EXT
-#define HEAD_SIZE         sizeof ( talloc_chunk ) + sizeof ( talloc_ext )
-#define HEAD_CHUNK_OFFSET sizeof ( talloc_ext )
-#else
-#define HEAD_SIZE         sizeof ( talloc_chunk )
-#define HEAD_CHUNK_OFFSET 0
-#endif
 
 #endif

@@ -77,7 +77,7 @@ bool test_destructor ()
         return false;
     }
 
-    talloc_ext * ext_03 = talloc_ext_from_chunk ( talloc_chunk_from_data ( text_03 ) );
+    talloc_ext * ext_03 = talloc_memory_from_ext_chunk ( talloc_chunk_from_data ( text_03 ) );
     talloc_destructor_item * item;
 
     if (

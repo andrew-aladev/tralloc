@@ -6,31 +6,19 @@
 #ifndef TALLOC_EXT_MAIN_H
 #define TALLOC_EXT_MAIN_H
 
-#include "../tree.h"
+#include "chunk.h"
 #include "destructor.h"
-
-inline
-talloc_ext * talloc_ext_from_chunk ( talloc_chunk * chunk )
-{
-    return ( talloc_ext * ) talloc_memory_from_chunk ( chunk );
-}
-
-inline
-talloc_chunk * talloc_chunk_from_ext ( talloc_ext * ext )
-{
-    return talloc_chunk_from_memory ( ext );
-}
 
 inline
 void talloc_ext_on_add ( talloc_chunk * chunk )
 {
-    talloc_destructor_on_add ( chunk, talloc_ext_from_chunk ( chunk ) );
+    talloc_destructor_on_add ( chunk, talloc_memory_from_ext_chunk ( chunk ) );
 }
 
 inline
 uint8_t talloc_ext_on_del ( talloc_chunk * chunk )
 {
-    return talloc_destructor_on_del ( chunk, talloc_ext_from_chunk ( chunk ) );
+    return talloc_destructor_on_del ( chunk, talloc_memory_from_ext_chunk ( chunk ) );
 }
 
 #endif

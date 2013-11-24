@@ -3,7 +3,34 @@
 // talloc2 is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Lesser Public License for more details.
 // You should have received a copy of the GNU General Lesser Public License along with talloc2. If not, see <http://www.gnu.org/licenses/>.
 
-#include "main.h"
+#ifndef TALLOC_CHUNK_H
+#define TALLOC_CHUNK_H
 
-extern inline void    talloc_ext_on_add ( talloc_chunk * chunk );
-extern inline uint8_t talloc_ext_on_del ( talloc_chunk * chunk );
+#include "types.h"
+#include <stdlib.h>
+
+inline
+talloc_chunk * talloc_usual_chunk_malloc ( size_t length )
+{
+    return ( talloc_chunk * ) malloc ( sizeof ( talloc_chunk ) + length );
+}
+
+inline
+talloc_chunk * talloc_usual_chunk_calloc ( size_t length )
+{
+    return ( talloc_chunk * ) calloc ( 1, sizeof ( talloc_chunk ) + length );
+}
+
+inline
+talloc_chunk * talloc_usual_chunk_realloc ( talloc_chunk * chunk, size_t length )
+{
+    return ( talloc_chunk * ) realloc ( chunk, sizeof ( talloc_chunk ) + length );
+}
+
+inline
+void talloc_usual_chunk_free ( talloc_chunk * chunk )
+{
+    free ( chunk );
+}
+
+#endif

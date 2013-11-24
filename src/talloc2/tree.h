@@ -6,22 +6,11 @@
 #ifndef TALLOC_TREE_H
 #define TALLOC_TREE_H
 
-#include <stddef.h>
-#include <stdint.h>
+#include "chunk.h"
 
-#include "types.h"
-
-inline
-void * talloc_memory_from_chunk ( talloc_chunk * chunk )
-{
-    return ( void * ) ( ( uintptr_t ) chunk - HEAD_CHUNK_OFFSET );
-}
-
-inline
-void * talloc_chunk_from_memory ( void * memory )
-{
-    return ( void * ) ( ( uintptr_t ) memory + HEAD_CHUNK_OFFSET );
-}
+#ifdef TALLOC_EXT
+#include "ext/chunk.h"
+#endif
 
 inline
 void * talloc_data_from_chunk ( talloc_chunk * chunk )
@@ -35,7 +24,53 @@ talloc_chunk * talloc_chunk_from_data ( const void * data )
     return ( talloc_chunk * ) ( ( uintptr_t ) data - sizeof ( talloc_chunk ) );
 }
 
-void *  talloc ( const void * parent_data, size_t length );
+uint8_t talloc_add ( const void * parent_data, talloc_chunk * child );
+
+inline
+void * talloc ( const void * parent_data, size_t length )
+{
+
+    talloc_chunk * chunk;
+#ifdef TALLOC_EXT
+    chunk = talloc_ext_chunk_malloc ( length );
+#else
+    chunk = talloc_usual_chunk_malloc ( length );
+#endif
+
+    if ( talloc_add ( parent_data, chunk ) != 0 ) {
+#ifdef TALLOC_EXT
+        talloc_ext_chunk_free ( chunk );
+#else
+        talloc_usual_chunk_free ( chunk );
+#endif
+        return NULL;
+    }
+
+    return talloc_data_from_chunk ( chunk );
+}
+
+inline
+void * talloc_zero ( const void * parent_data, size_t length )
+{
+
+    talloc_chunk * chunk;
+#ifdef TALLOC_EXT
+    chunk = talloc_ext_chunk_calloc ( length );
+#else
+    chunk = talloc_usual_chunk_calloc ( length );
+#endif
+
+    if ( talloc_add ( parent_data, chunk ) != 0 ) {
+#ifdef TALLOC_EXT
+        talloc_ext_chunk_free ( chunk );
+#else
+        talloc_usual_chunk_free ( chunk );
+#endif
+        return NULL;
+    }
+
+    return talloc_data_from_chunk ( chunk );
+}
 
 inline
 void * talloc_new ( const void * parent_data )
@@ -43,7 +78,6 @@ void * talloc_new ( const void * parent_data )
     return talloc ( parent_data, 0 );
 }
 
-void *  talloc_zero    ( const void * parent_data, size_t length );
 void *  talloc_realloc ( const void * child_data, size_t length );
 uint8_t talloc_move    ( const void * child_data, const void * parent_data );
 uint8_t talloc_free    ( void * root_data );

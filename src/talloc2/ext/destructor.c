@@ -3,10 +3,7 @@
 // talloc2 is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Lesser Public License for more details.
 // You should have received a copy of the GNU General Lesser Public License along with talloc2. If not, see <http://www.gnu.org/licenses/>.
 
-#include "main.h"
 #include "destructor.h"
-
-#include <stdbool.h>
 
 static inline
 bool talloc_destructor_append ( talloc_ext * ext, talloc_destructor destructor, void * user_data )
@@ -31,7 +28,7 @@ uint8_t talloc_add_destructor ( const void * chunk_data, talloc_destructor destr
     if ( chunk_data == NULL ) {
         return 1;
     }
-    talloc_ext * ext = talloc_ext_from_chunk ( talloc_chunk_from_data ( chunk_data ) );
+    talloc_ext * ext = talloc_memory_from_ext_chunk ( talloc_chunk_from_data ( chunk_data ) );
 
     if ( !talloc_destructor_append ( ext, destructor, user_data ) ) {
         return 2;
@@ -89,7 +86,7 @@ uint8_t delete_destructors ( const void * chunk_data, destructor_comparator comp
     if ( chunk_data == NULL ) {
         return 1;
     }
-    talloc_ext * ext = talloc_ext_from_chunk ( talloc_chunk_from_data ( chunk_data ) );
+    talloc_ext * ext = talloc_memory_from_ext_chunk ( talloc_chunk_from_data ( chunk_data ) );
 
     delete_destructors_by_comparator ( ext, comparator, destructor, user_data );
     return 0;
@@ -115,7 +112,7 @@ uint8_t talloc_clear_destructors ( const void * chunk_data )
     if ( chunk_data == NULL ) {
         return 1;
     }
-    talloc_ext * ext = talloc_ext_from_chunk ( talloc_chunk_from_data ( chunk_data ) );
+    talloc_ext * ext = talloc_memory_from_ext_chunk ( talloc_chunk_from_data ( chunk_data ) );
 
     talloc_destructor_free ( ext->first_destructor_item );
     ext->first_destructor_item = NULL;

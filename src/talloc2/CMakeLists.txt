@@ -7,8 +7,8 @@ endif ()
 
 configure_file (${CMAKE_CURRENT_SOURCE_DIR}/config.h.in ${CMAKE_CURRENT_SOURCE_DIR}/config.h)
 
-set (INCLUDES helpers.h tree.h types.h config.h)
-set (SOURCES  helpers.c tree.c)
+set (INCLUDES chunk.h helpers.h tree.h types.h config.h)
+set (SOURCES  chunk.c helpers.c tree.c)
 
 if (TALLOC_EVENTS MATCHES true)
     set (INCLUDES ${INCLUDES} events.h)
