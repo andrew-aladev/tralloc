@@ -23,7 +23,7 @@ typedef struct talloc_destructor_item_t {
 
 #ifdef TALLOC_REFERENCE
 typedef struct talloc_reference_t {
-    struct talloc_ext_t * parent;
+    struct talloc_ext_t *       parent;
     struct talloc_reference_t * prev;
     struct talloc_reference_t * next;
 } talloc_reference;
@@ -37,7 +37,7 @@ typedef struct talloc_ext_t {
 #endif
 
 #ifdef TALLOC_REFERENCE
-    talloc_reference * first_reference_item;
+    talloc_reference * first_reference;
 #endif
 
 } talloc_ext;

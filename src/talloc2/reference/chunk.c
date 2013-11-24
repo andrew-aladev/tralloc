@@ -7,5 +7,5 @@
 
 extern inline talloc_chunk * talloc_reference_chunk_from_memory ( void * memory );
 extern inline void *         talloc_memory_from_reference_chunk ( talloc_chunk * chunk );
-extern inline talloc_chunk * talloc_reference_chunk_malloc      ( size_t length );
+extern inline talloc_chunk * talloc_reference_chunk_new         ();
 extern inline void           talloc_reference_chunk_free        ( talloc_chunk * chunk );

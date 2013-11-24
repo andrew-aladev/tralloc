@@ -4,7 +4,7 @@
 // You should have received a copy of the GNU General Public License along with talloc2. If not, see <http://www.gnu.org/licenses/>.
 
 #include <talloc2/helpers.h>
-#include <talloc2/ext/main.h>
+#include <talloc2/ext/chunk.h>
 #include <talloc2/ext/destructor.h>
 
 #include "../lib/malloc_dynarr.h"

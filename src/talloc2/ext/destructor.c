@@ -3,6 +3,7 @@
 // talloc2 is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Lesser Public License for more details.
 // You should have received a copy of the GNU General Lesser Public License along with talloc2. If not, see <http://www.gnu.org/licenses/>.
 
+#include "chunk.h"
 #include "destructor.h"
 
 static inline
@@ -114,12 +115,48 @@ uint8_t talloc_clear_destructors ( const void * chunk_data )
     }
     talloc_ext * ext = talloc_memory_from_ext_chunk ( talloc_chunk_from_data ( chunk_data ) );
 
-    talloc_destructor_free ( ext->first_destructor_item );
+    talloc_destructor_free_silent ( ext->first_destructor_item );
     ext->first_destructor_item = NULL;
     return 0;
 }
 
-extern inline void    talloc_destructor_free   ( talloc_destructor_item * item );
-extern inline uint8_t talloc_destructor_run    ( void * chunk_data, talloc_destructor_item * item );
-extern inline void    talloc_destructor_on_add ( talloc_chunk * chunk, talloc_ext * ext );
-extern inline uint8_t talloc_destructor_on_del ( talloc_chunk * chunk, talloc_ext * ext );
+static inline
+uint8_t _destructor_run ( void * chunk_data, talloc_destructor_item * item )
+{
+    talloc_destructor destructor = item->destructor;
+    if ( destructor == NULL ) {
+        return 1;
+    }
+    if ( destructor ( chunk_data, item->user_data ) != 0 ) {
+        return 2;
+    }
+    return 0;
+}
+
+bool talloc_destructor_free ( talloc_chunk * chunk, talloc_destructor_item * current )
+{
+    void * chunk_data = talloc_data_from_chunk ( chunk );
+    bool result       = true;
+
+    talloc_destructor_item * next;
+    while ( current != NULL ) {
+        if ( _destructor_run ( chunk_data, current ) ) {
+            result = false;
+        }
+
+        next = current->next;
+        free ( current );
+        current = next;
+    }
+    return result;
+}
+
+void talloc_destructor_free_silent ( talloc_destructor_item * current )
+{
+    talloc_destructor_item * next;
+    while ( current != NULL ) {
+        next = current->next;
+        free ( current );
+        current = next;
+    }
+}

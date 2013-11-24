@@ -8,15 +8,6 @@
 
 #include "types.h"
 
-#ifdef TALLOC_EXT
-
-#include "ext/main.h"
-#ifdef TALLOC_EXT_DESTRUCTOR
-#include "ext/destructor.h"
-#endif
-
-#endif
-
 #ifdef TALLOC_DEBUG
 // Full global history of operations
 typedef uint8_t ( * talloc_callback ) ( talloc_chunk * chunk );
@@ -45,12 +36,6 @@ uint8_t talloc_on_add ( talloc_chunk * chunk )
         if ( talloc_debug_on_add ( chunk ) != 0 ) {
             return 1;
         }
-    }
-#endif
-
-#ifdef TALLOC_EXT
-    if ( chunk->mode == TALLOC_MODE_EXT ) {
-        talloc_ext_on_add ( chunk );
     }
 #endif
 
@@ -91,18 +76,10 @@ inline
 uint8_t talloc_on_del ( talloc_chunk * chunk )
 {
 
-#ifdef TALLOC_EXT
-    if ( chunk->mode == TALLOC_MODE_EXT ) {
-        if ( talloc_ext_on_del ( chunk ) != 0 ) {
-            return 1;
-        }
-    }
-#endif
-
 #ifdef TALLOC_DEBUG
     if ( talloc_debug_on_del != NULL ) {
         if ( talloc_debug_on_del ( chunk ) != 0 ) {
-            return 2;
+            return 1;
         }
     }
 #endif

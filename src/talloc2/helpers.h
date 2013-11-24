@@ -6,9 +6,9 @@
 #ifndef TALLOC_HELPERS_H
 #define TALLOC_HELPERS_H
 
-#include <string.h>
-
 #include "tree.h"
+
+#include <string.h>
 
 inline
 char * talloc_strndup ( const void * parent_data, const char * str, size_t length )

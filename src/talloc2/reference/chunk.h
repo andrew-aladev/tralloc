@@ -22,9 +22,9 @@ void * talloc_memory_from_reference_chunk ( talloc_chunk * chunk )
 }
 
 inline
-talloc_chunk * talloc_reference_chunk_malloc ( size_t length )
+talloc_chunk * talloc_reference_chunk_new ()
 {
-    void * memory = malloc ( sizeof ( talloc_reference ) + sizeof ( talloc_chunk ) + length );
+    void * memory = malloc ( sizeof ( talloc_reference ) + sizeof ( talloc_chunk ) );
     if ( memory == NULL ) {
         return NULL;
     } else {
@@ -37,6 +37,7 @@ talloc_chunk * talloc_reference_chunk_malloc ( size_t length )
 inline
 void talloc_reference_chunk_free ( talloc_chunk * chunk )
 {
+    printf ("123!\n");
     void * memory = talloc_memory_from_reference_chunk ( chunk );
     free ( memory );
 }

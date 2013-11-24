@@ -7,28 +7,26 @@
 #include <talloc2/tree.h>
 #include <talloc2/reference/main.h>
 
-void * root;
-
-bool init_data ()
-{
-    root = talloc_new ( NULL );
-    if ( root == NULL ) {
-        return false;
-    }
-    return true;
-}
-
-void free_data ()
-{
-    talloc_free ( root );
-}
-
 int main ()
 {
-    if ( !init_data () ) {
+    void * root = talloc_new ( NULL );
+    if ( root == NULL ) {
         return 1;
     }
 
-    free_data ();
+    int * a = talloc ( root, sizeof ( int ) );
+    int * b = talloc ( root, sizeof ( int ) );
+    int * c = talloc ( root, sizeof ( int ) );
+    if ( a == NULL || b == NULL || c == NULL ) {
+        return 2;
+    }
+
+    talloc_add_reference ( a, b );
+    talloc_add_reference ( a, b );
+    talloc_add_reference ( a, b );
+
+    if ( talloc_free ( root ) != 0 ) {
+        return 3;
+    }
     return 0;
 }
