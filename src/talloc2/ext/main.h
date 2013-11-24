@@ -3,13 +3,33 @@
 // talloc2 is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Lesser Public License for more details.
 // You should have received a copy of the GNU General Lesser Public License along with talloc2. If not, see <http://www.gnu.org/licenses/>.
 
-#include "events.h"
+#ifndef TALLOC_EXT_MAIN_H
+#define TALLOC_EXT_MAIN_H
 
-#ifdef TALLOC_DEBUG
-extern inline void talloc_set_callback ( talloc_callback on_add, talloc_callback on_update, talloc_callback on_move, talloc_callback on_del );
+#include "destructor.h"
+
+inline
+talloc_ext * talloc_ext_from_chunk ( talloc_chunk * chunk )
+{
+    return ( talloc_ext * ) talloc_memory_from_chunk ( chunk );
+}
+
+inline
+talloc_chunk * talloc_chunk_from_ext ( talloc_ext * ext )
+{
+    return talloc_chunk_from_memory ( ext );
+}
+
+inline
+void talloc_ext_on_add ( talloc_chunk * chunk )
+{
+    talloc_destructor_on_add ( chunk, talloc_ext_from_chunk ( chunk ) );
+}
+
+inline
+uint8_t talloc_ext_on_del ( talloc_chunk * chunk )
+{
+    return talloc_destructor_on_del ( chunk, talloc_ext_from_chunk ( chunk ) );
+}
+
 #endif
-
-extern inline uint8_t talloc_on_add    ( talloc_chunk * chunk );
-extern inline uint8_t talloc_on_update ( talloc_chunk * chunk );
-extern inline uint8_t talloc_on_move   ( talloc_chunk * chunk );
-extern inline uint8_t talloc_on_del    ( talloc_chunk * chunk );

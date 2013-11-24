@@ -13,11 +13,48 @@
 
 #ifdef TALLOC_EXT_DESTRUCTOR
 typedef uint8_t ( * talloc_destructor ) ( void * child_data, void * user_data );
+
 typedef struct talloc_destructor_item_t {
     struct talloc_destructor_item_t * next;
     talloc_destructor destructor;
     void * user_data;
 } talloc_destructor_item;
+#endif
+
+#ifdef TALLOC_REFERENCE
+typedef struct talloc_reference_t {
+    struct talloc_ext_t * parent;
+    struct talloc_reference_t * prev;
+    struct talloc_reference_t * next;
+} talloc_reference;
+#endif
+
+#ifdef TALLOC_EXT
+typedef struct talloc_ext_t {
+
+#ifdef TALLOC_EXT_DESTRUCTOR
+    talloc_destructor_item * first_destructor_item;
+#endif
+
+#ifdef TALLOC_REFERENCE
+    talloc_reference * first_reference_item;
+#endif
+
+} talloc_ext;
+#endif
+
+#ifdef TALLOC_MODE
+enum {
+
+#ifdef TALLOC_EXT
+    TALLOC_MODE_EXT,
+#endif
+
+#ifdef TALLOC_REFERENCE
+    TALLOC_MODE_REFERENCE
+#endif
+
+};
 #endif
 
 typedef struct talloc_chunk_t {
@@ -26,10 +63,18 @@ typedef struct talloc_chunk_t {
     struct talloc_chunk_t * prev;
     struct talloc_chunk_t * next;
 
-#ifdef TALLOC_EXT_DESTRUCTOR
-    talloc_destructor_item * first_destructor_item;
+#ifdef TALLOC_MODE
+    uint8_t mode;
 #endif
 
 } talloc_chunk;
 
+#endif
+
+#ifdef TALLOC_EXT
+#define HEAD_SIZE         sizeof ( talloc_chunk ) + sizeof ( talloc_ext )
+#define HEAD_CHUNK_OFFSET sizeof ( talloc_ext )
+#else
+#define HEAD_SIZE         sizeof ( talloc_chunk )
+#define HEAD_CHUNK_OFFSET 0
 #endif

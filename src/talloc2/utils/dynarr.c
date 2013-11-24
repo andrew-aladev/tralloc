@@ -8,9 +8,6 @@
 #include <stdbool.h>
 #include <string.h>
 
-extern inline
-talloc_dynarr * talloc_dynarr_new ( void * ctx, size_t capacity );
-
 static inline
 uint8_t talloc_dynarr_grow ( talloc_dynarr * arr, size_t new_length, bool null_on_init )
 {
@@ -121,14 +118,8 @@ uint8_t talloc_dynarr_grow_and_set ( talloc_dynarr * arr, size_t position, void 
     return 0;
 }
 
-extern inline
-uint8_t talloc_dynarr_insert_after ( talloc_dynarr * arr, size_t index, void * data );
-
-extern inline
-void talloc_dynarr_set ( talloc_dynarr * arr, size_t position, void * pointer );
-
-extern inline
-void * talloc_dynarr_get ( talloc_dynarr * arr, size_t position );
-
-extern inline
-size_t talloc_dynarr_get_length ( talloc_dynarr * arr );
+extern inline talloc_dynarr * talloc_dynarr_new          ( void * ctx, size_t capacity );
+extern inline uint8_t         talloc_dynarr_insert_after ( talloc_dynarr * arr, size_t index, void * data );
+extern inline void            talloc_dynarr_set          ( talloc_dynarr * arr, size_t position, void * pointer );
+extern inline void *          talloc_dynarr_get          ( talloc_dynarr * arr, size_t position );
+extern inline size_t          talloc_dynarr_get_length   ( talloc_dynarr * arr );

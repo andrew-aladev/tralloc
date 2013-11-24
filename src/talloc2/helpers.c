@@ -5,8 +5,5 @@
 
 #include "helpers.h"
 
-extern inline
-char * talloc_strndup ( const void * parent_data, const char * str, size_t length );
-
-extern inline
-char * talloc_strdup ( const void * parent_data, const char * str );
+extern inline char * talloc_strndup ( const void * parent_data, const char * str, size_t length );
+extern inline char * talloc_strdup  ( const void * parent_data, const char * str );

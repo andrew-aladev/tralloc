@@ -11,8 +11,8 @@
 
 #include "types.h"
 
-#ifdef TALLOC_EXT_DESTRUCTOR
-#include "ext/destructor.h"
+#ifdef TALLOC_EXT
+#include "ext/main.h"
 #endif
 
 #ifdef TALLOC_DEBUG
@@ -35,31 +35,31 @@ void talloc_set_callback ( talloc_callback on_add, talloc_callback on_update, ta
 #endif
 
 inline
-uint8_t talloc_on_add ( talloc_chunk * child, size_t length )
+uint8_t talloc_on_add ( talloc_chunk * chunk )
 {
 
 #ifdef TALLOC_DEBUG
     if ( talloc_debug_on_add != NULL ) {
-        if ( talloc_debug_on_add ( child ) != 0 ) {
+        if ( talloc_debug_on_add ( chunk ) != 0 ) {
             return 1;
         }
     }
 #endif
 
-#ifdef TALLOC_EXT_DESTRUCTOR
-    talloc_destructor_on_add ( child );
+#ifdef TALLOC_EXT
+    talloc_ext_on_add ( chunk );
 #endif
 
     return 0;
 }
 
 inline
-uint8_t talloc_on_update ( talloc_chunk * child, size_t length )
+uint8_t talloc_on_update ( talloc_chunk * chunk )
 {
 
 #ifdef TALLOC_DEBUG
     if ( talloc_debug_on_update != NULL ) {
-        if ( talloc_debug_on_update ( child ) != 0 ) {
+        if ( talloc_debug_on_update ( chunk ) != 0 ) {
             return 1;
         }
     }
@@ -69,12 +69,12 @@ uint8_t talloc_on_update ( talloc_chunk * child, size_t length )
 }
 
 inline
-uint8_t talloc_on_move ( talloc_chunk * child )
+uint8_t talloc_on_move ( talloc_chunk * chunk )
 {
 
 #ifdef TALLOC_DEBUG
     if ( talloc_debug_on_move != NULL ) {
-        if ( talloc_debug_on_move ( child ) != 0 ) {
+        if ( talloc_debug_on_move ( chunk ) != 0 ) {
             return 1;
         }
     }
@@ -84,18 +84,18 @@ uint8_t talloc_on_move ( talloc_chunk * child )
 }
 
 inline
-uint8_t talloc_on_del ( talloc_chunk * child )
+uint8_t talloc_on_del ( talloc_chunk * chunk )
 {
 
-#ifdef TALLOC_EXT_DESTRUCTOR
-    if ( talloc_destructor_on_del ( child ) != 0 ) {
+#ifdef TALLOC_EXT
+    if ( talloc_ext_on_del ( chunk ) != 0 ) {
         return 1;
     }
 #endif
 
 #ifdef TALLOC_DEBUG
     if ( talloc_debug_on_del != NULL ) {
-        if ( talloc_debug_on_del ( child ) != 0 ) {
+        if ( talloc_debug_on_del ( chunk ) != 0 ) {
             return 2;
         }
     }

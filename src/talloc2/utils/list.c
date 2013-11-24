@@ -27,7 +27,7 @@ void talloc_list_delete ( talloc_list * list, talloc_list_item * item )
 }
 
 static
-uint8_t delete_on_free ( void * child_data, void * user_data )
+uint8_t delete_on_free ( void * chunk_data, void * user_data )
 {
     talloc_list_item * item = user_data;
     if ( item == NULL ) {
@@ -39,10 +39,10 @@ uint8_t delete_on_free ( void * child_data, void * user_data )
 }
 
 static inline
-uint8_t list_free ( void * child_data, void * user_data )
+uint8_t list_free ( void * chunk_data, void * user_data )
 {
     uint8_t result = 0;
-    talloc_list * list      = child_data;
+    talloc_list * list      = chunk_data;
     talloc_list_item * item = list->first_item;
     talloc_list_item * next_item;
     while ( item != NULL ) {
@@ -163,5 +163,4 @@ uint8_t talloc_list_shift ( talloc_list* list )
     return 0;
 }
 
-extern inline
-size_t talloc_list_get_length ( talloc_list * list );
+extern inline size_t talloc_list_get_length ( talloc_list * list );

@@ -9,12 +9,12 @@
 #include "../tree.h"
 
 #include <stdlib.h>
-#include <stdio.h>
+#include <stdbool.h>
 
 inline
-void talloc_destructor_on_add ( talloc_chunk * child )
+void talloc_destructor_on_add ( talloc_chunk * chunk, talloc_ext * ext )
 {
-    child->first_destructor_item = NULL;
+    ext->first_destructor_item = NULL;
 }
 
 inline
@@ -29,41 +29,45 @@ void talloc_destructor_free ( talloc_destructor_item * current )
 }
 
 inline
-uint8_t talloc_destructor_run ( void * child_data, talloc_destructor_item * item )
+uint8_t talloc_destructor_run ( void * chunk_data, talloc_destructor_item * item )
 {
     talloc_destructor destructor = item->destructor;
     if ( destructor == NULL ) {
         return 1;
     }
-    if ( destructor ( child_data, item->user_data ) != 0 ) {
+    if ( destructor ( chunk_data, item->user_data ) != 0 ) {
         return 2;
     }
     return 0;
 }
 
 inline
-uint8_t talloc_destructor_on_del ( talloc_chunk * child )
+uint8_t talloc_destructor_on_del ( talloc_chunk * chunk, talloc_ext * ext )
 {
-    void * child_data = talloc_data_from_chunk ( child );
-    talloc_destructor_item * first_item = child->first_destructor_item;
+    void * chunk_data                   = talloc_data_from_chunk ( chunk );
+    talloc_destructor_item * first_item = ext->first_destructor_item;
     talloc_destructor_item * item       = first_item;
 
+    bool result = true;
     while ( item != NULL ) {
-        if ( talloc_destructor_run ( child_data, item ) != 0 ) {
-            talloc_destructor_free ( first_item );
-            return 1;
+        if ( talloc_destructor_run ( chunk_data, item ) != 0 ) {
+            result = false;
         }
         item = item->next;
     }
 
     talloc_destructor_free ( first_item );
-    return 0;
+    if ( result ) {
+        return 0;
+    } else {
+        return 1;
+    }
 }
 
-uint8_t talloc_add_destructor ( const void * child_data, talloc_destructor destructor, void * user_data );
-uint8_t talloc_del_destructor ( const void * child_data, talloc_destructor destructor, void * user_data );
-uint8_t talloc_del_destructor_by_function ( const void * child_data, talloc_destructor destructor );
-uint8_t talloc_del_destructor_by_data ( const void * child_data, void * user_data );
-uint8_t talloc_clear_destructors ( const void * child_data );
+uint8_t talloc_add_destructor             ( const void * chunk_data, talloc_destructor destructor, void * user_data );
+uint8_t talloc_del_destructor             ( const void * chunk_data, talloc_destructor destructor, void * user_data );
+uint8_t talloc_del_destructor_by_function ( const void * chunk_data, talloc_destructor destructor );
+uint8_t talloc_del_destructor_by_data     ( const void * chunk_data, void * user_data );
+uint8_t talloc_clear_destructors          ( const void * chunk_data );
 
 #endif

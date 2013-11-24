@@ -4,7 +4,7 @@
 // You should have received a copy of the GNU General Public License along with talloc2. If not, see <http://www.gnu.org/licenses/>.
 
 #include <talloc2/helpers.h>
-#include <talloc2/ext/destructor.h>
+#include <talloc2/ext/main.h>
 
 #include "../lib/malloc_dynarr.h"
 
@@ -76,11 +76,11 @@ bool test_destructor ()
         return false;
     }
 
-    talloc_chunk * chunk_03 = talloc_chunk_from_data ( text_03 );
+    talloc_ext * ext_03 = talloc_ext_from_chunk ( talloc_chunk_from_data ( text_03 ) );
     talloc_destructor_item * item;
 
     if (
-        ( item = chunk_03->first_destructor_item ) == NULL ||
+        ( item = ext_03->first_destructor_item ) == NULL ||
         item->destructor != destructor_empty_1 || item->user_data != NULL       || ( item = item->next ) == NULL ||
         item->destructor != destructor_empty_1 || item->user_data != &user_data || ( item = item->next ) == NULL ||
         item->destructor != destructor_empty_2 || item->user_data != &user_data || ( item = item->next ) == NULL ||
@@ -95,7 +95,7 @@ bool test_destructor ()
 
     if (
         talloc_del_destructor ( text_03, destructor_empty_2, NULL ) != 0 ||
-        ( item = chunk_03->first_destructor_item ) == NULL ||
+        ( item = ext_03->first_destructor_item ) == NULL ||
         item->destructor != destructor_empty_1 || item->user_data != NULL       || ( item = item->next ) == NULL ||
         item->destructor != destructor_empty_1 || item->user_data != &user_data || ( item = item->next ) == NULL ||
         item->destructor != destructor_empty_2 || item->user_data != &user_data || ( item = item->next ) == NULL ||
@@ -109,7 +109,7 @@ bool test_destructor ()
 
     if (
         talloc_del_destructor_by_function ( text_03, destructor_empty_2 ) != 0 ||
-        ( item = chunk_03->first_destructor_item ) == NULL ||
+        ( item = ext_03->first_destructor_item ) == NULL ||
         item->destructor != destructor_empty_1 || item->user_data != NULL       || ( item = item->next ) == NULL ||
         item->destructor != destructor_empty_1 || item->user_data != &user_data || ( item = item->next ) == NULL ||
         item->destructor != destructor_empty_1 || item->user_data != NULL       ||
@@ -121,7 +121,7 @@ bool test_destructor ()
 
     if (
         talloc_del_destructor_by_data ( text_03, NULL ) != 0 ||
-        ( item = chunk_03->first_destructor_item ) == NULL ||
+        ( item = ext_03->first_destructor_item ) == NULL ||
         item->destructor != destructor_empty_1 || item->user_data != &user_data ||
         item->next != NULL
     ) {
@@ -131,7 +131,7 @@ bool test_destructor ()
 
     if (
         talloc_del_destructor_by_data ( text_03, &user_data ) != 0 ||
-        chunk_03->first_destructor_item != NULL
+        ext_03->first_destructor_item != NULL
     ) {
         talloc_free ( strings );
         return false;

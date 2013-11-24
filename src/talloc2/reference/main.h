@@ -3,13 +3,21 @@
 // talloc2 is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Lesser Public License for more details.
 // You should have received a copy of the GNU General Lesser Public License along with talloc2. If not, see <http://www.gnu.org/licenses/>.
 
-#include "events.h"
+#ifndef TALLOC_REFERENCE_MAIN_H
+#define TALLOC_REFERENCE_MAIN_H
 
-#ifdef TALLOC_DEBUG
-extern inline void talloc_set_callback ( talloc_callback on_add, talloc_callback on_update, talloc_callback on_move, talloc_callback on_del );
+#include "../tree.h"
+
+inline
+talloc_reference * talloc_reference_from_chunk ( talloc_chunk * chunk )
+{
+    return ( talloc_reference * ) ( ( uintptr_t ) chunk - sizeof ( talloc_reference ) );
+}
+
+inline
+talloc_chunk * talloc_chunk_from_reference ( talloc_reference * reference )
+{
+    return ( talloc_chunk * ) ( ( uintptr_t ) reference + sizeof ( talloc_reference ) );
+}
+
 #endif
-
-extern inline uint8_t talloc_on_add    ( talloc_chunk * chunk );
-extern inline uint8_t talloc_on_update ( talloc_chunk * chunk );
-extern inline uint8_t talloc_on_move   ( talloc_chunk * chunk );
-extern inline uint8_t talloc_on_del    ( talloc_chunk * chunk );

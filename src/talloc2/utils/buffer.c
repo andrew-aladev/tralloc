@@ -7,21 +7,6 @@
 
 #include <string.h>
 
-extern inline
-talloc_buffer * talloc_buffer_new ( void * ctx );
-
-extern inline
-void talloc_buffer_written ( talloc_buffer * buffer, size_t length );
-
-extern inline
-uint8_t talloc_buffer_readed ( talloc_buffer * buffer, size_t length );
-
-extern inline
-uint8_t * talloc_buffer_get ( talloc_buffer * buffer );
-
-extern inline
-size_t talloc_buffer_get_length ( talloc_buffer * buffer );
-
 uint8_t * talloc_buffer_prepare ( talloc_buffer * buffer, size_t length )
 {
     uint8_t * buf = buffer->buf;
@@ -89,3 +74,9 @@ uint8_t talloc_buffer_trim ( talloc_buffer * buffer )
     buffer->length = data_length;
     return 0;
 }
+
+extern inline talloc_buffer * talloc_buffer_new        ( void * ctx );
+extern inline void            talloc_buffer_written    ( talloc_buffer * buffer, size_t length );
+extern inline uint8_t         talloc_buffer_readed     ( talloc_buffer * buffer, size_t length );
+extern inline uint8_t *       talloc_buffer_get        ( talloc_buffer * buffer );
+extern inline size_t          talloc_buffer_get_length ( talloc_buffer * buffer );
