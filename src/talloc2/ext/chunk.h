@@ -64,7 +64,12 @@ inline
 bool talloc_ext_chunk_free ( talloc_chunk * chunk )
 {
     talloc_ext * ext = talloc_memory_from_ext_chunk ( chunk );
-    bool result      = talloc_destructor_free ( chunk, ext->first_destructor_item );
+
+#ifdef TALLOC_REFERENCE
+    ;
+#endif
+
+    bool result = talloc_destructor_free ( chunk, ext->first_destructor_item );
     free ( ext );
     return result;
 }

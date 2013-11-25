@@ -6,7 +6,7 @@
 #ifndef TALLOC_REFERENCE_CHUNK_H
 #define TALLOC_REFERENCE_CHUNK_H
 
-#include "../types.h"
+#include "../ext/chunk.h"
 #include <stdlib.h>
 
 inline
@@ -37,9 +37,20 @@ talloc_chunk * talloc_reference_chunk_new ()
 inline
 void talloc_reference_chunk_free ( talloc_chunk * chunk )
 {
-    printf ("123!\n");
-    void * memory = talloc_memory_from_reference_chunk ( chunk );
-    free ( memory );
+    talloc_reference * reference = talloc_memory_from_reference_chunk ( chunk );
+    talloc_ext * chunk_ext       = reference->chunk;
+
+    talloc_reference * prev = reference->prev;
+    talloc_reference * next = reference->next;
+    if ( prev == NULL ) {
+        chunk_ext->first_reference = next;
+    } else {
+        prev->next = next;
+    }
+    if ( next != NULL ) {
+        next->prev = prev;
+    }
+    free ( reference );
 }
 
 #endif

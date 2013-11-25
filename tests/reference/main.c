@@ -18,15 +18,27 @@ int main ()
     int * b = talloc ( root, sizeof ( int ) );
     int * c = talloc ( root, sizeof ( int ) );
     if ( a == NULL || b == NULL || c == NULL ) {
+        talloc_free ( root );
         return 2;
     }
+    
+    int * common = talloc ( a, sizeof ( int ) );
 
-    talloc_add_reference ( a, b );
-    talloc_add_reference ( a, b );
-    talloc_add_reference ( a, b );
+    if (
+        common == NULL ||
+        talloc_add_reference ( NULL, common )   == 0 ||
+        talloc_add_reference ( common, NULL )   == 0 ||
+        talloc_add_reference ( NULL, NULL )     == 0 ||
+        talloc_add_reference ( common, common ) == 0 ||
+        talloc_add_reference ( b, common )      != 0 ||
+        talloc_add_reference ( c, common )      != 0
+    ) {
+        talloc_free ( root );
+        return 3;
+    }
 
     if ( talloc_free ( root ) != 0 ) {
-        return 3;
+        return 4;
     }
     return 0;
 }
