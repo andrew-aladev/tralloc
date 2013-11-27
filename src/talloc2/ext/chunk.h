@@ -6,18 +6,23 @@
 #ifndef TALLOC_EXT_CHUNK_H
 #define TALLOC_EXT_CHUNK_H
 
+#include "../types.h"
+#include <stdlib.h>
+
+#ifdef TALLOC_EXT_DESTRUCTOR
 #include "destructor.h"
+#endif
 
 inline
-talloc_chunk * talloc_ext_chunk_from_memory ( void * memory )
+talloc_chunk * talloc_chunk_from_ext ( talloc_ext * ext )
 {
-    return ( talloc_chunk * ) ( ( uintptr_t ) memory + sizeof ( talloc_ext ) );
+    return ( talloc_chunk * ) ( ( uintptr_t ) ext + sizeof ( talloc_ext ) );
 }
 
 inline
-void * talloc_memory_from_ext_chunk ( talloc_chunk * chunk )
+talloc_ext * talloc_ext_from_chunk ( talloc_chunk * chunk )
 {
-    return ( void * ) ( ( uintptr_t ) chunk - sizeof ( talloc_ext ) );
+    return ( talloc_ext * ) ( ( uintptr_t ) chunk - sizeof ( talloc_ext ) );
 }
 
 inline
@@ -27,9 +32,17 @@ talloc_chunk * talloc_ext_chunk_malloc ( size_t length )
     if ( ext == NULL ) {
         return NULL;
     } else {
-        ext->first_destructor_item = NULL;
-        talloc_chunk * chunk       = talloc_ext_chunk_from_memory ( ext );
-        chunk->mode                = TALLOC_MODE_EXT;
+
+#ifdef TALLOC_EXT_DESTRUCTOR
+        ext->first_destructor = NULL;
+#endif
+
+        talloc_chunk * chunk = talloc_chunk_from_ext ( ext );
+
+#ifdef TALLOC_REFERENCE
+        chunk->mode = TALLOC_MODE_EXT;
+#endif
+
         return chunk;
     }
 }
@@ -41,9 +54,17 @@ talloc_chunk * talloc_ext_chunk_calloc ( size_t length )
     if ( ext == NULL ) {
         return NULL;
     } else {
-        ext->first_destructor_item = NULL;
-        talloc_chunk * chunk       = talloc_ext_chunk_from_memory ( ext );
-        chunk->mode                = TALLOC_MODE_EXT;
+
+#ifdef TALLOC_EXT_DESTRUCTOR
+        ext->first_destructor = NULL;
+#endif
+
+        talloc_chunk * chunk = talloc_chunk_from_ext ( ext );
+
+#ifdef TALLOC_REFERENCE
+        chunk->mode = TALLOC_MODE_EXT;
+#endif
+
         return chunk;
     }
 }
@@ -51,27 +72,35 @@ talloc_chunk * talloc_ext_chunk_calloc ( size_t length )
 inline
 talloc_chunk * talloc_ext_chunk_realloc ( talloc_chunk * chunk, size_t length )
 {
-    void * memory = talloc_memory_from_ext_chunk ( chunk );
-    memory        = realloc ( memory, sizeof ( talloc_ext ) + sizeof ( talloc_chunk ) + length );
-    if ( memory == NULL ) {
+    talloc_ext * ext = talloc_ext_from_chunk ( chunk );
+    ext              = realloc ( ext, sizeof ( talloc_ext ) + sizeof ( talloc_chunk ) + length );
+    if ( ext == NULL ) {
         return NULL;
     } else {
-        return talloc_ext_chunk_from_memory ( memory );
+        return talloc_chunk_from_ext ( ext );
     }
 }
 
 inline
-bool talloc_ext_chunk_free ( talloc_chunk * chunk )
+uint8_t talloc_ext_chunk_free ( talloc_chunk * chunk )
 {
-    talloc_ext * ext = talloc_memory_from_ext_chunk ( chunk );
+    talloc_ext * ext = talloc_ext_from_chunk ( chunk );
 
 #ifdef TALLOC_REFERENCE
     ;
 #endif
 
-    bool result = talloc_destructor_free ( chunk, ext->first_destructor_item );
+#ifdef TALLOC_EXT_DESTRUCTOR
+    uint8_t result = talloc_destructor_free ( chunk, ext );
+#endif
+
     free ( ext );
+
+#ifdef TALLOC_EXT_DESTRUCTOR
     return result;
+#else
+    return 0;
+#endif
 }
 
 #endif

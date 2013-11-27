@@ -1,8 +1,8 @@
-set (BASIC      basic/main.c lib/malloc_dynarr.c)
-set (HELPERS    helpers/main.c)
-set (EXT        ext/main.c lib/malloc_dynarr.c)
-set (REFERENCE  reference/main.c)
-set (UTILS      utils/main.c)
+set (BASIC     basic/main.c lib/malloc_dynarr.c)
+set (HELPERS   helpers/main.c)
+set (EXT       ext/main.c lib/malloc_dynarr.c)
+set (REFERENCE reference/main.c)
+set (UTILS     utils/main.c)
 
 if (TALLOC_SHARED MATCHES true)
     add_executable (${TALLOC_TARGET}-basic ${BASIC})

@@ -5,9 +5,9 @@
 
 #include "chunk.h"
 
-extern inline talloc_chunk * talloc_ext_chunk_from_memory ( void * memory );
-extern inline void *         talloc_memory_from_ext_chunk ( talloc_chunk * chunk );
-extern inline talloc_chunk * talloc_ext_chunk_malloc      ( size_t length );
-extern inline talloc_chunk * talloc_ext_chunk_calloc      ( size_t length );
-extern inline talloc_chunk * talloc_ext_chunk_realloc     ( talloc_chunk * chunk, size_t length );
-extern inline bool           talloc_ext_chunk_free        ( talloc_chunk * chunk );
+extern inline talloc_chunk * talloc_chunk_from_ext    ( talloc_ext * ext );
+extern inline talloc_ext *   talloc_ext_from_chunk    ( talloc_chunk * chunk );
+extern inline talloc_chunk * talloc_ext_chunk_malloc  ( size_t length );
+extern inline talloc_chunk * talloc_ext_chunk_calloc  ( size_t length );
+extern inline talloc_chunk * talloc_ext_chunk_realloc ( talloc_chunk * chunk, size_t length );
+extern inline uint8_t        talloc_ext_chunk_free    ( talloc_chunk * chunk );

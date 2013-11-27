@@ -6,16 +6,14 @@
 #ifndef TALLOC_EXT_DESTRUCTOR_H
 #define TALLOC_EXT_DESTRUCTOR_H
 
-#include "../tree.h"
+#include "../types.h"
 
-#include <stdbool.h>
-
-uint8_t talloc_add_destructor             ( const void * chunk_data, talloc_destructor destructor, void * user_data );
-uint8_t talloc_del_destructor             ( const void * chunk_data, talloc_destructor destructor, void * user_data );
-uint8_t talloc_del_destructor_by_function ( const void * chunk_data, talloc_destructor destructor );
+uint8_t talloc_add_destructor             ( const void * chunk_data, talloc_destructor_function function, void * user_data );
+uint8_t talloc_del_destructor             ( const void * chunk_data, talloc_destructor_function function, void * user_data );
+uint8_t talloc_del_destructor_by_function ( const void * chunk_data, talloc_destructor_function function );
 uint8_t talloc_del_destructor_by_data     ( const void * chunk_data, void * user_data );
 uint8_t talloc_clear_destructors          ( const void * chunk_data );
-bool    talloc_destructor_free            ( talloc_chunk * chunk, talloc_destructor_item * current );
-void    talloc_destructor_free_silent     ( talloc_destructor_item * current );
+uint8_t talloc_destructor_free            ( talloc_chunk * chunk, talloc_ext * ext );
+void    talloc_destructor_free_silent     ( talloc_ext * ext );
 
 #endif

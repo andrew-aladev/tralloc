@@ -6,7 +6,7 @@
 #ifndef TALLOC_TREE_H
 #define TALLOC_TREE_H
 
-#include "chunk.h"
+#include "types.h"
 
 inline
 void * talloc_data_from_chunk ( talloc_chunk * chunk )
@@ -21,11 +21,11 @@ talloc_chunk * talloc_chunk_from_data ( const void * data )
 }
 
 inline
-void talloc_set_child ( talloc_chunk * parent, talloc_chunk * child )
+void talloc_set_child_chunk ( talloc_chunk * parent, talloc_chunk * child )
 {
-    child->parent = parent;
-
     talloc_chunk * parent_first_child = parent->first_child;
+
+    child->parent = parent;
     if ( parent_first_child != NULL ) {
         parent_first_child->prev = child;
         child->next = parent_first_child;
@@ -37,6 +37,30 @@ void talloc_set_child ( talloc_chunk * parent, talloc_chunk * child )
     parent->first_child = child;
 }
 
+inline
+void talloc_detach_chunk ( talloc_chunk * chunk )
+{
+    talloc_chunk * prev   = chunk->prev;
+    talloc_chunk * next   = chunk->next;
+    talloc_chunk * parent = chunk->parent;
+
+    if ( prev != NULL ) {
+        if ( next != NULL ) {
+            prev->next = next;
+            next->prev = prev;
+        } else {
+            prev->next = NULL;
+        }
+    } else {
+        if ( next != NULL ) {
+            next->prev = NULL;
+        }
+        if ( parent != NULL ) {
+            parent->first_child = next;
+        }
+    }
+}
+
 void * talloc ( const void * parent_data, size_t length );
 
 inline
@@ -45,9 +69,19 @@ void * talloc_new ( const void * parent_data )
     return talloc ( parent_data, 0 );
 }
 
-void *  talloc_zero    ( const void * parent_data, size_t length );
-void *  talloc_realloc ( const void * child_data, size_t length );
-uint8_t talloc_move    ( const void * child_data, const void * parent_data );
-uint8_t talloc_free    ( void * root_data );
+void *  talloc_zero       ( const void * parent_data, size_t length );
+void *  talloc_realloc    ( const void * child_data, size_t length );
+uint8_t talloc_move       ( const void * child_data, const void * parent_data );
+
+uint8_t talloc_free_chunk ( talloc_chunk * chunk );
+
+inline
+uint8_t talloc_free ( void * root_data )
+{
+    if ( root_data == NULL ) {
+        return 0;
+    }
+    return talloc_free_chunk ( talloc_chunk_from_data ( root_data ) );
+}
 
 #endif

@@ -1,10 +1,9 @@
 #cmakedefine TALLOC_DEBUG
 #cmakedefine TALLOC_EVENTS
-#cmakedefine TALLOC_EXT_DESTRUCTOR
 #cmakedefine TALLOC_EXT
+#cmakedefine TALLOC_EXT_DESTRUCTOR
 #cmakedefine TALLOC_REFERENCE
 #cmakedefine TALLOC_UTILS_BUFFER
 #cmakedefine TALLOC_UTILS_DYNARR
 #cmakedefine TALLOC_UTILS_LIST
 #cmakedefine TALLOC_UTILS
-#define      TALLOC_MODE TALLOC_EXT || TALLOC_REFERENCE

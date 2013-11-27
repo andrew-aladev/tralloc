@@ -22,8 +22,8 @@ uint8_t talloc_add_reference ( const void * parent_data, const void * child_data
     if ( reference_chunk == NULL ) {
         return 2;
     }
-    talloc_reference * reference = talloc_memory_from_reference_chunk ( reference_chunk );
-    talloc_ext       * child_ext = talloc_memory_from_ext_chunk ( child_chunk );
+    talloc_reference * reference = talloc_reference_from_chunk ( reference_chunk );
+    talloc_ext       * child_ext = talloc_ext_from_chunk ( child_chunk );
     reference->chunk = child_ext;
     reference->prev  = NULL;
 
@@ -36,7 +36,7 @@ uint8_t talloc_add_reference ( const void * parent_data, const void * child_data
     }
     child_ext->first_reference = reference;
 
-    talloc_set_child ( parent_chunk, reference_chunk );
+    talloc_set_child_chunk ( parent_chunk, reference_chunk );
 
     return 0;
 }
@@ -50,4 +50,4 @@ uint8_t talloc_del_reference ( const void * parent_data, const void * child_data
     return 0;
 }
 
-extern inline void talloc_clear_references ( talloc_ext * ext );
+extern inline uint8_t talloc_clear_references ( const void * chunk_data );

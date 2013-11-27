@@ -7,7 +7,6 @@
 #define TALLOC_HELPERS_H
 
 #include "tree.h"
-
 #include <string.h>
 
 inline

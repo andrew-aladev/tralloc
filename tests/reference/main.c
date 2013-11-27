@@ -21,7 +21,7 @@ int main ()
         talloc_free ( root );
         return 2;
     }
-    
+
     int * common = talloc ( a, sizeof ( int ) );
 
     if (
@@ -37,8 +37,13 @@ int main ()
         return 3;
     }
 
-    if ( talloc_free ( root ) != 0 ) {
+    if ( talloc_clear_references ( common ) != 0 ) {
+        talloc_free ( root );
         return 4;
+    }
+
+    if ( talloc_free ( root ) != 0 ) {
+        return 5;
     }
     return 0;
 }

@@ -10,15 +10,15 @@
 #include <stdlib.h>
 
 inline
-talloc_chunk * talloc_reference_chunk_from_memory ( void * memory )
+talloc_chunk * talloc_chunk_from_reference ( void * memory )
 {
     return ( talloc_chunk * ) ( ( uintptr_t ) memory + sizeof ( talloc_reference ) );
 }
 
 inline
-void * talloc_memory_from_reference_chunk ( talloc_chunk * chunk )
+talloc_reference * talloc_reference_from_chunk ( talloc_chunk * chunk )
 {
-    return ( void * ) ( ( uintptr_t ) chunk - sizeof ( talloc_reference ) );
+    return ( talloc_reference * ) ( ( uintptr_t ) chunk - sizeof ( talloc_reference ) );
 }
 
 inline
@@ -28,7 +28,7 @@ talloc_chunk * talloc_reference_chunk_new ()
     if ( memory == NULL ) {
         return NULL;
     } else {
-        talloc_chunk * chunk = talloc_reference_chunk_from_memory ( memory );
+        talloc_chunk * chunk = talloc_chunk_from_reference ( memory );
         chunk->mode          = TALLOC_MODE_REFERENCE;
         return chunk;
     }
@@ -37,7 +37,7 @@ talloc_chunk * talloc_reference_chunk_new ()
 inline
 void talloc_reference_chunk_free ( talloc_chunk * chunk )
 {
-    talloc_reference * reference = talloc_memory_from_reference_chunk ( chunk );
+    talloc_reference * reference = talloc_reference_from_chunk ( chunk );
     talloc_ext * chunk_ext       = reference->chunk;
 
     talloc_reference * prev = reference->prev;

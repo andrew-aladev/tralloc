@@ -33,9 +33,7 @@ uint8_t talloc_on_add ( talloc_chunk * chunk )
 
 #ifdef TALLOC_DEBUG
     if ( talloc_debug_on_add != NULL ) {
-        if ( talloc_debug_on_add ( chunk ) != 0 ) {
-            return 1;
-        }
+        return talloc_debug_on_add ( chunk );
     }
 #endif
 
@@ -48,9 +46,7 @@ uint8_t talloc_on_update ( talloc_chunk * chunk )
 
 #ifdef TALLOC_DEBUG
     if ( talloc_debug_on_update != NULL ) {
-        if ( talloc_debug_on_update ( chunk ) != 0 ) {
-            return 1;
-        }
+        return talloc_debug_on_update ( chunk );
     }
 #endif
 
@@ -63,9 +59,7 @@ uint8_t talloc_on_move ( talloc_chunk * chunk )
 
 #ifdef TALLOC_DEBUG
     if ( talloc_debug_on_move != NULL ) {
-        if ( talloc_debug_on_move ( chunk ) != 0 ) {
-            return 1;
-        }
+        return talloc_debug_on_move ( chunk );
     }
 #endif
 
@@ -78,9 +72,7 @@ uint8_t talloc_on_del ( talloc_chunk * chunk )
 
 #ifdef TALLOC_DEBUG
     if ( talloc_debug_on_del != NULL ) {
-        if ( talloc_debug_on_del ( chunk ) != 0 ) {
-            return 1;
-        }
+        return talloc_debug_on_del ( chunk );
     }
 #endif
 

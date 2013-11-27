@@ -8,6 +8,7 @@
 #include <stdbool.h>
 
 #include "tree.h"
+#include "chunk.h"
 
 #ifdef TALLOC_EVENTS
 #include "events.h"
@@ -21,16 +22,14 @@
 #include "reference/chunk.h"
 #endif
 
-extern inline void talloc_set_child ( talloc_chunk * parent, talloc_chunk * child );
-
 static inline
-uint8_t _add ( const void * parent_data, talloc_chunk * child )
+uint8_t talloc_add_chunk ( const void * parent_data, talloc_chunk * child )
 {
     child->first_child = NULL;
 
     if ( parent_data != NULL ) {
-        void * parent = talloc_chunk_from_data ( parent_data );
-        talloc_set_child ( parent, child );
+        talloc_chunk * parent = talloc_chunk_from_data ( parent_data );
+        talloc_set_child_chunk ( parent, child );
     } else {
         child->parent = NULL;
         child->prev   = NULL;
@@ -38,12 +37,11 @@ uint8_t _add ( const void * parent_data, talloc_chunk * child )
     }
 
 #ifdef TALLOC_EVENTS
-    if ( talloc_on_add ( child ) != 0 ) {
-        return 1;
-    }
+    return talloc_on_add ( child );
+#else
+    return 0;
 #endif
 
-    return 0;
 }
 
 void * talloc ( const void * parent_data, size_t length )
@@ -56,7 +54,7 @@ void * talloc ( const void * parent_data, size_t length )
     chunk = talloc_usual_chunk_malloc ( length );
 #endif
 
-    if ( _add ( parent_data, chunk ) != 0 ) {
+    if ( talloc_add_chunk ( parent_data, chunk ) != 0 ) {
 #ifdef TALLOC_EXT
         talloc_ext_chunk_free ( chunk );
 #else
@@ -78,7 +76,7 @@ void * talloc_zero ( const void * parent_data, size_t length )
     chunk = talloc_usual_chunk_calloc ( length );
 #endif
 
-    if ( _add ( parent_data, chunk ) != 0 ) {
+    if ( talloc_add_chunk ( parent_data, chunk ) != 0 ) {
 #ifdef TALLOC_EXT
         talloc_ext_chunk_free ( chunk );
 #else
@@ -91,7 +89,7 @@ void * talloc_zero ( const void * parent_data, size_t length )
 }
 
 static inline
-uint8_t _update ( talloc_chunk * child )
+uint8_t talloc_update_chunk ( talloc_chunk * child )
 {
     talloc_chunk * prev = child->prev;
     if ( prev == NULL ) {
@@ -132,7 +130,7 @@ void * talloc_realloc ( const void * chunk_data, size_t length )
         return NULL;
     }
     if ( old_chunk != new_chunk ) {
-        if ( _update ( new_chunk ) != 0 ) {
+        if ( talloc_update_chunk ( new_chunk ) != 0 ) {
             return NULL;
         }
     }
@@ -146,119 +144,83 @@ void * talloc_realloc ( const void * chunk_data, size_t length )
     return talloc_data_from_chunk ( new_chunk );
 }
 
-static inline
-void _detach ( talloc_chunk * chunk )
-{
-    talloc_chunk * prev   = chunk->prev;
-    talloc_chunk * next   = chunk->next;
-    talloc_chunk * parent = chunk->parent;
-
-    if ( prev != NULL ) {
-        if ( next != NULL ) {
-            prev->next = next;
-            next->prev = prev;
-        } else {
-            prev->next = NULL;
-        }
-    } else {
-        if ( next != NULL ) {
-            next->prev = NULL;
-        }
-        if ( parent != NULL ) {
-            parent->first_child = next;
-        }
-    }
-}
-
 uint8_t talloc_move ( const void * child_data, const void * parent_data )
 {
     if ( child_data == NULL ) {
         return 1;
     }
     talloc_chunk * child = talloc_chunk_from_data ( child_data );
-    _detach ( child );
+    talloc_detach_chunk ( child );
 
     if ( parent_data == NULL ) {
         child->parent = NULL;
     } else {
         talloc_chunk * new_parent = talloc_chunk_from_data ( parent_data );
-        talloc_set_child ( new_parent, child );
+        talloc_set_child_chunk ( new_parent, child );
     }
 
 #ifdef TALLOC_EVENTS
-    if ( talloc_on_move ( child ) != 0 ) {
-        return 2;
-    }
+    return talloc_on_move ( child );
+#else
+    return 0;
 #endif
 
-    return 0;
 }
 
 static
-bool free_recursive ( talloc_chunk * root )
+uint8_t talloc_free_chunk_recursive ( talloc_chunk * chunk )
 {
-    bool result          = true;
-    talloc_chunk * chunk = root->first_child;
+    uint8_t result, error = 0;
+    talloc_chunk * child  = chunk->first_child;
 
 #ifdef TALLOC_EVENTS
-    if ( talloc_on_del ( root ) != 0 ) {
-        result = false;
+    if ( ( result = talloc_on_del ( chunk ) ) != 0 ) {
+        error = result;
     }
 #endif
 
-#ifdef TALLOC_MODE
-    switch ( root->mode ) {
 #ifdef TALLOC_EXT
+    switch ( chunk->mode ) {
     case TALLOC_MODE_EXT:
-        if ( !talloc_ext_chunk_free ( root ) ) {
-            result = false;
+        if ( ( result = talloc_ext_chunk_free ( chunk ) ) != 0 ) {
+            error = result;
         }
         break;
-#else
-    case TALLOC_MODE_USUAL:
-        talloc_usual_chunk_free ( root );
-        break;
-#endif
+
 #ifdef TALLOC_REFERENCE
     case TALLOC_MODE_REFERENCE:
-        talloc_reference_chunk_free ( root );
+        talloc_reference_chunk_free ( chunk );
         break;
 #endif
+
     }
 #else
-    talloc_usual_chunk_free ( root );
+    talloc_usual_chunk_free ( chunk );
 #endif
 
-    talloc_chunk * next_chunk;
-    while ( chunk != NULL ) {
-        next_chunk = chunk->next;
-        if ( !free_recursive ( chunk ) ) {
-            result = false;
+    talloc_chunk * next_child;
+    while ( child != NULL ) {
+        next_child = child->next;
+        if ( ( result = talloc_free_chunk_recursive ( child ) ) != 0 ) {
+            error = result;
         }
-        chunk = next_chunk;
+        child = next_child;
     }
 
-    return result;
+    return error;
 }
 
-uint8_t talloc_free ( void * root_data )
+uint8_t talloc_free_chunk ( talloc_chunk * chunk )
 {
-    if ( root_data == NULL ) {
-        return 0;
-    }
-    talloc_chunk * root = talloc_chunk_from_data ( root_data );
-
-    _detach ( root );
-
-    if ( !free_recursive ( root ) ) {
-        return 1;
-    }
-
-    return 0;
+    talloc_detach_chunk ( chunk );
+    return talloc_free_chunk_recursive ( chunk );
 }
 
 extern inline void *         talloc_data_from_chunk ( talloc_chunk * chunk );
 extern inline talloc_chunk * talloc_chunk_from_data ( const void * data );
+extern inline void           talloc_set_child_chunk ( talloc_chunk * parent, talloc_chunk * child );
+extern inline void           talloc_detach_chunk    ( talloc_chunk * chunk );
 extern inline void *         talloc                 ( const void * parent_data, size_t length );
 extern inline void *         talloc_zero            ( const void * parent_data, size_t length );
 extern inline void *         talloc_new             ( const void * parent_data );
+extern inline uint8_t        talloc_free            ( void * root_data );
