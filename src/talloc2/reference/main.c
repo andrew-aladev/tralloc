@@ -3,9 +3,29 @@
 // talloc2 is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Lesser Public License for more details.
 // You should have received a copy of the GNU General Lesser Public License along with talloc2. If not, see <http://www.gnu.org/licenses/>.
 
-#include "../tree.h"
-#include "../ext/chunk.h"
 #include "main.h"
+#include "../tree.h"
+
+uint8_t talloc_clear_references ( const void * chunk_data )
+{
+    talloc_ext * ext             = talloc_ext_from_chunk ( talloc_chunk_from_data ( chunk_data ) );
+    talloc_reference * reference = ext->first_reference;
+    talloc_reference * next_reference;
+
+    uint8_t result, error = 0;
+    talloc_chunk * chunk;
+    while ( reference != NULL ) {
+        next_reference = reference->next;
+        chunk = talloc_chunk_from_reference ( reference );
+        if ( ( result = talloc_free_chunk ( chunk ) ) != 0 ) {
+            error = result;
+        }
+        reference = next_reference;
+    }
+    ext->first_reference = NULL;
+
+    return error;
+}
 
 uint8_t talloc_add_reference ( const void * parent_data, const void * child_data )
 {
@@ -46,6 +66,7 @@ uint8_t talloc_del_reference ( const void * parent_data, const void * child_data
     if ( parent_data == NULL || child_data == NULL ) {
         return 1;
     }
+    talloc_chunk * parent_chunk = talloc_chunk_from_data ( parent_data );
 
     return 0;
 }

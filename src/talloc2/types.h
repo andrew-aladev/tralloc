@@ -11,7 +11,7 @@
 
 #include "config.h"
 
-#ifdef TALLOC_EXT_DESTRUCTOR
+#if defined(TALLOC_EXT_DESTRUCTOR)
 typedef uint8_t ( * talloc_destructor_function ) ( void * child_data, void * user_data );
 
 typedef struct talloc_destructor_t {
@@ -21,7 +21,7 @@ typedef struct talloc_destructor_t {
 } talloc_destructor;
 #endif
 
-#ifdef TALLOC_REFERENCE
+#if defined(TALLOC_REFERENCE)
 typedef struct talloc_reference_t {
     struct talloc_ext_t *       chunk;
     struct talloc_reference_t * prev;
@@ -29,25 +29,25 @@ typedef struct talloc_reference_t {
 } talloc_reference;
 #endif
 
-#ifdef TALLOC_EXT
+#if defined(TALLOC_EXT)
 typedef struct talloc_ext_t {
 
-#ifdef TALLOC_EXT_DESTRUCTOR
+#if defined(TALLOC_EXT_DESTRUCTOR)
     talloc_destructor * first_destructor;
 #endif
 
-#ifdef TALLOC_REFERENCE
+#if defined(TALLOC_REFERENCE)
     talloc_reference * first_reference;
 #endif
 
 } talloc_ext;
 #endif
 
-#ifdef TALLOC_EXT
+#if defined(TALLOC_EXT)
 enum {
     TALLOC_MODE_EXT = 0,
 
-#ifdef TALLOC_REFERENCE
+#if defined(TALLOC_REFERENCE)
     TALLOC_MODE_REFERENCE
 #endif
 
@@ -60,7 +60,7 @@ typedef struct talloc_chunk_t {
     struct talloc_chunk_t * next;
     struct talloc_chunk_t * first_child;
 
-#ifdef TALLOC_EXT
+#if defined(TALLOC_EXT)
     uint8_t mode;
 #endif
 

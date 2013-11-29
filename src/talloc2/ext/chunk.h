@@ -6,10 +6,10 @@
 #ifndef TALLOC_EXT_CHUNK_H
 #define TALLOC_EXT_CHUNK_H
 
-#include "../types.h"
+#include "../data.h"
 #include <stdlib.h>
 
-#ifdef TALLOC_EXT_DESTRUCTOR
+#if defined(TALLOC_EXT_DESTRUCTOR)
 #include "destructor.h"
 #endif
 
@@ -33,13 +33,13 @@ talloc_chunk * talloc_ext_chunk_malloc ( size_t length )
         return NULL;
     } else {
 
-#ifdef TALLOC_EXT_DESTRUCTOR
+#if defined(TALLOC_EXT_DESTRUCTOR)
         ext->first_destructor = NULL;
 #endif
 
         talloc_chunk * chunk = talloc_chunk_from_ext ( ext );
 
-#ifdef TALLOC_REFERENCE
+#if defined(TALLOC_REFERENCE)
         chunk->mode = TALLOC_MODE_EXT;
 #endif
 
@@ -55,13 +55,13 @@ talloc_chunk * talloc_ext_chunk_calloc ( size_t length )
         return NULL;
     } else {
 
-#ifdef TALLOC_EXT_DESTRUCTOR
+#if defined(TALLOC_EXT_DESTRUCTOR)
         ext->first_destructor = NULL;
 #endif
 
         talloc_chunk * chunk = talloc_chunk_from_ext ( ext );
 
-#ifdef TALLOC_REFERENCE
+#if defined(TALLOC_REFERENCE)
         chunk->mode = TALLOC_MODE_EXT;
 #endif
 
@@ -85,22 +85,21 @@ inline
 uint8_t talloc_ext_chunk_free ( talloc_chunk * chunk )
 {
     talloc_ext * ext = talloc_ext_from_chunk ( chunk );
+    uint8_t result, error = 0;
 
-#ifdef TALLOC_REFERENCE
+#if defined(TALLOC_REFERENCE)
     ;
 #endif
 
-#ifdef TALLOC_EXT_DESTRUCTOR
-    uint8_t result = talloc_destructor_free ( chunk, ext );
+#if defined(TALLOC_EXT_DESTRUCTOR)
+    result = talloc_destructor_free ( chunk, ext );
+    if ( result != 0 ) {
+        error = result;
+    }
 #endif
 
     free ( ext );
-
-#ifdef TALLOC_EXT_DESTRUCTOR
-    return result;
-#else
-    return 0;
-#endif
+    return error;
 }
 
 #endif

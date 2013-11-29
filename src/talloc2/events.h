@@ -8,7 +8,7 @@
 
 #include "types.h"
 
-#ifdef TALLOC_DEBUG
+#if defined(TALLOC_DEBUG)
 // Full global history of operations
 typedef uint8_t ( * talloc_callback ) ( talloc_chunk * chunk );
 
@@ -31,7 +31,7 @@ inline
 uint8_t talloc_on_add ( talloc_chunk * chunk )
 {
 
-#ifdef TALLOC_DEBUG
+#if defined(TALLOC_DEBUG)
     if ( talloc_debug_on_add != NULL ) {
         return talloc_debug_on_add ( chunk );
     }
@@ -44,7 +44,7 @@ inline
 uint8_t talloc_on_update ( talloc_chunk * chunk )
 {
 
-#ifdef TALLOC_DEBUG
+#if defined(TALLOC_DEBUG)
     if ( talloc_debug_on_update != NULL ) {
         return talloc_debug_on_update ( chunk );
     }
@@ -57,7 +57,7 @@ inline
 uint8_t talloc_on_move ( talloc_chunk * chunk )
 {
 
-#ifdef TALLOC_DEBUG
+#if defined(TALLOC_DEBUG)
     if ( talloc_debug_on_move != NULL ) {
         return talloc_debug_on_move ( chunk );
     }
@@ -70,7 +70,7 @@ inline
 uint8_t talloc_on_del ( talloc_chunk * chunk )
 {
 
-#ifdef TALLOC_DEBUG
+#if defined(TALLOC_DEBUG)
     if ( talloc_debug_on_del != NULL ) {
         return talloc_debug_on_del ( chunk );
     }

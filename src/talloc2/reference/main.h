@@ -6,32 +6,10 @@
 #ifndef TALLOC_REFERENCE_MAIN_H
 #define TALLOC_REFERENCE_MAIN_H
 
-#include "../tree.h"
 #include "chunk.h"
 
-inline
-uint8_t talloc_clear_references ( const void * chunk_data )
-{
-    talloc_ext * ext             = talloc_ext_from_chunk ( talloc_chunk_from_data ( chunk_data ) );
-    talloc_reference * reference = ext->first_reference;
-    talloc_reference * next_reference;
-
-    uint8_t result, error = 0;
-    talloc_chunk * chunk;
-    while ( reference != NULL ) {
-        next_reference = reference->next;
-        chunk = talloc_chunk_from_reference ( reference );
-        if ( ( result = talloc_free_chunk ( chunk ) ) != 0 ) {
-            error = result;
-        }
-        reference = next_reference;
-    }
-    ext->first_reference = NULL;
-
-    return error;
-}
-
-uint8_t talloc_add_reference ( const void * parent_data, const void * child_data );
-uint8_t talloc_del_reference ( const void * parent_data, const void * child_data );
+uint8_t talloc_clear_references ( const void * chunk_data );
+uint8_t talloc_add_reference    ( const void * parent_data, const void * child_data );
+uint8_t talloc_del_reference    ( const void * parent_data, const void * child_data );
 
 #endif

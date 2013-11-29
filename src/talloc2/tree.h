@@ -7,18 +7,7 @@
 #define TALLOC_TREE_H
 
 #include "types.h"
-
-inline
-void * talloc_data_from_chunk ( talloc_chunk * chunk )
-{
-    return ( void * ) ( ( uintptr_t ) chunk + sizeof ( talloc_chunk ) );
-}
-
-inline
-talloc_chunk * talloc_chunk_from_data ( const void * data )
-{
-    return ( talloc_chunk * ) ( ( uintptr_t ) data - sizeof ( talloc_chunk ) );
-}
+#include "data.h"
 
 inline
 void talloc_set_child_chunk ( talloc_chunk * parent, talloc_chunk * child )
@@ -69,10 +58,6 @@ void * talloc_new ( const void * parent_data )
     return talloc ( parent_data, 0 );
 }
 
-void *  talloc_zero       ( const void * parent_data, size_t length );
-void *  talloc_realloc    ( const void * child_data, size_t length );
-uint8_t talloc_move       ( const void * child_data, const void * parent_data );
-
 uint8_t talloc_free_chunk ( talloc_chunk * chunk );
 
 inline
@@ -83,5 +68,9 @@ uint8_t talloc_free ( void * root_data )
     }
     return talloc_free_chunk ( talloc_chunk_from_data ( root_data ) );
 }
+
+void *  talloc_zero    ( const void * parent_data, size_t length );
+void *  talloc_realloc ( const void * child_data, size_t length );
+uint8_t talloc_move    ( const void * child_data, const void * parent_data );
 
 #endif

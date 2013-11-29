@@ -7,15 +7,15 @@
 
 #include <talloc2/helpers.h>
 
-#ifdef TALLOC_UTILS_BUFFER
+#if defined(TALLOC_UTILS_BUFFER)
 #include "buffer.h"
 #endif
 
-#ifdef TALLOC_UTILS_DYNARR
+#if defined(TALLOC_UTILS_DYNARR)
 #include "dynarr.h"
 #endif
 
-#ifdef TALLOC_UTILS_LIST
+#if defined(TALLOC_UTILS_LIST)
 #include "list.h"
 #endif
 
@@ -26,21 +26,21 @@ int main ()
         return 1;
     }
 
-#ifdef TALLOC_UTILS_BUFFER
+#if defined(TALLOC_UTILS_BUFFER)
     if ( !test_buffer ( ctx ) ) {
         talloc_free ( ctx );
         return 2;
     }
 #endif
 
-#ifdef TALLOC_UTILS_DYNARR
+#if defined(TALLOC_UTILS_DYNARR)
     if ( !test_dynarr ( ctx ) ) {
         talloc_free ( ctx );
         return 3;
     }
 #endif
 
-#ifdef TALLOC_UTILS_LIST
+#if defined(TALLOC_UTILS_LIST)
     if ( !test_list ( ctx ) ) {
         talloc_free ( ctx );
         return 4;

@@ -46,7 +46,7 @@ talloc_chunk * chunk_010     = NULL;
 talloc_chunk * chunk_011     = NULL;
 talloc_chunk * chunk_012     = NULL;
 
-#ifdef TALLOC_DEBUG
+#if defined(TALLOC_DEBUG)
 static malloc_dynarr * history;
 
 enum {
@@ -95,7 +95,7 @@ uint8_t on_del ( talloc_chunk * chunk )
 
 bool init ()
 {
-#ifdef TALLOC_DEBUG
+#if defined(TALLOC_DEBUG)
     // all history will be available here
     history = malloc_dynarr_new ( 16 );
     if ( history == NULL ) {
@@ -149,7 +149,7 @@ bool free_data ()
     if ( talloc_free ( root ) != 0 ) {
         result = false;
     }
-#ifdef TALLOC_DEBUG
+#if defined(TALLOC_DEBUG)
     if ( history != NULL ) {
         size_t length = malloc_dynarr_get_length ( history );
         for ( size_t index = 0; index < length; index ++ ) {
@@ -403,7 +403,7 @@ bool test_data_without_data_01 ()
     return true;
 }
 
-#ifdef TALLOC_DEBUG
+#if defined(TALLOC_DEBUG)
 bool test_history_event ( size_t index, uint8_t mode, talloc_chunk * chunk )
 {
     talloc_event * event = malloc_dynarr_get ( history, index );
@@ -507,7 +507,7 @@ int main ()
     }
     root = NULL;
 
-#ifdef TALLOC_DEBUG
+#if defined(TALLOC_DEBUG)
     if ( !test_history() ) {
         free_data();
         return 11;

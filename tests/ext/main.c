@@ -7,7 +7,7 @@
 
 #include <talloc2/helpers.h>
 
-#ifdef TALLOC_EXT_DESTRUCTOR
+#if defined(TALLOC_EXT_DESTRUCTOR)
 #include "destructor.h"
 #endif
 
@@ -44,7 +44,7 @@ int main ()
         return 1;
     }
 
-#ifdef TALLOC_EXT_DESTRUCTOR
+#if defined(TALLOC_EXT_DESTRUCTOR)
     if ( !test_destructor () ) {
         free_data ();
         return 2;
