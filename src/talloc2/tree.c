@@ -44,7 +44,7 @@ uint8_t talloc_add_chunk ( const void * parent_data, talloc_chunk * child )
 
 }
 
-void * talloc ( const void * parent_data, size_t length )
+void __attribute__ ( ( noinline ) ) * talloc ( const void * parent_data, size_t length )
 {
     talloc_chunk * chunk;
 
@@ -213,7 +213,5 @@ uint8_t talloc_free_chunk ( talloc_chunk * chunk )
 
 extern inline void    talloc_set_child_chunk ( talloc_chunk * parent, talloc_chunk * child );
 extern inline void    talloc_detach_chunk    ( talloc_chunk * chunk );
-extern inline void *  talloc                 ( const void * parent_data, size_t length );
-extern inline void *  talloc_zero            ( const void * parent_data, size_t length );
 extern inline void *  talloc_new             ( const void * parent_data );
 extern inline uint8_t talloc_free            ( void * root_data );

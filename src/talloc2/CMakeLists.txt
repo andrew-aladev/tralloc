@@ -1,14 +1,14 @@
 if (CMAKE_BUILD_TYPE MATCHES DEBUG)
     set (TALLOC_DEBUG true)
 endif ()
-if (TALLOC_DEBUG MATCHES true OR TALLOC_DESTRUCTOR MATCHES true)
+if (TALLOC_DEBUG MATCHES true)
     set (TALLOC_EVENTS true)
 endif ()
 
 configure_file (${CMAKE_CURRENT_SOURCE_DIR}/config.h.in ${CMAKE_CURRENT_SOURCE_DIR}/config.h)
 
-set (INCLUDES chunk.h data.h helpers.h tree.h types.h config.h)
-set (SOURCES  chunk.c data.c helpers.c tree.c)
+set (INCLUDES common.h chunk.h helpers.h tree.h types.h config.h)
+set (SOURCES  common.c chunk.c helpers.c tree.c)
 
 if (TALLOC_EVENTS MATCHES true)
     set (INCLUDES ${INCLUDES} events.h)

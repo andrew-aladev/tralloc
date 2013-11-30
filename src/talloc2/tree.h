@@ -6,8 +6,7 @@
 #ifndef TALLOC_TREE_H
 #define TALLOC_TREE_H
 
-#include "types.h"
-#include "data.h"
+#include "common.h"
 
 inline
 void talloc_set_child_chunk ( talloc_chunk * parent, talloc_chunk * child )

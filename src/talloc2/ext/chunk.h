@@ -6,8 +6,9 @@
 #ifndef TALLOC_EXT_CHUNK_H
 #define TALLOC_EXT_CHUNK_H
 
-#include "../data.h"
 #include <stdlib.h>
+
+#include "../common.h"
 
 #if defined(TALLOC_EXT_DESTRUCTOR)
 #include "destructor.h"
@@ -16,18 +17,6 @@
 #if defined(TALLOC_REFERENCE)
 #include "../reference/chunk.h"
 #endif
-
-inline
-talloc_chunk * talloc_chunk_from_ext ( talloc_ext * ext )
-{
-    return ( talloc_chunk * ) ( ( uintptr_t ) ext + sizeof ( talloc_ext ) );
-}
-
-inline
-talloc_ext * talloc_ext_from_chunk ( talloc_chunk * chunk )
-{
-    return ( talloc_ext * ) ( ( uintptr_t ) chunk - sizeof ( talloc_ext ) );
-}
 
 inline
 talloc_chunk * talloc_ext_chunk_malloc ( size_t length )

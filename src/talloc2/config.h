@@ -1,5 +1,5 @@
-#define TALLOC_DEBUG
-#define TALLOC_EVENTS
+/* #undef TALLOC_DEBUG */
+/* #undef TALLOC_EVENTS */
 #define TALLOC_EXT
 #define TALLOC_EXT_DESTRUCTOR
 #define TALLOC_REFERENCE

@@ -11,7 +11,11 @@
 #include <limits.h>
 
 #include <talloc2/tree.h>
+
+#if defined(TALLOC_EVENTS)
 #include <talloc2/events.h>
+#endif
+
 #include "../lib/malloc_dynarr.h"
 
 /*
@@ -247,7 +251,7 @@ bool test_move ()
     if (
         talloc_move ( trivium, data_00 ) != 0 ||
         chunk_trivium->parent != chunk_00 ||
-        
+
         talloc_move ( trivium, NULL ) != 0 ||
         chunk_trivium->parent != NULL ||
 

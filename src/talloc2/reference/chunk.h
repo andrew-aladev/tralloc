@@ -6,21 +6,8 @@
 #ifndef TALLOC_REFERENCE_CHUNK_H
 #define TALLOC_REFERENCE_CHUNK_H
 
-#include "../types.h"
-#include "../data.h"
+#include "../common.h"
 #include <stdlib.h>
-
-inline
-talloc_chunk * talloc_chunk_from_reference ( void * memory )
-{
-    return ( talloc_chunk * ) ( ( uintptr_t ) memory + sizeof ( talloc_reference ) );
-}
-
-inline
-talloc_reference * talloc_reference_from_chunk ( talloc_chunk * chunk )
-{
-    return ( talloc_reference * ) ( ( uintptr_t ) chunk - sizeof ( talloc_reference ) );
-}
 
 inline
 talloc_chunk * talloc_reference_chunk_new ( const void * chunk_data )
