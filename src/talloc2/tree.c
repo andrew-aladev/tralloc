@@ -89,27 +89,25 @@ void * talloc_zero ( const void * parent_data, size_t length )
 }
 
 static inline
-uint8_t talloc_update_chunk ( talloc_chunk * child )
+void talloc_update_chunk ( talloc_chunk * chunk )
 {
-    talloc_chunk * prev = child->prev;
+    talloc_chunk * prev = chunk->prev;
     if ( prev == NULL ) {
-        talloc_chunk * parent = child->parent;
-        parent->first_child = child;
+        talloc_chunk * parent = chunk->parent;
+        parent->first_child = chunk;
     } else {
-        prev->next = child;
+        prev->next = chunk;
     }
-    talloc_chunk * next = child->next;
+    talloc_chunk * next = chunk->next;
     if ( next != NULL ) {
-        next->prev = child;
+        next->prev = chunk;
     }
 
-    talloc_chunk * next_child = child->first_child;
+    talloc_chunk * next_child = chunk->first_child;
     while ( next_child != NULL ) {
-        next_child->parent = child;
+        next_child->parent = chunk;
         next_child = next_child->next;
     }
-
-    return 0;
 }
 
 void * talloc_realloc ( const void * chunk_data, size_t length )
@@ -130,9 +128,9 @@ void * talloc_realloc ( const void * chunk_data, size_t length )
         return NULL;
     }
     if ( old_chunk != new_chunk ) {
-        if ( talloc_update_chunk ( new_chunk ) != 0 ) {
-            return NULL;
-        }
+        // now pointers to old_chunk is invalid
+        // each pointer to old_chunk should be replaced with new_chunk
+        talloc_update_chunk ( new_chunk );
     }
 
 #if defined(TALLOC_EVENTS)

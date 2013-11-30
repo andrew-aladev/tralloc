@@ -6,7 +6,8 @@
 #ifndef TALLOC_REFERENCE_CHUNK_H
 #define TALLOC_REFERENCE_CHUNK_H
 
-#include "../ext/chunk.h"
+#include "../types.h"
+#include "../data.h"
 #include <stdlib.h>
 
 inline
@@ -22,15 +23,33 @@ talloc_reference * talloc_reference_from_chunk ( talloc_chunk * chunk )
 }
 
 inline
-talloc_chunk * talloc_reference_chunk_new ()
+talloc_chunk * talloc_reference_chunk_new ( const void * chunk_data )
 {
-    void * memory = malloc ( sizeof ( talloc_reference ) + sizeof ( talloc_chunk ) );
+    void * memory = malloc ( sizeof ( talloc_reference ) + sizeof ( talloc_chunk ) + sizeof ( uintptr_t ) );
     if ( memory == NULL ) {
         return NULL;
-    } else {
-        talloc_chunk * chunk = talloc_chunk_from_reference ( memory );
-        chunk->mode          = TALLOC_MODE_REFERENCE;
-        return chunk;
+    }
+
+    talloc_chunk * chunk = talloc_chunk_from_reference ( memory );
+    chunk->mode          = TALLOC_MODE_REFERENCE;
+
+    void ** data = ( void ** ) talloc_data_from_chunk ( chunk );
+    * data       = ( void * ) chunk_data;
+    return chunk;
+}
+
+inline
+void talloc_update_references ( talloc_ext * ext, talloc_chunk * chunk )
+{
+    void ** data;
+    void * chunk_data = talloc_data_from_chunk ( chunk );
+
+    talloc_reference * reference = ext->first_reference;
+    while ( reference != NULL ) {
+        reference->chunk = ext;
+        data = ( void ** ) talloc_data_from_chunk ( talloc_chunk_from_reference ( reference ) );
+        * data = chunk_data;
+        reference = reference->next;
     }
 }
 

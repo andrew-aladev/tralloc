@@ -13,6 +13,10 @@
 #include "destructor.h"
 #endif
 
+#if defined(TALLOC_REFERENCE)
+#include "../reference/chunk.h"
+#endif
+
 inline
 talloc_chunk * talloc_chunk_from_ext ( talloc_ext * ext )
 {
@@ -31,20 +35,19 @@ talloc_chunk * talloc_ext_chunk_malloc ( size_t length )
     talloc_ext * ext = malloc ( sizeof ( talloc_ext ) + sizeof ( talloc_chunk ) + length );
     if ( ext == NULL ) {
         return NULL;
-    } else {
+    }
 
 #if defined(TALLOC_EXT_DESTRUCTOR)
-        ext->first_destructor = NULL;
+    ext->first_destructor = NULL;
 #endif
 
-        talloc_chunk * chunk = talloc_chunk_from_ext ( ext );
+    talloc_chunk * chunk = talloc_chunk_from_ext ( ext );
 
 #if defined(TALLOC_REFERENCE)
-        chunk->mode = TALLOC_MODE_EXT;
+    chunk->mode = TALLOC_MODE_EXT;
 #endif
 
-        return chunk;
-    }
+    return chunk;
 }
 
 inline
@@ -53,32 +56,41 @@ talloc_chunk * talloc_ext_chunk_calloc ( size_t length )
     talloc_ext * ext = calloc ( 1, sizeof ( talloc_ext ) + sizeof ( talloc_chunk ) + length );
     if ( ext == NULL ) {
         return NULL;
-    } else {
+    }
 
 #if defined(TALLOC_EXT_DESTRUCTOR)
-        ext->first_destructor = NULL;
+    ext->first_destructor = NULL;
 #endif
 
-        talloc_chunk * chunk = talloc_chunk_from_ext ( ext );
+    talloc_chunk * chunk = talloc_chunk_from_ext ( ext );
 
 #if defined(TALLOC_REFERENCE)
-        chunk->mode = TALLOC_MODE_EXT;
+    chunk->mode = TALLOC_MODE_EXT;
 #endif
 
-        return chunk;
-    }
+    return chunk;
 }
 
 inline
 talloc_chunk * talloc_ext_chunk_realloc ( talloc_chunk * chunk, size_t length )
 {
-    talloc_ext * ext = talloc_ext_from_chunk ( chunk );
-    ext              = realloc ( ext, sizeof ( talloc_ext ) + sizeof ( talloc_chunk ) + length );
-    if ( ext == NULL ) {
+    talloc_ext * old_ext = talloc_ext_from_chunk ( chunk );
+    talloc_ext * new_ext = realloc ( old_ext, sizeof ( talloc_ext ) + sizeof ( talloc_chunk ) + length );
+    if ( new_ext == NULL ) {
         return NULL;
-    } else {
-        return talloc_chunk_from_ext ( ext );
     }
+
+    chunk = talloc_chunk_from_ext ( new_ext );
+
+#if defined(TALLOC_REFERENCE)
+    if ( old_ext != new_ext ) {
+        // now pointers to old_ext is invalid
+        // each pointer to old_ext should be replaced with new_ext
+        talloc_update_references ( new_ext, chunk );
+    }
+#endif
+
+    return chunk;
 }
 
 inline

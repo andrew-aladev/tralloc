@@ -8,8 +8,7 @@
 
 #include "chunk.h"
 
+void ** talloc_add_reference    ( const void * parent_data, const void * child_data );
 uint8_t talloc_clear_references ( const void * chunk_data );
-uint8_t talloc_add_reference    ( const void * parent_data, const void * child_data );
-uint8_t talloc_del_reference    ( const void * parent_data, const void * child_data );
 
 #endif

@@ -43,14 +43,10 @@ typedef struct talloc_ext_t {
 } talloc_ext;
 #endif
 
-#if defined(TALLOC_EXT)
+#if defined(TALLOC_REFERENCE)
 enum {
     TALLOC_MODE_EXT = 0,
-
-#if defined(TALLOC_REFERENCE)
     TALLOC_MODE_REFERENCE
-#endif
-
 };
 #endif
 
@@ -60,7 +56,7 @@ typedef struct talloc_chunk_t {
     struct talloc_chunk_t * next;
     struct talloc_chunk_t * first_child;
 
-#if defined(TALLOC_EXT)
+#if defined(TALLOC_REFERENCE)
     uint8_t mode;
 #endif
 
