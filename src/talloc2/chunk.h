@@ -6,31 +6,49 @@
 #ifndef TALLOC_CHUNK_H
 #define TALLOC_CHUNK_H
 
-#include "types.h"
+#include "tree.h"
+
+#if defined(TALLOC_EVENTS)
+#include "events.h"
+#endif
+
 #include <stdlib.h>
 
 inline
-talloc_chunk * talloc_usual_chunk_malloc ( size_t length )
+talloc_chunk * talloc_usual_malloc_chunk ( size_t length )
 {
     return ( talloc_chunk * ) malloc ( sizeof ( talloc_chunk ) + length );
 }
 
 inline
-talloc_chunk * talloc_usual_chunk_calloc ( size_t length )
+talloc_chunk * talloc_usual_calloc_chunk ( size_t length )
 {
     return ( talloc_chunk * ) calloc ( 1, sizeof ( talloc_chunk ) + length );
 }
 
 inline
-talloc_chunk * talloc_usual_chunk_realloc ( talloc_chunk * chunk, size_t length )
+talloc_chunk * talloc_usual_realloc_chunk ( talloc_chunk * chunk, size_t length )
 {
     return ( talloc_chunk * ) realloc ( chunk, sizeof ( talloc_chunk ) + length );
 }
 
 inline
-void talloc_usual_chunk_free ( talloc_chunk * chunk )
+uint8_t talloc_usual_free_chunk ( talloc_chunk * chunk )
 {
+    uint8_t result, error = 0;
+
+#if defined(TALLOC_EVENTS)
+    if ( ( result = talloc_on_del ( chunk ) ) != 0 ) {
+        error = result;
+    }
+#endif
+
+    if ( ( result = talloc_free_chunk_children ( chunk ) ) != 0 ) {
+        error = result;
+    }
+
     free ( chunk );
+    return error;
 }
 
 #endif

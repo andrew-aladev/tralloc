@@ -47,6 +47,8 @@ void talloc_detach_chunk ( talloc_chunk * chunk )
             parent->first_child = next;
         }
     }
+    
+    chunk->parent = NULL;
 }
 
 void * talloc ( const void * parent_data, size_t length );
@@ -60,12 +62,32 @@ void * talloc_new ( const void * parent_data )
 uint8_t talloc_free_chunk ( talloc_chunk * chunk );
 
 inline
+uint8_t talloc_free_chunk_children ( talloc_chunk * chunk )
+{
+    uint8_t result, error = 0;
+    talloc_chunk * child  = chunk->first_child;
+
+    talloc_chunk * next_child;
+    while ( child != NULL ) {
+        next_child = child->next;
+        if ( ( result = talloc_free_chunk ( child ) ) != 0 ) {
+            error = result;
+        }
+        child = next_child;
+    }
+
+    return error;
+}
+
+inline
 uint8_t talloc_free ( void * root_data )
 {
     if ( root_data == NULL ) {
         return 0;
     }
-    return talloc_free_chunk ( talloc_chunk_from_data ( root_data ) );
+    talloc_chunk * chunk = talloc_chunk_from_data ( root_data );
+    talloc_detach_chunk ( chunk );
+    return talloc_free_chunk ( chunk );
 }
 
 void *  talloc_zero    ( const void * parent_data, size_t length );
@@ -73,3 +95,4 @@ void *  talloc_realloc ( const void * child_data, size_t length );
 uint8_t talloc_move    ( const void * child_data, const void * parent_data );
 
 #endif
+

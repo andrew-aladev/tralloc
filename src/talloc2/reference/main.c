@@ -18,14 +18,14 @@ void ** talloc_add_reference ( const void * parent_data, const void * child_data
         return NULL;
     }
 
-    talloc_chunk * reference_chunk = talloc_reference_chunk_new ( child_data );
+    talloc_chunk * reference_chunk = talloc_reference_new_chunk ( child_data );
     if ( reference_chunk == NULL ) {
         return NULL;
     }
     talloc_reference * reference = talloc_reference_from_chunk ( reference_chunk );
     talloc_ext       * child_ext = talloc_ext_from_chunk ( child_chunk );
-    reference->chunk = child_ext;
-    reference->prev  = NULL;
+    reference->parent_ext = child_ext;
+    reference->prev       = NULL;
 
     talloc_reference * first_reference = child_ext->first_reference;
     if ( first_reference == NULL ) {
@@ -52,6 +52,7 @@ uint8_t talloc_clear_references ( const void * chunk_data )
     while ( reference != NULL ) {
         next_reference = reference->next;
         chunk = talloc_chunk_from_reference ( reference );
+        talloc_detach_chunk ( chunk );
         if ( ( result = talloc_free_chunk ( chunk ) ) != 0 ) {
             error = result;
         }

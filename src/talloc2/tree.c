@@ -44,21 +44,21 @@ uint8_t talloc_add_chunk ( const void * parent_data, talloc_chunk * child )
 
 }
 
-void __attribute__ ( ( noinline ) ) * talloc ( const void * parent_data, size_t length )
+void * talloc ( const void * parent_data, size_t length )
 {
     talloc_chunk * chunk;
 
 #if defined(TALLOC_EXT)
-    chunk = talloc_ext_chunk_malloc ( length );
+    chunk = talloc_ext_malloc_chunk ( length );
 #else
-    chunk = talloc_usual_chunk_malloc ( length );
+    chunk = talloc_usual_malloc_chunk ( length );
 #endif
 
     if ( talloc_add_chunk ( parent_data, chunk ) != 0 ) {
 #if defined(TALLOC_EXT)
-        talloc_ext_chunk_free ( chunk );
+        talloc_ext_free_chunk ( chunk );
 #else
-        talloc_usual_chunk_free ( chunk );
+        talloc_usual_free_chunk ( chunk );
 #endif
         return NULL;
     }
@@ -71,16 +71,16 @@ void * talloc_zero ( const void * parent_data, size_t length )
     talloc_chunk * chunk;
 
 #if defined(TALLOC_EXT)
-    chunk = talloc_ext_chunk_calloc ( length );
+    chunk = talloc_ext_calloc_chunk ( length );
 #else
-    chunk = talloc_usual_chunk_calloc ( length );
+    chunk = talloc_usual_calloc_chunk ( length );
 #endif
 
     if ( talloc_add_chunk ( parent_data, chunk ) != 0 ) {
 #if defined(TALLOC_EXT)
-        talloc_ext_chunk_free ( chunk );
+        talloc_ext_free_chunk ( chunk );
 #else
-        talloc_usual_chunk_free ( chunk );
+        talloc_usual_free_chunk ( chunk );
 #endif
         return NULL;
     }
@@ -119,9 +119,9 @@ void * talloc_realloc ( const void * chunk_data, size_t length )
 
     talloc_chunk * new_chunk;
 #if defined(TALLOC_EXT)
-    new_chunk = talloc_ext_chunk_realloc ( old_chunk, length );
+    new_chunk = talloc_ext_realloc_chunk ( old_chunk, length );
 #else
-    new_chunk = talloc_usual_chunk_realloc ( old_chunk, length );
+    new_chunk = talloc_usual_realloc_chunk ( old_chunk, length );
 #endif
 
     if ( new_chunk == NULL ) {
@@ -165,53 +165,25 @@ uint8_t talloc_move ( const void * child_data, const void * parent_data )
 
 }
 
-static
-uint8_t talloc_free_chunk_recursive ( talloc_chunk * chunk )
+uint8_t talloc_free_chunk ( talloc_chunk * chunk )
 {
-    uint8_t result, error = 0;
-    talloc_chunk * child  = chunk->first_child;
-
-#if defined(TALLOC_EVENTS)
-    if ( ( result = talloc_on_del ( chunk ) ) != 0 ) {
-        error = result;
-    }
-#endif
 
 #if defined(TALLOC_REFERENCE)
     if ( chunk->mode == TALLOC_MODE_EXT ) {
-        if ( ( result = talloc_ext_chunk_free ( chunk ) ) != 0 ) {
-            error = result;
-        }
+        return talloc_ext_free_chunk ( chunk );
     } else {
-        talloc_reference_chunk_free ( chunk );
+        return talloc_reference_free_chunk ( chunk );
     }
 #elif defined(TALLOC_EXT)
-    if ( ( result = talloc_ext_chunk_free ( chunk ) ) != 0 ) {
-        error = result;
-    }
+    return talloc_ext_free_chunk ( chunk );
 #else
-    talloc_usual_chunk_free ( chunk );
+    return talloc_usual_free_chunk ( chunk );
 #endif
 
-    talloc_chunk * next_child;
-    while ( child != NULL ) {
-        next_child = child->next;
-        if ( ( result = talloc_free_chunk_recursive ( child ) ) != 0 ) {
-            error = result;
-        }
-        child = next_child;
-    }
-
-    return error;
 }
 
-uint8_t talloc_free_chunk ( talloc_chunk * chunk )
-{
-    talloc_detach_chunk ( chunk );
-    return talloc_free_chunk_recursive ( chunk );
-}
-
-extern inline void    talloc_set_child_chunk ( talloc_chunk * parent, talloc_chunk * child );
-extern inline void    talloc_detach_chunk    ( talloc_chunk * chunk );
-extern inline void *  talloc_new             ( const void * parent_data );
-extern inline uint8_t talloc_free            ( void * root_data );
+extern inline void    talloc_set_child_chunk     ( talloc_chunk * parent, talloc_chunk * child );
+extern inline void    talloc_detach_chunk        ( talloc_chunk * chunk );
+extern inline void *  talloc_new                 ( const void * parent_data );
+extern inline uint8_t talloc_free                ( void * root_data );
+extern inline uint8_t talloc_free_chunk_children ( talloc_chunk * chunk );

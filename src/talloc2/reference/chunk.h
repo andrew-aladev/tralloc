@@ -10,7 +10,7 @@
 #include <stdlib.h>
 
 inline
-talloc_chunk * talloc_reference_chunk_new ( const void * chunk_data )
+talloc_chunk * talloc_reference_new_chunk ( const void * chunk_data )
 {
     void * memory = malloc ( sizeof ( talloc_reference ) + sizeof ( talloc_chunk ) + sizeof ( uintptr_t ) );
     if ( memory == NULL ) {
@@ -26,37 +26,20 @@ talloc_chunk * talloc_reference_chunk_new ( const void * chunk_data )
 }
 
 inline
-void talloc_update_references ( talloc_ext * ext, talloc_chunk * chunk )
+void talloc_reference_update ( talloc_ext * ext, talloc_chunk * chunk )
 {
     void ** data;
     void * chunk_data = talloc_data_from_chunk ( chunk );
 
     talloc_reference * reference = ext->first_reference;
     while ( reference != NULL ) {
-        reference->chunk = ext;
+        reference->parent_ext = ext;
         data = ( void ** ) talloc_data_from_chunk ( talloc_chunk_from_reference ( reference ) );
         * data = chunk_data;
         reference = reference->next;
     }
 }
 
-inline
-void talloc_reference_chunk_free ( talloc_chunk * chunk )
-{
-    talloc_reference * reference = talloc_reference_from_chunk ( chunk );
-    talloc_ext * chunk_ext       = reference->chunk;
-
-    talloc_reference * prev = reference->prev;
-    talloc_reference * next = reference->next;
-    if ( prev == NULL ) {
-        chunk_ext->first_reference = next;
-    } else {
-        prev->next = next;
-    }
-    if ( next != NULL ) {
-        next->prev = prev;
-    }
-    free ( reference );
-}
+uint8_t talloc_reference_free_chunk ( talloc_chunk * chunk );
 
 #endif

@@ -3,8 +3,8 @@
 // talloc2 is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Lesser Public License for more details.
 // You should have received a copy of the GNU General Lesser Public License along with talloc2. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TALLOC_DATA_H
-#define TALLOC_DATA_H
+#ifndef TALLOC_COMMON_H
+#define TALLOC_COMMON_H
 
 #include "types.h"
 
@@ -36,9 +36,9 @@ talloc_ext * talloc_ext_from_chunk ( talloc_chunk * chunk )
 
 #ifdef TALLOC_REFERENCE
 inline
-talloc_chunk * talloc_chunk_from_reference ( void * memory )
+talloc_chunk * talloc_chunk_from_reference ( talloc_reference * reference )
 {
-    return ( talloc_chunk * ) ( ( uintptr_t ) memory + sizeof ( talloc_reference ) );
+    return ( talloc_chunk * ) ( ( uintptr_t ) reference + sizeof ( talloc_reference ) );
 }
 
 inline
