@@ -3,9 +3,7 @@
 // talloc2 is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with talloc2. If not, see <http://www.gnu.org/licenses/>.
 
-#include <stdbool.h>
-
-#include <talloc2/helpers.h>
+#include <talloc2/tree.h>
 
 #if defined(TALLOC_DEBUG)
 #include <talloc2/events.h>
@@ -15,52 +13,31 @@
 #include "destructor.h"
 #endif
 
-#include "../lib/malloc_dynarr.h"
-
-void * root;
-malloc_dynarr * history;
-
-bool init_data ()
-{
-    root = talloc_new ( NULL );
-    if ( root == NULL ) {
-        return false;
-    }
-    history = malloc_dynarr_new ( 16 );
-    if ( history == NULL ) {
-        talloc_free ( root );
-        return false;
-    }
-    return true;
-}
-
-void free_data ()
-{
-    talloc_free ( root );
-    if ( history != NULL ) {
-        malloc_dynarr_free ( history );
-    }
-}
-
 int main ()
 {
-    if ( !init_data () ) {
+    void * root = talloc_new ( NULL );
+    if ( root == NULL ) {
         return 1;
     }
 
 #if defined(TALLOC_EXT_DESTRUCTOR)
-    if ( !test_destructor () ) {
-        free_data ();
+    if ( !test_destructor (root) ) {
+        talloc_free ( root );
         return 2;
     }
 #endif
 
-    free_data ();
+    if ( talloc_free ( root ) != 0 ) {
+        return 3;
+    }
 
 #if defined(TALLOC_DEBUG)
-    // no memory leaks should be here
-    if ( talloc_get_objects_count() != 0 ) {
-        return 3;
+    if (
+        talloc_get_objects_count()        != 0 ||
+        talloc_get_objects_chunk_length() != 0 ||
+        talloc_get_objects_length()       != 0
+    ) {
+        return 4;
     }
 #endif
 

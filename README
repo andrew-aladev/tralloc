@@ -6,8 +6,7 @@ Goals:
 2. Configurable extensions.
 3. CMake build system. Project is ready to be added as git submodule to existing CMake project.
 
-mkdir build
-cd build
-cmake ..
-make
-make test
+Supported platforms : GNU/Linux.
+
+mkdir build && cd build
+cmake .. && make &&make test

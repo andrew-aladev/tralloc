@@ -1,7 +1,7 @@
 set (BASIC     basic/main.c lib/malloc_dynarr.c)
 set (EVENTS    events/main.c events/add.c events/resize.c events/move.c events/free.c lib/malloc_dynarr.c)
 set (HELPERS   helpers/main.c)
-set (EXT       ext/main.c lib/malloc_dynarr.c)
+set (EXT       ext/main.c ext/destructor.c lib/malloc_dynarr.c)
 set (REFERENCE reference/main.c)
 set (UTILS     utils/main.c)
 
