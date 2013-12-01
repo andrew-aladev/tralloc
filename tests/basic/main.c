@@ -12,7 +12,7 @@
 
 #include <talloc2/tree.h>
 
-#if defined(TALLOC_EVENTS)
+#if defined(TALLOC_DEBUG)
 #include <talloc2/events.h>
 #endif
 
@@ -30,6 +30,7 @@
     trivium
 */
 
+/*
 static void     * root     = NULL;
 static void     * trivium  = NULL;
 static int8_t   * data_0   = NULL;
@@ -49,6 +50,7 @@ talloc_chunk * chunk_02      = NULL;
 talloc_chunk * chunk_010     = NULL;
 talloc_chunk * chunk_011     = NULL;
 talloc_chunk * chunk_012     = NULL;
+
 
 #if defined(TALLOC_DEBUG)
 static malloc_dynarr * history;
@@ -457,9 +459,11 @@ bool test_history()
     return true;
 }
 #endif
+*/
 
 int main ()
 {
+    /*
     if ( !init() ) {
         free_data();
         return 1;
@@ -521,11 +525,14 @@ int main ()
     if ( !free_data() ) {
         return 12;
     }
-    
+
+#if defined(TALLOC_DEBUG)
     // no memory leaks should be here
     if ( talloc_get_objects_count() != 0 ) {
         return 13;
     }
+#endif
+    */
 
     return 0;
 }

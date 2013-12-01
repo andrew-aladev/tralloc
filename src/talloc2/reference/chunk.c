@@ -6,24 +6,24 @@
 #include "chunk.h"
 #include "../ext/chunk.h"
 
-#if defined(TALLOC_EVENTS)
+#if defined(TALLOC_DEBUG)
 #include "../events.h"
 #endif
 
 extern inline talloc_reference * talloc_reference_malloc_chunk ( const void * parent_data, const void * chunk_data );
-extern inline void               talloc_reference_update       ( talloc_ext * ext, talloc_chunk * chunk );
+extern inline void               talloc_reference_update       ( talloc_ext * ext, talloc_chunk * ext_chunk );
 
-uint8_t talloc_reference_free_chunk ( talloc_chunk * chunk )
+uint8_t talloc_reference_free_chunk ( talloc_chunk * reference_chunk )
 {
     uint8_t result, error = 0;
 
-#if defined(TALLOC_EVENTS)
-    if ( ( result = talloc_on_del ( chunk ) ) != 0 ) {
+#if defined(TALLOC_DEBUG)
+    if ( ( result = talloc_on_free ( reference_chunk ) ) != 0 ) {
         error = result;
     }
 #endif
 
-    talloc_reference * reference = talloc_reference_from_chunk ( chunk );
+    talloc_reference * reference = talloc_reference_from_chunk ( reference_chunk );
     talloc_ext * parent_ext      = reference->parent_ext;
 
     talloc_reference * prev = reference->prev;

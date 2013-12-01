@@ -5,8 +5,11 @@
 
 #include <stdbool.h>
 
-#include <talloc2/events.h>
 #include <talloc2/helpers.h>
+
+#if defined(TALLOC_DEBUG)
+#include <talloc2/events.h>
+#endif
 
 #if defined(TALLOC_EXT_DESTRUCTOR)
 #include "destructor.h"
@@ -53,11 +56,13 @@ int main ()
 #endif
 
     free_data ();
-    
+
+#if defined(TALLOC_DEBUG)
     // no memory leaks should be here
     if ( talloc_get_objects_count() != 0 ) {
         return 3;
     }
-    
+#endif
+
     return 0;
 }

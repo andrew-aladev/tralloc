@@ -4,9 +4,13 @@
 // You should have received a copy of the GNU General Public License along with talloc2. If not, see <http://www.gnu.org/licenses/>.
 
 #include <talloc2/tree.h>
-#include <talloc2/events.h>
 #include <talloc2/ext/chunk.h>
 #include <talloc2/reference/main.h>
+
+#if defined(TALLOC_DEBUG)
+#include <talloc2/events.h>
+#endif
+
 #include <string.h>
 
 int main ()
@@ -194,10 +198,12 @@ int main ()
         return 15;
     }
 
+#if defined(TALLOC_DEBUG)
     // no memory leaks should be here
     if ( talloc_get_objects_count() != 0 ) {
         return 16;
     }
+#endif
 
     return 0;
 }

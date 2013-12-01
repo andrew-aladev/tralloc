@@ -5,70 +5,71 @@
 
 #include "events.h"
 
-#if defined(TALLOC_DEBUG)
+static void *                    talloc_user_data;
+static talloc_callback_on_add    talloc_debug_on_add;
+static talloc_callback_on_resize talloc_debug_on_resize;
+static talloc_callback_on_move   talloc_debug_on_move;
+static talloc_callback_on_free   talloc_debug_on_free;
 
-static talloc_callback talloc_debug_on_add;
-static talloc_callback talloc_debug_on_update;
-static talloc_callback talloc_debug_on_move;
-static talloc_callback talloc_debug_on_del;
+void talloc_set_user_data ( void * user_data )
+{
+    talloc_user_data = user_data;
+}
 
-void talloc_set_callback ( talloc_callback on_add, talloc_callback on_update, talloc_callback on_move, talloc_callback on_del )
+void talloc_set_callback ( talloc_callback_on_add on_add, talloc_callback_on_resize on_resize, talloc_callback_on_move on_move, talloc_callback_on_free on_free )
 {
     talloc_debug_on_add    = on_add;
-    talloc_debug_on_update = on_update;
+    talloc_debug_on_resize = on_resize;
     talloc_debug_on_move   = on_move;
-    talloc_debug_on_del    = on_del;
+    talloc_debug_on_free   = on_free;
 }
-#endif
 
-static size_t talloc_objects_count = 0;
+static size_t talloc_objects_count         = 0;
+static size_t talloc_objects_chunks_length = 0;
+static size_t talloc_objects_length        = 0;
 
 uint8_t talloc_on_add ( talloc_chunk * chunk )
 {
     talloc_objects_count++;
+    talloc_objects_chunks_length += chunk->chunk_length;
+    talloc_objects_length        += chunk->length;
 
-#if defined(TALLOC_DEBUG)
     if ( talloc_debug_on_add != NULL ) {
-        return talloc_debug_on_add ( chunk );
+        return talloc_debug_on_add ( talloc_user_data, chunk );
     }
-#endif
 
     return 0;
 }
 
-uint8_t talloc_on_update ( talloc_chunk * chunk )
+uint8_t talloc_on_resize ( talloc_chunk * chunk, size_t old_length )
 {
+    talloc_objects_length += chunk->length - old_length;
 
-#if defined(TALLOC_DEBUG)
-    if ( talloc_debug_on_update != NULL ) {
-        return talloc_debug_on_update ( chunk );
+    if ( talloc_debug_on_resize != NULL ) {
+        return talloc_debug_on_resize ( talloc_user_data, chunk, old_length );
     }
-#endif
 
     return 0;
 }
 
-uint8_t talloc_on_move ( talloc_chunk * chunk )
+uint8_t talloc_on_move ( talloc_chunk * chunk, talloc_chunk * old_parent_chunk )
 {
-
-#if defined(TALLOC_DEBUG)
     if ( talloc_debug_on_move != NULL ) {
-        return talloc_debug_on_move ( chunk );
+        return talloc_debug_on_move ( talloc_user_data, chunk, old_parent_chunk );
     }
-#endif
 
     return 0;
 }
 
-uint8_t talloc_on_del ( talloc_chunk * chunk )
+uint8_t talloc_on_free ( talloc_chunk * chunk )
 {
     talloc_objects_count--;
+    talloc_objects_chunks_length -= chunk->chunk_length;
+    talloc_objects_length        -= chunk->length;
 
-#if defined(TALLOC_DEBUG)
-    if ( talloc_debug_on_del != NULL ) {
-        return talloc_debug_on_del ( chunk );
+    if ( talloc_debug_on_free != NULL ) {
+        return talloc_debug_on_free ( talloc_user_data, chunk );
     }
-#endif
 
     return 0;
 }
@@ -76,4 +77,14 @@ uint8_t talloc_on_del ( talloc_chunk * chunk )
 size_t talloc_get_objects_count ()
 {
     return talloc_objects_count;
+}
+
+size_t talloc_get_objects_chunk_length ()
+{
+    return talloc_objects_chunks_length;
+}
+
+size_t talloc_get_objects_length ()
+{
+    return talloc_objects_length;
 }

@@ -8,7 +8,7 @@
 
 #include "tree.h"
 
-#if defined(TALLOC_EVENTS)
+#if defined(TALLOC_DEBUG)
 #include "events.h"
 #endif
 
@@ -21,6 +21,12 @@ talloc_chunk * talloc_usual_malloc_chunk ( const void * parent_data, size_t leng
     if ( chunk == NULL ) {
         return NULL;
     }
+
+#if defined(TALLOC_DEBUG)
+    chunk->chunk_length = sizeof ( talloc_chunk );
+    chunk->length       = length;
+#endif
+
     talloc_add_chunk ( parent_data, chunk );
     return chunk;
 }
@@ -32,6 +38,12 @@ talloc_chunk * talloc_usual_calloc_chunk ( const void * parent_data, size_t leng
     if ( chunk == NULL ) {
         return NULL;
     }
+
+#if defined(TALLOC_DEBUG)
+    chunk->chunk_length = sizeof ( talloc_chunk );
+    chunk->length       = length;
+#endif
+
     talloc_add_chunk ( parent_data, chunk );
     return chunk;
 }
@@ -39,7 +51,16 @@ talloc_chunk * talloc_usual_calloc_chunk ( const void * parent_data, size_t leng
 inline
 talloc_chunk * talloc_usual_realloc_chunk ( talloc_chunk * chunk, size_t length )
 {
-    return ( talloc_chunk * ) realloc ( chunk, sizeof ( talloc_chunk ) + length );
+    talloc_chunk * new_chunk = ( talloc_chunk * ) realloc ( chunk, sizeof ( talloc_chunk ) + length );
+    if ( new_chunk == NULL ) {
+        return NULL;
+    }
+
+#if defined(TALLOC_DEBUG)
+    chunk->length = length;
+#endif
+
+    return new_chunk;
 }
 
 inline
@@ -47,8 +68,8 @@ uint8_t talloc_usual_free_chunk ( talloc_chunk * chunk )
 {
     uint8_t result, error = 0;
 
-#if defined(TALLOC_EVENTS)
-    if ( ( result = talloc_on_del ( chunk ) ) != 0 ) {
+#if defined(TALLOC_DEBUG)
+    if ( ( result = talloc_on_free ( chunk ) ) != 0 ) {
         error = result;
     }
 #endif

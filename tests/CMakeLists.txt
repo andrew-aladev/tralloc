@@ -1,4 +1,5 @@
 set (BASIC     basic/main.c lib/malloc_dynarr.c)
+set (EVENTS    events/main.c events/add.c events/resize.c events/move.c events/free.c lib/malloc_dynarr.c)
 set (HELPERS   helpers/main.c)
 set (EXT       ext/main.c lib/malloc_dynarr.c)
 set (REFERENCE reference/main.c)
@@ -8,10 +9,16 @@ if (TALLOC_SHARED MATCHES true)
     add_executable (${TALLOC_TARGET}-basic ${BASIC})
     target_link_libraries (${TALLOC_TARGET}-basic ${TALLOC_TARGET})
     add_test (${TALLOC_TARGET}-basic ${TALLOC_TARGET}-basic)
-
+    
     add_executable (${TALLOC_TARGET}-helpers ${HELPERS})
     target_link_libraries (${TALLOC_TARGET}-helpers ${TALLOC_TARGET})
     add_test (${TALLOC_TARGET}-helpers ${TALLOC_TARGET}-helpers)
+    
+    if (TALLOC_DEBUG MATCHES true)
+        add_executable (${TALLOC_TARGET}-events ${EVENTS})
+        target_link_libraries (${TALLOC_TARGET}-events ${TALLOC_TARGET})
+        add_test (${TALLOC_TARGET}-events ${TALLOC_TARGET}-events)
+    endif ()
 
     if (TALLOC_EXT MATCHES true)
         add_executable (${TALLOC_TARGET}-ext ${EXT})
@@ -40,6 +47,12 @@ if (TALLOC_STATIC MATCHES true)
     add_executable (${TALLOC_TARGET}-static-helpers ${HELPERS})
     target_link_libraries (${TALLOC_TARGET}-static-helpers ${TALLOC_TARGET}_static)
     add_test (${TALLOC_TARGET}-static-helpers ${TALLOC_TARGET}-static-helpers)
+    
+    if (TALLOC_DEBUG MATCHES true)
+        add_executable (${TALLOC_TARGET}-static-events ${HELPERS})
+        target_link_libraries (${TALLOC_TARGET}-static-events ${TALLOC_TARGET}_static)
+        add_test (${TALLOC_TARGET}-static-events ${TALLOC_TARGET}-static-events)
+    endif ()
 
     if (TALLOC_EXT MATCHES true)
         add_executable (${TALLOC_TARGET}-static-ext ${EXT})

@@ -10,7 +10,7 @@
 #include "tree.h"
 #include "chunk.h"
 
-#if defined(TALLOC_EVENTS)
+#if defined(TALLOC_DEBUG)
 #include "events.h"
 #endif
 
@@ -35,7 +35,7 @@ uint8_t talloc_add_chunk ( const void * parent_data, talloc_chunk * child )
         child->next   = NULL;
     }
 
-#if defined(TALLOC_EVENTS)
+#if defined(TALLOC_DEBUG)
     return talloc_on_add ( child );
 #else
     return 0;
@@ -106,6 +106,10 @@ void * talloc_realloc ( const void * chunk_data, size_t length )
     }
     talloc_chunk * old_chunk = talloc_chunk_from_data ( chunk_data );
 
+#if defined(TALLOC_DEBUG)
+    size_t old_length = old_chunk->length;
+#endif
+
     talloc_chunk * new_chunk;
 #if defined(TALLOC_EXT)
     new_chunk = talloc_ext_realloc_chunk ( old_chunk, length );
@@ -122,8 +126,8 @@ void * talloc_realloc ( const void * chunk_data, size_t length )
         talloc_update_chunk ( new_chunk );
     }
 
-#if defined(TALLOC_EVENTS)
-    if ( talloc_on_update ( new_chunk ) != 0 ) {
+#if defined(TALLOC_DEBUG)
+    if ( talloc_on_resize ( new_chunk, old_length ) != 0 ) {
         return NULL;
     }
 #endif
@@ -137,6 +141,11 @@ uint8_t talloc_move ( const void * child_data, const void * parent_data )
         return 1;
     }
     talloc_chunk * child = talloc_chunk_from_data ( child_data );
+
+#if defined(TALLOC_DEBUG)
+    talloc_chunk * old_parent = child->parent;
+#endif
+
     talloc_detach_chunk ( child );
 
     if ( parent_data == NULL ) {
@@ -146,8 +155,8 @@ uint8_t talloc_move ( const void * child_data, const void * parent_data )
         talloc_set_child_chunk ( new_parent, child );
     }
 
-#if defined(TALLOC_EVENTS)
-    return talloc_on_move ( child );
+#if defined(TALLOC_DEBUG)
+    return talloc_on_move ( child, old_parent );
 #else
     return 0;
 #endif

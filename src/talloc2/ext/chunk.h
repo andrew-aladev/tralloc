@@ -21,15 +21,21 @@ talloc_chunk * talloc_ext_malloc_chunk ( const void * parent_data, size_t length
     ext->first_destructor = NULL;
 #endif
 
-    talloc_chunk * chunk = talloc_chunk_from_ext ( ext );
-    talloc_add_chunk ( parent_data, chunk );
+    talloc_chunk * ext_chunk = talloc_chunk_from_ext ( ext );
+
+#if defined(TALLOC_DEBUG)
+    ext_chunk->chunk_length = sizeof ( talloc_ext ) + sizeof ( talloc_chunk );
+    ext_chunk->length       = length;
+#endif
+
+    talloc_add_chunk ( parent_data, ext_chunk );
 
 #if defined(TALLOC_REFERENCE)
-    chunk->mode          = TALLOC_MODE_EXT;
+    ext_chunk->mode      = TALLOC_MODE_EXT;
     ext->first_reference = NULL;
 #endif
 
-    return chunk;
+    return ext_chunk;
 }
 
 inline
@@ -44,18 +50,24 @@ talloc_chunk * talloc_ext_calloc_chunk ( const void * parent_data, size_t length
     ext->first_destructor = NULL;
 #endif
 
-    talloc_chunk * chunk = talloc_chunk_from_ext ( ext );
-    talloc_add_chunk ( parent_data, chunk );
+    talloc_chunk * ext_chunk = talloc_chunk_from_ext ( ext );
+
+#if defined(TALLOC_DEBUG)
+    ext_chunk->chunk_length = sizeof ( talloc_ext ) + sizeof ( talloc_chunk );
+    ext_chunk->length       = length;
+#endif
+
+    talloc_add_chunk ( parent_data, ext_chunk );
 
 #if defined(TALLOC_REFERENCE)
-    chunk->mode          = TALLOC_MODE_EXT;
+    ext_chunk->mode          = TALLOC_MODE_EXT;
     ext->first_reference = NULL;
 #endif
 
-    return chunk;
+    return ext_chunk;
 }
 
-talloc_chunk * talloc_ext_realloc_chunk ( talloc_chunk * chunk, size_t length );
-uint8_t        talloc_ext_free_chunk    ( talloc_chunk * chunk );
+talloc_chunk * talloc_ext_realloc_chunk ( talloc_chunk * ext_chunk, size_t length );
+uint8_t        talloc_ext_free_chunk    ( talloc_chunk * ext_chunk );
 
 #endif

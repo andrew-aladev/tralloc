@@ -20,6 +20,11 @@ talloc_reference * talloc_reference_malloc_chunk ( const void * parent_data, con
     talloc_chunk * reference_chunk = talloc_chunk_from_reference ( reference );
     reference_chunk->mode          = TALLOC_MODE_REFERENCE;
 
+#if defined(TALLOC_DEBUG)
+    reference_chunk->chunk_length = sizeof ( talloc_reference ) + sizeof ( talloc_chunk );
+    reference_chunk->length       = sizeof ( uintptr_t );
+#endif
+
     void ** data = ( void ** ) talloc_data_from_chunk ( reference_chunk );
     * data       = ( void * ) chunk_data;
 
@@ -29,10 +34,10 @@ talloc_reference * talloc_reference_malloc_chunk ( const void * parent_data, con
 }
 
 inline
-void talloc_reference_update ( talloc_ext * ext, talloc_chunk * chunk )
+void talloc_reference_update ( talloc_ext * ext, talloc_chunk * ext_chunk )
 {
     void ** data;
-    void * chunk_data = talloc_data_from_chunk ( chunk );
+    void * chunk_data = talloc_data_from_chunk ( ext_chunk );
 
     talloc_reference * reference = ext->first_reference;
     while ( reference != NULL ) {

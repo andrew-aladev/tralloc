@@ -60,6 +60,11 @@ typedef struct talloc_chunk_t {
     uint8_t mode;
 #endif
 
+#if defined(TALLOC_DEBUG)
+    size_t chunk_length;
+    size_t length;
+#endif
+
 } talloc_chunk;
 
 #endif

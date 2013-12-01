@@ -8,17 +8,22 @@
 
 #include "types.h"
 
-#if defined(TALLOC_DEBUG)
 // Full global history of operations
-typedef uint8_t ( * talloc_callback ) ( talloc_chunk * chunk );
+typedef uint8_t ( * talloc_callback_on_add )    ( void * user_data, talloc_chunk * chunk );
+typedef uint8_t ( * talloc_callback_on_resize ) ( void * user_data, talloc_chunk * chunk, size_t old_length );
+typedef uint8_t ( * talloc_callback_on_move )   ( void * user_data, talloc_chunk * chunk, talloc_chunk * old_parent_chunk );
+typedef uint8_t ( * talloc_callback_on_free )   ( void * user_data, talloc_chunk * chunk );
 
-void talloc_set_callback ( talloc_callback on_add, talloc_callback on_update, talloc_callback on_move, talloc_callback on_del );
-#endif
+void talloc_set_user_data ( void * user_data );
+void talloc_set_callback  ( talloc_callback_on_add on_add, talloc_callback_on_resize on_resize, talloc_callback_on_move on_move, talloc_callback_on_free on_free );
 
-uint8_t talloc_on_add            ( talloc_chunk * chunk );
-uint8_t talloc_on_update         ( talloc_chunk * chunk );
-uint8_t talloc_on_move           ( talloc_chunk * chunk );
-uint8_t talloc_on_del            ( talloc_chunk * chunk );
-size_t  talloc_get_objects_count ();
+uint8_t talloc_on_add    ( talloc_chunk * chunk );
+uint8_t talloc_on_resize ( talloc_chunk * chunk, size_t old_length );
+uint8_t talloc_on_move   ( talloc_chunk * chunk, talloc_chunk * old_parent_chunk );
+uint8_t talloc_on_free   ( talloc_chunk * chunk );
+
+size_t talloc_get_objects_count        ();
+size_t talloc_get_objects_chunk_length ();
+size_t talloc_get_objects_length       ();
 
 #endif

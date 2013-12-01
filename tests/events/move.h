@@ -5,34 +5,4 @@
 
 #include <stdbool.h>
 
-#include "str.h"
-
-#if defined(TALLOC_DEBUG)
-#include <talloc2/events.h>
-#endif
-
-int main ()
-{
-    void * ctx = talloc_new ( NULL );
-    if ( ctx == NULL ) {
-        return 1;
-    }
-
-    if ( !test_str ( ctx ) ) {
-        talloc_free ( ctx );
-        return 2;
-    }
-
-    if ( talloc_free ( ctx ) != 0 ) {
-        return 3;
-    }
-
-#if defined(TALLOC_DEBUG)
-    // no memory leaks should be here
-    if ( talloc_get_objects_count() != 0 ) {
-        return 4;
-    }
-#endif
-
-    return 0;
-}
+bool test_move ( void * root );
