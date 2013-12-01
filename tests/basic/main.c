@@ -521,6 +521,11 @@ int main ()
     if ( !free_data() ) {
         return 12;
     }
+    
+    // no memory leaks should be here
+    if ( talloc_get_objects_count() != 0 ) {
+        return 13;
+    }
 
     return 0;
 }

@@ -4,7 +4,6 @@
 // You should have received a copy of the GNU General Lesser Public License along with talloc2. If not, see <http://www.gnu.org/licenses/>.
 
 #include "main.h"
-#include "../tree.h"
 #include "../ext/chunk.h"
 
 void ** talloc_add_reference ( const void * parent_data, const void * child_data )
@@ -18,14 +17,14 @@ void ** talloc_add_reference ( const void * parent_data, const void * child_data
         return NULL;
     }
 
-    talloc_chunk * reference_chunk = talloc_reference_new_chunk ( child_data );
-    if ( reference_chunk == NULL ) {
+    talloc_reference * reference = talloc_reference_malloc_chunk ( parent_data, child_data );
+    if ( reference == NULL ) {
         return NULL;
     }
-    talloc_reference * reference = talloc_reference_from_chunk ( reference_chunk );
-    talloc_ext       * child_ext = talloc_ext_from_chunk ( child_chunk );
-    reference->parent_ext = child_ext;
-    reference->prev       = NULL;
+
+    talloc_ext * child_ext = talloc_ext_from_chunk ( child_chunk );
+    reference->parent_ext  = child_ext;
+    reference->prev        = NULL;
 
     talloc_reference * first_reference = child_ext->first_reference;
     if ( first_reference == NULL ) {
@@ -36,9 +35,7 @@ void ** talloc_add_reference ( const void * parent_data, const void * child_data
     }
     child_ext->first_reference = reference;
 
-    talloc_set_child_chunk ( parent_chunk, reference_chunk );
-
-    return talloc_data_from_chunk ( reference_chunk );
+    return talloc_data_from_chunk ( talloc_chunk_from_reference ( reference ) );
 }
 
 uint8_t talloc_clear_references ( const void * chunk_data )

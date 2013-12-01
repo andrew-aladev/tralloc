@@ -22,7 +22,6 @@
 #include "reference/chunk.h"
 #endif
 
-static inline
 uint8_t talloc_add_chunk ( const void * parent_data, talloc_chunk * child )
 {
     child->first_child = NULL;
@@ -49,17 +48,12 @@ void * talloc ( const void * parent_data, size_t length )
     talloc_chunk * chunk;
 
 #if defined(TALLOC_EXT)
-    chunk = talloc_ext_malloc_chunk ( length );
+    chunk = talloc_ext_malloc_chunk ( parent_data, length );
 #else
-    chunk = talloc_usual_malloc_chunk ( length );
+    chunk = talloc_usual_malloc_chunk ( parent_data, length );
 #endif
 
-    if ( talloc_add_chunk ( parent_data, chunk ) != 0 ) {
-#if defined(TALLOC_EXT)
-        talloc_ext_free_chunk ( chunk );
-#else
-        talloc_usual_free_chunk ( chunk );
-#endif
+    if ( chunk == NULL ) {
         return NULL;
     }
 
@@ -71,17 +65,12 @@ void * talloc_zero ( const void * parent_data, size_t length )
     talloc_chunk * chunk;
 
 #if defined(TALLOC_EXT)
-    chunk = talloc_ext_calloc_chunk ( length );
+    chunk = talloc_ext_calloc_chunk ( parent_data, length );
 #else
-    chunk = talloc_usual_calloc_chunk ( length );
+    chunk = talloc_usual_calloc_chunk ( parent_data, length );
 #endif
 
-    if ( talloc_add_chunk ( parent_data, chunk ) != 0 ) {
-#if defined(TALLOC_EXT)
-        talloc_ext_free_chunk ( chunk );
-#else
-        talloc_usual_free_chunk ( chunk );
-#endif
+    if ( chunk == NULL ) {
         return NULL;
     }
 

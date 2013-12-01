@@ -5,11 +5,75 @@
 
 #include "events.h"
 
-#if defined TALLOC_DEBUG
-extern inline void talloc_set_callback ( talloc_callback on_add, talloc_callback on_update, talloc_callback on_move, talloc_callback on_del );
+#if defined(TALLOC_DEBUG)
+
+static talloc_callback talloc_debug_on_add;
+static talloc_callback talloc_debug_on_update;
+static talloc_callback talloc_debug_on_move;
+static talloc_callback talloc_debug_on_del;
+
+void talloc_set_callback ( talloc_callback on_add, talloc_callback on_update, talloc_callback on_move, talloc_callback on_del )
+{
+    talloc_debug_on_add    = on_add;
+    talloc_debug_on_update = on_update;
+    talloc_debug_on_move   = on_move;
+    talloc_debug_on_del    = on_del;
+}
 #endif
 
-extern inline uint8_t talloc_on_add    ( talloc_chunk * chunk );
-extern inline uint8_t talloc_on_update ( talloc_chunk * chunk );
-extern inline uint8_t talloc_on_move   ( talloc_chunk * chunk );
-extern inline uint8_t talloc_on_del    ( talloc_chunk * chunk );
+static size_t talloc_objects_count = 0;
+
+uint8_t talloc_on_add ( talloc_chunk * chunk )
+{
+    talloc_objects_count++;
+
+#if defined(TALLOC_DEBUG)
+    if ( talloc_debug_on_add != NULL ) {
+        return talloc_debug_on_add ( chunk );
+    }
+#endif
+
+    return 0;
+}
+
+uint8_t talloc_on_update ( talloc_chunk * chunk )
+{
+
+#if defined(TALLOC_DEBUG)
+    if ( talloc_debug_on_update != NULL ) {
+        return talloc_debug_on_update ( chunk );
+    }
+#endif
+
+    return 0;
+}
+
+uint8_t talloc_on_move ( talloc_chunk * chunk )
+{
+
+#if defined(TALLOC_DEBUG)
+    if ( talloc_debug_on_move != NULL ) {
+        return talloc_debug_on_move ( chunk );
+    }
+#endif
+
+    return 0;
+}
+
+uint8_t talloc_on_del ( talloc_chunk * chunk )
+{
+    talloc_objects_count--;
+
+#if defined(TALLOC_DEBUG)
+    if ( talloc_debug_on_del != NULL ) {
+        return talloc_debug_on_del ( chunk );
+    }
+#endif
+
+    return 0;
+}
+
+size_t talloc_get_objects_count ()
+{
+    return talloc_objects_count;
+}

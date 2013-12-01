@@ -15,15 +15,25 @@
 #include <stdlib.h>
 
 inline
-talloc_chunk * talloc_usual_malloc_chunk ( size_t length )
+talloc_chunk * talloc_usual_malloc_chunk ( const void * parent_data, size_t length )
 {
-    return ( talloc_chunk * ) malloc ( sizeof ( talloc_chunk ) + length );
+    talloc_chunk * chunk = ( talloc_chunk * ) malloc ( sizeof ( talloc_chunk ) + length );
+    if ( chunk == NULL ) {
+        return NULL;
+    }
+    talloc_add_chunk ( parent_data, chunk );
+    return chunk;
 }
 
 inline
-talloc_chunk * talloc_usual_calloc_chunk ( size_t length )
+talloc_chunk * talloc_usual_calloc_chunk ( const void * parent_data, size_t length )
 {
-    return ( talloc_chunk * ) calloc ( 1, sizeof ( talloc_chunk ) + length );
+    talloc_chunk * chunk = ( talloc_chunk * ) calloc ( 1, sizeof ( talloc_chunk ) + length );
+    if ( chunk == NULL ) {
+        return NULL;
+    }
+    talloc_add_chunk ( parent_data, chunk );
+    return chunk;
 }
 
 inline

@@ -6,23 +6,26 @@
 #ifndef TALLOC_REFERENCE_CHUNK_H
 #define TALLOC_REFERENCE_CHUNK_H
 
-#include "../common.h"
+#include "../tree.h"
 #include <stdlib.h>
 
 inline
-talloc_chunk * talloc_reference_new_chunk ( const void * chunk_data )
+talloc_reference * talloc_reference_malloc_chunk ( const void * parent_data, const void * chunk_data )
 {
-    void * memory = malloc ( sizeof ( talloc_reference ) + sizeof ( talloc_chunk ) + sizeof ( uintptr_t ) );
-    if ( memory == NULL ) {
+    talloc_reference * reference = malloc ( sizeof ( talloc_reference ) + sizeof ( talloc_chunk ) + sizeof ( uintptr_t ) );
+    if ( reference == NULL ) {
         return NULL;
     }
 
-    talloc_chunk * chunk = talloc_chunk_from_reference ( memory );
-    chunk->mode          = TALLOC_MODE_REFERENCE;
+    talloc_chunk * reference_chunk = talloc_chunk_from_reference ( reference );
+    reference_chunk->mode          = TALLOC_MODE_REFERENCE;
 
-    void ** data = ( void ** ) talloc_data_from_chunk ( chunk );
+    void ** data = ( void ** ) talloc_data_from_chunk ( reference_chunk );
     * data       = ( void * ) chunk_data;
-    return chunk;
+
+    talloc_add_chunk ( parent_data, reference_chunk );
+
+    return reference;
 }
 
 inline
@@ -43,3 +46,5 @@ void talloc_reference_update ( talloc_ext * ext, talloc_chunk * chunk )
 uint8_t talloc_reference_free_chunk ( talloc_chunk * chunk );
 
 #endif
+
+

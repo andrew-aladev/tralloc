@@ -6,11 +6,11 @@
 #ifndef TALLOC_EXT_CHUNK_H
 #define TALLOC_EXT_CHUNK_H
 
-#include "../common.h"
+#include "../tree.h"
 #include <stdlib.h>
 
 inline
-talloc_chunk * talloc_ext_malloc_chunk ( size_t length )
+talloc_chunk * talloc_ext_malloc_chunk ( const void * parent_data, size_t length )
 {
     talloc_ext * ext = malloc ( sizeof ( talloc_ext ) + sizeof ( talloc_chunk ) + length );
     if ( ext == NULL ) {
@@ -22,6 +22,7 @@ talloc_chunk * talloc_ext_malloc_chunk ( size_t length )
 #endif
 
     talloc_chunk * chunk = talloc_chunk_from_ext ( ext );
+    talloc_add_chunk ( parent_data, chunk );
 
 #if defined(TALLOC_REFERENCE)
     chunk->mode          = TALLOC_MODE_EXT;
@@ -32,7 +33,7 @@ talloc_chunk * talloc_ext_malloc_chunk ( size_t length )
 }
 
 inline
-talloc_chunk * talloc_ext_calloc_chunk ( size_t length )
+talloc_chunk * talloc_ext_calloc_chunk ( const void * parent_data, size_t length )
 {
     talloc_ext * ext = calloc ( 1, sizeof ( talloc_ext ) + sizeof ( talloc_chunk ) + length );
     if ( ext == NULL ) {
@@ -44,6 +45,7 @@ talloc_chunk * talloc_ext_calloc_chunk ( size_t length )
 #endif
 
     talloc_chunk * chunk = talloc_chunk_from_ext ( ext );
+    talloc_add_chunk ( parent_data, chunk );
 
 #if defined(TALLOC_REFERENCE)
     chunk->mode          = TALLOC_MODE_EXT;

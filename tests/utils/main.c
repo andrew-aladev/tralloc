@@ -5,6 +5,7 @@
 
 #include <stdbool.h>
 
+#include <talloc2/events.h>
 #include <talloc2/helpers.h>
 
 #if defined(TALLOC_UTILS_BUFFER)
@@ -50,6 +51,12 @@ int main ()
     if ( talloc_free ( ctx ) != 0 ) {
         return 5;
     }
+
+    // no memory leaks should be here
+    if ( talloc_get_objects_count() != 0 ) {
+        return 6;
+    }
+
     return 0;
 }
 

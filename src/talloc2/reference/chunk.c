@@ -10,10 +10,8 @@
 #include "../events.h"
 #endif
 
-#include <stdbool.h>
-
-extern inline talloc_chunk * talloc_reference_new_chunk ( const void * chunk_data );
-extern inline void           talloc_reference_update    ( talloc_ext * ext, talloc_chunk * chunk );
+extern inline talloc_reference * talloc_reference_malloc_chunk ( const void * parent_data, const void * chunk_data );
+extern inline void               talloc_reference_update       ( talloc_ext * ext, talloc_chunk * chunk );
 
 uint8_t talloc_reference_free_chunk ( talloc_chunk * chunk )
 {

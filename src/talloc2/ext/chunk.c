@@ -18,8 +18,8 @@
 #include "../events.h"
 #endif
 
-extern inline talloc_chunk * talloc_ext_malloc_chunk  ( size_t length );
-extern inline talloc_chunk * talloc_ext_calloc_chunk  ( size_t length );
+extern inline talloc_chunk * talloc_ext_malloc_chunk ( const void * parent_data, size_t length );
+extern inline talloc_chunk * talloc_ext_calloc_chunk ( const void * parent_data, size_t length );
 
 talloc_chunk * talloc_ext_realloc_chunk ( talloc_chunk * chunk, size_t length )
 {

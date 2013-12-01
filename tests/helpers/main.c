@@ -6,6 +6,7 @@
 #include <stdbool.h>
 
 #include "str.h"
+#include <talloc2/events.h>
 
 int main ()
 {
@@ -22,5 +23,11 @@ int main ()
     if ( talloc_free ( ctx ) != 0 ) {
         return 3;
     }
+    
+    // no memory leaks should be here
+    if ( talloc_get_objects_count() != 0 ) {
+        return 4;
+    }
+    
     return 0;
 }
