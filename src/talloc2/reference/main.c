@@ -13,6 +13,9 @@ void ** talloc_add_reference ( const void * parent_data, const void * child_data
     }
     talloc_chunk * parent_chunk = talloc_chunk_from_data ( parent_data );
     talloc_chunk * child_chunk  = talloc_chunk_from_data ( child_data );
+    if ( parent_chunk->mode == TALLOC_MODE_REFERENCE ) {
+        return NULL;
+    }
     if ( child_chunk->parent == parent_chunk ) {
         return NULL;
     }
