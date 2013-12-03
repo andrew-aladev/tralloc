@@ -7,7 +7,7 @@
 
 #include <string.h>
 
-uint8_t * talloc_buffer_prepare ( talloc_buffer * buffer, size_t length )
+uint8_t talloc_buffer_prepare ( talloc_buffer * buffer, size_t length )
 {
     uint8_t * buf = buffer->buf;
     uint8_t * new_buf;
@@ -15,29 +15,29 @@ uint8_t * talloc_buffer_prepare ( talloc_buffer * buffer, size_t length )
     if ( buf == NULL ) {
         new_buf = talloc ( buffer, sizeof ( uint8_t ) * length );
         if ( new_buf == NULL ) {
-            return NULL;
+            return 1;
         }
         buffer->buf    = new_buf;
         buffer->length = length;
-        return new_buf;
+        return 0;
     }
 
     size_t data_length = buffer->data_offset + buffer->data_length;
     size_t tail        = buffer->length - data_length;
     if ( tail >= length ) {
-        return buf + data_length;
+        return 0;
     }
 
     size_t new_length = data_length + length;
     new_buf = talloc_realloc ( buf, sizeof ( uint8_t ) * new_length );
     if ( new_buf == NULL ) {
-        return NULL;
+        return 2;
     }
     if ( new_buf != buf ) {
         buffer->buf = new_buf;
     }
     buffer->length = new_length;
-    return new_buf + data_length;
+    return 0;
 }
 
 uint8_t talloc_buffer_trim ( talloc_buffer * buffer )
@@ -75,8 +75,9 @@ uint8_t talloc_buffer_trim ( talloc_buffer * buffer )
     return 0;
 }
 
-extern inline talloc_buffer * talloc_buffer_new        ( void * ctx );
-extern inline void            talloc_buffer_written    ( talloc_buffer * buffer, size_t length );
-extern inline uint8_t         talloc_buffer_readed     ( talloc_buffer * buffer, size_t length );
-extern inline uint8_t *       talloc_buffer_get        ( talloc_buffer * buffer );
-extern inline size_t          talloc_buffer_get_length ( talloc_buffer * buffer );
+extern inline talloc_buffer * talloc_buffer_new             ( void * ctx );
+extern inline void            talloc_buffer_written         ( talloc_buffer * buffer, size_t length );
+extern inline uint8_t         talloc_buffer_readed          ( talloc_buffer * buffer, size_t length );
+extern inline uint8_t *       talloc_buffer_get_read_point  ( talloc_buffer * buffer );
+extern inline uint8_t *       talloc_buffer_get_write_point ( talloc_buffer * buffer );
+extern inline size_t          talloc_buffer_get_length      ( talloc_buffer * buffer );

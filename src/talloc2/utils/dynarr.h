@@ -39,11 +39,8 @@ talloc_dynarr * talloc_dynarr_new ( void * ctx, size_t capacity )
     return arr;
 }
 
-uint8_t talloc_dynarr_push   ( talloc_dynarr * arr, void * data );
-uint8_t talloc_dynarr_pop    ( talloc_dynarr * arr );
-uint8_t talloc_dynarr_delete ( talloc_dynarr * arr, size_t index );
-
 uint8_t talloc_dynarr_insert_before ( talloc_dynarr * arr, size_t index, void * data );
+
 inline
 uint8_t talloc_dynarr_insert_after ( talloc_dynarr * arr, size_t index, void * data )
 {
@@ -69,5 +66,9 @@ size_t talloc_dynarr_get_length ( talloc_dynarr * arr )
 {
     return arr->length;
 }
+
+uint8_t talloc_dynarr_push   ( talloc_dynarr * arr, void * data );
+uint8_t talloc_dynarr_pop    ( talloc_dynarr * arr );
+uint8_t talloc_dynarr_delete ( talloc_dynarr * arr, size_t index );
 
 #endif

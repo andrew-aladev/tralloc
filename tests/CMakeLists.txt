@@ -3,7 +3,7 @@ set (EVENTS    events/main.c events/add.c events/resize.c events/move.c events/f
 set (HELPERS   helpers/main.c)
 set (EXT       ext/main.c ext/destructor.c lib/malloc_dynarr.c)
 set (REFERENCE reference/main.c reference/shared.c reference/common.c)
-set (UTILS     utils/main.c)
+set (UTILS     utils/main.c utils/buffer.c utils/dynarr.c)
 
 if (TALLOC_SHARED MATCHES true)
     add_executable (${TALLOC_TARGET}-basic ${BASIC})
