@@ -4,6 +4,7 @@
 // You should have received a copy of the GNU General Public License along with talloc2. If not, see <http://www.gnu.org/licenses/>.
 
 #include <talloc2/helpers.h>
+#include <stdbool.h>
 
 bool test_str ( void * ctx )
 {
@@ -38,6 +39,7 @@ bool test_str ( void * ctx )
             !strcmp ( part_5, "Sun" )
         )
     ) {
+        talloc_free ( full );
         return false;
     }
 

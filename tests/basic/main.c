@@ -3,20 +3,47 @@
 // talloc2 is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with talloc2. If not, see <http://www.gnu.org/licenses/>.
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <string.h>
-#include <stdbool.h>
-#include <limits.h>
-
 #include <talloc2/tree.h>
 
 #if defined(TALLOC_DEBUG)
 #include <talloc2/events.h>
 #endif
 
-#include "../lib/malloc_dynarr.h"
+#include <stdbool.h>
+#include <math.h>
+
+static void * root;
+static talloc_chunk * root_chunk;
+
+static int8_t * data_0;
+static talloc_chunk * data_0_chunk;
+
+static uint16_t * data_00;
+static char *     data_01;
+static uint32_t * data_02;
+static talloc_chunk * data_00_chunk;
+static talloc_chunk * data_01_chunk;
+static talloc_chunk * data_02_chunk;
+
+static size_t * data_010;
+static double * data_011;
+static float  * data_012;
+static talloc_chunk * data_010_chunk;
+static talloc_chunk * data_011_chunk;
+static talloc_chunk * data_012_chunk;
+
+static void * trivium;
+static talloc_chunk * trivium_chunk;
+
+bool compare_float ( float a, float b )
+{
+    return fabs ( a - b ) < 0.000001;
+}
+
+bool compare_double ( double a, double b )
+{
+    return fabs ( a - b ) < 0.000000000001;
+}
 
 /*
            root
@@ -30,509 +57,274 @@
     trivium
 */
 
-/*
-static void     * root     = NULL;
-static void     * trivium  = NULL;
-static int8_t   * data_0   = NULL;
-static uint16_t * data_00  = NULL;
-static char     * data_01  = NULL;
-static uint32_t * data_02  = NULL;
-static size_t   * data_010 = NULL;
-static size_t   * data_011 = NULL;
-static size_t   * data_012 = NULL;
-
-talloc_chunk * chunk_root    = NULL;
-talloc_chunk * chunk_trivium = NULL;
-talloc_chunk * chunk_0       = NULL;
-talloc_chunk * chunk_00      = NULL;
-talloc_chunk * chunk_01      = NULL;
-talloc_chunk * chunk_02      = NULL;
-talloc_chunk * chunk_010     = NULL;
-talloc_chunk * chunk_011     = NULL;
-talloc_chunk * chunk_012     = NULL;
-
-
-#if defined(TALLOC_DEBUG)
-static malloc_dynarr * history;
-
-enum {
-    ADD_MODE = 0,
-    UPDATE_MODE,
-    MOVE_MODE,
-    DELETE_MODE
-};
-
-typedef struct talloc_event_t {
-    talloc_chunk * chunk;
-    uint8_t mode;
-} talloc_event;
-
-uint8_t history_append ( talloc_chunk * chunk, uint8_t mode )
-{
-    talloc_event * event = malloc ( sizeof ( talloc_event ) );
-    if ( event == NULL ) {
-        return 1;
-    }
-    event->mode  = mode;
-    event->chunk = chunk;
-    if ( malloc_dynarr_append ( history, event ) != 0 ) {
-        return 2;
-    }
-    return 0;
-}
-
-uint8_t on_add ( talloc_chunk * chunk )
-{
-    return history_append ( chunk, ADD_MODE );
-}
-uint8_t on_update ( talloc_chunk * chunk )
-{
-    return history_append ( chunk, UPDATE_MODE );
-}
-uint8_t on_move ( talloc_chunk * chunk )
-{
-    return history_append ( chunk, MOVE_MODE );
-}
-uint8_t on_del ( talloc_chunk * chunk )
-{
-    return history_append ( chunk, DELETE_MODE );
-}
-#endif
-
-bool init ()
-{
-#if defined(TALLOC_DEBUG)
-    // all history will be available here
-    history = malloc_dynarr_new ( 16 );
-    if ( history == NULL ) {
-        return false;
-    }
-    talloc_set_callback ( on_add, on_update, on_move, on_del );
-#endif
-    return true;
-}
-
-bool alloc ()
+bool test_alloc()
 {
     root = talloc_new ( NULL );
     if ( root == NULL ) {
         return false;
     }
+
     data_0 = talloc ( root, sizeof ( int8_t ) );
     if ( data_0 == NULL ) {
         return false;
     }
-    data_00 = talloc_zero ( data_0, sizeof ( uint16_t ) );
+    * data_0 = - 123;
+
+    data_00 = talloc_zero ( data_0, sizeof ( uint16_t ) * 4 );
     data_01 = talloc      ( data_0, sizeof ( char ) * 3 );
-    data_02 = talloc_zero ( data_0, sizeof ( uint32_t ) );
+    data_02 = talloc_zero ( data_0, sizeof ( uint32_t ) * 2 );
     if (
-        data_00 == NULL ||
+        data_00 == NULL || data_00[0] != 0 || data_00[1] != 0 || data_00[2] != 0 || data_00[3] != 0 ||
         data_01 == NULL ||
-        data_02 == NULL
+        data_02 == NULL || data_02[0] != 0 || data_02[1] != 0
     ) {
         return false;
     }
-    data_010 = talloc      ( data_01, sizeof ( size_t ) );
-    data_011 = talloc_zero ( data_01, sizeof ( size_t ) );
-    data_012 = talloc      ( data_01, sizeof ( size_t ) );
+    data_00[0] = 012;
+    data_00[1] = 345;
+    data_00[2] = 678;
+    data_00[3] = 901;
+
+    data_01[0] = 'q';
+    data_01[1] = 'w';
+    data_01[2] = 'e';
+
+    data_02[0] = 12345;
+    data_02[1] = 67890;
+
+    data_010 = talloc      ( data_01, sizeof ( size_t ) * 3 );
+    data_011 = talloc_zero ( data_01, sizeof ( double ) );
+    data_012 = talloc      ( data_01, sizeof ( float ) * 2 );
     if (
         data_010 == NULL ||
-        data_011 == NULL ||
+        data_011 == NULL || * data_011 != 0 ||
         data_012 == NULL
     ) {
         return false;
     }
+    data_010[0] = 123456789;
+    data_010[1] = 987654321;
+    data_010[2] = 123456789;
+
+    * data_011 = 0.0123456789;
+
+    data_012[0] = 0.01234;
+    data_012[1] = 0.56789;
+
     trivium = talloc_new ( data_012 );
     if ( trivium == NULL ) {
         return false;
     }
-    return true;
-}
 
-bool free_data ()
-{
-    bool result = true;
-    if ( talloc_free ( root ) != 0 ) {
-        result = false;
-    }
-#if defined(TALLOC_DEBUG)
-    if ( history != NULL ) {
-        size_t length = malloc_dynarr_get_length ( history );
-        for ( size_t index = 0; index < length; index ++ ) {
-            free ( malloc_dynarr_get ( history, index ) );
-        }
-        malloc_dynarr_free ( history );
-    }
-#endif
-    return result;
-}
-
-bool test_alloc ()
-{
-    if (
-        ! (
-            root     != NULL &&
-            data_0   != NULL &&
-            data_00  != NULL &&
-            data_01  != NULL &&
-            data_02  != NULL &&
-            data_010 != NULL &&
-            data_011 != NULL &&
-            data_012 != NULL &&
-            trivium  != NULL &&
-
-            *data_00  == 0 &&
-            *data_02  == 0 &&
-            *data_011 == 0
-        )
-    ) {
-        return false;
-    }
     return true;
 }
 
 bool test_realloc ()
 {
-    data_01[0] = CHAR_MAX;
-    data_01[1] = CHAR_MAX;
-    data_01[2] = CHAR_MAX;
-
     void * null = talloc_realloc ( NULL, 1 );
     if ( null != NULL ) {
         return false;
     }
-    data_01 = talloc_realloc ( data_01, sizeof ( char ) * 4 );
-    if ( data_01 == NULL ) {
+
+    data_0 = talloc_realloc ( data_0, sizeof ( int8_t ) * 2 );
+    if ( data_0 == NULL || data_0[0] != - 123 ) {
         return false;
     }
-    // realloc can change chunk pointer
-    chunk_01 = talloc_chunk_from_data ( data_01 );
 
+    data_00 = talloc_realloc ( data_00, sizeof ( uint16_t ) * 20 );
+    data_01 = talloc_realloc ( data_01, sizeof ( char ) );
+    data_02 = talloc_realloc ( data_02, sizeof ( uint32_t ) * 30 );
     if (
-        data_01[0] != CHAR_MAX ||
-        data_01[1] != CHAR_MAX ||
-        data_01[2] != CHAR_MAX
+        data_00 == NULL || data_00[0] != 012   || data_00[1] != 345 || data_00[2] != 678 || data_00[3] != 901 ||
+        data_01 == NULL || * data_01 != 'q'    ||
+        data_02 == NULL || data_02[0] != 12345 || data_02[1] != 67890
     ) {
         return false;
     }
 
-    data_01[3] = CHAR_MAX;
-    data_01    = talloc_realloc ( data_01, sizeof ( char ) * 2 );
-    if ( data_01 == NULL ) {
-        return false;
-    }
-    // realloc can change chunk pointer
-    chunk_01 = talloc_chunk_from_data ( data_01 );
-
+    data_010 = talloc_realloc ( data_010, sizeof ( size_t ) * 2 );
+    data_011 = talloc_realloc ( data_011, sizeof ( double ) * 10 );
+    data_012 = talloc_realloc ( data_012, sizeof ( float ) );
     if (
-        data_01[0] != CHAR_MAX ||
-        data_01[1] != CHAR_MAX
+        data_010 == NULL || data_010[0] != 123456789 || data_010[1] != 987654321 ||
+        data_011 == NULL || !compare_double ( data_011[0], 0.0123456789 ) ||
+        data_012 == NULL || !compare_float  ( data_012[0], 0.01234 )
     ) {
         return false;
     }
 
-    data_01 = talloc_realloc ( data_01, sizeof ( char ) * 5 );
-    if ( data_01 == NULL ) {
-        return false;
-    }
-    // realloc can change chunk pointer
-    chunk_01 = talloc_chunk_from_data ( data_01 );
-
-    if (
-        data_01[0] != CHAR_MAX ||
-        data_01[1] != CHAR_MAX
-    ) {
-        return false;
-    }
+    root_chunk     = talloc_chunk_from_data ( root );
+    data_0_chunk   = talloc_chunk_from_data ( data_0 );
+    data_00_chunk  = talloc_chunk_from_data ( data_00 );
+    data_01_chunk  = talloc_chunk_from_data ( data_01 );
+    data_02_chunk  = talloc_chunk_from_data ( data_02 );
+    data_010_chunk = talloc_chunk_from_data ( data_010 );
+    data_011_chunk = talloc_chunk_from_data ( data_011 );
+    data_012_chunk = talloc_chunk_from_data ( data_012 );
+    trivium_chunk  = talloc_chunk_from_data ( trivium );
 
     return true;
 }
+
+/*
+           root
+            |
+            0
+           /|\
+       01  02   00
+      /|\
+      012  011  010
+       |
+    trivium
+*/
 
 bool test_move ()
 {
     if (
-        talloc_move ( trivium, data_00 ) != 0 ||
-        chunk_trivium->parent != chunk_00 ||
+        talloc_move ( data_01, data_02 ) != 0  ||
+        data_01_chunk->parent != data_02_chunk ||
 
-        talloc_move ( trivium, NULL ) != 0 ||
-        chunk_trivium->parent != NULL ||
+        talloc_move ( data_01, NULL ) != 0 ||
+        data_01_chunk->parent != NULL      ||
 
-        talloc_move ( trivium, data_012 ) != 0 ||
-        chunk_trivium->parent != chunk_012
+        talloc_move ( data_01, data_0 ) != 0 ||
+        data_01_chunk->parent != data_0_chunk
     ) {
         return false;
     }
 
     return true;
-}
-
-void set_data ()
-{
-    * data_0   = INT8_MAX;
-    * data_00  = UINT16_MAX;
-    data_01[0] = CHAR_MAX;
-    data_01[1] = CHAR_MAX;
-    data_01[2] = CHAR_MAX;
-    data_01[3] = CHAR_MAX;
-    data_01[4] = CHAR_MAX;
-    * data_02  = UINT32_MAX;
-    * data_010 = SIZE_MAX;
-    * data_011 = SIZE_MAX;
-    * data_012 = SIZE_MAX;
-}
-
-void set_chunks ()
-{
-    chunk_root    = talloc_chunk_from_data ( root );
-    chunk_0       = talloc_chunk_from_data ( data_0 );
-    chunk_00      = talloc_chunk_from_data ( data_00 );
-    chunk_01      = talloc_chunk_from_data ( data_01 );
-    chunk_02      = talloc_chunk_from_data ( data_02 );
-    chunk_010     = talloc_chunk_from_data ( data_010 );
-    chunk_011     = talloc_chunk_from_data ( data_011 );
-    chunk_012     = talloc_chunk_from_data ( data_012 );
-    chunk_trivium = talloc_chunk_from_data ( trivium );
 }
 
 bool test_chunks ()
 {
     if (
-        chunk_root    == NULL ||
-        chunk_0       == NULL ||
-        chunk_00      == NULL ||
-        chunk_01      == NULL ||
-        chunk_02      == NULL ||
-        chunk_010     == NULL ||
-        chunk_011     == NULL ||
-        chunk_012     == NULL ||
-        chunk_trivium == NULL
-    ) {
-        return false;
-    }
+        root_chunk->parent      != NULL         ||
+        root_chunk->prev        != NULL         ||
+        root_chunk->next        != NULL         ||
+        root_chunk->first_child != data_0_chunk ||
 
-    // checking tree structure. see scheme above
-    if (
-        ! (
-            chunk_root->parent      == NULL    &&
-            chunk_root->prev        == NULL    &&
-            chunk_root->next        == NULL    &&
-            chunk_root->first_child == chunk_0 &&
+        data_0_chunk->parent      != root_chunk    ||
+        data_0_chunk->prev        != NULL          ||
+        data_0_chunk->next        != NULL          ||
+        data_0_chunk->first_child != data_01_chunk ||
 
-            chunk_0->parent      == chunk_root &&
-            chunk_0->prev        == NULL       &&
-            chunk_0->next        == NULL       &&
-            chunk_0->first_child == chunk_02   &&
+        data_00_chunk->parent      != data_0_chunk  ||
+        data_00_chunk->prev        != data_02_chunk ||
+        data_00_chunk->next        != NULL          ||
+        data_00_chunk->first_child != NULL          ||
 
-            chunk_00->parent      == chunk_0  &&
-            chunk_00->prev        == chunk_01 &&
-            chunk_00->next        == NULL     &&
-            chunk_00->first_child == NULL     &&
+        data_01_chunk->parent      != data_0_chunk   ||
+        data_01_chunk->prev        != NULL           ||
+        data_01_chunk->next        != data_02_chunk  ||
+        data_01_chunk->first_child != data_012_chunk ||
 
-            chunk_01->parent      == chunk_0   &&
-            chunk_01->prev        == chunk_02  &&
-            chunk_01->next        == chunk_00  &&
-            chunk_01->first_child == chunk_012 &&
+        data_02_chunk->parent      != data_0_chunk  ||
+        data_02_chunk->prev        != data_01_chunk ||
+        data_02_chunk->next        != data_00_chunk ||
+        data_02_chunk->first_child != NULL          ||
 
-            chunk_02->parent      == chunk_0  &&
-            chunk_02->prev        == NULL     &&
-            chunk_02->next        == chunk_01 &&
-            chunk_02->first_child == NULL     &&
+        data_010_chunk->parent      != data_01_chunk  ||
+        data_010_chunk->prev        != data_011_chunk ||
+        data_010_chunk->next        != NULL           ||
+        data_010_chunk->first_child != NULL           ||
 
-            chunk_010->parent      == chunk_01  &&
-            chunk_010->prev        == chunk_011 &&
-            chunk_010->next        == NULL      &&
-            chunk_010->first_child == NULL      &&
+        data_011_chunk->parent      != data_01_chunk  ||
+        data_011_chunk->prev        != data_012_chunk ||
+        data_011_chunk->next        != data_010_chunk ||
+        data_011_chunk->first_child != NULL           ||
 
-            chunk_011->parent      == chunk_01  &&
-            chunk_011->prev        == chunk_012 &&
-            chunk_011->next        == chunk_010 &&
-            chunk_011->first_child == NULL      &&
+        data_012_chunk->parent      != data_01_chunk  ||
+        data_012_chunk->prev        != NULL           ||
+        data_012_chunk->next        != data_011_chunk ||
+        data_012_chunk->first_child != trivium_chunk  ||
 
-            chunk_012->parent      == chunk_01      &&
-            chunk_012->prev        == NULL          &&
-            chunk_012->next        == chunk_011     &&
-            chunk_012->first_child == chunk_trivium &&
-
-            chunk_trivium->parent      == chunk_012 &&
-            chunk_trivium->prev        == NULL      &&
-            chunk_trivium->next        == NULL      &&
-            chunk_trivium->first_child == NULL
-        )
+        trivium_chunk->parent      != data_012_chunk ||
+        trivium_chunk->prev        != NULL           ||
+        trivium_chunk->next        != NULL           ||
+        trivium_chunk->first_child != NULL
     ) {
         return false;
     }
     return true;
 }
+
+/*
+           root
+            |
+            0
+           / \
+         02   00
+*/
 
 bool test_chunks_without_data_01 ()
 {
-    // checking tree structure after delete 01. see scheme above
     if (
-        ! (
-            chunk_root->parent      == NULL    &&
-            chunk_root->prev        == NULL    &&
-            chunk_root->next        == NULL    &&
-            chunk_root->first_child == chunk_0 &&
+        root_chunk->parent      != NULL         ||
+        root_chunk->prev        != NULL         ||
+        root_chunk->next        != NULL         ||
+        root_chunk->first_child != data_0_chunk ||
 
-            chunk_0->parent      == chunk_root &&
-            chunk_0->prev        == NULL       &&
-            chunk_0->next        == NULL       &&
-            chunk_0->first_child == chunk_02   &&
+        data_0_chunk->parent      != root_chunk    ||
+        data_0_chunk->prev        != NULL          ||
+        data_0_chunk->next        != NULL          ||
+        data_0_chunk->first_child != data_02_chunk ||
 
-            chunk_00->parent      == chunk_0  &&
-            chunk_00->prev        == chunk_02 &&
-            chunk_00->next        == NULL     &&
-            chunk_00->first_child == NULL     &&
+        data_00_chunk->parent      != data_0_chunk  ||
+        data_00_chunk->prev        != data_02_chunk ||
+        data_00_chunk->next        != NULL          ||
+        data_00_chunk->first_child != NULL          ||
 
-            chunk_02->parent      == chunk_0  &&
-            chunk_02->prev        == NULL     &&
-            chunk_02->next        == chunk_00 &&
-            chunk_02->first_child == NULL
-        )
+        data_02_chunk->parent      != data_0_chunk  ||
+        data_02_chunk->prev        != NULL          ||
+        data_02_chunk->next        != data_00_chunk ||
+        data_02_chunk->first_child != NULL
     ) {
         return false;
     }
     return true;
 }
-
-bool test_data_without_data_01 ()
-{
-    if (
-        ! (
-            * data_0  == INT8_MAX   &&
-            * data_00 == UINT16_MAX &&
-            * data_02 == UINT32_MAX
-        )
-    ) {
-        return false;
-    }
-    return true;
-}
-
-#if defined(TALLOC_DEBUG)
-bool test_history_event ( size_t index, uint8_t mode, talloc_chunk * chunk )
-{
-    talloc_event * event = malloc_dynarr_get ( history, index );
-    if ( event == NULL ) {
-        return false;
-    }
-    return event->mode == mode && event->chunk == chunk;
-}
-
-bool test_history()
-{
-    if (
-        ! (
-            history->length == 24 &&
-            test_history_event ( 0, ADD_MODE, chunk_root )    &&
-            test_history_event ( 1, ADD_MODE, chunk_0 )       &&
-            test_history_event ( 2, ADD_MODE, chunk_00 )      &&
-            test_history_event ( 3, ADD_MODE, chunk_01 )      &&
-            test_history_event ( 4, ADD_MODE, chunk_02 )      &&
-            test_history_event ( 5, ADD_MODE, chunk_010 )     &&
-            test_history_event ( 6, ADD_MODE, chunk_011 )     &&
-            test_history_event ( 7, ADD_MODE, chunk_012 )     &&
-            test_history_event ( 8, ADD_MODE, chunk_trivium ) &&
-
-            test_history_event ( 9,  UPDATE_MODE, chunk_01 ) &&
-            test_history_event ( 10, UPDATE_MODE, chunk_01 ) &&
-            test_history_event ( 11, UPDATE_MODE, chunk_01 ) &&
-
-            test_history_event ( 12, MOVE_MODE, chunk_trivium ) &&
-            test_history_event ( 13, MOVE_MODE, chunk_trivium ) &&
-            test_history_event ( 14, MOVE_MODE, chunk_trivium ) &&
-
-            test_history_event ( 15, DELETE_MODE, chunk_01 )      &&
-            test_history_event ( 16, DELETE_MODE, chunk_012 )     &&
-            test_history_event ( 17, DELETE_MODE, chunk_trivium ) &&
-            test_history_event ( 18, DELETE_MODE, chunk_011 )     &&
-            test_history_event ( 19, DELETE_MODE, chunk_010 )     &&
-
-            test_history_event ( 20, DELETE_MODE, chunk_root ) &&
-            test_history_event ( 21, DELETE_MODE, chunk_0 )    &&
-            test_history_event ( 22, DELETE_MODE, chunk_02 )   &&
-            test_history_event ( 23, DELETE_MODE, chunk_00 )
-        )
-    ) {
-        return false;
-    }
-    return true;
-}
-#endif
-*/
 
 int main ()
 {
-    /*
-    if ( !init() ) {
-        free_data();
+    if ( !test_alloc() ) {
+        talloc_free ( root );
         return 1;
     }
-    if ( !alloc() ) {
-        free_data();
+    if ( !test_realloc() ) {
+        talloc_free ( root );
         return 2;
     }
-
-    if ( !test_alloc() ) {
-        free_data();
+    if ( !test_move() ) {
+        talloc_free ( root );
         return 3;
     }
-    if ( !test_realloc() ) {
-        free_data();
+    if ( !test_chunks() ) {
+        talloc_free ( root );
         return 4;
     }
-
-    set_chunks();
-    if ( !test_move() ) {
-        free_data();
+    if ( talloc_free ( data_01 ) != 0 ) {
+        talloc_free ( root );
         return 5;
     }
-
-    set_data();
-    set_chunks();
-
-    if ( !test_chunks() ) {
-        free_data();
+    if ( !test_chunks_without_data_01() ) {
+        talloc_free ( root );
         return 6;
     }
 
-    if ( talloc_free ( data_01 ) != 0 ) {
+    if ( talloc_free ( root ) != 0 ) {
         return 7;
     }
 
-    if ( !test_chunks_without_data_01() ) {
-        free_data();
+#if defined(TALLOC_DEBUG)
+    if (
+        talloc_get_objects_count()        != 0 ||
+        talloc_get_objects_chunk_length() != 0 ||
+        talloc_get_objects_length()       != 0
+    ) {
         return 8;
     }
-
-    if ( !test_data_without_data_01() ) {
-        free_data();
-        return 9;
-    }
-
-    if ( talloc_free ( root ) != 0 ) {
-        return 10;
-    }
-    root = NULL;
-
-#if defined(TALLOC_DEBUG)
-    if ( !test_history() ) {
-        free_data();
-        return 11;
-    }
 #endif
-
-    if ( !free_data() ) {
-        return 12;
-    }
-
-#if defined(TALLOC_DEBUG)
-    // no memory leaks should be here
-    if ( talloc_get_objects_count() != 0 ) {
-        return 13;
-    }
-#endif
-    */
 
     return 0;
 }
