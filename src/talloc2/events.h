@@ -8,83 +8,22 @@
 
 #include "types.h"
 
-#ifdef TALLOC_DEBUG
 // Full global history of operations
-typedef uint8_t ( * talloc_callback ) ( talloc_chunk * chunk );
+typedef uint8_t ( * talloc_callback_on_add )    ( void * user_data, talloc_chunk * chunk );
+typedef uint8_t ( * talloc_callback_on_resize ) ( void * user_data, talloc_chunk * chunk, size_t old_length );
+typedef uint8_t ( * talloc_callback_on_move )   ( void * user_data, talloc_chunk * chunk, talloc_chunk * old_parent_chunk );
+typedef uint8_t ( * talloc_callback_on_free )   ( void * user_data, talloc_chunk * chunk );
 
-talloc_callback talloc_debug_on_add;
-talloc_callback talloc_debug_on_update;
-talloc_callback talloc_debug_on_move;
-talloc_callback talloc_debug_on_del;
+void talloc_set_user_data ( void * user_data );
+void talloc_set_callback  ( talloc_callback_on_add on_add, talloc_callback_on_resize on_resize, talloc_callback_on_move on_move, talloc_callback_on_free on_free );
 
-inline
-void talloc_set_callback ( talloc_callback on_add, talloc_callback on_update, talloc_callback on_move, talloc_callback on_del )
-{
-    talloc_debug_on_add    = on_add;
-    talloc_debug_on_update = on_update;
-    talloc_debug_on_move   = on_move;
-    talloc_debug_on_del    = on_del;
-}
-#endif
+uint8_t talloc_on_add    ( talloc_chunk * chunk );
+uint8_t talloc_on_resize ( talloc_chunk * chunk, size_t old_length );
+uint8_t talloc_on_move   ( talloc_chunk * chunk, talloc_chunk * old_parent_chunk );
+uint8_t talloc_on_free   ( talloc_chunk * chunk );
 
-inline
-uint8_t talloc_on_add ( talloc_chunk * chunk )
-{
-
-#ifdef TALLOC_DEBUG
-    if ( talloc_debug_on_add != NULL ) {
-        if ( talloc_debug_on_add ( chunk ) != 0 ) {
-            return 1;
-        }
-    }
-#endif
-
-    return 0;
-}
-
-inline
-uint8_t talloc_on_update ( talloc_chunk * chunk )
-{
-
-#ifdef TALLOC_DEBUG
-    if ( talloc_debug_on_update != NULL ) {
-        if ( talloc_debug_on_update ( chunk ) != 0 ) {
-            return 1;
-        }
-    }
-#endif
-
-    return 0;
-}
-
-inline
-uint8_t talloc_on_move ( talloc_chunk * chunk )
-{
-
-#ifdef TALLOC_DEBUG
-    if ( talloc_debug_on_move != NULL ) {
-        if ( talloc_debug_on_move ( chunk ) != 0 ) {
-            return 1;
-        }
-    }
-#endif
-
-    return 0;
-}
-
-inline
-uint8_t talloc_on_del ( talloc_chunk * chunk )
-{
-
-#ifdef TALLOC_DEBUG
-    if ( talloc_debug_on_del != NULL ) {
-        if ( talloc_debug_on_del ( chunk ) != 0 ) {
-            return 1;
-        }
-    }
-#endif
-
-    return 0;
-}
+size_t talloc_get_objects_count        ();
+size_t talloc_get_objects_chunk_length ();
+size_t talloc_get_objects_length       ();
 
 #endif

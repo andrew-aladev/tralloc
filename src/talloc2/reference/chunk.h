@@ -6,51 +6,50 @@
 #ifndef TALLOC_REFERENCE_CHUNK_H
 #define TALLOC_REFERENCE_CHUNK_H
 
-#include "../ext/chunk.h"
+#include "../tree.h"
 #include <stdlib.h>
 
 inline
-talloc_chunk * talloc_reference_chunk_from_memory ( void * memory )
+talloc_reference * talloc_reference_malloc_chunk ( const void * parent_data, const void * chunk_data )
 {
-    return ( talloc_chunk * ) ( ( uintptr_t ) memory + sizeof ( talloc_reference ) );
-}
-
-inline
-void * talloc_memory_from_reference_chunk ( talloc_chunk * chunk )
-{
-    return ( void * ) ( ( uintptr_t ) chunk - sizeof ( talloc_reference ) );
-}
-
-inline
-talloc_chunk * talloc_reference_chunk_new ()
-{
-    void * memory = malloc ( sizeof ( talloc_reference ) + sizeof ( talloc_chunk ) );
-    if ( memory == NULL ) {
+    talloc_reference * reference = malloc ( sizeof ( talloc_reference ) + sizeof ( talloc_chunk ) + sizeof ( uintptr_t ) );
+    if ( reference == NULL ) {
         return NULL;
-    } else {
-        talloc_chunk * chunk = talloc_reference_chunk_from_memory ( memory );
-        chunk->mode          = TALLOC_MODE_REFERENCE;
-        return chunk;
     }
+
+    talloc_chunk * reference_chunk = talloc_chunk_from_reference ( reference );
+    reference_chunk->mode          = TALLOC_MODE_REFERENCE;
+
+#if defined(TALLOC_DEBUG)
+    reference_chunk->chunk_length = sizeof ( talloc_reference ) + sizeof ( talloc_chunk );
+    reference_chunk->length       = sizeof ( uintptr_t );
+#endif
+
+    void ** data = ( void ** ) talloc_data_from_chunk ( reference_chunk );
+    * data       = ( void * ) chunk_data;
+
+    talloc_add_chunk ( parent_data, reference_chunk );
+
+    return reference;
 }
 
 inline
-void talloc_reference_chunk_free ( talloc_chunk * chunk )
+void talloc_reference_update ( talloc_ext * ext, talloc_chunk * ext_chunk )
 {
-    talloc_reference * reference = talloc_memory_from_reference_chunk ( chunk );
-    talloc_ext * chunk_ext       = reference->chunk;
+    void ** data;
+    void * chunk_data = talloc_data_from_chunk ( ext_chunk );
 
-    talloc_reference * prev = reference->prev;
-    talloc_reference * next = reference->next;
-    if ( prev == NULL ) {
-        chunk_ext->first_reference = next;
-    } else {
-        prev->next = next;
+    talloc_reference * reference = ext->first_reference;
+    while ( reference != NULL ) {
+        reference->parent_ext = ext;
+        data = ( void ** ) talloc_data_from_chunk ( talloc_chunk_from_reference ( reference ) );
+        * data = chunk_data;
+        reference = reference->next;
     }
-    if ( next != NULL ) {
-        next->prev = prev;
-    }
-    free ( reference );
 }
+
+uint8_t talloc_reference_free_chunk ( talloc_chunk * chunk );
 
 #endif
+
+

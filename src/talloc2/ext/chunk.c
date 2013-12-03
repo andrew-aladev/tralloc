@@ -5,9 +5,75 @@
 
 #include "chunk.h"
 
-extern inline talloc_chunk * talloc_ext_chunk_from_memory ( void * memory );
-extern inline void *         talloc_memory_from_ext_chunk ( talloc_chunk * chunk );
-extern inline talloc_chunk * talloc_ext_chunk_malloc      ( size_t length );
-extern inline talloc_chunk * talloc_ext_chunk_calloc      ( size_t length );
-extern inline talloc_chunk * talloc_ext_chunk_realloc     ( talloc_chunk * chunk, size_t length );
-extern inline bool           talloc_ext_chunk_free        ( talloc_chunk * chunk );
+#if defined(TALLOC_EXT_DESTRUCTOR)
+#include "destructor.h"
+#endif
+
+#if defined(TALLOC_REFERENCE)
+#include "../reference/chunk.h"
+#endif
+
+#if defined(TALLOC_DEBUG)
+#include "../events.h"
+#endif
+
+extern inline talloc_chunk * talloc_ext_malloc_chunk ( const void * parent_data, size_t length );
+extern inline talloc_chunk * talloc_ext_calloc_chunk ( const void * parent_data, size_t length );
+
+talloc_chunk * talloc_ext_realloc_chunk ( talloc_chunk * ext_chunk, size_t length )
+{
+    talloc_ext * old_ext = talloc_ext_from_chunk ( ext_chunk );
+    talloc_ext * new_ext = realloc ( old_ext, sizeof ( talloc_ext ) + sizeof ( talloc_chunk ) + length );
+    if ( new_ext == NULL ) {
+        return NULL;
+    }
+
+    ext_chunk = talloc_chunk_from_ext ( new_ext );
+
+#if defined(TALLOC_DEBUG)
+    ext_chunk->length = length;
+#endif
+
+#if defined(TALLOC_REFERENCE)
+    if ( old_ext != new_ext ) {
+        // now pointers to old_ext is invalid
+        // each pointer to old_ext should be replaced with new_ext
+        talloc_reference_update ( new_ext, ext_chunk );
+    }
+#endif
+
+    return ext_chunk;
+}
+
+uint8_t talloc_ext_free_chunk ( talloc_chunk * ext_chunk )
+{
+    talloc_ext * ext = talloc_ext_from_chunk ( ext_chunk );
+
+#if defined(TALLOC_REFERENCE)
+    if ( ext->first_reference != NULL ) {
+        talloc_detach_chunk ( ext_chunk );
+        return 0;
+    }
+#endif
+
+    uint8_t result, error = 0;
+
+#if defined(TALLOC_DEBUG)
+    if ( ( result = talloc_on_free ( ext_chunk ) ) != 0 ) {
+        error = result;
+    }
+#endif
+
+#if defined(TALLOC_EXT_DESTRUCTOR)
+    if ( ( result = talloc_destructor_free ( ext_chunk, ext ) ) != 0 ) {
+        error = result;
+    }
+#endif
+
+    if ( ( result = talloc_free_chunk_children ( ext_chunk ) ) != 0 ) {
+        error = result;
+    }
+
+    free ( ext );
+    return error;
+}

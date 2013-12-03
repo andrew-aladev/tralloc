@@ -5,4 +5,4 @@
 
 #include <stdbool.h>
 
-bool test_destructor ( void * root );
+bool test_move ( void * root );

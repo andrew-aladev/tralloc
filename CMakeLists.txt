@@ -3,6 +3,7 @@ project (talloc2)
 
 set (
     BOOLEANS
+    TALLOC_DEBUG
     TALLOC_EXT_DESTRUCTOR TALLOC_REFERENCE
     TALLOC_UTILS_BUFFER TALLOC_UTILS_DYNARR TALLOC_UTILS_LIST
     TALLOC_SHARED TALLOC_STATIC TALLOC_TEST
@@ -23,16 +24,8 @@ endif ()
 if (TALLOC_UTILS_BUFFER MATCHES true OR TALLOC_UTILS_DYNARR MATCHES true OR TALLOC_UTILS_LIST MATCHES true)
     set (TALLOC_UTILS true)
 endif ()
-
-if (TALLOC_EXT_DESTRUCTOR MATCHES true)
+if (TALLOC_EXT_DESTRUCTOR MATCHES true OR TALLOC_REFERENCE MATCHES true)
     set (TALLOC_EXT true)
-endif ()
-
-if (TALLOC_REFERENCE MATCHES true)
-    if (NOT TALLOC_EXT MATCHES true)
-        set (TALLOC_REFERENCE false)
-        message ("talloc_reference cannot be compiled, it depends on TALLOC_EXT")
-    endif ()
 endif ()
 
 if (NOT DEFINED TALLOC_TARGET)

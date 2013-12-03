@@ -3,29 +3,28 @@
 // talloc2 is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Lesser Public License for more details.
 // You should have received a copy of the GNU General Lesser Public License along with talloc2. If not, see <http://www.gnu.org/licenses/>.
 
-#include "../tree.h"
-#include "../ext/chunk.h"
 #include "main.h"
+#include "../ext/chunk.h"
 
-uint8_t talloc_add_reference ( const void * parent_data, const void * child_data )
+void ** talloc_add_reference ( const void * parent_data, const void * child_data )
 {
     if ( parent_data == NULL || child_data == NULL || parent_data == child_data ) {
-        return 1;
+        return NULL;
     }
     talloc_chunk * parent_chunk = talloc_chunk_from_data ( parent_data );
     talloc_chunk * child_chunk  = talloc_chunk_from_data ( child_data );
     if ( child_chunk->parent == parent_chunk ) {
-        return 0;
+        return NULL;
     }
 
-    talloc_chunk * reference_chunk = talloc_reference_chunk_new ();
-    if ( reference_chunk == NULL ) {
-        return 2;
+    talloc_reference * reference = talloc_reference_malloc_chunk ( parent_data, child_data );
+    if ( reference == NULL ) {
+        return NULL;
     }
-    talloc_reference * reference = talloc_memory_from_reference_chunk ( reference_chunk );
-    talloc_ext       * child_ext = talloc_memory_from_ext_chunk ( child_chunk );
-    reference->chunk = child_ext;
-    reference->prev  = NULL;
+
+    talloc_ext * child_ext = talloc_ext_from_chunk ( child_chunk );
+    reference->parent_ext  = child_ext;
+    reference->prev        = NULL;
 
     talloc_reference * first_reference = child_ext->first_reference;
     if ( first_reference == NULL ) {
@@ -36,18 +35,27 @@ uint8_t talloc_add_reference ( const void * parent_data, const void * child_data
     }
     child_ext->first_reference = reference;
 
-    talloc_set_child ( parent_chunk, reference_chunk );
-
-    return 0;
+    return talloc_data_from_chunk ( talloc_chunk_from_reference ( reference ) );
 }
 
-uint8_t talloc_del_reference ( const void * parent_data, const void * child_data )
+uint8_t talloc_clear_references ( const void * chunk_data )
 {
-    if ( parent_data == NULL || child_data == NULL ) {
-        return 1;
+    talloc_ext * ext             = talloc_ext_from_chunk ( talloc_chunk_from_data ( chunk_data ) );
+    talloc_reference * reference = ext->first_reference;
+    talloc_reference * next_reference;
+
+    uint8_t result, error = 0;
+    talloc_chunk * chunk;
+    while ( reference != NULL ) {
+        next_reference = reference->next;
+        chunk = talloc_chunk_from_reference ( reference );
+        talloc_detach_chunk ( chunk );
+        if ( ( result = talloc_free_chunk ( chunk ) ) != 0 ) {
+            error = result;
+        }
+        reference = next_reference;
     }
+    ext->first_reference = NULL;
 
-    return 0;
+    return error;
 }
-
-extern inline void talloc_clear_references ( talloc_ext * ext );

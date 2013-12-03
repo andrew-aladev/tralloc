@@ -3,36 +3,52 @@
 // talloc2 is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with talloc2. If not, see <http://www.gnu.org/licenses/>.
 
-#include <stdbool.h>
+#include "add.h"
+#include "resize.h"
+#include "move.h"
+#include "free.h"
 
-#include "str.h"
-
-#if defined(TALLOC_DEBUG)
+#include <talloc2/tree.h>
 #include <talloc2/events.h>
-#endif
 
 int main ()
 {
-    void * ctx = talloc_new ( NULL );
-    if ( ctx == NULL ) {
+    void * root = talloc_new ( NULL );
+    if ( root == NULL ) {
         return 1;
     }
 
-    if ( !test_str ( ctx ) ) {
-        talloc_free ( ctx );
+    if ( !test_add ( root ) ) {
+        talloc_free ( root );
         return 2;
     }
 
-    if ( talloc_free ( ctx ) != 0 ) {
+    if ( !test_resize ( root ) ) {
+        talloc_free ( root );
         return 3;
     }
 
-#if defined(TALLOC_DEBUG)
-    // no memory leaks should be here
-    if ( talloc_get_objects_count() != 0 ) {
+    if ( !test_move ( root ) ) {
+        talloc_free ( root );
         return 4;
     }
-#endif
+
+    if ( !test_free ( root ) ) {
+        talloc_free ( root );
+        return 5;
+    }
+
+    if ( talloc_free ( root ) != 0 ) {
+        return 6;
+    }
+
+    if (
+        talloc_get_objects_count()        != 0 ||
+        talloc_get_objects_chunk_length() != 0 ||
+        talloc_get_objects_length()       != 0
+    ) {
+        return 7;
+    }
 
     return 0;
 }

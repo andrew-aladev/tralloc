@@ -11,7 +11,11 @@
 #include <limits.h>
 
 #include <talloc2/tree.h>
+
+#if defined(TALLOC_DEBUG)
 #include <talloc2/events.h>
+#endif
+
 #include "../lib/malloc_dynarr.h"
 
 /*
@@ -26,6 +30,7 @@
     trivium
 */
 
+/*
 static void     * root     = NULL;
 static void     * trivium  = NULL;
 static int8_t   * data_0   = NULL;
@@ -46,7 +51,8 @@ talloc_chunk * chunk_010     = NULL;
 talloc_chunk * chunk_011     = NULL;
 talloc_chunk * chunk_012     = NULL;
 
-#ifdef TALLOC_DEBUG
+
+#if defined(TALLOC_DEBUG)
 static malloc_dynarr * history;
 
 enum {
@@ -95,7 +101,7 @@ uint8_t on_del ( talloc_chunk * chunk )
 
 bool init ()
 {
-#ifdef TALLOC_DEBUG
+#if defined(TALLOC_DEBUG)
     // all history will be available here
     history = malloc_dynarr_new ( 16 );
     if ( history == NULL ) {
@@ -149,7 +155,7 @@ bool free_data ()
     if ( talloc_free ( root ) != 0 ) {
         result = false;
     }
-#ifdef TALLOC_DEBUG
+#if defined(TALLOC_DEBUG)
     if ( history != NULL ) {
         size_t length = malloc_dynarr_get_length ( history );
         for ( size_t index = 0; index < length; index ++ ) {
@@ -247,7 +253,7 @@ bool test_move ()
     if (
         talloc_move ( trivium, data_00 ) != 0 ||
         chunk_trivium->parent != chunk_00 ||
-        
+
         talloc_move ( trivium, NULL ) != 0 ||
         chunk_trivium->parent != NULL ||
 
@@ -403,7 +409,7 @@ bool test_data_without_data_01 ()
     return true;
 }
 
-#ifdef TALLOC_DEBUG
+#if defined(TALLOC_DEBUG)
 bool test_history_event ( size_t index, uint8_t mode, talloc_chunk * chunk )
 {
     talloc_event * event = malloc_dynarr_get ( history, index );
@@ -453,9 +459,11 @@ bool test_history()
     return true;
 }
 #endif
+*/
 
 int main ()
 {
+    /*
     if ( !init() ) {
         free_data();
         return 1;
@@ -507,7 +515,7 @@ int main ()
     }
     root = NULL;
 
-#ifdef TALLOC_DEBUG
+#if defined(TALLOC_DEBUG)
     if ( !test_history() ) {
         free_data();
         return 11;
@@ -517,6 +525,14 @@ int main ()
     if ( !free_data() ) {
         return 12;
     }
+
+#if defined(TALLOC_DEBUG)
+    // no memory leaks should be here
+    if ( talloc_get_objects_count() != 0 ) {
+        return 13;
+    }
+#endif
+    */
 
     return 0;
 }

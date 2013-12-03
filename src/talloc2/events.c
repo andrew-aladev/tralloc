@@ -5,11 +5,86 @@
 
 #include "events.h"
 
-#ifdef TALLOC_DEBUG
-extern inline void talloc_set_callback ( talloc_callback on_add, talloc_callback on_update, talloc_callback on_move, talloc_callback on_del );
-#endif
+static void *                    talloc_user_data;
+static talloc_callback_on_add    talloc_debug_on_add;
+static talloc_callback_on_resize talloc_debug_on_resize;
+static talloc_callback_on_move   talloc_debug_on_move;
+static talloc_callback_on_free   talloc_debug_on_free;
 
-extern inline uint8_t talloc_on_add    ( talloc_chunk * chunk );
-extern inline uint8_t talloc_on_update ( talloc_chunk * chunk );
-extern inline uint8_t talloc_on_move   ( talloc_chunk * chunk );
-extern inline uint8_t talloc_on_del    ( talloc_chunk * chunk );
+void talloc_set_user_data ( void * user_data )
+{
+    talloc_user_data = user_data;
+}
+
+void talloc_set_callback ( talloc_callback_on_add on_add, talloc_callback_on_resize on_resize, talloc_callback_on_move on_move, talloc_callback_on_free on_free )
+{
+    talloc_debug_on_add    = on_add;
+    talloc_debug_on_resize = on_resize;
+    talloc_debug_on_move   = on_move;
+    talloc_debug_on_free   = on_free;
+}
+
+static size_t talloc_objects_count         = 0;
+static size_t talloc_objects_chunks_length = 0;
+static size_t talloc_objects_length        = 0;
+
+uint8_t talloc_on_add ( talloc_chunk * chunk )
+{
+    talloc_objects_count++;
+    talloc_objects_chunks_length += chunk->chunk_length;
+    talloc_objects_length        += chunk->length;
+
+    if ( talloc_debug_on_add != NULL ) {
+        return talloc_debug_on_add ( talloc_user_data, chunk );
+    }
+
+    return 0;
+}
+
+uint8_t talloc_on_resize ( talloc_chunk * chunk, size_t old_length )
+{
+    talloc_objects_length += chunk->length - old_length;
+
+    if ( talloc_debug_on_resize != NULL ) {
+        return talloc_debug_on_resize ( talloc_user_data, chunk, old_length );
+    }
+
+    return 0;
+}
+
+uint8_t talloc_on_move ( talloc_chunk * chunk, talloc_chunk * old_parent_chunk )
+{
+    if ( talloc_debug_on_move != NULL ) {
+        return talloc_debug_on_move ( talloc_user_data, chunk, old_parent_chunk );
+    }
+
+    return 0;
+}
+
+uint8_t talloc_on_free ( talloc_chunk * chunk )
+{
+    talloc_objects_count--;
+    talloc_objects_chunks_length -= chunk->chunk_length;
+    talloc_objects_length        -= chunk->length;
+
+    if ( talloc_debug_on_free != NULL ) {
+        return talloc_debug_on_free ( talloc_user_data, chunk );
+    }
+
+    return 0;
+}
+
+size_t talloc_get_objects_count ()
+{
+    return talloc_objects_count;
+}
+
+size_t talloc_get_objects_chunk_length ()
+{
+    return talloc_objects_chunks_length;
+}
+
+size_t talloc_get_objects_length ()
+{
+    return talloc_objects_length;
+}

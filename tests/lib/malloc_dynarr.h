@@ -15,11 +15,14 @@
 // this was implemented to store history of talloc events
 // talloc_dynarr cannot be used, because it will do self-excitation
 
+typedef void ( * free_item ) ( void * item );
+
 typedef struct malloc_dynarr_t {
     size_t length;
     size_t start_capacity;
     size_t current_capacity;
     void ** data;
+    free_item free_item;
 } malloc_dynarr;
 
 inline
@@ -40,10 +43,17 @@ malloc_dynarr * malloc_dynarr_new ( size_t capacity )
         free ( arr );
         return NULL;
     }
-    arr->data = data;
-    arr->length = 0;
+    arr->data      = data;
+    arr->length    = 0;
+    arr->free_item = NULL;
 
     return arr;
+}
+
+inline
+void malloc_dynarr_set_free_item ( malloc_dynarr * arr, free_item free_item )
+{
+    arr->free_item = free_item;
 }
 
 inline
@@ -74,6 +84,30 @@ uint8_t malloc_dynarr_append ( malloc_dynarr * arr, void * pointer )
 }
 
 inline
+uint8_t malloc_dynarr_clear ( malloc_dynarr * arr )
+{
+    if ( arr == NULL ) {
+        return 1;
+    }
+    free_item free_item = arr->free_item;
+    if ( free_item != NULL ) {
+        for ( size_t index = 0; index < arr->length; index ++ ) {
+            free_item ( arr->data[index] );
+        }
+    }
+    free ( arr->data );
+
+    arr->current_capacity = arr->start_capacity;
+    void ** data = malloc ( arr->current_capacity * sizeof ( uintptr_t ) );
+    if ( data == NULL ) {
+        return 2;
+    }
+    arr->data   = data;
+    arr->length = 0;
+    return 0;
+}
+
+inline
 void malloc_dynarr_set ( malloc_dynarr * arr, size_t position, void * pointer )
 {
     arr->data[position] = pointer;
@@ -94,10 +128,18 @@ size_t malloc_dynarr_get_length ( malloc_dynarr * arr )
 inline
 void malloc_dynarr_free ( malloc_dynarr * arr )
 {
-    if ( arr != NULL ) {
-        free ( arr->data );
-        free ( arr );
+    if ( arr == NULL ) {
+        return;
     }
+    free_item free_item = arr->free_item;
+    if ( free_item != NULL ) {
+        for ( size_t index = 0; index < arr->length; index ++ ) {
+            free_item ( arr->data[index] );
+        }
+    }
+    free ( arr->data );
+    free ( arr );
 }
 
 #endif
+
