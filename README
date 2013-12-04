@@ -1,4 +1,5 @@
-Talloc2 is lightweight implementation of simplified talloc api. License - LGPL v3.
+Talloc2 is lightweight implementation of simplified talloc api. License 
+- LGPL v3+.
 
 Goals:
 1. Minimize sizeof talloc_chunk.
@@ -9,4 +10,4 @@ Goals:
 Supported platforms : GNU/Linux, GNU/Hurd.
 
 mkdir build && cd build
-cmake .. && make &&make test
+cmake .. && make && make test
