@@ -28,7 +28,7 @@ uint8_t talloc_reference_free_chunk ( talloc_chunk * reference_chunk )
 
     talloc_reference * prev = reference->prev;
     talloc_reference * next = reference->next;
-    
+
     if ( prev == NULL ) {
         parent_extensions->first_reference = next;
 
@@ -45,6 +45,10 @@ uint8_t talloc_reference_free_chunk ( talloc_chunk * reference_chunk )
     }
     if ( next != NULL ) {
         next->prev = prev;
+    }
+
+    if ( ( result = talloc_free_chunk_children ( reference_chunk ) ) != 0 ) {
+        error = result;
     }
 
     free ( reference );

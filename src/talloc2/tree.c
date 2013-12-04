@@ -143,21 +143,45 @@ void * talloc_realloc ( const void * chunk_data, size_t length )
 
 uint8_t talloc_move ( const void * child_data, const void * parent_data )
 {
-    if ( child_data == NULL ) {
+    if ( child_data == NULL || parent_data == child_data ) {
         return 1;
     }
     talloc_chunk * child = talloc_chunk_from_data ( child_data );
 
-#if defined(TALLOC_DEBUG)
-    talloc_chunk * old_parent = child->parent;
+#if defined(TALLOC_EXTENSIONS)
+    if ( child->mode == TALLOC_MODE_REFERENCE ) {
+        if ( parent_data == NULL ) {
+            return 2;
+        }
+    }
 #endif
 
-    talloc_detach_chunk ( child );
+#if defined(TALLOC_DEBUG)
+    talloc_chunk * old_parent;
+#endif
 
     if ( parent_data == NULL ) {
+        if ( child->parent == NULL ) {
+            return 3;
+        }
+
+#if defined(TALLOC_DEBUG)
+        old_parent = child->parent;
+#endif
+
+        talloc_detach_chunk ( child );
         child->parent = NULL;
     } else {
         talloc_chunk * new_parent = talloc_chunk_from_data ( parent_data );
+        if ( child->parent == new_parent ) {
+            return 4;
+        }
+
+#if defined(TALLOC_DEBUG)
+        old_parent = child->parent;
+#endif
+
+        talloc_detach_chunk ( child );
         talloc_set_child_chunk ( new_parent, child );
     }
 

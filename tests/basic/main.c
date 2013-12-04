@@ -9,31 +9,50 @@
 #include <talloc2/events.h>
 #endif
 
+#if defined(TALLOC_REFERENCE)
+#include <talloc2/reference/main.h>
+#endif
+
 #include <stdbool.h>
 #include <math.h>
 
-static void * root;
+static void *         root;
 static talloc_chunk * root_chunk;
 
-static int8_t * data_0;
-static talloc_chunk * data_0_chunk;
+static uint8_t *      data_1;
+static talloc_chunk * data_1_chunk;
 
-static uint16_t * data_00;
-static char *     data_01;
-static uint32_t * data_02;
-static talloc_chunk * data_00_chunk;
-static talloc_chunk * data_01_chunk;
-static talloc_chunk * data_02_chunk;
+static uint16_t *     data_2;
+static char *         data_3;
+static uint32_t *     data_4;
+static talloc_chunk * data_2_chunk;
+static talloc_chunk * data_3_chunk;
+static talloc_chunk * data_4_chunk;
 
-static size_t * data_010;
-static double * data_011;
-static float  * data_012;
-static talloc_chunk * data_010_chunk;
-static talloc_chunk * data_011_chunk;
-static talloc_chunk * data_012_chunk;
+static size_t *       data_5;
+static double *       data_6;
+static float  *       data_7;
+static talloc_chunk * data_5_chunk;
+static talloc_chunk * data_6_chunk;
+static talloc_chunk * data_7_chunk;
 
-static void * trivium;
+static void *         trivium;
 static talloc_chunk * trivium_chunk;
+
+#if defined(TALLOC_REFERENCE)
+static void **        trivium_reference_1;
+static talloc_chunk * trivium_reference_1_chunk;
+
+static void **        trivium_reference_2;
+static talloc_chunk * trivium_reference_2_chunk;
+
+static int8_t *       data_8;
+static int16_t *      data_9;
+static int32_t *      data_10;
+static talloc_chunk * data_8_chunk;
+static talloc_chunk * data_9_chunk;
+static talloc_chunk * data_10_chunk;
+#endif
 
 bool compare_float ( float a, float b )
 {
@@ -48,13 +67,17 @@ bool compare_double ( double a, double b )
 /*
            root
             |
-            0
+            1
            /|\
-       02  01   00
+       4    3    2
            /|\
-      012  011  010
-       |
-    trivium
+   7        6        5
+   |        |        |
+trivium trivium_1 trivium_2
+            |
+            8
+           /|\
+         10   9
 */
 
 bool test_alloc()
@@ -64,57 +87,85 @@ bool test_alloc()
         return false;
     }
 
-    data_0 = talloc ( root, sizeof ( int8_t ) );
-    if ( data_0 == NULL ) {
+    data_1 = talloc ( root, sizeof ( uint8_t ) );
+    if ( data_1 == NULL ) {
         return false;
     }
-    * data_0 = - 123;
+    * data_1 = 123;
 
-    data_00 = talloc_zero ( data_0, sizeof ( uint16_t ) * 4 );
-    data_01 = talloc      ( data_0, sizeof ( char ) * 3 );
-    data_02 = talloc_zero ( data_0, sizeof ( uint32_t ) * 2 );
+    data_2 = talloc_zero ( data_1, sizeof ( uint16_t ) * 4 );
+    data_3 = talloc      ( data_1, sizeof ( char ) * 3 );
+    data_4 = talloc_zero ( data_1, sizeof ( uint32_t ) * 2 );
     if (
-        data_00 == NULL || data_00[0] != 0 || data_00[1] != 0 || data_00[2] != 0 || data_00[3] != 0 ||
-        data_01 == NULL ||
-        data_02 == NULL || data_02[0] != 0 || data_02[1] != 0
+        data_2 == NULL || data_2[0] != 0 || data_2[1] != 0 || data_2[2] != 0 || data_2[3] != 0 ||
+        data_3 == NULL ||
+        data_4 == NULL || data_4[0] != 0 || data_4[1] != 0
     ) {
         return false;
     }
-    data_00[0] = 012;
-    data_00[1] = 345;
-    data_00[2] = 678;
-    data_00[3] = 901;
+    data_2[0] = 012;
+    data_2[1] = 345;
+    data_2[2] = 678;
+    data_2[3] = 901;
 
-    data_01[0] = 'q';
-    data_01[1] = 'w';
-    data_01[2] = 'e';
+    data_3[0] = 'q';
+    data_3[1] = 'w';
+    data_3[2] = 'e';
 
-    data_02[0] = 12345;
-    data_02[1] = 67890;
+    data_4[0] = 12345;
+    data_4[1] = 67890;
 
-    data_010 = talloc      ( data_01, sizeof ( size_t ) * 3 );
-    data_011 = talloc_zero ( data_01, sizeof ( double ) );
-    data_012 = talloc      ( data_01, sizeof ( float ) * 2 );
+    data_5 = talloc      ( data_3, sizeof ( size_t ) * 3 );
+    data_6 = talloc_zero ( data_3, sizeof ( double ) );
+    data_7 = talloc      ( data_3, sizeof ( float ) * 2 );
     if (
-        data_010 == NULL ||
-        data_011 == NULL || * data_011 != 0 ||
-        data_012 == NULL
+        data_5 == NULL ||
+        data_6 == NULL || * data_6 != 0 ||
+        data_7 == NULL
     ) {
         return false;
     }
-    data_010[0] = 123456789;
-    data_010[1] = 987654321;
-    data_010[2] = 123456789;
+    data_5[0] = 123456789;
+    data_5[1] = 987654321;
+    data_5[2] = 123456789;
 
-    * data_011 = 0.0123456789;
+    * data_6 = 0.0123456789;
 
-    data_012[0] = 0.01234;
-    data_012[1] = 0.56789;
+    data_7[0] = 0.01234;
+    data_7[1] = 0.56789;
 
-    trivium = talloc_new ( data_012 );
+    trivium = talloc_new ( data_7 );
     if ( trivium == NULL ) {
         return false;
     }
+
+#if defined(TALLOC_REFERENCE)
+    trivium_reference_1 = talloc_add_reference ( data_6, trivium );
+    trivium_reference_2 = talloc_add_reference ( data_5, trivium );
+    if ( trivium_reference_1 == NULL || trivium_reference_2 == NULL ) {
+        return false;
+    }
+
+    data_8  = talloc      ( trivium_reference_1, sizeof ( int8_t ) * 2 );
+    data_9  = talloc      ( data_8, sizeof ( int16_t ) * 3 );
+    data_10 = talloc_zero ( data_8, sizeof ( int32_t ) * 2 );
+    if (
+        data_8  == NULL ||
+        data_9  == NULL ||
+        data_10 == NULL || data_10[0] != 0 || data_10[1] != 0
+    ) {
+        return false;
+    }
+    data_8[0] = - 1;
+    data_8[1] = 2;
+
+    data_9[0] = 4000;
+    data_9[1] = - 5000;
+    data_9[2] = 6000;
+
+    data_10[0] = - 123456;
+    data_10[1] = 789012;
+#endif
 
     return true;
 }
@@ -126,42 +177,102 @@ bool test_realloc ()
         return false;
     }
 
-    data_0 = talloc_realloc ( data_0, sizeof ( int8_t ) * 2 );
-    if ( data_0 == NULL || data_0[0] != - 123 ) {
+    data_1 = talloc_realloc ( data_1, sizeof ( uint8_t ) * 2 );
+    if ( data_1 == NULL || data_1[0] != 123 ) {
         return false;
     }
 
-    data_00 = talloc_realloc ( data_00, sizeof ( uint16_t ) * 20 );
-    data_01 = talloc_realloc ( data_01, sizeof ( char ) );
-    data_02 = talloc_realloc ( data_02, sizeof ( uint32_t ) * 30 );
+    data_2 = talloc_realloc ( data_2, sizeof ( uint16_t ) * 20 );
+    data_3 = talloc_realloc ( data_3, sizeof ( char ) );
+    data_4 = talloc_realloc ( data_4, sizeof ( uint32_t ) * 30 );
     if (
-        data_00 == NULL || data_00[0] != 012   || data_00[1] != 345 || data_00[2] != 678 || data_00[3] != 901 ||
-        data_01 == NULL || * data_01 != 'q'    ||
-        data_02 == NULL || data_02[0] != 12345 || data_02[1] != 67890
+        data_2 == NULL || data_2[0] != 012   || data_2[1] != 345 || data_2[2] != 678 || data_2[3] != 901 ||
+        data_3 == NULL || * data_3 != 'q'    ||
+        data_4 == NULL || data_4[0] != 12345 || data_4[1] != 67890
     ) {
         return false;
     }
 
-    data_010 = talloc_realloc ( data_010, sizeof ( size_t ) * 2 );
-    data_011 = talloc_realloc ( data_011, sizeof ( double ) * 10 );
-    data_012 = talloc_realloc ( data_012, sizeof ( float ) );
+    data_5 = talloc_realloc ( data_5, sizeof ( size_t ) * 2 );
+    data_6 = talloc_realloc ( data_6, sizeof ( double ) * 10 );
+    data_7 = talloc_realloc ( data_7, sizeof ( float ) );
     if (
-        data_010 == NULL || data_010[0] != 123456789 || data_010[1] != 987654321 ||
-        data_011 == NULL || !compare_double ( data_011[0], 0.0123456789 ) ||
-        data_012 == NULL || !compare_float  ( data_012[0], 0.01234 )
+        data_5 == NULL || data_5[0] != 123456789 || data_5[1] != 987654321 ||
+        data_6 == NULL || !compare_double ( data_6[0], 0.0123456789 ) ||
+        data_7 == NULL || !compare_float  ( data_7[0], 0.01234 )
     ) {
         return false;
     }
 
-    root_chunk     = talloc_chunk_from_data ( root );
-    data_0_chunk   = talloc_chunk_from_data ( data_0 );
-    data_00_chunk  = talloc_chunk_from_data ( data_00 );
-    data_01_chunk  = talloc_chunk_from_data ( data_01 );
-    data_02_chunk  = talloc_chunk_from_data ( data_02 );
-    data_010_chunk = talloc_chunk_from_data ( data_010 );
-    data_011_chunk = talloc_chunk_from_data ( data_011 );
-    data_012_chunk = talloc_chunk_from_data ( data_012 );
-    trivium_chunk  = talloc_chunk_from_data ( trivium );
+#if defined(TALLOC_REFERENCE)
+    if (
+        talloc_realloc ( trivium_reference_1, sizeof ( float ) * 2 )  != NULL ||
+        talloc_realloc ( trivium_reference_1, sizeof ( size_t ) * 3 ) != NULL
+    ) {
+        return false;
+    }
+
+    data_8  = talloc_realloc ( data_8,  sizeof ( int8_t ) );
+    data_9  = talloc_realloc ( data_9,  sizeof ( int16_t ) * 2 );
+    data_10 = talloc_realloc ( data_10, sizeof ( int32_t ) );
+    if (
+        data_8  == NULL || data_8[0]  != - 1    ||
+        data_9  == NULL || data_9[0]  != 4000   || data_9[1] != - 5000 ||
+        data_10 == NULL || data_10[0] != - 123456
+    ) {
+        return false;
+    }
+#endif
+
+    root_chunk    = talloc_chunk_from_data ( root );
+    data_1_chunk  = talloc_chunk_from_data ( data_1 );
+    data_2_chunk  = talloc_chunk_from_data ( data_2 );
+    data_3_chunk  = talloc_chunk_from_data ( data_3 );
+    data_4_chunk  = talloc_chunk_from_data ( data_4 );
+    data_5_chunk  = talloc_chunk_from_data ( data_5 );
+    data_6_chunk  = talloc_chunk_from_data ( data_6 );
+    data_7_chunk  = talloc_chunk_from_data ( data_7 );
+    trivium_chunk = talloc_chunk_from_data ( trivium );
+
+#if defined(TALLOC_REFERENCE)
+    trivium_reference_1_chunk = talloc_chunk_from_data ( trivium_reference_1 );
+    trivium_reference_2_chunk = talloc_chunk_from_data ( trivium_reference_2 );
+    data_8_chunk              = talloc_chunk_from_data ( data_8 );
+    data_9_chunk              = talloc_chunk_from_data ( data_9 );
+    data_10_chunk             = talloc_chunk_from_data ( data_10 );
+#endif
+
+    return true;
+}
+
+bool test_move ()
+{
+    if (
+        talloc_move ( data_3, data_4 ) != 0            ||
+        data_3_chunk->parent           != data_4_chunk ||
+
+        talloc_move ( data_3, NULL ) != 0    ||
+        data_3_chunk->parent         != NULL ||
+
+        talloc_move ( data_3, data_1 ) != 0 ||
+        data_3_chunk->parent           != data_1_chunk
+    ) {
+        return false;
+    }
+
+#if defined(TALLOC_REFERENCE)
+    if (
+        talloc_move ( trivium_reference_1, data_5 ) != 0 ||
+        trivium_reference_1_chunk->parent           != data_5_chunk ||
+
+        talloc_move ( trivium_reference_1, NULL ) == 0 ||
+        talloc_move ( trivium_reference_2, NULL ) == 0 ||
+
+        talloc_move ( trivium_reference_2, data_5 ) == 0
+    ) {
+        return false;
+    }
+#endif
 
     return true;
 }
@@ -169,32 +280,18 @@ bool test_realloc ()
 /*
            root
             |
-            0
+            1
            /|\
-       01  02   00
+       3    4    2
       /|\
-      012  011  010
-       |
-    trivium
+   7        6        5
+   |                 |\
+trivium          trivium_1 trivium_2
+                     |
+                     8
+                    /|\
+                  10   9
 */
-
-bool test_move ()
-{
-    if (
-        talloc_move ( data_01, data_02 ) != 0  ||
-        data_01_chunk->parent != data_02_chunk ||
-
-        talloc_move ( data_01, NULL ) != 0 ||
-        data_01_chunk->parent != NULL      ||
-
-        talloc_move ( data_01, data_0 ) != 0 ||
-        data_01_chunk->parent != data_0_chunk
-    ) {
-        return false;
-    }
-
-    return true;
-}
 
 bool test_chunks ()
 {
@@ -202,46 +299,45 @@ bool test_chunks ()
         root_chunk->parent      != NULL         ||
         root_chunk->prev        != NULL         ||
         root_chunk->next        != NULL         ||
-        root_chunk->first_child != data_0_chunk ||
+        root_chunk->first_child != data_1_chunk ||
 
-        data_0_chunk->parent      != root_chunk    ||
-        data_0_chunk->prev        != NULL          ||
-        data_0_chunk->next        != NULL          ||
-        data_0_chunk->first_child != data_01_chunk ||
+        data_1_chunk->parent      != root_chunk   ||
+        data_1_chunk->prev        != NULL         ||
+        data_1_chunk->next        != NULL         ||
+        data_1_chunk->first_child != data_3_chunk ||
 
-        data_00_chunk->parent      != data_0_chunk  ||
-        data_00_chunk->prev        != data_02_chunk ||
-        data_00_chunk->next        != NULL          ||
-        data_00_chunk->first_child != NULL          ||
+        data_2_chunk->parent      != data_1_chunk ||
+        data_2_chunk->prev        != data_4_chunk ||
+        data_2_chunk->next        != NULL         ||
+        data_2_chunk->first_child != NULL         ||
 
-        data_01_chunk->parent      != data_0_chunk   ||
-        data_01_chunk->prev        != NULL           ||
-        data_01_chunk->next        != data_02_chunk  ||
-        data_01_chunk->first_child != data_012_chunk ||
+        data_3_chunk->parent      != data_1_chunk ||
+        data_3_chunk->prev        != NULL         ||
+        data_3_chunk->next        != data_4_chunk ||
+        data_3_chunk->first_child != data_7_chunk ||
 
-        data_02_chunk->parent      != data_0_chunk  ||
-        data_02_chunk->prev        != data_01_chunk ||
-        data_02_chunk->next        != data_00_chunk ||
-        data_02_chunk->first_child != NULL          ||
+        data_4_chunk->parent      != data_1_chunk ||
+        data_4_chunk->prev        != data_3_chunk ||
+        data_4_chunk->next        != data_2_chunk ||
+        data_4_chunk->first_child != NULL         ||
 
-        data_010_chunk->parent      != data_01_chunk  ||
-        data_010_chunk->prev        != data_011_chunk ||
-        data_010_chunk->next        != NULL           ||
-        data_010_chunk->first_child != NULL           ||
+        data_5_chunk->parent      != data_3_chunk ||
+        data_5_chunk->prev        != data_6_chunk ||
+        data_5_chunk->next        != NULL         ||
 
-        data_011_chunk->parent      != data_01_chunk  ||
-        data_011_chunk->prev        != data_012_chunk ||
-        data_011_chunk->next        != data_010_chunk ||
-        data_011_chunk->first_child != NULL           ||
+        data_6_chunk->parent      != data_3_chunk ||
+        data_6_chunk->prev        != data_7_chunk ||
+        data_6_chunk->next        != data_5_chunk ||
+        data_6_chunk->first_child != NULL         ||
 
-        data_012_chunk->parent      != data_01_chunk  ||
-        data_012_chunk->prev        != NULL           ||
-        data_012_chunk->next        != data_011_chunk ||
-        data_012_chunk->first_child != trivium_chunk  ||
+        data_7_chunk->parent      != data_3_chunk  ||
+        data_7_chunk->prev        != NULL          ||
+        data_7_chunk->next        != data_6_chunk  ||
+        data_7_chunk->first_child != trivium_chunk ||
 
-        trivium_chunk->parent      != data_012_chunk ||
-        trivium_chunk->prev        != NULL           ||
-        trivium_chunk->next        != NULL           ||
+        trivium_chunk->parent      != data_7_chunk ||
+        trivium_chunk->prev        != NULL         ||
+        trivium_chunk->next        != NULL         ||
         trivium_chunk->first_child != NULL
     ) {
         return false;
@@ -252,33 +348,33 @@ bool test_chunks ()
 /*
            root
             |
-            0
+            1
            / \
-         02   00
+         4    2
 */
 
-bool test_chunks_without_data_01 ()
+bool test_chunks_without_data_3 ()
 {
     if (
         root_chunk->parent      != NULL         ||
         root_chunk->prev        != NULL         ||
         root_chunk->next        != NULL         ||
-        root_chunk->first_child != data_0_chunk ||
+        root_chunk->first_child != data_1_chunk ||
 
-        data_0_chunk->parent      != root_chunk    ||
-        data_0_chunk->prev        != NULL          ||
-        data_0_chunk->next        != NULL          ||
-        data_0_chunk->first_child != data_02_chunk ||
+        data_1_chunk->parent      != root_chunk   ||
+        data_1_chunk->prev        != NULL         ||
+        data_1_chunk->next        != NULL         ||
+        data_1_chunk->first_child != data_4_chunk ||
 
-        data_00_chunk->parent      != data_0_chunk  ||
-        data_00_chunk->prev        != data_02_chunk ||
-        data_00_chunk->next        != NULL          ||
-        data_00_chunk->first_child != NULL          ||
+        data_2_chunk->parent      != data_1_chunk ||
+        data_2_chunk->prev        != data_4_chunk ||
+        data_2_chunk->next        != NULL         ||
+        data_2_chunk->first_child != NULL         ||
 
-        data_02_chunk->parent      != data_0_chunk  ||
-        data_02_chunk->prev        != NULL          ||
-        data_02_chunk->next        != data_00_chunk ||
-        data_02_chunk->first_child != NULL
+        data_4_chunk->parent      != data_1_chunk  ||
+        data_4_chunk->prev        != NULL          ||
+        data_4_chunk->next        != data_2_chunk ||
+        data_4_chunk->first_child != NULL
     ) {
         return false;
     }
@@ -303,11 +399,11 @@ int main ()
         talloc_free ( root );
         return 4;
     }
-    if ( talloc_free ( data_01 ) != 0 ) {
+    if ( talloc_free ( data_3 ) != 0 ) {
         talloc_free ( root );
         return 5;
     }
-    if ( !test_chunks_without_data_01() ) {
+    if ( !test_chunks_without_data_3() ) {
         talloc_free ( root );
         return 6;
     }
