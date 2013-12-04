@@ -148,7 +148,7 @@ uint8_t talloc_move ( const void * child_data, const void * parent_data )
     }
     talloc_chunk * child = talloc_chunk_from_data ( child_data );
 
-#if defined(TALLOC_EXTENSIONS)
+#if defined(TALLOC_REFERENCE)
     if ( child->mode == TALLOC_MODE_REFERENCE ) {
         if ( parent_data == NULL ) {
             return 2;
