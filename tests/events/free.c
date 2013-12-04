@@ -57,6 +57,10 @@ bool test_free ( void * root )
         free_history ( talloc_history );
         return false;
     }
+    
+    talloc_chunk * a_chunk = talloc_chunk_from_data ( a );
+    talloc_chunk * b_chunk = talloc_chunk_from_data ( b );
+    talloc_chunk * c_chunk = talloc_chunk_from_data ( c );
 
 #if defined(TALLOC_REFERENCE)
     char ** c_reference = ( char ** ) talloc_add_reference ( b, c );
@@ -66,6 +70,7 @@ bool test_free ( void * root )
         free_history ( talloc_history );
         return false;
     }
+    talloc_chunk * c_reference_chunk = talloc_chunk_from_data ( c_reference );
 #endif
 
     if (
@@ -76,12 +81,8 @@ bool test_free ( void * root )
         return false;
     }
 
-    talloc_chunk * a_chunk           = talloc_chunk_from_data ( a );
-    talloc_chunk * b_chunk           = talloc_chunk_from_data ( b );
-    talloc_chunk * c_chunk           = talloc_chunk_from_data ( c );
-    talloc_chunk * c_reference_chunk = talloc_chunk_from_data ( c_reference );
+#if defined(TALLOC_REFERENCE)
     talloc_chunk * chunk;
-
     if (
         malloc_dynarr_get_length ( talloc_history ) != 4 ||
         ( chunk = malloc_dynarr_get ( talloc_history, 0 ) ) == NULL ||
@@ -96,6 +97,21 @@ bool test_free ( void * root )
         free_history ( talloc_history );
         return false;
     }
+#else
+    talloc_chunk * chunk;
+    if (
+        malloc_dynarr_get_length ( talloc_history ) != 3 ||
+        ( chunk = malloc_dynarr_get ( talloc_history, 0 ) ) == NULL ||
+        chunk != a_chunk ||
+        ( chunk = malloc_dynarr_get ( talloc_history, 1 ) ) == NULL ||
+        chunk != c_chunk ||
+        ( chunk = malloc_dynarr_get ( talloc_history, 2 ) ) == NULL ||
+        chunk != b_chunk
+    ) {
+        free_history ( talloc_history );
+        return false;
+    }
+#endif
 
     free_history ( talloc_history );
     return true;

@@ -17,6 +17,7 @@ void prepend_destructor_to_extensions ( talloc_extensions * extensions, talloc_d
     destructor->next                     = first_destructor;
 }
 
+#if defined(TALLOC_REFERENCE)
 static inline
 void prepend_destructor_to_reference ( talloc_reference * reference, talloc_destructor * destructor )
 {
@@ -24,6 +25,7 @@ void prepend_destructor_to_reference ( talloc_reference * reference, talloc_dest
     reference->first_destructor          = destructor;
     destructor->next                     = first_destructor;
 }
+#endif
 
 uint8_t talloc_add_destructor ( const void * chunk_data, talloc_destructor_function function, void * user_data )
 {

@@ -57,7 +57,7 @@ talloc_chunk * talloc_usual_realloc_chunk ( talloc_chunk * chunk, size_t length 
     }
 
 #if defined(TALLOC_DEBUG)
-    chunk->length = length;
+    new_chunk->length = length;
 #endif
 
     return new_chunk;
