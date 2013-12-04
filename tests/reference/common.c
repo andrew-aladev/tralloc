@@ -5,7 +5,7 @@
 
 #include "common.h"
 #include <talloc2/tree.h>
-#include <talloc2/ext/chunk.h>
+#include <talloc2/extensions/chunk.h>
 #include <talloc2/reference/main.h>
 
 #include <string.h>

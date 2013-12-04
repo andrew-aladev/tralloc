@@ -4,14 +4,14 @@
 // You should have received a copy of the GNU General Lesser Public License along with talloc2. If not, see <http://www.gnu.org/licenses/>.
 
 #include "chunk.h"
-#include "../ext/chunk.h"
+#include "../extensions/chunk.h"
 
 #if defined(TALLOC_DEBUG)
 #include "../events.h"
 #endif
 
 extern inline talloc_reference * talloc_reference_malloc_chunk ( const void * parent_data, const void * chunk_data );
-extern inline void               talloc_reference_update       ( talloc_ext * ext, talloc_chunk * ext_chunk );
+extern inline void               talloc_reference_update       ( talloc_extensions * extensions, talloc_chunk * extensions_chunk );
 
 uint8_t talloc_reference_free_chunk ( talloc_chunk * reference_chunk )
 {
@@ -23,19 +23,19 @@ uint8_t talloc_reference_free_chunk ( talloc_chunk * reference_chunk )
     }
 #endif
 
-    talloc_reference * reference = talloc_reference_from_chunk ( reference_chunk );
-    talloc_ext * parent_ext      = reference->parent_ext;
+    talloc_reference * reference          = talloc_reference_from_chunk ( reference_chunk );
+    talloc_extensions * parent_extensions = reference->parent_extensions;
 
     talloc_reference * prev = reference->prev;
     talloc_reference * next = reference->next;
     
     if ( prev == NULL ) {
-        parent_ext->first_reference = next;
+        parent_extensions->first_reference = next;
 
         if ( next == NULL ) {
-            talloc_chunk * parent_chunk = talloc_chunk_from_ext ( parent_ext );
+            talloc_chunk * parent_chunk = talloc_chunk_from_extensions ( parent_extensions );
             if ( parent_chunk->parent == NULL ) {
-                if ( ( result = talloc_ext_free_chunk ( parent_chunk ) ) != 0 ) {
+                if ( ( result = talloc_extensions_free_chunk ( parent_chunk ) ) != 0 ) {
                     error = result;
                 }
             }

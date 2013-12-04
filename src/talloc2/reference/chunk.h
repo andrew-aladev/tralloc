@@ -34,14 +34,14 @@ talloc_reference * talloc_reference_malloc_chunk ( const void * parent_data, con
 }
 
 inline
-void talloc_reference_update ( talloc_ext * ext, talloc_chunk * ext_chunk )
+void talloc_reference_update ( talloc_extensions * extensions, talloc_chunk * extensions_chunk )
 {
     void ** data;
-    void * chunk_data = talloc_data_from_chunk ( ext_chunk );
+    void * chunk_data = talloc_data_from_chunk ( extensions_chunk );
 
-    talloc_reference * reference = ext->first_reference;
+    talloc_reference * reference = extensions->first_reference;
     while ( reference != NULL ) {
-        reference->parent_ext = ext;
+        reference->parent_extensions = extensions;
         data = ( void ** ) talloc_data_from_chunk ( talloc_chunk_from_reference ( reference ) );
         * data = chunk_data;
         reference = reference->next;

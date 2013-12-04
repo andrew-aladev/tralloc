@@ -6,7 +6,7 @@
 #include "destructor.h"
 #include "../lib/malloc_dynarr.h"
 #include <talloc2/helpers.h>
-#include <talloc2/ext/destructor.h>
+#include <talloc2/extensions/destructor.h>
 
 static
 uint8_t destructor ( void * chunk_data, void * user_data )
@@ -101,11 +101,11 @@ bool test_destructor ( void * root )
         return false;
     }
 
-    talloc_ext * ext_03 = talloc_ext_from_chunk ( talloc_chunk_from_data ( text_03 ) );
+    talloc_extensions * extensions_03 = talloc_extensions_from_chunk ( talloc_chunk_from_data ( text_03 ) );
     talloc_destructor * destructor;
 
     if (
-        ( destructor = ext_03->first_destructor ) == NULL ||
+        ( destructor = extensions_03->first_destructor ) == NULL ||
         destructor->function != destructor_empty_1 || destructor->user_data != NULL           || ( destructor = destructor->next ) == NULL ||
         destructor->function != destructor_empty_1 || destructor->user_data != talloc_history || ( destructor = destructor->next ) == NULL ||
         destructor->function != destructor_empty_2 || destructor->user_data != talloc_history || ( destructor = destructor->next ) == NULL ||
@@ -121,7 +121,7 @@ bool test_destructor ( void * root )
 
     if (
         talloc_del_destructor ( text_03, destructor_empty_2, NULL ) != 0 ||
-        ( destructor = ext_03->first_destructor ) == NULL ||
+        ( destructor = extensions_03->first_destructor ) == NULL ||
         destructor->function != destructor_empty_1 || destructor->user_data != NULL           || ( destructor = destructor->next ) == NULL ||
         destructor->function != destructor_empty_1 || destructor->user_data != talloc_history || ( destructor = destructor->next ) == NULL ||
         destructor->function != destructor_empty_2 || destructor->user_data != talloc_history || ( destructor = destructor->next ) == NULL ||
@@ -136,7 +136,7 @@ bool test_destructor ( void * root )
 
     if (
         talloc_del_destructor_by_function ( text_03, destructor_empty_2 ) != 0 ||
-        ( destructor = ext_03->first_destructor ) == NULL ||
+        ( destructor = extensions_03->first_destructor ) == NULL ||
         destructor->function != destructor_empty_1 || destructor->user_data != NULL           || ( destructor = destructor->next ) == NULL ||
         destructor->function != destructor_empty_1 || destructor->user_data != talloc_history || ( destructor = destructor->next ) == NULL ||
         destructor->function != destructor_empty_1 || destructor->user_data != NULL           ||
@@ -149,7 +149,7 @@ bool test_destructor ( void * root )
 
     if (
         talloc_del_destructor_by_data ( text_03, NULL ) != 0 ||
-        ( destructor = ext_03->first_destructor ) == NULL ||
+        ( destructor = extensions_03->first_destructor ) == NULL ||
         destructor->function != destructor_empty_1 || destructor->user_data != talloc_history ||
         destructor->next != NULL
     ) {
@@ -160,7 +160,7 @@ bool test_destructor ( void * root )
 
     if (
         talloc_del_destructor_by_data ( text_03, talloc_history ) != 0 ||
-        ext_03->first_destructor != NULL
+        extensions_03->first_destructor != NULL
     ) {
         talloc_free ( strings );
         free_history ( talloc_history );

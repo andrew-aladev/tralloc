@@ -20,17 +20,17 @@ talloc_chunk * talloc_chunk_from_data ( const void * data )
     return ( talloc_chunk * ) ( ( uintptr_t ) data - sizeof ( talloc_chunk ) );
 }
 
-#ifdef TALLOC_EXT
+#ifdef TALLOC_EXTENSIONS
 inline
-talloc_chunk * talloc_chunk_from_ext ( talloc_ext * ext )
+talloc_chunk * talloc_chunk_from_extensions ( talloc_extensions * extensions )
 {
-    return ( talloc_chunk * ) ( ( uintptr_t ) ext + sizeof ( talloc_ext ) );
+    return ( talloc_chunk * ) ( ( uintptr_t ) extensions + sizeof ( talloc_extensions ) );
 }
 
 inline
-talloc_ext * talloc_ext_from_chunk ( talloc_chunk * chunk )
+talloc_extensions * talloc_extensions_from_chunk ( talloc_chunk * chunk )
 {
-    return ( talloc_ext * ) ( ( uintptr_t ) chunk - sizeof ( talloc_ext ) );
+    return ( talloc_extensions * ) ( ( uintptr_t ) chunk - sizeof ( talloc_extensions ) );
 }
 #endif
 

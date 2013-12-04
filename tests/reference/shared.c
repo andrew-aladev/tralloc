@@ -5,7 +5,7 @@
 
 #include "shared.h"
 #include <talloc2/tree.h>
-#include <talloc2/ext/chunk.h>
+#include <talloc2/extensions/chunk.h>
 #include <talloc2/reference/main.h>
 
 #include <string.h>
@@ -64,23 +64,23 @@ bool test_shared ( void * root )
     }
 
     talloc_chunk * shared_chunk = talloc_chunk_from_data ( shared );
-    if ( shared_chunk->mode != TALLOC_MODE_EXT ) {
+    if ( shared_chunk->mode != TALLOC_MODE_EXTENSIONS ) {
         talloc_free ( root );
         return false;
     }
 
-    talloc_ext * shared_ext        = talloc_ext_from_chunk ( shared_chunk );
-    talloc_reference * a_reference = talloc_reference_from_chunk ( talloc_chunk_from_data ( a_shared ) );
-    talloc_reference * b_reference = talloc_reference_from_chunk ( talloc_chunk_from_data ( b_shared ) );
-    talloc_reference * c_reference = talloc_reference_from_chunk ( talloc_chunk_from_data ( c_shared ) );
-    talloc_reference * reference   = shared_ext->first_reference;
+    talloc_extensions * shared_extensions = talloc_extensions_from_chunk ( shared_chunk );
+    talloc_reference * a_reference        = talloc_reference_from_chunk ( talloc_chunk_from_data ( a_shared ) );
+    talloc_reference * b_reference        = talloc_reference_from_chunk ( talloc_chunk_from_data ( b_shared ) );
+    talloc_reference * c_reference        = talloc_reference_from_chunk ( talloc_chunk_from_data ( c_shared ) );
+    talloc_reference * reference          = shared_extensions->first_reference;
     if (
         reference != a_reference ||
-        reference->prev != NULL || reference->parent_ext != shared_ext ||
+        reference->prev != NULL || reference->parent_extensions != shared_extensions ||
         ( reference = reference->next ) != c_reference ||
-        reference->prev != a_reference || reference->parent_ext != shared_ext ||
+        reference->prev != a_reference || reference->parent_extensions != shared_extensions ||
         ( reference = reference->next ) != b_reference ||
-        reference->prev != c_reference || reference->parent_ext != shared_ext ||
+        reference->prev != c_reference || reference->parent_extensions != shared_extensions ||
         ( reference = reference->next ) != NULL
     ) {
         talloc_free ( root );
@@ -95,10 +95,10 @@ bool test_shared ( void * root )
     a_shared = ( char ** ) talloc_add_reference ( a, shared );
 
     a_reference = talloc_reference_from_chunk ( talloc_chunk_from_data ( a_shared ) );
-    reference   = shared_ext->first_reference;
+    reference   = shared_extensions->first_reference;
     if (
         reference != a_reference ||
-        reference->prev != NULL || reference->parent_ext != shared_ext || reference->next != NULL
+        reference->prev != NULL || reference->parent_extensions != shared_extensions || reference->next != NULL
     ) {
         talloc_free ( root );
         return false;
@@ -116,10 +116,10 @@ bool test_shared ( void * root )
     }
 
     b_reference = talloc_reference_from_chunk ( talloc_chunk_from_data ( b_shared ) );
-    reference   = shared_ext->first_reference;
+    reference   = shared_extensions->first_reference;
     if (
         reference != b_reference ||
-        reference->prev != NULL || reference->parent_ext != shared_ext || reference->next != NULL
+        reference->prev != NULL || reference->parent_extensions != shared_extensions || reference->next != NULL
     ) {
         talloc_free ( root );
         return false;

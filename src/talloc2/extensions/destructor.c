@@ -10,10 +10,10 @@
 #endif
 
 static inline
-void prepend_destructor_to_ext ( talloc_ext * ext, talloc_destructor * destructor )
+void prepend_destructor_to_extensions ( talloc_extensions * extensions, talloc_destructor * destructor )
 {
-    talloc_destructor * first_destructor = ext->first_destructor;
-    ext->first_destructor                = destructor;
+    talloc_destructor * first_destructor = extensions->first_destructor;
+    extensions->first_destructor         = destructor;
     destructor->next                     = first_destructor;
 }
 
@@ -42,13 +42,13 @@ uint8_t talloc_add_destructor ( const void * chunk_data, talloc_destructor_funct
     talloc_chunk * chunk = talloc_chunk_from_data ( chunk_data );
 
 #if defined(TALLOC_REFERENCE)
-    if ( chunk->mode == TALLOC_MODE_EXT ) {
-        prepend_destructor_to_ext ( talloc_ext_from_chunk ( chunk ), destructor );
+    if ( chunk->mode == TALLOC_MODE_EXTENSIONS ) {
+        prepend_destructor_to_extensions ( talloc_extensions_from_chunk ( chunk ), destructor );
     } else {
         prepend_destructor_to_reference ( talloc_reference_from_chunk ( chunk ), destructor );
     }
 #else
-    prepend_destructor_to_ext ( talloc_ext_from_chunk ( chunk ), destructor );
+    prepend_destructor_to_extensions ( talloc_extensions_from_chunk ( chunk ), destructor );
 #endif
 
     return 0;
@@ -75,9 +75,9 @@ bool destructor_comparator_strict ( talloc_destructor * destructor, talloc_destr
 typedef bool ( * destructor_comparator ) ( talloc_destructor * destructor, talloc_destructor_function function, void * user_data );
 
 static inline
-void delete_destructors_by_comparator ( talloc_ext * ext, destructor_comparator comparator, talloc_destructor_function function, void * user_data )
+void delete_destructors_by_comparator ( talloc_extensions * extensions, destructor_comparator comparator, talloc_destructor_function function, void * user_data )
 {
-    talloc_destructor * destructor = ext->first_destructor;
+    talloc_destructor * destructor = extensions->first_destructor;
     talloc_destructor * next_destructor;
     talloc_destructor * prev_destructor = NULL;
 
@@ -86,7 +86,7 @@ void delete_destructors_by_comparator ( talloc_ext * ext, destructor_comparator 
         if ( comparator ( destructor, function, user_data ) ) {
             free ( destructor );
             if ( prev_destructor == NULL ) {
-                ext->first_destructor = next_destructor;
+                extensions->first_destructor = next_destructor;
             } else {
                 prev_destructor->next = next_destructor;
             }
@@ -103,9 +103,9 @@ uint8_t delete_destructors ( const void * chunk_data, destructor_comparator comp
     if ( chunk_data == NULL ) {
         return 1;
     }
-    talloc_ext * ext = talloc_ext_from_chunk ( talloc_chunk_from_data ( chunk_data ) );
+    talloc_extensions * extensions = talloc_extensions_from_chunk ( talloc_chunk_from_data ( chunk_data ) );
 
-    delete_destructors_by_comparator ( ext, comparator, function, user_data );
+    delete_destructors_by_comparator ( extensions, comparator, function, user_data );
     return 0;
 }
 
@@ -124,11 +124,11 @@ uint8_t talloc_del_destructor_by_data ( const void * chunk_data, void * user_dat
     return delete_destructors ( chunk_data, destructor_comparator_by_data, NULL, user_data );
 }
 
-uint8_t talloc_destructor_free ( talloc_chunk * chunk, talloc_ext * ext )
+uint8_t talloc_destructor_free ( talloc_chunk * chunk, talloc_extensions * extensions )
 {
     uint8_t result, error = 0;
     void * chunk_data = talloc_data_from_chunk ( chunk );
-    talloc_destructor * destructor = ext->first_destructor;
+    talloc_destructor * destructor = extensions->first_destructor;
     talloc_destructor * next_destructor;
     talloc_destructor_function function;
 
@@ -148,4 +148,4 @@ uint8_t talloc_destructor_free ( talloc_chunk * chunk, talloc_ext * ext )
 }
 
 extern inline uint8_t talloc_clear_destructors      ( const void * chunk_data );
-extern inline void    talloc_destructor_free_silent ( talloc_ext * ext );
+extern inline void    talloc_destructor_free_silent ( talloc_extensions * extensions );

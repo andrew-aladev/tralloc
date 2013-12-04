@@ -9,7 +9,7 @@
 #include <talloc2/events.h>
 #endif
 
-#if defined(TALLOC_EXT_DESTRUCTOR)
+#if defined(TALLOC_EXTENSIONS_DESTRUCTOR)
 #include "destructor.h"
 #endif
 
@@ -20,7 +20,7 @@ int main ()
         return 1;
     }
 
-#if defined(TALLOC_EXT_DESTRUCTOR)
+#if defined(TALLOC_EXTENSIONS_DESTRUCTOR)
     if ( !test_destructor (root) ) {
         talloc_free ( root );
         return 2;

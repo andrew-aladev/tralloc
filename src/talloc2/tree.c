@@ -14,8 +14,8 @@
 #include "events.h"
 #endif
 
-#if defined(TALLOC_EXT)
-#include "ext/chunk.h"
+#if defined(TALLOC_EXTENSIONS)
+#include "extensions/chunk.h"
 #endif
 
 #if defined(TALLOC_REFERENCE)
@@ -47,8 +47,8 @@ void * talloc ( const void * parent_data, size_t length )
 {
     talloc_chunk * chunk;
 
-#if defined(TALLOC_EXT)
-    chunk = talloc_ext_malloc_chunk ( parent_data, length );
+#if defined(TALLOC_EXTENSIONS)
+    chunk = talloc_extensions_malloc_chunk ( parent_data, length );
 #else
     chunk = talloc_usual_malloc_chunk ( parent_data, length );
 #endif
@@ -64,8 +64,8 @@ void * talloc_zero ( const void * parent_data, size_t length )
 {
     talloc_chunk * chunk;
 
-#if defined(TALLOC_EXT)
-    chunk = talloc_ext_calloc_chunk ( parent_data, length );
+#if defined(TALLOC_EXTENSIONS)
+    chunk = talloc_extensions_calloc_chunk ( parent_data, length );
 #else
     chunk = talloc_usual_calloc_chunk ( parent_data, length );
 #endif
@@ -117,8 +117,8 @@ void * talloc_realloc ( const void * chunk_data, size_t length )
 #endif
 
     talloc_chunk * new_chunk;
-#if defined(TALLOC_EXT)
-    new_chunk = talloc_ext_realloc_chunk ( old_chunk, length );
+#if defined(TALLOC_EXTENSIONS)
+    new_chunk = talloc_extensions_realloc_chunk ( old_chunk, length );
 #else
     new_chunk = talloc_usual_realloc_chunk ( old_chunk, length );
 #endif
@@ -173,13 +173,13 @@ uint8_t talloc_free_chunk ( talloc_chunk * chunk )
 {
 
 #if defined(TALLOC_REFERENCE)
-    if ( chunk->mode == TALLOC_MODE_EXT ) {
-        return talloc_ext_free_chunk ( chunk );
+    if ( chunk->mode == TALLOC_MODE_EXTENSIONS ) {
+        return talloc_extensions_free_chunk ( chunk );
     } else {
         return talloc_reference_free_chunk ( chunk );
     }
-#elif defined(TALLOC_EXT)
-    return talloc_ext_free_chunk ( chunk );
+#elif defined(TALLOC_EXTENSIONS)
+    return talloc_extensions_free_chunk ( chunk );
 #else
     return talloc_usual_free_chunk ( chunk );
 #endif

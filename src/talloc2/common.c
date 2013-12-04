@@ -8,9 +8,9 @@
 extern inline void *         talloc_data_from_chunk ( talloc_chunk * chunk );
 extern inline talloc_chunk * talloc_chunk_from_data ( const void * data );
 
-#ifdef TALLOC_EXT
-extern inline talloc_chunk * talloc_chunk_from_ext ( talloc_ext * ext );
-extern inline talloc_ext *   talloc_ext_from_chunk ( talloc_chunk * chunk );
+#ifdef TALLOC_EXTENSIONS
+extern inline talloc_chunk *      talloc_chunk_from_extensions ( talloc_extensions * extensions );
+extern inline talloc_extensions * talloc_extensions_from_chunk ( talloc_chunk * chunk );
 #endif
 
 #ifdef TALLOC_REFERENCE

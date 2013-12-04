@@ -4,7 +4,7 @@
 // You should have received a copy of the GNU General Lesser Public License along with talloc2. If not, see <http://www.gnu.org/licenses/>.
 
 #include "main.h"
-#include "../ext/chunk.h"
+#include "../extensions/chunk.h"
 
 void ** talloc_add_reference ( const void * parent_data, const void * child_data )
 {
@@ -25,26 +25,27 @@ void ** talloc_add_reference ( const void * parent_data, const void * child_data
         return NULL;
     }
 
-    talloc_ext * child_ext = talloc_ext_from_chunk ( child_chunk );
-    reference->parent_ext  = child_ext;
-    reference->prev        = NULL;
+    talloc_extensions * child_extensions = talloc_extensions_from_chunk ( child_chunk );
+    
+    reference->parent_extensions = child_extensions;
+    reference->prev              = NULL;
 
-    talloc_reference * first_reference = child_ext->first_reference;
+    talloc_reference * first_reference = child_extensions->first_reference;
     if ( first_reference == NULL ) {
         reference->next = NULL;
     } else {
         reference->next       = first_reference;
         first_reference->prev = reference;
     }
-    child_ext->first_reference = reference;
+    child_extensions->first_reference = reference;
 
     return talloc_data_from_chunk ( talloc_chunk_from_reference ( reference ) );
 }
 
 uint8_t talloc_clear_references ( const void * chunk_data )
 {
-    talloc_ext * ext             = talloc_ext_from_chunk ( talloc_chunk_from_data ( chunk_data ) );
-    talloc_reference * reference = ext->first_reference;
+    talloc_extensions * extensions = talloc_extensions_from_chunk ( talloc_chunk_from_data ( chunk_data ) );
+    talloc_reference * reference   = extensions->first_reference;
     talloc_reference * next_reference;
 
     uint8_t result, error = 0;
@@ -58,7 +59,7 @@ uint8_t talloc_clear_references ( const void * chunk_data )
         }
         reference = next_reference;
     }
-    ext->first_reference = NULL;
+    extensions->first_reference = NULL;
 
     return error;
 }
