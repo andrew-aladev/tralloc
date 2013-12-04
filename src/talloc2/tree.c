@@ -83,7 +83,9 @@ void talloc_update_chunk ( talloc_chunk * chunk )
     talloc_chunk * prev = chunk->prev;
     if ( prev == NULL ) {
         talloc_chunk * parent = chunk->parent;
-        parent->first_child = chunk;
+        if ( parent != NULL ) {
+            parent->first_child = chunk;
+        }
     } else {
         prev->next = chunk;
     }
