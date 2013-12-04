@@ -106,6 +106,12 @@ void * talloc_realloc ( const void * chunk_data, size_t length )
     }
     talloc_chunk * old_chunk = talloc_chunk_from_data ( chunk_data );
 
+#if defined(TALLOC_REFERENCE)
+    if ( old_chunk->mode == TALLOC_MODE_REFERENCE ) {
+        return NULL;
+    }
+#endif
+
 #if defined(TALLOC_DEBUG)
     size_t old_length = old_chunk->length;
 #endif

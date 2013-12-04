@@ -9,23 +9,6 @@
 #include "chunk.h"
 #include <stdbool.h>
 
-bool talloc_destructor_append ( talloc_ext * ext, talloc_destructor_function function, void * user_data );
-
-inline
-uint8_t talloc_add_destructor ( const void * chunk_data, talloc_destructor_function function, void * user_data )
-{
-    if ( chunk_data == NULL ) {
-        return 1;
-    }
-    talloc_ext * ext = talloc_ext_from_chunk ( talloc_chunk_from_data ( chunk_data ) );
-
-    if ( !talloc_destructor_append ( ext, function, user_data ) ) {
-        return 2;
-    }
-
-    return 0;
-}
-
 inline
 void talloc_destructor_free_silent ( talloc_ext * ext )
 {
@@ -51,6 +34,7 @@ uint8_t talloc_clear_destructors ( const void * chunk_data )
     return 0;
 }
 
+uint8_t talloc_add_destructor             ( const void * chunk_data, talloc_destructor_function function, void * user_data );
 uint8_t talloc_del_destructor             ( const void * chunk_data, talloc_destructor_function function, void * user_data );
 uint8_t talloc_del_destructor_by_function ( const void * chunk_data, talloc_destructor_function function );
 uint8_t talloc_del_destructor_by_data     ( const void * chunk_data, void * user_data );

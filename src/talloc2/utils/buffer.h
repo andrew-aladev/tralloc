@@ -29,9 +29,6 @@ talloc_buffer * talloc_buffer_new ( void * ctx )
     return buffer;
 }
 
-uint8_t * talloc_buffer_prepare  ( talloc_buffer * buffer, size_t length );
-uint8_t   talloc_buffer_trim ( talloc_buffer * buffer );
-
 inline
 void talloc_buffer_written ( talloc_buffer * buffer, size_t length )
 {
@@ -50,9 +47,15 @@ uint8_t talloc_buffer_readed ( talloc_buffer * buffer, size_t length )
 }
 
 inline
-uint8_t * talloc_buffer_get ( talloc_buffer * buffer )
+uint8_t * talloc_buffer_get_read_point ( talloc_buffer * buffer )
 {
     return buffer->buf + buffer->data_offset;
+}
+
+inline
+uint8_t * talloc_buffer_get_write_point ( talloc_buffer * buffer )
+{
+    return buffer->buf + buffer->data_offset + buffer->data_length;
 }
 
 inline
@@ -60,5 +63,8 @@ size_t talloc_buffer_get_length ( talloc_buffer * buffer )
 {
     return buffer->data_length;
 }
+
+uint8_t talloc_buffer_prepare ( talloc_buffer * buffer, size_t length );
+uint8_t talloc_buffer_trim    ( talloc_buffer * buffer );
 
 #endif

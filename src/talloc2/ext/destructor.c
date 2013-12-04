@@ -5,37 +5,69 @@
 
 #include "destructor.h"
 
-bool talloc_destructor_append ( talloc_ext * ext, talloc_destructor_function function, void * user_data )
+#if defined(TALLOC_REFERENCE)
+#include "../reference/chunk.h"
+#endif
+
+static inline
+void prepend_destructor_to_ext ( talloc_ext * ext, talloc_destructor * destructor )
 {
+    talloc_destructor * first_destructor = ext->first_destructor;
+    ext->first_destructor                = destructor;
+    destructor->next                     = first_destructor;
+}
+
+static inline
+void prepend_destructor_to_reference ( talloc_reference * reference, talloc_destructor * destructor )
+{
+    talloc_destructor * first_destructor = reference->first_destructor;
+    reference->first_destructor          = destructor;
+    destructor->next                     = first_destructor;
+}
+
+uint8_t talloc_add_destructor ( const void * chunk_data, talloc_destructor_function function, void * user_data )
+{
+    if ( chunk_data == NULL ) {
+        return 1;
+    }
+
     talloc_destructor * destructor = malloc ( sizeof ( talloc_destructor ) );
     if ( destructor == NULL ) {
-        return false;
+        return 1;
     }
     destructor->function  = function;
     destructor->user_data = user_data;
     destructor->next      = NULL;
 
-    talloc_destructor * first_destructor = ext->first_destructor;
-    ext->first_destructor = destructor;
-    destructor->next      = first_destructor;
+    talloc_chunk * chunk = talloc_chunk_from_data ( chunk_data );
 
-    return true;
+#if defined(TALLOC_REFERENCE)
+    if ( chunk->mode == TALLOC_MODE_EXT ) {
+        prepend_destructor_to_ext ( talloc_ext_from_chunk ( chunk ), destructor );
+    } else {
+        prepend_destructor_to_reference ( talloc_reference_from_chunk ( chunk ), destructor );
+    }
+#else
+    prepend_destructor_to_ext ( talloc_ext_from_chunk ( chunk ), destructor );
+#endif
+
+    return 0;
 }
 
 static inline
-bool talloc_destructor_comparator_by_function ( talloc_destructor * destructor, talloc_destructor_function function, void * user_data )
+bool destructor_comparator_by_function ( talloc_destructor * destructor, talloc_destructor_function function, void * user_data )
 {
     return destructor->function == function;
 }
 
 static inline
-bool talloc_destructor_comparator_by_data ( talloc_destructor * destructor, talloc_destructor_function function, void * user_data )
+bool destructor_comparator_by_data ( talloc_destructor * destructor, talloc_destructor_function function, void * user_data )
 {
     return destructor->user_data == user_data;
 }
 
 static inline
-bool talloc_destructor_comparator_strict ( talloc_destructor * destructor, talloc_destructor_function function, void * user_data )
+bool destructor_comparator_strict ( talloc_destructor * destructor, talloc_destructor_function function, void * user_data )
 {
     return destructor->function == function && destructor->user_data == user_data;
 }
@@ -79,17 +111,17 @@ uint8_t delete_destructors ( const void * chunk_data, destructor_comparator comp
 
 uint8_t talloc_del_destructor ( const void * chunk_data, talloc_destructor_function function, void * user_data )
 {
-    return delete_destructors ( chunk_data, talloc_destructor_comparator_strict, function, user_data );
+    return delete_destructors ( chunk_data, destructor_comparator_strict, function, user_data );
 }
 
 uint8_t talloc_del_destructor_by_function ( const void * chunk_data, talloc_destructor_function function )
 {
-    return delete_destructors ( chunk_data, talloc_destructor_comparator_by_function, function, NULL );
+    return delete_destructors ( chunk_data, destructor_comparator_by_function, function, NULL );
 }
 
 uint8_t talloc_del_destructor_by_data ( const void * chunk_data, void * user_data )
 {
-    return delete_destructors ( chunk_data, talloc_destructor_comparator_by_data, NULL, user_data );
+    return delete_destructors ( chunk_data, destructor_comparator_by_data, NULL, user_data );
 }
 
 uint8_t talloc_destructor_free ( talloc_chunk * chunk, talloc_ext * ext )
@@ -115,6 +147,5 @@ uint8_t talloc_destructor_free ( talloc_chunk * chunk, talloc_ext * ext )
     return error;
 }
 
-extern inline uint8_t talloc_add_destructor         ( const void * chunk_data, talloc_destructor_function function, void * user_data );
 extern inline uint8_t talloc_clear_destructors      ( const void * chunk_data );
 extern inline void    talloc_destructor_free_silent ( talloc_ext * ext );

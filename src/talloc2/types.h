@@ -26,6 +26,11 @@ typedef struct talloc_reference_t {
     struct talloc_ext_t *       parent_ext;
     struct talloc_reference_t * prev;
     struct talloc_reference_t * next;
+
+#if defined(TALLOC_EXT_DESTRUCTOR)
+    talloc_destructor * first_destructor;
+#endif
+
 } talloc_reference;
 #endif
 
