@@ -140,8 +140,8 @@ bool test_alloc()
     }
 
 #if defined(TALLOC_REFERENCE)
-    trivium_reference_1 = talloc_add_reference ( data_6, trivium );
-    trivium_reference_2 = talloc_add_reference ( data_5, trivium );
+    trivium_reference_1 = talloc_add_reference ( trivium, data_6 );
+    trivium_reference_2 = talloc_add_reference ( trivium, data_5 );
     if ( trivium_reference_1 == NULL || trivium_reference_2 == NULL ) {
         return false;
     }
