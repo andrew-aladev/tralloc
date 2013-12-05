@@ -8,6 +8,10 @@
 #include <talloc2/tree.h>
 #include <talloc2/events.h>
 
+#if defined(TALLOC_REFERENCE)
+#include <talloc2/reference/main.h>
+#endif
+
 typedef struct move_info_t {
     talloc_chunk * chunk;
     talloc_chunk * old_parent;
@@ -67,6 +71,16 @@ bool test_move ( void * root )
         return false;
     }
 
+#if defined(TALLOC_REFERENCE)
+    float ** c_reference = talloc_add_reference ( b, c );
+    if ( c_reference == NULL ) {
+        talloc_free ( a );
+        talloc_free ( b );
+        free_history ( talloc_history );
+        return false;
+    }
+#endif
+
     if (
         talloc_move ( c, b )    != 0 ||
         talloc_move ( c, root ) != 0 ||
@@ -83,8 +97,37 @@ bool test_move ( void * root )
     talloc_chunk * a_chunk    = talloc_chunk_from_data ( a );
     talloc_chunk * b_chunk    = talloc_chunk_from_data ( b );
     talloc_chunk * c_chunk    = talloc_chunk_from_data ( c );
+
+#if defined(TALLOC_REFERENCE)
+    if ( talloc_move ( c_reference, a ) != 0 ) {
+        talloc_free ( a );
+        free_history ( talloc_history );
+        return false;
+    }
+    talloc_chunk * c_reference_chunk = talloc_chunk_from_data ( c_reference );
+#endif
+
     move_info * info;
 
+#if defined(TALLOC_REFERENCE)
+    if (
+        malloc_dynarr_get_length ( talloc_history ) != 5 ||
+        ( info = malloc_dynarr_get ( talloc_history, 0 ) ) == NULL ||
+        info->chunk != c_chunk || info->old_parent != a_chunk || info->chunk->parent != a_chunk ||
+        ( info = malloc_dynarr_get ( talloc_history, 1 ) ) == NULL ||
+        info->chunk != c_chunk || info->old_parent != b_chunk || info->chunk->parent != a_chunk ||
+        ( info = malloc_dynarr_get ( talloc_history, 2 ) ) == NULL ||
+        info->chunk != b_chunk || info->old_parent != root_chunk || info->chunk->parent != c_chunk ||
+        ( info = malloc_dynarr_get ( talloc_history, 3 ) ) == NULL ||
+        info->chunk != c_chunk || info->old_parent != root_chunk || info->chunk->parent != a_chunk ||
+        ( info = malloc_dynarr_get ( talloc_history, 4 ) ) == NULL ||
+        info->chunk != c_reference_chunk || info->old_parent != b_chunk || info->chunk->parent != a_chunk
+    ) {
+        talloc_free ( a );
+        free_history ( talloc_history );
+        return false;
+    }
+#else
     if (
         malloc_dynarr_get_length ( talloc_history ) != 4 ||
         ( info = malloc_dynarr_get ( talloc_history, 0 ) ) == NULL ||
@@ -100,6 +143,7 @@ bool test_move ( void * root )
         free_history ( talloc_history );
         return false;
     }
+#endif
 
     if (
         talloc_free ( a ) != 0

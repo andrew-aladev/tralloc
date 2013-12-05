@@ -251,8 +251,12 @@ bool test_move ()
         talloc_move ( data_3, data_4 ) != 0            ||
         data_3_chunk->parent           != data_4_chunk ||
 
+        talloc_move ( data_3, data_4 ) == 0 ||
+
         talloc_move ( data_3, NULL ) != 0    ||
         data_3_chunk->parent         != NULL ||
+
+        talloc_move ( data_3, NULL ) == 0 ||
 
         talloc_move ( data_3, data_1 ) != 0 ||
         data_3_chunk->parent           != data_1_chunk
@@ -342,8 +346,118 @@ bool test_chunks ()
     ) {
         return false;
     }
+
+#if defined(TALLOC_REFERENCE)
+    if (
+        data_5_chunk->first_child != trivium_reference_1_chunk ||
+
+        trivium_reference_1_chunk->parent      != data_5_chunk              ||
+        trivium_reference_1_chunk->prev        != NULL                      ||
+        trivium_reference_1_chunk->next        != trivium_reference_2_chunk ||
+        trivium_reference_1_chunk->first_child != data_8_chunk              ||
+
+        trivium_reference_2_chunk->parent      != data_5_chunk              ||
+        trivium_reference_2_chunk->prev        != trivium_reference_1_chunk ||
+        trivium_reference_2_chunk->next        != NULL                      ||
+        trivium_reference_2_chunk->first_child != NULL                      ||
+
+        data_8_chunk->parent      != trivium_reference_1_chunk ||
+        data_8_chunk->prev        != NULL                      ||
+        data_8_chunk->next        != NULL                      ||
+        data_8_chunk->first_child != data_10_chunk             ||
+
+        data_10_chunk->parent      != data_8_chunk ||
+        data_10_chunk->prev        != NULL         ||
+        data_10_chunk->next        != data_9_chunk ||
+        data_10_chunk->first_child != NULL         ||
+
+        data_9_chunk->parent      != data_8_chunk  ||
+        data_9_chunk->prev        != data_10_chunk ||
+        data_9_chunk->next        != NULL          ||
+        data_9_chunk->first_child != NULL
+    ) {
+        return false;
+    }
+#else
+    if ( data_5_chunk->first_child != NULL ) {
+        return false;
+    }
+#endif
+
     return true;
 }
+
+/*
+           root               trivium
+            |
+            1
+           /|\
+       3    4    2
+      /|\
+   7        6        5
+                     |
+                  trivium_2
+*/
+
+#if defined(TALLOC_REFERENCE)
+bool test_chunks_without_trivium_and_first_reference ()
+{
+    if (
+        root_chunk->parent      != NULL         ||
+        root_chunk->prev        != NULL         ||
+        root_chunk->next        != NULL         ||
+        root_chunk->first_child != data_1_chunk ||
+
+        data_1_chunk->parent      != root_chunk   ||
+        data_1_chunk->prev        != NULL         ||
+        data_1_chunk->next        != NULL         ||
+        data_1_chunk->first_child != data_3_chunk ||
+
+        data_2_chunk->parent      != data_1_chunk ||
+        data_2_chunk->prev        != data_4_chunk ||
+        data_2_chunk->next        != NULL         ||
+        data_2_chunk->first_child != NULL         ||
+
+        data_3_chunk->parent      != data_1_chunk ||
+        data_3_chunk->prev        != NULL         ||
+        data_3_chunk->next        != data_4_chunk ||
+        data_3_chunk->first_child != data_7_chunk ||
+
+        data_4_chunk->parent      != data_1_chunk ||
+        data_4_chunk->prev        != data_3_chunk ||
+        data_4_chunk->next        != data_2_chunk ||
+        data_4_chunk->first_child != NULL         ||
+
+        data_5_chunk->parent      != data_3_chunk              ||
+        data_5_chunk->prev        != data_6_chunk              ||
+        data_5_chunk->next        != NULL                      ||
+        data_5_chunk->first_child != trivium_reference_2_chunk ||
+
+        data_6_chunk->parent      != data_3_chunk ||
+        data_6_chunk->prev        != data_7_chunk ||
+        data_6_chunk->next        != data_5_chunk ||
+        data_6_chunk->first_child != NULL         ||
+
+        data_7_chunk->parent      != data_3_chunk ||
+        data_7_chunk->prev        != NULL         ||
+        data_7_chunk->next        != data_6_chunk ||
+        data_7_chunk->first_child != NULL         ||
+
+        trivium_chunk->parent      != NULL ||
+        trivium_chunk->prev        != NULL ||
+        trivium_chunk->next        != NULL ||
+        trivium_chunk->first_child != NULL ||
+        
+        trivium_reference_2_chunk->parent      != data_5_chunk ||
+        trivium_reference_2_chunk->prev        != NULL         ||
+        trivium_reference_2_chunk->next        != NULL         ||
+        trivium_reference_2_chunk->first_child != NULL
+    ) {
+        return false;
+    }
+    return true;
+}
+#endif
 
 /*
            root
@@ -399,17 +513,32 @@ int main ()
         talloc_free ( root );
         return 4;
     }
-    if ( talloc_free ( data_3 ) != 0 ) {
+
+#if defined(TALLOC_REFERENCE)
+    if (
+        talloc_free ( trivium )             != 0 ||
+        talloc_free ( trivium_reference_1 ) != 0
+    ) {
         talloc_free ( root );
         return 5;
     }
-    if ( !test_chunks_without_data_3() ) {
+    if ( !test_chunks_without_trivium_and_first_reference() ) {
         talloc_free ( root );
         return 6;
     }
+#endif
+
+    if ( talloc_free ( data_3 ) != 0 ) {
+        talloc_free ( root );
+        return 7;
+    }
+    if ( !test_chunks_without_data_3() ) {
+        talloc_free ( root );
+        return 8;
+    }
 
     if ( talloc_free ( root ) != 0 ) {
-        return 7;
+        return 9;
     }
 
 #if defined(TALLOC_DEBUG)
@@ -418,7 +547,7 @@ int main ()
         talloc_get_objects_chunk_length() != 0 ||
         talloc_get_objects_length()       != 0
     ) {
-        return 8;
+        return 10;
     }
 #endif
 

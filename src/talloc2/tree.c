@@ -83,7 +83,9 @@ void talloc_update_chunk ( talloc_chunk * chunk )
     talloc_chunk * prev = chunk->prev;
     if ( prev == NULL ) {
         talloc_chunk * parent = chunk->parent;
-        parent->first_child = chunk;
+        if ( parent != NULL ) {
+            parent->first_child = chunk;
+        }
     } else {
         prev->next = chunk;
     }
@@ -148,7 +150,7 @@ uint8_t talloc_move ( const void * child_data, const void * parent_data )
     }
     talloc_chunk * child = talloc_chunk_from_data ( child_data );
 
-#if defined(TALLOC_EXTENSIONS)
+#if defined(TALLOC_REFERENCE)
     if ( child->mode == TALLOC_MODE_REFERENCE ) {
         if ( parent_data == NULL ) {
             return 2;

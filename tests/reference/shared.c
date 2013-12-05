@@ -16,7 +16,6 @@ bool test_shared ( void * root )
     char *   b = talloc ( root, sizeof ( char ) * 3 );
     size_t * c = talloc ( root, sizeof ( size_t ) * 4 );
     if ( a == NULL || b == NULL || c == NULL ) {
-        talloc_free ( root );
         return false;
     }
 
@@ -31,7 +30,9 @@ bool test_shared ( void * root )
         talloc_add_reference ( shared, shared ) != NULL ||
         talloc_add_reference ( root, shared )   != NULL
     ) {
-        talloc_free ( root );
+        talloc_free ( a );
+        talloc_free ( b );
+        talloc_free ( c );
         return false;
     }
 
@@ -42,7 +43,9 @@ bool test_shared ( void * root )
         b_shared == NULL || * b_shared != shared ||
         c_shared == NULL || * c_shared != shared
     ) {
-        talloc_free ( root );
+        talloc_free ( a );
+        talloc_free ( b );
+        talloc_free ( c );
         return false;
     }
 
@@ -53,19 +56,25 @@ bool test_shared ( void * root )
         * b_shared != shared ||
         * c_shared != shared
     ) {
-        talloc_free ( root );
+        talloc_free ( a );
+        talloc_free ( b );
+        talloc_free ( c );
         return false;
     }
 
     shared = talloc_realloc ( shared, sizeof ( char ) * 256 );
     if ( shared == NULL || strncmp ( shared, "shared", 6 ) != 0 ) {
-        talloc_free ( root );
+        talloc_free ( a );
+        talloc_free ( b );
+        talloc_free ( c );
         return false;
     }
 
     talloc_chunk * shared_chunk = talloc_chunk_from_data ( shared );
     if ( shared_chunk->mode != TALLOC_MODE_EXTENSIONS ) {
-        talloc_free ( root );
+        talloc_free ( a );
+        talloc_free ( b );
+        talloc_free ( c );
         return false;
     }
 
@@ -83,12 +92,16 @@ bool test_shared ( void * root )
         reference->prev != c_reference || reference->parent_extensions != shared_extensions ||
         ( reference = reference->next ) != NULL
     ) {
-        talloc_free ( root );
+        talloc_free ( a );
+        talloc_free ( b );
+        talloc_free ( c );
         return false;
     }
 
     if ( talloc_clear_references ( shared ) != 0 ) {
-        talloc_free ( root );
+        talloc_free ( a );
+        talloc_free ( b );
+        talloc_free ( c );
         return false;
     }
 
@@ -100,7 +113,9 @@ bool test_shared ( void * root )
         reference != a_reference ||
         reference->prev != NULL || reference->parent_extensions != shared_extensions || reference->next != NULL
     ) {
-        talloc_free ( root );
+        talloc_free ( a );
+        talloc_free ( b );
+        talloc_free ( c );
         return false;
     }
 
@@ -111,7 +126,9 @@ bool test_shared ( void * root )
         talloc_free ( a_shared ) != 0 ||
         talloc_free ( c_shared ) != 0
     ) {
-        talloc_free ( root );
+        talloc_free ( a );
+        talloc_free ( b );
+        talloc_free ( c );
         return false;
     }
 
@@ -121,7 +138,17 @@ bool test_shared ( void * root )
         reference != b_reference ||
         reference->prev != NULL || reference->parent_extensions != shared_extensions || reference->next != NULL
     ) {
-        talloc_free ( root );
+        talloc_free ( a );
+        talloc_free ( b );
+        talloc_free ( c );
+        return false;
+    }
+
+    if (
+        talloc_free ( a ) != 0 ||
+        talloc_free ( b ) != 0 ||
+        talloc_free ( c ) != 0
+    ) {
         return false;
     }
 

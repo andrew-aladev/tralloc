@@ -57,7 +57,7 @@ bool test_add ( void * root )
         free_history ( talloc_history );
         return false;
     }
-    
+
     talloc_chunk * a_chunk = talloc_chunk_from_data ( a );
     talloc_chunk * b_chunk = talloc_chunk_from_data ( b );
     talloc_chunk * c_chunk = talloc_chunk_from_data ( c );
@@ -71,18 +71,29 @@ bool test_add ( void * root )
         return false;
     }
     talloc_chunk * c_reference_chunk = talloc_chunk_from_data ( c_reference );
-    
+
+    double * d = talloc ( c_reference, sizeof ( double ) * 2 );
+    if ( d == NULL ) {
+        talloc_free ( a );
+        talloc_free ( b );
+        free_history ( talloc_history );
+        return false;
+    }
+    talloc_chunk * d_chunk = talloc_chunk_from_data ( d );
+
     talloc_chunk * chunk;
     if (
-        malloc_dynarr_get_length ( talloc_history ) != 4 ||
-        ( chunk = malloc_dynarr_get ( talloc_history, 0 ) ) == NULL ||
-        chunk != a_chunk || chunk->length != sizeof ( int ) * 2 ||
-        ( chunk = malloc_dynarr_get ( talloc_history, 1 ) ) == NULL ||
-        chunk != b_chunk || chunk->length != sizeof ( char ) * 3 ||
-        ( chunk = malloc_dynarr_get ( talloc_history, 2 ) ) == NULL ||
-        chunk != c_chunk || chunk->length != sizeof ( float ) * 4 ||
-        ( chunk = malloc_dynarr_get ( talloc_history, 3 ) ) == NULL ||
-        chunk != c_reference_chunk || chunk->length != sizeof ( uintptr_t )
+        malloc_dynarr_get_length ( talloc_history ) != 5                    ||
+        ( chunk = malloc_dynarr_get ( talloc_history, 0 ) ) == NULL         ||
+        chunk != a_chunk || chunk->length != sizeof ( int ) * 2             ||
+        ( chunk = malloc_dynarr_get ( talloc_history, 1 ) ) == NULL         ||
+        chunk != b_chunk || chunk->length != sizeof ( char ) * 3            ||
+        ( chunk = malloc_dynarr_get ( talloc_history, 2 ) ) == NULL         ||
+        chunk != c_chunk || chunk->length != sizeof ( float ) * 4           ||
+        ( chunk = malloc_dynarr_get ( talloc_history, 3 ) ) == NULL         ||
+        chunk != c_reference_chunk || chunk->length != sizeof ( uintptr_t ) ||
+        ( chunk = malloc_dynarr_get ( talloc_history, 4 ) ) == NULL         ||
+        chunk != d_chunk || chunk->length != sizeof ( double ) * 2
     ) {
         talloc_free ( a );
         talloc_free ( b );
@@ -92,11 +103,11 @@ bool test_add ( void * root )
 #else
     talloc_chunk * chunk;
     if (
-        malloc_dynarr_get_length ( talloc_history ) != 3 ||
+        malloc_dynarr_get_length ( talloc_history ) != 3            ||
         ( chunk = malloc_dynarr_get ( talloc_history, 0 ) ) == NULL ||
-        chunk != a_chunk || chunk->length != sizeof ( int ) * 2 ||
+        chunk != a_chunk || chunk->length != sizeof ( int ) * 2     ||
         ( chunk = malloc_dynarr_get ( talloc_history, 1 ) ) == NULL ||
-        chunk != b_chunk || chunk->length != sizeof ( char ) * 3 ||
+        chunk != b_chunk || chunk->length != sizeof ( char ) * 3    ||
         ( chunk = malloc_dynarr_get ( talloc_history, 2 ) ) == NULL ||
         chunk != c_chunk || chunk->length != sizeof ( float ) * 4
     ) {
