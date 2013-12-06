@@ -251,12 +251,12 @@ bool test_move ()
         talloc_move ( data_3, data_4 ) != 0            ||
         data_3_chunk->parent           != data_4_chunk ||
 
-        talloc_move ( data_3, data_4 ) == 0 ||
+        talloc_move ( data_3, data_4 ) != 0 ||
 
         talloc_move ( data_3, NULL ) != 0    ||
         data_3_chunk->parent         != NULL ||
 
-        talloc_move ( data_3, NULL ) == 0 ||
+        talloc_move ( data_3, NULL ) != 0 ||
 
         talloc_move ( data_3, data_1 ) != 0 ||
         data_3_chunk->parent           != data_1_chunk
@@ -272,7 +272,7 @@ bool test_move ()
         talloc_move ( trivium_reference_1, NULL ) == 0 ||
         talloc_move ( trivium_reference_2, NULL ) == 0 ||
 
-        talloc_move ( trivium_reference_2, data_5 ) == 0
+        talloc_move ( trivium_reference_2, data_5 ) != 0
     ) {
         return false;
     }

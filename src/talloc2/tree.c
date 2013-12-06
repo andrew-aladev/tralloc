@@ -164,7 +164,7 @@ uint8_t talloc_move ( const void * child_data, const void * parent_data )
 
     if ( parent_data == NULL ) {
         if ( child->parent == NULL ) {
-            return 3;
+            return 0;
         }
 
 #if defined(TALLOC_DEBUG)
@@ -176,7 +176,7 @@ uint8_t talloc_move ( const void * child_data, const void * parent_data )
     } else {
         talloc_chunk * new_parent = talloc_chunk_from_data ( parent_data );
         if ( child->parent == new_parent ) {
-            return 4;
+            return 0;
         }
 
 #if defined(TALLOC_DEBUG)
