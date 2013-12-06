@@ -6,7 +6,7 @@
 #include "main.h"
 #include "../extensions/chunk.h"
 
-void ** talloc_add_reference ( const void * parent_data, const void * child_data )
+void ** talloc_add_reference ( const void * child_data, const void * parent_data )
 {
     if ( parent_data == NULL || child_data == NULL || parent_data == child_data ) {
         return NULL;
@@ -26,7 +26,7 @@ void ** talloc_add_reference ( const void * parent_data, const void * child_data
     }
 
     talloc_extensions * child_extensions = talloc_extensions_from_chunk ( child_chunk );
-    
+
     reference->parent_extensions = child_extensions;
     reference->prev              = NULL;
 

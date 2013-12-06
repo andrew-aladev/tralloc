@@ -22,8 +22,8 @@ bool test_common ( void * root )
     char * common = talloc ( NULL, sizeof ( char ) * 7 );
     strcpy ( common, "common" );
 
-    char ** b_common = ( char ** ) talloc_add_reference ( b, common );
-    char ** c_common = ( char ** ) talloc_add_reference ( c, common );
+    char ** b_common = ( char ** ) talloc_add_reference ( common, b );
+    char ** c_common = ( char ** ) talloc_add_reference ( common, c );
 
     if (
         b_common == NULL || * b_common != common ||

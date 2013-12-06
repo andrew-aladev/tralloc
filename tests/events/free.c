@@ -63,7 +63,7 @@ bool test_free ( void * root )
     talloc_chunk * c_chunk = talloc_chunk_from_data ( c );
 
 #if defined(TALLOC_REFERENCE)
-    char ** c_reference = ( char ** ) talloc_add_reference ( b, c );
+    char ** c_reference = ( char ** ) talloc_add_reference ( c, b );
     if ( c_reference == NULL ) {
         talloc_free ( a );
         talloc_free ( b );

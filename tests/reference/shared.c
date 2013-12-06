@@ -28,7 +28,7 @@ bool test_shared ( void * root )
         talloc_add_reference ( shared, NULL )   != NULL ||
         talloc_add_reference ( NULL, NULL )     != NULL ||
         talloc_add_reference ( shared, shared ) != NULL ||
-        talloc_add_reference ( root, shared )   != NULL
+        talloc_add_reference ( shared, root )   != NULL
     ) {
         talloc_free ( a );
         talloc_free ( b );
@@ -36,8 +36,8 @@ bool test_shared ( void * root )
         return false;
     }
 
-    char ** b_shared = ( char ** ) talloc_add_reference ( b, shared );
-    char ** c_shared = ( char ** ) talloc_add_reference ( c, shared );
+    char ** b_shared = ( char ** ) talloc_add_reference ( shared, b );
+    char ** c_shared = ( char ** ) talloc_add_reference ( shared, c );
 
     if (
         b_shared == NULL || * b_shared != shared ||
@@ -49,7 +49,7 @@ bool test_shared ( void * root )
         return false;
     }
 
-    char ** a_shared = ( char ** ) talloc_add_reference ( a, shared );
+    char ** a_shared = ( char ** ) talloc_add_reference ( shared, a );
 
     if (
         a_shared == NULL     || * a_shared != shared ||
@@ -105,7 +105,7 @@ bool test_shared ( void * root )
         return false;
     }
 
-    a_shared = ( char ** ) talloc_add_reference ( a, shared );
+    a_shared = ( char ** ) talloc_add_reference ( shared, a );
 
     a_reference = talloc_reference_from_chunk ( talloc_chunk_from_data ( a_shared ) );
     reference   = shared_extensions->first_reference;
@@ -119,8 +119,8 @@ bool test_shared ( void * root )
         return false;
     }
 
-    b_shared = ( char ** ) talloc_add_reference ( b, shared );
-    c_shared = ( char ** ) talloc_add_reference ( c, shared );
+    b_shared = ( char ** ) talloc_add_reference ( shared, b );
+    c_shared = ( char ** ) talloc_add_reference ( shared, c );
 
     if (
         talloc_free ( a_shared ) != 0 ||
