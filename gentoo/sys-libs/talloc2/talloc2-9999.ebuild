@@ -15,12 +15,13 @@ SLOT="0/9999"
 KEYWORDS=""
 
 IUSE="debug shared-libs static-libs test"
-IUSE_FEATURES="destructor reference"
-IUSE_UTILS="buffer dynarr"
 
+IUSE_FEATURES="destructor reference"
 for feature in ${IUSE_FEATURES}; do
     IUSE="${IUSE} talloc2_features_${feature}"
 done
+
+IUSE_UTILS="buffer dynarr"
 for util in ${IUSE_UTILS}; do
     IUSE="${IUSE} talloc2_utils_${util}"
 done
