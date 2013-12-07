@@ -14,7 +14,7 @@ LICENSE="LGPL-3+"
 SLOT="0/9999"
 KEYWORDS=""
 
-IUSE="debug shared-libs static-libs test"
+IUSE="debug +shared-libs static-libs test"
 
 IUSE_FEATURES="destructor reference"
 for feature in ${IUSE_FEATURES}; do
