@@ -1,18 +1,30 @@
 cmake_minimum_required (VERSION 2.8)
 project (talloc2)
 
-set (
-    BOOLEANS
-    TALLOC_DEBUG
-    TALLOC_EXTENSIONS_DESTRUCTOR TALLOC_REFERENCE
-    TALLOC_UTILS_BUFFER TALLOC_UTILS_DYNARR
-    TALLOC_SHARED TALLOC_STATIC TALLOC_TEST
-)
-foreach (bool ${BOOLEANS})
-    if (NOT DEFINED ${bool})
-        set (${bool} true)
-    endif ()
-endforeach()
+if (NOT DEFINED TALLOC_DEBUG)
+    set (TALLOC_DEBUG true)
+endif ()
+if (NOT DEFINED TALLOC_EXTENSIONS_DESTRUCTOR)
+    set (TALLOC_EXTENSIONS_DESTRUCTOR true)
+endif ()
+if (NOT DEFINED TALLOC_REFERENCE)
+    set (TALLOC_REFERENCE true)
+endif ()
+if (NOT DEFINED TALLOC_UTILS_BUFFER)
+    set (TALLOC_UTILS_BUFFER true)
+endif ()
+if (NOT DEFINED TALLOC_UTILS_DYNARR)
+    set (TALLOC_UTILS_DYNARR true)
+endif ()
+if (NOT DEFINED TALLOC_SHARED)
+    set (TALLOC_SHARED true)
+endif ()
+if (NOT DEFINED TALLOC_STATIC)
+    set (TALLOC_STATIC true)
+endif ()
+if (NOT DEFINED TALLOC_TEST)
+    set (TALLOC_TEST true)
+endif ()
 
 if (TALLOC_UTILS_BUFFER MATCHES true OR TALLOC_UTILS_DYNARR MATCHES true)
     set (TALLOC_UTILS true)

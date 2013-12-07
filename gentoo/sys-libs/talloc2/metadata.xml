@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <herd>talloc2</herd>
+  <maintainer>
+    <email>aladjev.andrew@gmail.com</email>
+    <name>Andrew Aladjev</name>
+  </maintainer>
+  <longdescription>
+    Talloc2 is a lightweight implementation of simplified talloc api.
+  </longdescription>
+  <use>
+    <flag name="debug">Enable extra features for testing</flag>
+    <flag name="shared-libs">Build shared libraries</flag>
+    <flag name="static-libs">Build static libraries</flag>
+    <flag name="test">Build and run tests</flag>
+  </use>
+</pkgmetadata>
