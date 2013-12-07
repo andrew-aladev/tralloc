@@ -1,6 +1,8 @@
 cmake_minimum_required (VERSION 2.8)
 project (talloc2)
 
+set (TALLOC_VERSION "0.6.1")
+
 set (TALLOC_DEBUG        true CACHE BOOL "")
 set (TALLOC_DESTRUCTOR   true CACHE BOOL "")
 set (TALLOC_REFERENCE    true CACHE BOOL "")
@@ -9,6 +11,13 @@ set (TALLOC_UTILS_DYNARR true CACHE BOOL "")
 set (TALLOC_SHARED       true CACHE BOOL "")
 set (TALLOC_STATIC       true CACHE BOOL "")
 set (TALLOC_TEST         true CACHE BOOL "")
+
+if (NOT DEFINED CMAKE_INSTALL_LIBDIR)
+    set (CMAKE_INSTALL_LIBDIR "lib" CACHE PATH "Output directory for libraries")
+endif ()
+if (NOT DEFINED CMAKE_INSTALL_INCLUDEDIR)
+  set (CMAKE_INSTALL_INCLUDEDIR "include" CACHE PATH "Output directory for include files")
+endif ()
 
 if (${TALLOC_UTILS_BUFFER} OR ${TALLOC_UTILS_DYNARR})
     set (TALLOC_UTILS true)
@@ -23,12 +32,6 @@ endif ()
 
 if (NOT DEFINED TALLOC_TARGET)
     set (TALLOC_TARGET ${PROJECT_NAME})
-endif ()
-if (NOT DEFINED CMAKE_INSTALL_LIBDIR)
-    set (CMAKE_INSTALL_LIBDIR "lib" CACHE PATH "Output directory for libraries")
-endif ()
-if (NOT DEFINED CMAKE_INSTALL_INCLUDEDIR)
-  set (CMAKE_INSTALL_INCLUDEDIR "include" CACHE PATH "Output directory for include files")
 endif ()
 
 if (NOT DEFINED CMAKE_BUILD_TYPE OR CMAKE_BUILD_TYPE STREQUAL "")
@@ -49,3 +52,6 @@ if (${TALLOC_TEST})
     enable_testing ()
     add_subdirectory (tests)
 endif ()
+
+include (CPackConfig.cmake)
+include (CPack)
