@@ -17,7 +17,7 @@ talloc_chunk * talloc_extensions_malloc_chunk ( const void * parent_data, size_t
         return NULL;
     }
 
-#if defined(TALLOC_EXTENSIONS_DESTRUCTOR)
+#if defined(TALLOC_DESTRUCTOR)
     extensions->first_destructor = NULL;
 #endif
 
@@ -46,7 +46,7 @@ talloc_chunk * talloc_extensions_calloc_chunk ( const void * parent_data, size_t
         return NULL;
     }
 
-#if defined(TALLOC_EXTENSIONS_DESTRUCTOR)
+#if defined(TALLOC_DESTRUCTOR)
     extensions->first_destructor = NULL;
 #endif
 

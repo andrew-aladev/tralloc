@@ -5,7 +5,7 @@
 
 #include "chunk.h"
 
-#if defined(TALLOC_EXTENSIONS_DESTRUCTOR)
+#if defined(TALLOC_DESTRUCTOR)
 #include "destructor.h"
 #endif
 
@@ -64,7 +64,7 @@ uint8_t talloc_extensions_free_chunk ( talloc_chunk * extensions_chunk )
     }
 #endif
 
-#if defined(TALLOC_EXTENSIONS_DESTRUCTOR)
+#if defined(TALLOC_DESTRUCTOR)
     if ( ( result = talloc_destructor_free ( extensions_chunk, extensions ) ) != 0 ) {
         error = result;
     }

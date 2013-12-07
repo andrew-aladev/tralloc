@@ -4,7 +4,7 @@ set (HELPERS   helpers/main.c)
 set (REFERENCE reference/main.c reference/shared.c reference/common.c)
 
 set (EXTENSIONS extensions/main.c lib/malloc_dynarr.c)
-if (${TALLOC_EXTENSIONS_DESTRUCTOR})
+if (${TALLOC_DESTRUCTOR})
     set (EXTENSIONS ${EXTENSIONS} extensions/destructor.c)
 endif ()
 

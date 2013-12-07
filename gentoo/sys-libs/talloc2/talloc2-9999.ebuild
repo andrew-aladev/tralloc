@@ -15,6 +15,15 @@ SLOT="0/9999"
 KEYWORDS=""
 
 IUSE="debug shared-libs static-libs test"
+IUSE_FEATURES="destructor reference"
+IUSE_UTILS="buffer dynarr"
+
+for feature in ${IUSE_FEATURES}; do
+    IUSE="${IUSE} talloc2_features_${feature}"
+done
+for util in ${IUSE_UTILS}; do
+    IUSE="${IUSE} talloc2_utils_${util}"
+done
 
 RDEPEND=""
 DEPEND="${RDEPEND}"
@@ -29,6 +38,12 @@ src_configure() {
         $(cmake-utils_use shared-libs TALLOC_SHARED)
         $(cmake-utils_use static-libs TALLOC_STATIC)
         $(cmake-utils_use test        TALLOC_TEST)
+        
+        $(cmake-utils_use talloc2_features_destructor TALLOC_DESTRUCTOR)
+        $(cmake-utils_use talloc2_features_reference  TALLOC_REFERENCE)
+        
+        $(cmake-utils_use talloc2_utils_buffer TALLOC_UTILS_BUFFER)
+        $(cmake-utils_use talloc2_utils_dynarr TALLOC_UTILS_DYNARR)
     )
     cmake-utils_src_configure
 }
