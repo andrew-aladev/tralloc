@@ -14,5 +14,10 @@
     <flag name="shared-libs">Build shared libraries</flag>
     <flag name="static-libs">Build static libraries</flag>
     <flag name="test">Build and run tests</flag>
+
+    <flag name="talloc2_features_destructor">Enable destructor feature</flag>
+    <flag name="talloc2_features_reference">Enable reference feature</flag>
+    <flag name="talloc2_utils_buffer">Enable buffer utility</flag>
+    <flag name="talloc2_utils_dynarr">Enable dynamic array utility</flag>
   </use>
 </pkgmetadata>
