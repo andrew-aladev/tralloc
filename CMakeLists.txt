@@ -1,7 +1,7 @@
 cmake_minimum_required (VERSION 2.8)
 project (talloc2)
 
-set (TALLOC_VERSION "0.6.1")
+set (TALLOC_VERSION "0.6.2")
 
 set (TALLOC_DEBUG        true CACHE BOOL "")
 set (TALLOC_DESTRUCTOR   true CACHE BOOL "")
