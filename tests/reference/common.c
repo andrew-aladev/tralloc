@@ -22,19 +22,30 @@ bool test_common ( void * root )
     char * common = talloc ( NULL, sizeof ( char ) * 7 );
     strcpy ( common, "common" );
 
-    char ** b_common = ( char ** ) talloc_add_reference ( common, b );
-    char ** c_common = ( char ** ) talloc_add_reference ( common, c );
-
-    if (
-        b_common == NULL || * b_common != common ||
-        c_common == NULL || * c_common != common
-    ) {
+    void * b_common = talloc_add_reference ( common, c );
+    void * c_common = talloc_add_reference ( common, b );
+    if ( b_common == NULL || c_common == NULL ) {
         talloc_free ( a );
         return false;
     }
 
     common = talloc_realloc ( common, sizeof ( char ) * 256 );
     if ( common == NULL || strncmp ( common, "common", 6 ) != 0 ) {
+        talloc_free ( a );
+        return false;
+    }
+
+    if (
+        talloc_move ( b_common, NULL ) != 0 ||
+        talloc_move ( b_common, b )    != 0 ||
+        talloc_move ( c_common, c )    != 0
+    ) {
+        talloc_free ( a );
+        return false;
+    }
+
+    c_common = talloc_realloc ( c_common, sizeof ( uint8_t ) * 50 );
+    if ( c_common == NULL ) {
         talloc_free ( a );
         return false;
     }

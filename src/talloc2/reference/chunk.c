@@ -6,13 +6,6 @@
 #include "chunk.h"
 #include "../extensions/chunk.h"
 
-#if defined(TALLOC_DEBUG)
-#include "../events.h"
-#endif
-
-extern inline talloc_reference * talloc_reference_malloc_chunk ( const void * parent_data, const void * chunk_data );
-extern inline void               talloc_reference_update       ( talloc_extensions * extensions, talloc_chunk * extensions_chunk );
-
 uint8_t talloc_reference_free_chunk ( talloc_chunk * reference_chunk )
 {
     uint8_t result, error = 0;
@@ -54,3 +47,10 @@ uint8_t talloc_reference_free_chunk ( talloc_chunk * reference_chunk )
     free ( reference );
     return error;
 }
+
+extern inline talloc_reference * talloc_reference_process_new_chunk ( talloc_reference * reference, const void * parent_data, size_t length );
+extern inline talloc_reference * talloc_reference_malloc_chunk      ( const void * parent_data, size_t length );
+extern inline talloc_reference * talloc_reference_calloc_chunk      ( const void * parent_data, size_t length );
+extern inline void               talloc_reference_update            ( talloc_reference * reference );
+extern inline talloc_chunk *     talloc_reference_realloc_chunk     ( talloc_chunk * reference_chunk, size_t length );
+extern inline void               talloc_reference_update_extensions ( talloc_extensions * extensions );

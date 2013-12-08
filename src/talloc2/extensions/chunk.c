@@ -13,13 +13,6 @@
 #include "../reference/chunk.h"
 #endif
 
-#if defined(TALLOC_DEBUG)
-#include "../events.h"
-#endif
-
-extern inline talloc_chunk * talloc_extensions_malloc_chunk ( const void * parent_data, size_t length );
-extern inline talloc_chunk * talloc_extensions_calloc_chunk ( const void * parent_data, size_t length );
-
 talloc_chunk * talloc_extensions_realloc_chunk ( talloc_chunk * extensions_chunk, size_t length )
 {
     talloc_extensions * old_extensions = talloc_extensions_from_chunk ( extensions_chunk );
@@ -38,7 +31,7 @@ talloc_chunk * talloc_extensions_realloc_chunk ( talloc_chunk * extensions_chunk
     if ( old_extensions != new_extensions ) {
         // now pointers to old_extensions is invalid
         // each pointer to old_extensions should be replaced with new_extensions
-        talloc_reference_update ( new_extensions, extensions_chunk );
+        talloc_reference_update_extensions ( new_extensions );
     }
 #endif
 
@@ -77,3 +70,7 @@ uint8_t talloc_extensions_free_chunk ( talloc_chunk * extensions_chunk )
     free ( extensions );
     return error;
 }
+
+extern inline talloc_chunk * talloc_extensions_process_new_chunk ( talloc_extensions * extensions, const void * parent_data, size_t length );
+extern inline talloc_chunk * talloc_extensions_malloc_chunk      ( const void * parent_data, size_t length );
+extern inline talloc_chunk * talloc_extensions_calloc_chunk      ( const void * parent_data, size_t length );

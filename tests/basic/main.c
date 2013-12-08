@@ -40,11 +40,14 @@ static void *         trivium;
 static talloc_chunk * trivium_chunk;
 
 #if defined(TALLOC_REFERENCE)
-static void **        trivium_reference_1;
+static void *         trivium_reference_1;
 static talloc_chunk * trivium_reference_1_chunk;
 
-static void **        trivium_reference_2;
+static uint16_t *     trivium_reference_2;
 static talloc_chunk * trivium_reference_2_chunk;
+
+static uint32_t *     trivium_reference_3;
+static talloc_chunk * trivium_reference_3_chunk;
 
 static int8_t *       data_8;
 static int16_t *      data_9;
@@ -72,8 +75,8 @@ bool compare_double ( double a, double b )
        4    3    2
            /|\
    7        6        5
-   |        |        |
-trivium trivium_1 trivium_2
+   |        |        |\
+trivium trivium_1 trivium_2 trivium_3
             |
             8
            /|\
@@ -140,11 +143,21 @@ bool test_alloc()
     }
 
 #if defined(TALLOC_REFERENCE)
-    trivium_reference_1 = talloc_add_reference ( trivium, data_6 );
-    trivium_reference_2 = talloc_add_reference ( trivium, data_5 );
-    if ( trivium_reference_1 == NULL || trivium_reference_2 == NULL ) {
+    trivium_reference_1 = talloc_add_reference                ( trivium, data_6 );
+    trivium_reference_2 = talloc_add_reference_with_data      ( trivium, data_5, sizeof ( uint16_t ) * 2 );
+    trivium_reference_3 = talloc_add_reference_with_zero_data ( trivium, data_5, sizeof ( uint32_t ) );
+    if (
+        trivium_reference_1 == NULL ||
+        trivium_reference_2 == NULL ||
+        trivium_reference_3 == NULL || * trivium_reference_3 != 0
+    ) {
         return false;
     }
+
+    trivium_reference_2[0] = 3000;
+    trivium_reference_2[1] = 4000;
+
+    * trivium_reference_3 = 500000;
 
     data_8  = talloc      ( trivium_reference_1, sizeof ( int8_t ) * 2 );
     data_9  = talloc      ( data_8, sizeof ( int16_t ) * 3 );
@@ -205,9 +218,13 @@ bool test_realloc ()
     }
 
 #if defined(TALLOC_REFERENCE)
+    trivium_reference_1 = talloc_realloc ( trivium_reference_1, sizeof ( float ) * 20 );
+    trivium_reference_2 = talloc_realloc ( trivium_reference_2, sizeof ( uint16_t ) );
+    trivium_reference_3 = talloc_realloc ( trivium_reference_3, sizeof ( uint32_t ) * 10 );
     if (
-        talloc_realloc ( trivium_reference_1, sizeof ( float ) * 2 )  != NULL ||
-        talloc_realloc ( trivium_reference_1, sizeof ( size_t ) * 3 ) != NULL
+        trivium_reference_1 == NULL ||
+        trivium_reference_2 == NULL || * trivium_reference_2  != 3000 ||
+        trivium_reference_3 == NULL || trivium_reference_3[0] != 500000
     ) {
         return false;
     }
@@ -237,6 +254,7 @@ bool test_realloc ()
 #if defined(TALLOC_REFERENCE)
     trivium_reference_1_chunk = talloc_chunk_from_data ( trivium_reference_1 );
     trivium_reference_2_chunk = talloc_chunk_from_data ( trivium_reference_2 );
+    trivium_reference_3_chunk = talloc_chunk_from_data ( trivium_reference_3 );
     data_8_chunk              = talloc_chunk_from_data ( data_8 );
     data_9_chunk              = talloc_chunk_from_data ( data_9 );
     data_10_chunk             = talloc_chunk_from_data ( data_10 );
@@ -266,13 +284,12 @@ bool test_move ()
 
 #if defined(TALLOC_REFERENCE)
     if (
+        talloc_move ( trivium_reference_1, NULL )   != 0 ||
         talloc_move ( trivium_reference_1, data_5 ) != 0 ||
         trivium_reference_1_chunk->parent           != data_5_chunk ||
 
-        talloc_move ( trivium_reference_1, NULL ) == 0 ||
-        talloc_move ( trivium_reference_2, NULL ) == 0 ||
-
-        talloc_move ( trivium_reference_2, data_5 ) != 0
+        talloc_move ( trivium_reference_3, data_6 ) != 0 ||
+        trivium_reference_3_chunk->parent           != data_6_chunk
     ) {
         return false;
     }
@@ -288,9 +305,9 @@ bool test_move ()
            /|\
        3    4    2
       /|\
-   7        6        5
-   |                 |\
-trivium          trivium_1 trivium_2
+  7         6         5
+  |         |         |\
+trivium trivium_3 trivium_1 trivium_2
                      |
                      8
                     /|\
@@ -325,14 +342,13 @@ bool test_chunks ()
         data_4_chunk->next        != data_2_chunk ||
         data_4_chunk->first_child != NULL         ||
 
-        data_5_chunk->parent      != data_3_chunk ||
-        data_5_chunk->prev        != data_6_chunk ||
-        data_5_chunk->next        != NULL         ||
+        data_5_chunk->parent != data_3_chunk ||
+        data_5_chunk->prev   != data_6_chunk ||
+        data_5_chunk->next   != NULL         ||
 
-        data_6_chunk->parent      != data_3_chunk ||
-        data_6_chunk->prev        != data_7_chunk ||
-        data_6_chunk->next        != data_5_chunk ||
-        data_6_chunk->first_child != NULL         ||
+        data_6_chunk->parent != data_3_chunk ||
+        data_6_chunk->prev   != data_7_chunk ||
+        data_6_chunk->next   != data_5_chunk ||
 
         data_7_chunk->parent      != data_3_chunk  ||
         data_7_chunk->prev        != NULL          ||
@@ -350,6 +366,7 @@ bool test_chunks ()
 #if defined(TALLOC_REFERENCE)
     if (
         data_5_chunk->first_child != trivium_reference_1_chunk ||
+        data_6_chunk->first_child != trivium_reference_3_chunk ||
 
         trivium_reference_1_chunk->parent      != data_5_chunk              ||
         trivium_reference_1_chunk->prev        != NULL                      ||
@@ -360,6 +377,11 @@ bool test_chunks ()
         trivium_reference_2_chunk->prev        != trivium_reference_1_chunk ||
         trivium_reference_2_chunk->next        != NULL                      ||
         trivium_reference_2_chunk->first_child != NULL                      ||
+
+        trivium_reference_3_chunk->parent      != data_6_chunk ||
+        trivium_reference_3_chunk->prev        != NULL         ||
+        trivium_reference_3_chunk->next        != NULL         ||
+        trivium_reference_3_chunk->first_child != NULL         ||
 
         data_8_chunk->parent      != trivium_reference_1_chunk ||
         data_8_chunk->prev        != NULL                      ||
@@ -379,7 +401,10 @@ bool test_chunks ()
         return false;
     }
 #else
-    if ( data_5_chunk->first_child != NULL ) {
+    if (
+        data_5_chunk->first_child != NULL ||
+        data_6_chunk->first_child != NULL
+    ) {
         return false;
     }
 #endif
@@ -395,8 +420,8 @@ bool test_chunks ()
        3    4    2
       /|\
    7        6        5
-                     |
-                  trivium_2
+            |        |
+        trivium_3 trivium_2
 */
 
 #if defined(TALLOC_REFERENCE)
@@ -433,10 +458,10 @@ bool test_chunks_without_trivium_and_first_reference ()
         data_5_chunk->next        != NULL                      ||
         data_5_chunk->first_child != trivium_reference_2_chunk ||
 
-        data_6_chunk->parent      != data_3_chunk ||
-        data_6_chunk->prev        != data_7_chunk ||
-        data_6_chunk->next        != data_5_chunk ||
-        data_6_chunk->first_child != NULL         ||
+        data_6_chunk->parent      != data_3_chunk              ||
+        data_6_chunk->prev        != data_7_chunk              ||
+        data_6_chunk->next        != data_5_chunk              ||
+        data_6_chunk->first_child != trivium_reference_3_chunk ||
 
         data_7_chunk->parent      != data_3_chunk ||
         data_7_chunk->prev        != NULL         ||
@@ -447,11 +472,16 @@ bool test_chunks_without_trivium_and_first_reference ()
         trivium_chunk->prev        != NULL ||
         trivium_chunk->next        != NULL ||
         trivium_chunk->first_child != NULL ||
-        
+
         trivium_reference_2_chunk->parent      != data_5_chunk ||
         trivium_reference_2_chunk->prev        != NULL         ||
         trivium_reference_2_chunk->next        != NULL         ||
-        trivium_reference_2_chunk->first_child != NULL
+        trivium_reference_2_chunk->first_child != NULL         ||
+
+        trivium_reference_3_chunk->parent      != data_6_chunk ||
+        trivium_reference_3_chunk->prev        != NULL         ||
+        trivium_reference_3_chunk->next        != NULL         ||
+        trivium_reference_3_chunk->first_child != NULL
     ) {
         return false;
     }
@@ -553,3 +583,4 @@ int main ()
 
     return 0;
 }
+
