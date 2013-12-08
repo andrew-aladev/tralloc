@@ -13,6 +13,7 @@
     <flag name="debug">Enable extra features for testing</flag>
     <flag name="shared-libs">Build shared libraries</flag>
     <flag name="static-libs">Build static libraries</flag>
+    <flag name="man">Create man page</flag>
     <flag name="test">Build and run tests</flag>
 
     <flag name="talloc2_features_destructor">Enable destructor feature</flag>

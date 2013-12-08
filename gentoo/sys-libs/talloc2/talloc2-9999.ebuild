@@ -14,7 +14,7 @@ LICENSE="LGPL-3+"
 SLOT="0/9999"
 KEYWORDS=""
 
-IUSE="debug shared-libs static-libs test"
+IUSE="debug shared-libs static-libs man test"
 
 IUSE_FEATURES="destructor reference"
 for feature in ${IUSE_FEATURES}; do
@@ -26,7 +26,7 @@ for util in ${IUSE_UTILS}; do
     IUSE="${IUSE} talloc2_utils_${util}"
 done
 
-RDEPEND=""
+RDEPEND="man? ( app-text/docbook2X )"
 DEPEND="${RDEPEND}"
 
 src_unpack() {
@@ -38,6 +38,7 @@ src_configure() {
         $(cmake-utils_use debug       TALLOC_DEBUG)
         $(cmake-utils_use shared-libs TALLOC_SHARED)
         $(cmake-utils_use static-libs TALLOC_STATIC)
+        $(cmake-utils_use man         TALLOC_MAN)
         $(cmake-utils_use test        TALLOC_TEST)
         
         $(cmake-utils_use talloc2_features_destructor TALLOC_DESTRUCTOR)
