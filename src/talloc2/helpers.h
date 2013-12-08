@@ -9,6 +9,10 @@
 #include "tree.h"
 #include <string.h>
 
+// Function makes duplicate from length bytes of str.
+// If parent_data is NULL function will set new chunk as root independent chunk.
+// Otherwise it will obtain parent chunk from parent_data and attach new chunk to parent chunk.
+// Function returns pointer to memory (with length + 1 size) or NULL if error occurred.
 inline
 char * talloc_strndup ( const void * parent_data, const char * str, size_t length )
 {
@@ -21,6 +25,10 @@ char * talloc_strndup ( const void * parent_data, const char * str, size_t lengt
     return child_data;
 };
 
+// Function makes duplicate of str.
+// If parent_data is NULL function will set new chunk as root independent chunk.
+// Otherwise it will obtain parent chunk from parent_data and attach new chunk to parent chunk.
+// Function returns pointer to memory (with strlen ( str ) + 1 size) or NULL if error occurred.
 inline
 char * talloc_strdup ( const void * parent_data, const char * str )
 {

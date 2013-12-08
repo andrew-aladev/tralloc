@@ -27,9 +27,9 @@ int main ()
 
 #if defined(TALLOC_DEBUG)
     if (
-        talloc_get_objects_count()        != 0 ||
-        talloc_get_objects_chunk_length() != 0 ||
-        talloc_get_objects_length()       != 0
+        talloc_get_chunks_count()           != 0 ||
+        talloc_get_chunks_overhead_length() != 0 ||
+        talloc_get_chunks_length()          != 0
     ) {
         return 4;
     }

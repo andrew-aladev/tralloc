@@ -21,6 +21,10 @@ void talloc_destructor_free_silent ( talloc_extensions * extensions )
     }
 }
 
+// If chunk_data is NULL function will return non-zero value.
+// Otherwise function will obtain chunk from chunk_data and clear it's destructors list.
+// Destructors will not be called.
+// Function returns zero or non-zero value if error occurred.
 inline
 uint8_t talloc_clear_destructors ( const void * chunk_data )
 {
@@ -34,10 +38,26 @@ uint8_t talloc_clear_destructors ( const void * chunk_data )
     return 0;
 }
 
-uint8_t talloc_add_destructor             ( const void * chunk_data, talloc_destructor_function function, void * user_data );
-uint8_t talloc_del_destructor             ( const void * chunk_data, talloc_destructor_function function, void * user_data );
+// If chunk_data is NULL function will return non-zero value.
+// Otherwise function will obtain chunk from chunk_data, create destructor from function + user_data and add it to chunk's destructors list.
+// Function returns zero or non-zero value if error occurred.
+uint8_t talloc_add_destructor ( const void * chunk_data, talloc_destructor_function function, void * user_data );
+
+// If chunk_data is NULL function will return non-zero value.
+// Otherwise function will obtain chunk from chunk_data and delete destructor by function + user_data from it's destructors list.
+// Function returns zero or non-zero value if error occurred.
+uint8_t talloc_del_destructor ( const void * chunk_data, talloc_destructor_function function, void * user_data );
+
+// If chunk_data is NULL function will return non-zero value.
+// Otherwise function will obtain chunk from chunk_data and delete destructor by function from it's destructors list.
+// Function returns zero or non-zero value if error occurred.
 uint8_t talloc_del_destructor_by_function ( const void * chunk_data, talloc_destructor_function function );
-uint8_t talloc_del_destructor_by_data     ( const void * chunk_data, void * user_data );
-uint8_t talloc_destructor_free            ( talloc_chunk * chunk, talloc_extensions * extensions );
+
+// If chunk_data is NULL function will return non-zero value.
+// Otherwise function will obtain chunk from chunk_data and delete destructor by user_data from it's destructors list.
+// Function returns zero or non-zero value if error occurred.
+uint8_t talloc_del_destructor_by_data ( const void * chunk_data, void * user_data );
+
+uint8_t talloc_destructor_free ( talloc_chunk * chunk, talloc_extensions * extensions );
 
 #endif
