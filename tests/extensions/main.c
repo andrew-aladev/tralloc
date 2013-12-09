@@ -9,7 +9,7 @@
 #include <talloc2/events.h>
 #endif
 
-#if defined(TALLOC_EXTENSIONS_DESTRUCTOR)
+#if defined(TALLOC_DESTRUCTOR)
 #include "destructor.h"
 #endif
 
@@ -20,7 +20,7 @@ int main ()
         return 1;
     }
 
-#if defined(TALLOC_EXTENSIONS_DESTRUCTOR)
+#if defined(TALLOC_DESTRUCTOR)
     if ( !test_destructor (root) ) {
         talloc_free ( root );
         return 2;
@@ -33,9 +33,9 @@ int main ()
 
 #if defined(TALLOC_DEBUG)
     if (
-        talloc_get_objects_count()        != 0 ||
-        talloc_get_objects_chunk_length() != 0 ||
-        talloc_get_objects_length()       != 0
+        talloc_get_chunks_count()           != 0 ||
+        talloc_get_chunks_overhead_length() != 0 ||
+        talloc_get_chunks_length()          != 0
     ) {
         return 4;
     }

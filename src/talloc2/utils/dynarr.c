@@ -106,20 +106,20 @@ uint8_t talloc_dynarr_delete ( talloc_dynarr * arr, size_t index )
     return talloc_dynarr_pop ( arr );
 }
 
-uint8_t talloc_dynarr_grow_and_set ( talloc_dynarr * arr, size_t position, void * pointer )
+uint8_t talloc_dynarr_grow_and_set ( talloc_dynarr * arr, size_t index, void * data )
 {
-    size_t new_length = position + 1;
+    size_t new_length = index + 1;
     if ( arr->length < new_length ) {
         if ( talloc_dynarr_grow ( arr, new_length, true ) != 0 ) {
             return 1;
         }
     }
-    arr->data[position] = pointer;
+    arr->data[index] = data;
     return 0;
 }
 
 extern inline talloc_dynarr * talloc_dynarr_new          ( void * ctx, size_t capacity );
 extern inline uint8_t         talloc_dynarr_insert_after ( talloc_dynarr * arr, size_t index, void * data );
-extern inline void            talloc_dynarr_set          ( talloc_dynarr * arr, size_t position, void * pointer );
-extern inline void *          talloc_dynarr_get          ( talloc_dynarr * arr, size_t position );
+extern inline void            talloc_dynarr_set          ( talloc_dynarr * arr, size_t index, void * data );
+extern inline void *          talloc_dynarr_get          ( talloc_dynarr * arr, size_t index );
 extern inline size_t          talloc_dynarr_get_length   ( talloc_dynarr * arr );

@@ -108,18 +108,19 @@ void * talloc_realloc ( const void * chunk_data, size_t length )
     }
     talloc_chunk * old_chunk = talloc_chunk_from_data ( chunk_data );
 
-#if defined(TALLOC_REFERENCE)
-    if ( old_chunk->mode == TALLOC_MODE_REFERENCE ) {
-        return NULL;
-    }
-#endif
-
 #if defined(TALLOC_DEBUG)
     size_t old_length = old_chunk->length;
 #endif
 
     talloc_chunk * new_chunk;
-#if defined(TALLOC_EXTENSIONS)
+
+#if defined(TALLOC_REFERENCE)
+    if ( old_chunk->mode == TALLOC_MODE_EXTENSIONS ) {
+        new_chunk = talloc_extensions_realloc_chunk ( old_chunk, length );
+    } else {
+        new_chunk = talloc_reference_realloc_chunk ( old_chunk, length );
+    }
+#elif defined(TALLOC_EXTENSIONS)
     new_chunk = talloc_extensions_realloc_chunk ( old_chunk, length );
 #else
     new_chunk = talloc_usual_realloc_chunk ( old_chunk, length );
@@ -150,21 +151,13 @@ uint8_t talloc_move ( const void * child_data, const void * parent_data )
     }
     talloc_chunk * child = talloc_chunk_from_data ( child_data );
 
-#if defined(TALLOC_REFERENCE)
-    if ( child->mode == TALLOC_MODE_REFERENCE ) {
-        if ( parent_data == NULL ) {
-            return 2;
-        }
-    }
-#endif
-
 #if defined(TALLOC_DEBUG)
     talloc_chunk * old_parent;
 #endif
 
     if ( parent_data == NULL ) {
         if ( child->parent == NULL ) {
-            return 3;
+            return 0;
         }
 
 #if defined(TALLOC_DEBUG)
@@ -176,7 +169,7 @@ uint8_t talloc_move ( const void * child_data, const void * parent_data )
     } else {
         talloc_chunk * new_parent = talloc_chunk_from_data ( parent_data );
         if ( child->parent == new_parent ) {
-            return 4;
+            return 0;
         }
 
 #if defined(TALLOC_DEBUG)

@@ -5,7 +5,8 @@
 
 #include "chunk.h"
 
-extern inline talloc_chunk * talloc_usual_malloc_chunk  ( const void * parent_data, size_t length );
-extern inline talloc_chunk * talloc_usual_calloc_chunk  ( const void * parent_data, size_t length );
-extern inline talloc_chunk * talloc_usual_realloc_chunk ( talloc_chunk * chunk, size_t length );
-extern inline uint8_t        talloc_usual_free_chunk    ( talloc_chunk * chunk );
+extern inline talloc_chunk * talloc_usual_process_new_chunk ( talloc_chunk * chunk, const void * parent_data, size_t length );
+extern inline talloc_chunk * talloc_usual_malloc_chunk      ( const void * parent_data, size_t length );
+extern inline talloc_chunk * talloc_usual_calloc_chunk      ( const void * parent_data, size_t length );
+extern inline talloc_chunk * talloc_usual_realloc_chunk     ( talloc_chunk * chunk, size_t length );
+extern inline uint8_t        talloc_usual_free_chunk        ( talloc_chunk * chunk );

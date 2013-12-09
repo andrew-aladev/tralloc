@@ -8,22 +8,37 @@
 
 #include "types.h"
 
-// Full global history of operations
 typedef uint8_t ( * talloc_callback_on_add )    ( void * user_data, talloc_chunk * chunk );
 typedef uint8_t ( * talloc_callback_on_resize ) ( void * user_data, talloc_chunk * chunk, size_t old_length );
 typedef uint8_t ( * talloc_callback_on_move )   ( void * user_data, talloc_chunk * chunk, talloc_chunk * old_parent_chunk );
 typedef uint8_t ( * talloc_callback_on_free )   ( void * user_data, talloc_chunk * chunk );
 
+// Function sets global user_data to user_data.
+// It will be passed as a first argument in on_add, on_resize, on_move and on_free functions.
 void talloc_set_user_data ( void * user_data );
+
+// Function sets global on_add, on_resize, on_move and on_free functions.
 void talloc_set_callback  ( talloc_callback_on_add on_add, talloc_callback_on_resize on_resize, talloc_callback_on_move on_move, talloc_callback_on_free on_free );
 
-uint8_t talloc_on_add    ( talloc_chunk * chunk );
-uint8_t talloc_on_resize ( talloc_chunk * chunk, size_t old_length );
-uint8_t talloc_on_move   ( talloc_chunk * chunk, talloc_chunk * old_parent_chunk );
-uint8_t talloc_on_free   ( talloc_chunk * chunk );
+// Function calls after some chunk was created.
+uint8_t talloc_on_add ( talloc_chunk * chunk );
 
-size_t talloc_get_objects_count        ();
-size_t talloc_get_objects_chunk_length ();
-size_t talloc_get_objects_length       ();
+// Function calls after some chunk was resizes.
+uint8_t talloc_on_resize ( talloc_chunk * chunk, size_t old_length );
+
+// Function calls after some chunk was moved.
+uint8_t talloc_on_move ( talloc_chunk * chunk, talloc_chunk * old_parent_chunk );
+
+// Function calls before some chunk was freed.
+uint8_t talloc_on_free ( talloc_chunk * chunk );
+
+// Function returns global count of chunks.
+size_t talloc_get_chunks_count ();
+
+// Function returns global length used by chunk's controll structures.
+size_t talloc_get_chunks_overhead_length ();
+
+// Function returns global usable for user length of chunks.
+size_t talloc_get_chunks_length ();
 
 #endif

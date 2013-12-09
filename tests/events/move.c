@@ -72,7 +72,7 @@ bool test_move ( void * root )
     }
 
 #if defined(TALLOC_REFERENCE)
-    float ** c_reference = talloc_add_reference ( c, b );
+    void * c_reference = talloc_add_reference ( c, b );
     if ( c_reference == NULL ) {
         talloc_free ( a );
         talloc_free ( b );

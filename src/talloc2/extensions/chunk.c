@@ -5,20 +5,13 @@
 
 #include "chunk.h"
 
-#if defined(TALLOC_EXTENSIONS_DESTRUCTOR)
+#if defined(TALLOC_DESTRUCTOR)
 #include "destructor.h"
 #endif
 
 #if defined(TALLOC_REFERENCE)
 #include "../reference/chunk.h"
 #endif
-
-#if defined(TALLOC_DEBUG)
-#include "../events.h"
-#endif
-
-extern inline talloc_chunk * talloc_extensions_malloc_chunk ( const void * parent_data, size_t length );
-extern inline talloc_chunk * talloc_extensions_calloc_chunk ( const void * parent_data, size_t length );
 
 talloc_chunk * talloc_extensions_realloc_chunk ( talloc_chunk * extensions_chunk, size_t length )
 {
@@ -38,7 +31,7 @@ talloc_chunk * talloc_extensions_realloc_chunk ( talloc_chunk * extensions_chunk
     if ( old_extensions != new_extensions ) {
         // now pointers to old_extensions is invalid
         // each pointer to old_extensions should be replaced with new_extensions
-        talloc_reference_update ( new_extensions, extensions_chunk );
+        talloc_reference_update_extensions ( new_extensions );
     }
 #endif
 
@@ -64,7 +57,7 @@ uint8_t talloc_extensions_free_chunk ( talloc_chunk * extensions_chunk )
     }
 #endif
 
-#if defined(TALLOC_EXTENSIONS_DESTRUCTOR)
+#if defined(TALLOC_DESTRUCTOR)
     if ( ( result = talloc_destructor_free ( extensions_chunk, extensions ) ) != 0 ) {
         error = result;
     }
@@ -77,3 +70,7 @@ uint8_t talloc_extensions_free_chunk ( talloc_chunk * extensions_chunk )
     free ( extensions );
     return error;
 }
+
+extern inline talloc_chunk * talloc_extensions_process_new_chunk ( talloc_extensions * extensions, const void * parent_data, size_t length );
+extern inline talloc_chunk * talloc_extensions_malloc_chunk      ( const void * parent_data, size_t length );
+extern inline talloc_chunk * talloc_extensions_calloc_chunk      ( const void * parent_data, size_t length );

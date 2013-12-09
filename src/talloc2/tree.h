@@ -47,12 +47,25 @@ void talloc_detach_chunk ( talloc_chunk * chunk )
             parent->first_child = next;
         }
     }
-    
+
     chunk->parent = NULL;
 }
 
+// Function uses malloc to allocate new chunk with size = sizeof ( chunk ) + length.
+// If parent_data is NULL function will set new chunk as root independent chunk.
+// Otherwise it will obtain parent chunk from parent_data and attach new chunk to parent chunk.
+// parent_data can be both usual and reference.
+// Function returns pointer to memory (with length size) or NULL if error occurred.
 void * talloc ( const void * parent_data, size_t length );
 
+// Function works the same as "talloc". It will use calloc instead of malloc to allocate new chunk.
+void *  talloc_zero ( const void * parent_data, size_t length );
+
+// Function uses malloc to allocate new chunk with size = sizeof ( chunk ).
+// If parent_data is NULL function will set new chunk as root independent chunk.
+// Otherwise it will obtain parent chunk from parent_data and attach new chunk to parent chunk.
+// parent_data can be both usual and reference.
+// Function returns pointer to memory (with zero size) or NULL if error occurred. This memory should not be used for storing information.
 inline
 void * talloc_new ( const void * parent_data )
 {
@@ -79,21 +92,36 @@ uint8_t talloc_free_chunk_children ( talloc_chunk * chunk )
     return error;
 }
 
+// Function obtains chunk from chunk_data, detaches it from the tree and start delete operation on subtree starting from it.
+// chunk_data can be both usual and reference.
+// If chunk is usual and it has reference(s) - it will become root independent chunk and delete operation will not go to it's children.
+// Otherwise it will be deleted. All it's destructors will be invoked.
+// If chunk is reference it will be deleted. All it's destructors will be invoked.
+// If linked usual chunk is root independent chunk and it has no references - it will be deleted. All it's destructors will be invoked.
+// Function returns zero if delete operations were successful and non-zero value otherwise.
+// Non-zero value meaning is "error code of the last failed operation". Function will not stop on errors.
 inline
-uint8_t talloc_free ( void * root_data )
+uint8_t talloc_free ( void * chunk_data )
 {
-    if ( root_data == NULL ) {
+    if ( chunk_data == NULL ) {
         return 0;
     }
-    talloc_chunk * chunk = talloc_chunk_from_data ( root_data );
+    talloc_chunk * chunk = talloc_chunk_from_data ( chunk_data );
     talloc_detach_chunk ( chunk );
     return talloc_free_chunk ( chunk );
 }
 
 uint8_t talloc_add_chunk ( const void * parent_data, talloc_chunk * child );
-void *  talloc_zero      ( const void * parent_data, size_t length );
-void *  talloc_realloc   ( const void * child_data, size_t length );
-uint8_t talloc_move      ( const void * child_data, const void * parent_data );
+
+// Function obtains chunk from chunk_data, uses realloc to change size of chunk from current_length to length.
+// chunk_data can be both usual and reference.
+// Function returns pointer to memory (with length size) or NULL if error occurred.
+void * talloc_realloc ( const void * chunk_data, size_t length );
+
+// Function obtains child chunk from child_data, parent chunk from parent_data.
+// chunk_data and parent_data can be both usual and reference.
+// Function detaches child chunk from it's parent and attaches it to new parent chunk.
+// Function returns zero if move operation was successful and non-zero value otherwise.
+uint8_t talloc_move ( const void * child_data, const void * parent_data );
 
 #endif
-

@@ -6,7 +6,10 @@
 #include "main.h"
 #include "../extensions/chunk.h"
 
-void ** talloc_add_reference ( const void * child_data, const void * parent_data )
+typedef talloc_reference * ( * reference_alloc_chunk ) ( const void * parent_data, size_t length );
+
+static inline
+void * add_reference ( const void * child_data, const void * parent_data, size_t length, reference_alloc_chunk allocator )
 {
     if ( parent_data == NULL || child_data == NULL || parent_data == child_data ) {
         return NULL;
@@ -20,7 +23,7 @@ void ** talloc_add_reference ( const void * child_data, const void * parent_data
         return NULL;
     }
 
-    talloc_reference * reference = talloc_reference_malloc_chunk ( parent_data, child_data );
+    talloc_reference * reference = allocator ( parent_data, length );
     if ( reference == NULL ) {
         return NULL;
     }
@@ -40,6 +43,16 @@ void ** talloc_add_reference ( const void * child_data, const void * parent_data
     child_extensions->first_reference = reference;
 
     return talloc_data_from_chunk ( talloc_chunk_from_reference ( reference ) );
+}
+
+void * talloc_add_reference_with_data ( const void * child_data, const void * parent_data, size_t length )
+{
+    return add_reference ( child_data, parent_data, length, talloc_reference_malloc_chunk );
+}
+
+void * talloc_add_reference_with_zero_data ( const void * child_data, const void * parent_data, size_t length )
+{
+    return add_reference ( child_data, parent_data, length, talloc_reference_calloc_chunk );
 }
 
 uint8_t talloc_clear_references ( const void * chunk_data )
@@ -63,3 +76,5 @@ uint8_t talloc_clear_references ( const void * chunk_data )
 
     return error;
 }
+
+extern inline void * talloc_add_reference ( const void * child_data, const void * parent_data );

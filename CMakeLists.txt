@@ -1,24 +1,37 @@
 cmake_minimum_required (VERSION 2.8)
 project (talloc2)
 
-set (
-    BOOLEANS
-    TALLOC_DEBUG
-    TALLOC_EXTENSIONS_DESTRUCTOR TALLOC_REFERENCE
-    TALLOC_UTILS_BUFFER TALLOC_UTILS_DYNARR
-    TALLOC_SHARED TALLOC_STATIC TALLOC_TEST
-)
-foreach (bool ${BOOLEANS})
-    if (NOT DEFINED ${bool})
-        set (${bool} true)
-    endif ()
-endforeach()
+set (TALLOC_VERSION "0.6.2")
 
-if (TALLOC_UTILS_BUFFER MATCHES true OR TALLOC_UTILS_DYNARR MATCHES true)
+set (TALLOC_DEBUG        true CACHE BOOL "")
+set (TALLOC_DESTRUCTOR   true CACHE BOOL "")
+set (TALLOC_REFERENCE    true CACHE BOOL "")
+set (TALLOC_UTILS_BUFFER true CACHE BOOL "")
+set (TALLOC_UTILS_DYNARR true CACHE BOOL "")
+set (TALLOC_SHARED       true CACHE BOOL "")
+set (TALLOC_STATIC       true CACHE BOOL "")
+set (TALLOC_MAN          true CACHE BOOL "")
+set (TALLOC_TEST         true CACHE BOOL "")
+
+if (NOT DEFINED CMAKE_INSTALL_LIBDIR)
+    set (CMAKE_INSTALL_LIBDIR "lib" CACHE PATH "Output directory for libraries")
+endif ()
+if (NOT DEFINED CMAKE_INSTALL_INCLUDEDIR)
+  set (CMAKE_INSTALL_INCLUDEDIR "include" CACHE PATH "Output directory for include files")
+endif ()
+if (NOT DEFINED CMAKE_INSTALL_MANDIR)
+  set (CMAKE_INSTALL_MANDIR "man/man3" CACHE PATH "Output directory for include files")
+endif ()
+
+if (${TALLOC_UTILS_BUFFER} OR ${TALLOC_UTILS_DYNARR})
     set (TALLOC_UTILS true)
 endif ()
-if (TALLOC_EXTENSIONS_DESTRUCTOR MATCHES true OR TALLOC_REFERENCE MATCHES true)
+if (${TALLOC_DESTRUCTOR} OR ${TALLOC_REFERENCE})
     set (TALLOC_EXTENSIONS true)
+endif ()
+
+if (NOT ${TALLOC_STATIC} AND NOT ${TALLOC_SHARED})
+    message (FATAL_ERROR "Talloc can not be compiled. Please enable building of shared or static libraries")
 endif ()
 
 if (NOT DEFINED TALLOC_TARGET)
@@ -39,7 +52,14 @@ add_subdirectory (src)
 
 include_directories ("src/")
 
-if (TALLOC_TEST MATCHES true)
+if (${TALLOC_TEST})
     enable_testing ()
     add_subdirectory (tests)
 endif ()
+
+if (${TALLOC_MAN})
+    add_subdirectory (man)
+endif ()
+
+include (CPackConfig.cmake)
+include (CPack)

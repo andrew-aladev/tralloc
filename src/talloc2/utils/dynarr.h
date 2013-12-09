@@ -15,6 +15,8 @@ typedef struct talloc_dynarr_t {
     void ** data;
 } talloc_dynarr;
 
+// Function creates new dynamic array with capacity and attaches it to ctx.
+// Function returns pointer to talloc_dynarr or NULL if error occurred.
 inline
 talloc_dynarr * talloc_dynarr_new ( void * ctx, size_t capacity )
 {
@@ -39,36 +41,53 @@ talloc_dynarr * talloc_dynarr_new ( void * ctx, size_t capacity )
     return arr;
 }
 
+// Function inserts data before index position to arr.
+// Function returns zero or non-zero value if error occurred.
 uint8_t talloc_dynarr_insert_before ( talloc_dynarr * arr, size_t index, void * data );
 
+// Function inserts data after index position to arr.
+// Function returns zero or non-zero value if error occurred.
 inline
 uint8_t talloc_dynarr_insert_after ( talloc_dynarr * arr, size_t index, void * data )
 {
     return talloc_dynarr_insert_before ( arr, index + 1, data );
 }
 
-uint8_t talloc_dynarr_grow_and_set ( talloc_dynarr * arr, size_t position, void * pointer );
+// Function grows arr to index + 1 position and sets data to index.
+// Function returns zero or non-zero value if error occurred.
+uint8_t talloc_dynarr_grow_and_set ( talloc_dynarr * arr, size_t index, void * data );
 
+// Function sets data to index in arr.
 inline
-void talloc_dynarr_set ( talloc_dynarr * arr, size_t position, void * pointer )
+void talloc_dynarr_set ( talloc_dynarr * arr, size_t index, void * data )
 {
-    arr->data[position] = pointer;
+    arr->data[index] = data;
 }
 
+// Function returns data from index in arr.
 inline
-void * talloc_dynarr_get ( talloc_dynarr * arr, size_t position )
+void * talloc_dynarr_get ( talloc_dynarr * arr, size_t index )
 {
-    return arr->data[position];
+    return arr->data[index];
 }
 
+// Function returns length from arr.
 inline
 size_t talloc_dynarr_get_length ( talloc_dynarr * arr )
 {
     return arr->length;
 }
 
-uint8_t talloc_dynarr_push   ( talloc_dynarr * arr, void * data );
-uint8_t talloc_dynarr_pop    ( talloc_dynarr * arr );
+// Function pushes data to arr.
+// Function returns zero or non-zero value if error occurred.
+uint8_t talloc_dynarr_push ( talloc_dynarr * arr, void * data );
+
+// Function deletes first data from arr.
+// Function returns zero or non-zero value if error occurred.
+uint8_t talloc_dynarr_pop ( talloc_dynarr * arr );
+
+// Function deletes data from index in arr.
+// Function returns zero or non-zero value if error occurred.
 uint8_t talloc_dynarr_delete ( talloc_dynarr * arr, size_t index );
 
 #endif

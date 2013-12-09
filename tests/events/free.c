@@ -57,13 +57,13 @@ bool test_free ( void * root )
         free_history ( talloc_history );
         return false;
     }
-    
+
     talloc_chunk * a_chunk = talloc_chunk_from_data ( a );
     talloc_chunk * b_chunk = talloc_chunk_from_data ( b );
     talloc_chunk * c_chunk = talloc_chunk_from_data ( c );
 
 #if defined(TALLOC_REFERENCE)
-    char ** c_reference = ( char ** ) talloc_add_reference ( c, b );
+    void * c_reference = talloc_add_reference ( c, b );
     if ( c_reference == NULL ) {
         talloc_free ( a );
         talloc_free ( b );

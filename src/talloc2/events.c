@@ -24,15 +24,15 @@ void talloc_set_callback ( talloc_callback_on_add on_add, talloc_callback_on_res
     talloc_debug_on_free   = on_free;
 }
 
-static size_t talloc_objects_count         = 0;
-static size_t talloc_objects_chunks_length = 0;
-static size_t talloc_objects_length        = 0;
+static size_t talloc_chunks_count         = 0;
+static size_t talloc_chunks_overhead_length = 0;
+static size_t talloc_chunks_length        = 0;
 
 uint8_t talloc_on_add ( talloc_chunk * chunk )
 {
-    talloc_objects_count++;
-    talloc_objects_chunks_length += chunk->chunk_length;
-    talloc_objects_length        += chunk->length;
+    talloc_chunks_count++;
+    talloc_chunks_overhead_length += chunk->chunk_length;
+    talloc_chunks_length        += chunk->length;
 
     if ( talloc_debug_on_add != NULL ) {
         return talloc_debug_on_add ( talloc_user_data, chunk );
@@ -43,7 +43,7 @@ uint8_t talloc_on_add ( talloc_chunk * chunk )
 
 uint8_t talloc_on_resize ( talloc_chunk * chunk, size_t old_length )
 {
-    talloc_objects_length += chunk->length - old_length;
+    talloc_chunks_length += chunk->length - old_length;
 
     if ( talloc_debug_on_resize != NULL ) {
         return talloc_debug_on_resize ( talloc_user_data, chunk, old_length );
@@ -63,9 +63,9 @@ uint8_t talloc_on_move ( talloc_chunk * chunk, talloc_chunk * old_parent_chunk )
 
 uint8_t talloc_on_free ( talloc_chunk * chunk )
 {
-    talloc_objects_count--;
-    talloc_objects_chunks_length -= chunk->chunk_length;
-    talloc_objects_length        -= chunk->length;
+    talloc_chunks_count--;
+    talloc_chunks_overhead_length -= chunk->chunk_length;
+    talloc_chunks_length          -= chunk->length;
 
     if ( talloc_debug_on_free != NULL ) {
         return talloc_debug_on_free ( talloc_user_data, chunk );
@@ -74,17 +74,17 @@ uint8_t talloc_on_free ( talloc_chunk * chunk )
     return 0;
 }
 
-size_t talloc_get_objects_count ()
+size_t talloc_get_chunks_count ()
 {
-    return talloc_objects_count;
+    return talloc_chunks_count;
 }
 
-size_t talloc_get_objects_chunk_length ()
+size_t talloc_get_chunks_overhead_length ()
 {
-    return talloc_objects_chunks_length;
+    return talloc_chunks_overhead_length;
 }
 
-size_t talloc_get_objects_length ()
+size_t talloc_get_chunks_length ()
 {
-    return talloc_objects_length;
+    return talloc_chunks_length;
 }
