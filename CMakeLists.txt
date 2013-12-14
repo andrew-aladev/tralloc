@@ -1,7 +1,7 @@
 cmake_minimum_required (VERSION 2.8)
 project (talloc2)
 
-set (TALLOC_VERSION "0.6.2")
+set (TALLOC_VERSION "0.7.0")
 
 set (TALLOC_DEBUG        true CACHE BOOL "")
 set (TALLOC_DESTRUCTOR   true CACHE BOOL "")
@@ -20,7 +20,7 @@ if (NOT DEFINED CMAKE_INSTALL_INCLUDEDIR)
   set (CMAKE_INSTALL_INCLUDEDIR "include" CACHE PATH "Output directory for include files")
 endif ()
 if (NOT DEFINED CMAKE_INSTALL_MANDIR)
-  set (CMAKE_INSTALL_MANDIR "man/man3" CACHE PATH "Output directory for include files")
+  set (CMAKE_INSTALL_MANDIR "share/man/man3" CACHE PATH "Output directory for include files")
 endif ()
 
 if (${TALLOC_UTILS_BUFFER} OR ${TALLOC_UTILS_DYNARR})

@@ -10,13 +10,13 @@
 #include <string.h>
 
 // Function makes duplicate from length bytes of str.
-// If parent_data is NULL function will set new chunk as root independent chunk.
-// Otherwise it will obtain parent chunk from parent_data and attach new chunk to parent chunk.
+// If parent_context is NULL function will set new chunk as root independent chunk.
+// Otherwise it will obtain parent chunk from parent_context and attach new chunk to parent chunk.
 // Function returns pointer to memory (with length + 1 size) or NULL if error occurred.
 inline
-char * talloc_strndup ( const void * parent_data, const char * str, size_t length )
+char * talloc_strndup ( const talloc_context * parent_context, const char * str, size_t length )
 {
-    char * child_data = talloc ( parent_data, sizeof ( char ) * ( length + 1 ) );
+    char * child_data = talloc ( parent_context, sizeof ( char ) * ( length + 1 ) );
     if ( child_data == NULL ) {
         return NULL;
     }
@@ -26,13 +26,13 @@ char * talloc_strndup ( const void * parent_data, const char * str, size_t lengt
 };
 
 // Function makes duplicate of str.
-// If parent_data is NULL function will set new chunk as root independent chunk.
-// Otherwise it will obtain parent chunk from parent_data and attach new chunk to parent chunk.
+// If parent_context is NULL function will set new chunk as root independent chunk.
+// Otherwise it will obtain parent chunk from parent_context and attach new chunk to parent chunk.
 // Function returns pointer to memory (with strlen ( str ) + 1 size) or NULL if error occurred.
 inline
-char * talloc_strdup ( const void * parent_data, const char * str )
+char * talloc_strdup ( const talloc_context * parent_context, const char * str )
 {
-    return talloc_strndup ( parent_data, str, strlen ( str ) );
+    return talloc_strndup ( parent_context, str, strlen ( str ) );
 };
 
 #endif

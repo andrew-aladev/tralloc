@@ -21,7 +21,7 @@ uint8_t talloc_dynarr_grow ( talloc_dynarr * arr, size_t new_length, bool null_o
     size_t start_capacity = arr->start_capacity;
     capacity = ( new_length / start_capacity + 1 ) * start_capacity;
 
-    void ** data = talloc_realloc ( arr->data, capacity * sizeof ( uintptr_t ) );
+    talloc_context ** data = talloc_realloc ( arr->data, capacity * sizeof ( uintptr_t ) );
     if ( data == NULL ) {
         return 1;
     }
@@ -75,7 +75,7 @@ uint8_t talloc_dynarr_reduction ( talloc_dynarr * arr )
     }
 
     capacity -= start_capacity;
-    void ** data = talloc_realloc ( arr->data, capacity * sizeof ( uintptr_t ) );
+    talloc_context ** data = talloc_realloc ( arr->data, capacity * sizeof ( uintptr_t ) );
     if ( data == NULL ) {
         return 1;
     }
@@ -118,8 +118,8 @@ uint8_t talloc_dynarr_grow_and_set ( talloc_dynarr * arr, size_t index, void * d
     return 0;
 }
 
-extern inline talloc_dynarr * talloc_dynarr_new          ( void * ctx, size_t capacity );
+extern inline talloc_dynarr * talloc_dynarr_new          ( const talloc_context * ctx, size_t capacity );
 extern inline uint8_t         talloc_dynarr_insert_after ( talloc_dynarr * arr, size_t index, void * data );
 extern inline void            talloc_dynarr_set          ( talloc_dynarr * arr, size_t index, void * data );
-extern inline void *          talloc_dynarr_get          ( talloc_dynarr * arr, size_t index );
-extern inline size_t          talloc_dynarr_get_length   ( talloc_dynarr * arr );
+extern inline void *          talloc_dynarr_get          ( const talloc_dynarr * arr, size_t index );
+extern inline size_t          talloc_dynarr_get_length   ( const talloc_dynarr * arr );

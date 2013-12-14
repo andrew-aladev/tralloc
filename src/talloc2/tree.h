@@ -52,24 +52,26 @@ void talloc_detach_chunk ( talloc_chunk * chunk )
 }
 
 // Function uses malloc to allocate new chunk with size = sizeof ( chunk ) + length.
-// If parent_data is NULL function will set new chunk as root independent chunk.
-// Otherwise it will obtain parent chunk from parent_data and attach new chunk to parent chunk.
-// parent_data can be both usual and reference.
+// If parent_context is NULL function will set new chunk as root independent chunk.
+// Otherwise it will obtain parent chunk from parent_context and attach new chunk to parent chunk.
+// parent_context can be both usual and reference.
 // Function returns pointer to memory (with length size) or NULL if error occurred.
-void * talloc ( const void * parent_data, size_t length );
+talloc_context * talloc ( const talloc_context * parent_context, size_t length );
 
-// Function works the same as "talloc". It will use calloc instead of malloc to allocate new chunk.
-void *  talloc_zero ( const void * parent_data, size_t length );
+// Function works the same as "talloc".
+// It will use calloc instead of malloc to allocate new chunk.
+talloc_context * talloc_zero ( const talloc_context * parent_context, size_t length );
 
 // Function uses malloc to allocate new chunk with size = sizeof ( chunk ).
-// If parent_data is NULL function will set new chunk as root independent chunk.
-// Otherwise it will obtain parent chunk from parent_data and attach new chunk to parent chunk.
-// parent_data can be both usual and reference.
-// Function returns pointer to memory (with zero size) or NULL if error occurred. This memory should not be used for storing information.
+// If parent_context is NULL function will set new chunk as root independent chunk.
+// Otherwise it will obtain parent chunk from parent_context and attach new chunk to parent chunk.
+// parent_context can be both usual and reference.
+// Function returns pointer to memory (with zero size) or NULL if error occurred.
+// This memory should not be used for storing information.
 inline
-void * talloc_new ( const void * parent_data )
+talloc_context * talloc_new ( const talloc_context * parent_context )
 {
-    return talloc ( parent_data, 0 );
+    return talloc ( parent_context, 0 );
 }
 
 uint8_t talloc_free_chunk ( talloc_chunk * chunk );
@@ -92,8 +94,8 @@ uint8_t talloc_free_chunk_children ( talloc_chunk * chunk )
     return error;
 }
 
-// Function obtains chunk from chunk_data, detaches it from the tree and start delete operation on subtree starting from it.
-// chunk_data can be both usual and reference.
+// Function obtains chunk from chunk_context, detaches it from the tree and start delete operation on subtree starting from it.
+// chunk_context can be both usual and reference.
 // If chunk is usual and it has reference(s) - it will become root independent chunk and delete operation will not go to it's children.
 // Otherwise it will be deleted. All it's destructors will be invoked.
 // If chunk is reference it will be deleted. All it's destructors will be invoked.
@@ -101,27 +103,27 @@ uint8_t talloc_free_chunk_children ( talloc_chunk * chunk )
 // Function returns zero if delete operations were successful and non-zero value otherwise.
 // Non-zero value meaning is "error code of the last failed operation". Function will not stop on errors.
 inline
-uint8_t talloc_free ( void * chunk_data )
+uint8_t talloc_free ( const talloc_context * chunk_context )
 {
-    if ( chunk_data == NULL ) {
+    if ( chunk_context == NULL ) {
         return 0;
     }
-    talloc_chunk * chunk = talloc_chunk_from_data ( chunk_data );
+    talloc_chunk * chunk = talloc_chunk_from_context ( chunk_context );
     talloc_detach_chunk ( chunk );
     return talloc_free_chunk ( chunk );
 }
 
-uint8_t talloc_add_chunk ( const void * parent_data, talloc_chunk * child );
+uint8_t talloc_add_chunk ( const talloc_context * parent_context, talloc_chunk * child );
 
-// Function obtains chunk from chunk_data, uses realloc to change size of chunk from current_length to length.
-// chunk_data can be both usual and reference.
+// Function obtains chunk from chunk_context, uses realloc to change size of chunk from current_length to length.
+// chunk_context can be both usual and reference.
 // Function returns pointer to memory (with length size) or NULL if error occurred.
-void * talloc_realloc ( const void * chunk_data, size_t length );
+talloc_context * talloc_realloc ( const talloc_context * chunk_context, size_t length );
 
-// Function obtains child chunk from child_data, parent chunk from parent_data.
-// chunk_data and parent_data can be both usual and reference.
+// Function obtains child chunk from child_context, parent chunk from parent_context.
+// chunk_context and parent_context can be both usual and reference.
 // Function detaches child chunk from it's parent and attaches it to new parent chunk.
 // Function returns zero if move operation was successful and non-zero value otherwise.
-uint8_t talloc_move ( const void * child_data, const void * parent_data );
+uint8_t talloc_move ( const talloc_context * child_context, const talloc_context * parent_context );
 
 #endif

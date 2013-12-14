@@ -39,7 +39,7 @@ uint8_t on_free ( void * user_data, talloc_chunk * chunk )
     return 0;
 }
 
-bool test_free ( void * root )
+bool test_free ( const talloc_context * root )
 {
     malloc_dynarr * talloc_history = malloc_history();
     if ( talloc_history == NULL ) {
@@ -58,9 +58,9 @@ bool test_free ( void * root )
         return false;
     }
 
-    talloc_chunk * a_chunk = talloc_chunk_from_data ( a );
-    talloc_chunk * b_chunk = talloc_chunk_from_data ( b );
-    talloc_chunk * c_chunk = talloc_chunk_from_data ( c );
+    talloc_chunk * a_chunk = talloc_chunk_from_context ( a );
+    talloc_chunk * b_chunk = talloc_chunk_from_context ( b );
+    talloc_chunk * c_chunk = talloc_chunk_from_context ( c );
 
 #if defined(TALLOC_REFERENCE)
     void * c_reference = talloc_add_reference ( c, b );
@@ -70,7 +70,7 @@ bool test_free ( void * root )
         free_history ( talloc_history );
         return false;
     }
-    talloc_chunk * c_reference_chunk = talloc_chunk_from_data ( c_reference );
+    talloc_chunk * c_reference_chunk = talloc_chunk_from_context ( c_reference );
 #endif
 
     if (

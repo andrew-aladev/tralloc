@@ -15,7 +15,7 @@
 #include <stdlib.h>
 
 inline
-talloc_chunk * talloc_extensions_process_new_chunk ( talloc_extensions * extensions, const void * parent_data, size_t length )
+talloc_chunk * talloc_extensions_process_new_chunk ( talloc_extensions * extensions, const talloc_context * parent_context, size_t length )
 {
 
 #if defined(TALLOC_DESTRUCTOR)
@@ -29,7 +29,7 @@ talloc_chunk * talloc_extensions_process_new_chunk ( talloc_extensions * extensi
     extensions_chunk->length       = length;
 #endif
 
-    talloc_add_chunk ( parent_data, extensions_chunk );
+    talloc_add_chunk ( parent_context, extensions_chunk );
 
 #if defined(TALLOC_REFERENCE)
     extensions_chunk->mode      = TALLOC_MODE_EXTENSIONS;
@@ -40,23 +40,23 @@ talloc_chunk * talloc_extensions_process_new_chunk ( talloc_extensions * extensi
 }
 
 inline
-talloc_chunk * talloc_extensions_malloc_chunk ( const void * parent_data, size_t length )
+talloc_chunk * talloc_extensions_malloc_chunk ( const talloc_context * parent_context, size_t length )
 {
     talloc_extensions * extensions = malloc ( sizeof ( talloc_extensions ) + sizeof ( talloc_chunk ) + length );
     if ( extensions == NULL ) {
         return NULL;
     }
-    return talloc_extensions_process_new_chunk ( extensions, parent_data, length );
+    return talloc_extensions_process_new_chunk ( extensions, parent_context, length );
 }
 
 inline
-talloc_chunk * talloc_extensions_calloc_chunk ( const void * parent_data, size_t length )
+talloc_chunk * talloc_extensions_calloc_chunk ( const talloc_context * parent_context, size_t length )
 {
     talloc_extensions * extensions = calloc ( 1, sizeof ( talloc_extensions ) + sizeof ( talloc_chunk ) + length );
     if ( extensions == NULL ) {
         return NULL;
     }
-    return talloc_extensions_process_new_chunk ( extensions, parent_data, length );
+    return talloc_extensions_process_new_chunk ( extensions, parent_context, length );
 }
 
 talloc_chunk * talloc_extensions_realloc_chunk ( talloc_chunk * extensions_chunk, size_t length );

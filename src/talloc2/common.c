@@ -5,8 +5,8 @@
 
 #include "common.h"
 
-extern inline void *         talloc_data_from_chunk ( talloc_chunk * chunk );
-extern inline talloc_chunk * talloc_chunk_from_data ( const void * data );
+extern inline talloc_context * talloc_context_from_chunk ( talloc_chunk * chunk );
+extern inline talloc_chunk *   talloc_chunk_from_context ( const talloc_context * context );
 
 #ifdef TALLOC_EXTENSIONS
 extern inline talloc_chunk *      talloc_chunk_from_extensions ( talloc_extensions * extensions );

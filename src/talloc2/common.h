@@ -9,15 +9,15 @@
 #include "types.h"
 
 inline
-void * talloc_data_from_chunk ( talloc_chunk * chunk )
+talloc_context * talloc_context_from_chunk ( talloc_chunk * chunk )
 {
-    return ( void * ) ( ( uintptr_t ) chunk + sizeof ( talloc_chunk ) );
+    return ( talloc_context * ) ( ( uintptr_t ) chunk + sizeof ( talloc_chunk ) );
 }
 
 inline
-talloc_chunk * talloc_chunk_from_data ( const void * data )
+talloc_chunk * talloc_chunk_from_context ( const talloc_context * context )
 {
-    return ( talloc_chunk * ) ( ( uintptr_t ) data - sizeof ( talloc_chunk ) );
+    return ( talloc_chunk * ) ( ( uintptr_t ) context - sizeof ( talloc_chunk ) );
 }
 
 #ifdef TALLOC_EXTENSIONS

@@ -6,7 +6,7 @@
 #include <talloc2/helpers.h>
 #include <stdbool.h>
 
-bool test_str ( void * ctx )
+bool test_str ( const talloc_context * ctx )
 {
     char * str  = "Viktor Tsoi Star Called Sun";
     char * full = talloc_strdup ( ctx, str );

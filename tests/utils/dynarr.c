@@ -6,7 +6,7 @@
 #include "dynarr.h"
 #include <talloc2/utils/dynarr.h>
 
-bool test_dynarr ( void * root )
+bool test_dynarr ( const talloc_context * root )
 {
     size_t a = 12345, b = 56789;
     talloc_dynarr * arr = talloc_dynarr_new ( root, 0 );

@@ -10,7 +10,7 @@
 
 #include <string.h>
 
-bool test_common ( void * root )
+bool test_common ( const talloc_context * root )
 {
     int *    a = talloc ( root, sizeof ( int ) * 2 );
     char *   b = talloc ( a, sizeof ( char ) * 3 );
@@ -50,15 +50,15 @@ bool test_common ( void * root )
         return false;
     }
 
-    talloc_chunk * common_chunk = talloc_chunk_from_data ( common );
+    talloc_chunk * common_chunk = talloc_chunk_from_context ( common );
     if ( common_chunk->mode != TALLOC_MODE_EXTENSIONS ) {
         talloc_free ( a );
         return false;
     }
 
     talloc_extensions * common_extensions = talloc_extensions_from_chunk ( common_chunk );
-    talloc_reference * b_reference        = talloc_reference_from_chunk ( talloc_chunk_from_data ( b_common ) );
-    talloc_reference * c_reference        = talloc_reference_from_chunk ( talloc_chunk_from_data ( c_common ) );
+    talloc_reference * b_reference        = talloc_reference_from_chunk ( talloc_chunk_from_context ( b_common ) );
+    talloc_reference * c_reference        = talloc_reference_from_chunk ( talloc_chunk_from_context ( c_common ) );
     talloc_reference * reference          = common_extensions->first_reference;
 
     if (

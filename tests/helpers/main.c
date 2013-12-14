@@ -11,7 +11,7 @@
 
 int main ()
 {
-    void * ctx = talloc_new ( NULL );
+    talloc_context * ctx = talloc_new ( NULL );
     if ( ctx == NULL ) {
         return 1;
     }

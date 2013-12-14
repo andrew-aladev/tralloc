@@ -12,13 +12,13 @@ typedef struct talloc_dynarr_t {
     size_t length;
     size_t start_capacity;
     size_t current_capacity;
-    void ** data;
+    talloc_context ** data;
 } talloc_dynarr;
 
 // Function creates new dynamic array with capacity and attaches it to ctx.
 // Function returns pointer to talloc_dynarr or NULL if error occurred.
 inline
-talloc_dynarr * talloc_dynarr_new ( void * ctx, size_t capacity )
+talloc_dynarr * talloc_dynarr_new ( const talloc_context * ctx, size_t capacity )
 {
     if ( capacity == 0 ) {
         return NULL;
@@ -30,7 +30,7 @@ talloc_dynarr * talloc_dynarr_new ( void * ctx, size_t capacity )
     }
 
     arr->start_capacity = arr->current_capacity = capacity;
-    void ** data = talloc ( arr, capacity * sizeof ( uintptr_t ) );
+    talloc_context ** data = talloc ( arr, capacity * sizeof ( uintptr_t ) );
     if ( data == NULL ) {
         talloc_free ( arr );
         return NULL;
@@ -66,14 +66,14 @@ void talloc_dynarr_set ( talloc_dynarr * arr, size_t index, void * data )
 
 // Function returns data from index in arr.
 inline
-void * talloc_dynarr_get ( talloc_dynarr * arr, size_t index )
+void * talloc_dynarr_get ( const talloc_dynarr * arr, size_t index )
 {
     return arr->data[index];
 }
 
 // Function returns length from arr.
 inline
-size_t talloc_dynarr_get_length ( talloc_dynarr * arr )
+size_t talloc_dynarr_get_length ( const talloc_dynarr * arr )
 {
     return arr->length;
 }

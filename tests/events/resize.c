@@ -48,7 +48,7 @@ uint8_t on_resize ( void * user_data, talloc_chunk * chunk, size_t old_length )
     return 0;
 }
 
-bool test_resize ( void * root )
+bool test_resize ( const talloc_context * root )
 {
     malloc_dynarr * talloc_history = malloc_history();
     if ( talloc_history == NULL ) {
@@ -78,9 +78,9 @@ bool test_resize ( void * root )
         return false;
     }
 
-    talloc_chunk * a_chunk = talloc_chunk_from_data ( a );
-    talloc_chunk * b_chunk = talloc_chunk_from_data ( b );
-    talloc_chunk * c_chunk = talloc_chunk_from_data ( c );
+    talloc_chunk * a_chunk = talloc_chunk_from_context ( a );
+    talloc_chunk * b_chunk = talloc_chunk_from_context ( b );
+    talloc_chunk * c_chunk = talloc_chunk_from_context ( c );
     resize_info * info;
 
     if (

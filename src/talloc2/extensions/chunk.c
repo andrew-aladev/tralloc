@@ -71,6 +71,6 @@ uint8_t talloc_extensions_free_chunk ( talloc_chunk * extensions_chunk )
     return error;
 }
 
-extern inline talloc_chunk * talloc_extensions_process_new_chunk ( talloc_extensions * extensions, const void * parent_data, size_t length );
-extern inline talloc_chunk * talloc_extensions_malloc_chunk      ( const void * parent_data, size_t length );
-extern inline talloc_chunk * talloc_extensions_calloc_chunk      ( const void * parent_data, size_t length );
+extern inline talloc_chunk * talloc_extensions_process_new_chunk ( talloc_extensions * extensions, const talloc_context * parent_context, size_t length );
+extern inline talloc_chunk * talloc_extensions_malloc_chunk      ( const talloc_context * parent_context, size_t length );
+extern inline talloc_chunk * talloc_extensions_calloc_chunk      ( const talloc_context * parent_context, size_t length );

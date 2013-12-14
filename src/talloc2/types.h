@@ -11,8 +11,10 @@
 
 #include "config.h"
 
+typedef void talloc_context;
+
 #if defined(TALLOC_DESTRUCTOR)
-typedef uint8_t ( * talloc_destructor_function ) ( void * chunk_data, void * user_data );
+typedef uint8_t ( * talloc_destructor_function ) ( talloc_context * chunk_context, void * user_data );
 
 typedef struct talloc_destructor_t {
     struct talloc_destructor_t * next;

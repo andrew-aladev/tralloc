@@ -10,7 +10,7 @@
 
 #include <string.h>
 
-bool test_shared ( void * root )
+bool test_shared ( const talloc_context * root )
 {
     int *    a = talloc ( root, sizeof ( int ) * 2 );
     char *   b = talloc ( root, sizeof ( char ) * 3 );
@@ -80,7 +80,7 @@ bool test_shared ( void * root )
         return false;
     }
 
-    talloc_chunk * shared_chunk = talloc_chunk_from_data ( shared );
+    talloc_chunk * shared_chunk = talloc_chunk_from_context ( shared );
     if ( shared_chunk->mode != TALLOC_MODE_EXTENSIONS ) {
         talloc_free ( a );
         talloc_free ( b );
@@ -89,9 +89,9 @@ bool test_shared ( void * root )
     }
 
     talloc_extensions * shared_extensions = talloc_extensions_from_chunk ( shared_chunk );
-    talloc_reference * a_reference        = talloc_reference_from_chunk ( talloc_chunk_from_data ( a_shared ) );
-    talloc_reference * b_reference        = talloc_reference_from_chunk ( talloc_chunk_from_data ( b_shared ) );
-    talloc_reference * c_reference        = talloc_reference_from_chunk ( talloc_chunk_from_data ( c_shared ) );
+    talloc_reference * a_reference        = talloc_reference_from_chunk ( talloc_chunk_from_context ( a_shared ) );
+    talloc_reference * b_reference        = talloc_reference_from_chunk ( talloc_chunk_from_context ( b_shared ) );
+    talloc_reference * c_reference        = talloc_reference_from_chunk ( talloc_chunk_from_context ( c_shared ) );
     talloc_reference * reference          = shared_extensions->first_reference;
     if (
         reference != a_reference ||
@@ -117,7 +117,7 @@ bool test_shared ( void * root )
 
     a_shared = talloc_add_reference ( shared, a );
 
-    a_reference = talloc_reference_from_chunk ( talloc_chunk_from_data ( a_shared ) );
+    a_reference = talloc_reference_from_chunk ( talloc_chunk_from_context ( a_shared ) );
     reference   = shared_extensions->first_reference;
     if (
         reference != a_reference ||
@@ -142,7 +142,7 @@ bool test_shared ( void * root )
         return false;
     }
 
-    b_reference = talloc_reference_from_chunk ( talloc_chunk_from_data ( b_shared ) );
+    b_reference = talloc_reference_from_chunk ( talloc_chunk_from_context ( b_shared ) );
     reference   = shared_extensions->first_reference;
     if (
         reference != b_reference ||

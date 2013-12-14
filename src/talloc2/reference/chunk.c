@@ -48,9 +48,9 @@ uint8_t talloc_reference_free_chunk ( talloc_chunk * reference_chunk )
     return error;
 }
 
-extern inline talloc_reference * talloc_reference_process_new_chunk ( talloc_reference * reference, const void * parent_data, size_t length );
-extern inline talloc_reference * talloc_reference_malloc_chunk      ( const void * parent_data, size_t length );
-extern inline talloc_reference * talloc_reference_calloc_chunk      ( const void * parent_data, size_t length );
+extern inline talloc_reference * talloc_reference_process_new_chunk ( talloc_reference * reference, const talloc_context * parent_context, size_t length );
+extern inline talloc_reference * talloc_reference_malloc_chunk      ( const talloc_context * parent_context, size_t length );
+extern inline talloc_reference * talloc_reference_calloc_chunk      ( const talloc_context * parent_context, size_t length );
 extern inline void               talloc_reference_update            ( talloc_reference * reference );
 extern inline talloc_chunk *     talloc_reference_realloc_chunk     ( talloc_chunk * reference_chunk, size_t length );
 extern inline void               talloc_reference_update_extensions ( talloc_extensions * extensions );

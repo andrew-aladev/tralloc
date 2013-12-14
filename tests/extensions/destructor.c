@@ -9,26 +9,26 @@
 #include <talloc2/extensions/destructor.h>
 
 static
-uint8_t destructor ( void * chunk_data, void * user_data )
+uint8_t destructor ( talloc_context * chunk_context, void * user_data )
 {
     malloc_dynarr * talloc_history = user_data;
     if ( talloc_history == NULL ) {
         return 0;
     }
-    if ( malloc_dynarr_append ( talloc_history, chunk_data ) != 0 ) {
+    if ( malloc_dynarr_append ( talloc_history, chunk_context ) != 0 ) {
         return 1;
     }
     return 0;
 }
 
 static
-uint8_t destructor_empty_1 ( void * chunk_data, void * user_data )
+uint8_t destructor_empty_1 ( talloc_context * chunk_context, void * user_data )
 {
     return 0;
 }
 
 static
-uint8_t destructor_empty_2 ( void * chunk_data, void * user_data )
+uint8_t destructor_empty_2 ( talloc_context * chunk_context, void * user_data )
 {
     return 0;
 }
@@ -49,7 +49,7 @@ void free_history ( malloc_dynarr * talloc_history )
     malloc_dynarr_free ( talloc_history );
 }
 
-bool test_destructor ( void * root )
+bool test_destructor ( const talloc_context * root )
 {
     malloc_dynarr * talloc_history = malloc_history();
     if ( talloc_history == NULL ) {
@@ -101,7 +101,7 @@ bool test_destructor ( void * root )
         return false;
     }
 
-    talloc_extensions * extensions_03 = talloc_extensions_from_chunk ( talloc_chunk_from_data ( text_03 ) );
+    talloc_extensions * extensions_03 = talloc_extensions_from_chunk ( talloc_chunk_from_context ( text_03 ) );
     talloc_destructor * destructor;
 
     if (

@@ -10,26 +10,27 @@
 
 // Function works the same as "talloc_add_reference".
 // Function returns pointer to memory (with length size) or NULL if error occurred.
-void * talloc_add_reference_with_data ( const void * child_data, const void * parent_data, size_t length );
+talloc_context * talloc_add_reference_with_data ( const talloc_context * child_context, const talloc_context * parent_context, size_t length );
 
 // Function works the same as "talloc_add_reference_with_data".
 // It will use calloc instead of malloc to allocate new reference.
-void * talloc_add_reference_with_zero_data ( const void * child_data, const void * parent_data, size_t length );
+talloc_context * talloc_add_reference_with_zero_data ( const talloc_context * child_context, const talloc_context * parent_context, size_t length );
 
-// If child_data is NULL or parent_data is NULL or child_data equals parent_data function will return non-zero value.
-// Function will obtain child chunk from child_data, parent chunk from parent_data.
+// If child_context is NULL or parent_context is NULL or child_context equals parent_context function will return non-zero value.
+// Function will obtain child chunk from child_context, parent chunk from parent_context.
 // If child chunk's parent is parent chunk function will return non-zero value.
-// Otherwise function will create reference to child_data and attach it to parent chunk.
-// Function returns pointer to memory (with zero size) or NULL if error occurred. This memory should not be used for storing information.
+// Otherwise function will create reference to child_context and attach it to parent chunk.
+// Function returns pointer to memory (with zero size) or NULL if error occurred.
+// This memory should not be used for storing information.
 inline
-void * talloc_add_reference ( const void * child_data, const void * parent_data )
+talloc_context * talloc_add_reference ( const talloc_context * child_context, const talloc_context * parent_context )
 {
-    return talloc_add_reference_with_data ( child_data, parent_data, 0 );
+    return talloc_add_reference_with_data ( child_context, parent_context, 0 );
 }
 
-// If chunk_data is NULL function will return non-zero value.
-// Otherwise function will obtain chunk from chunk_data and delete all it's references.
+// If chunk_context is NULL function will return non-zero value.
+// Otherwise function will obtain chunk from chunk_context and delete all it's references.
 // Function returns zero or non-zero value if error occurred.
-uint8_t talloc_clear_references ( const void * chunk_data );
+uint8_t talloc_clear_references ( const talloc_context * chunk_context );
 
 #endif

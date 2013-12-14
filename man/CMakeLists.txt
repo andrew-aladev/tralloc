@@ -1,2 +1,2 @@
-# exec_program ("cd \"${CMAKE_CURRENT_BINARY_DIR}\" && docbook2man.pl ${CMAKE_CURRENT_SOURCE_DIR}/talloc2.3.xml")
-# install (FILES ${CMAKE_CURRENT_BINARY_DIR}/talloc2.xml DESTINATION ${CMAKE_INSTALL_MANDIR})
+exec_program ("a2x -d manpage -f manpage \"${CMAKE_CURRENT_SOURCE_DIR}/talloc2.txt\" -D \"${CMAKE_CURRENT_BINARY_DIR}\"")
+install (FILES ${CMAKE_CURRENT_BINARY_DIR}/talloc2.3 DESTINATION ${CMAKE_INSTALL_MANDIR})

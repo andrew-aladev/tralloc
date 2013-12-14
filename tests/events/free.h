@@ -3,6 +3,7 @@
 // talloc2 is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with talloc2. If not, see <http://www.gnu.org/licenses/>.
 
+#include <talloc2/types.h>
 #include <stdbool.h>
 
-bool test_free ( void * root );
+bool test_free ( const talloc_context * root );

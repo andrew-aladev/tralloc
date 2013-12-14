@@ -15,7 +15,7 @@
 #include <stdlib.h>
 
 inline
-talloc_chunk * talloc_usual_process_new_chunk ( talloc_chunk * chunk, const void * parent_data, size_t length )
+talloc_chunk * talloc_usual_process_new_chunk ( talloc_chunk * chunk, const talloc_context * parent_context, size_t length )
 {
 
 #if defined(TALLOC_DEBUG)
@@ -23,28 +23,28 @@ talloc_chunk * talloc_usual_process_new_chunk ( talloc_chunk * chunk, const void
     chunk->length       = length;
 #endif
 
-    talloc_add_chunk ( parent_data, chunk );
+    talloc_add_chunk ( parent_context, chunk );
     return chunk;
 }
 
 inline
-talloc_chunk * talloc_usual_malloc_chunk ( const void * parent_data, size_t length )
+talloc_chunk * talloc_usual_malloc_chunk ( const talloc_context * parent_context, size_t length )
 {
     talloc_chunk * chunk = ( talloc_chunk * ) malloc ( sizeof ( talloc_chunk ) + length );
     if ( chunk == NULL ) {
         return NULL;
     }
-    return talloc_usual_process_new_chunk ( chunk, parent_data, length );
+    return talloc_usual_process_new_chunk ( chunk, parent_context, length );
 }
 
 inline
-talloc_chunk * talloc_usual_calloc_chunk ( const void * parent_data, size_t length )
+talloc_chunk * talloc_usual_calloc_chunk ( const talloc_context * parent_context, size_t length )
 {
     talloc_chunk * chunk = ( talloc_chunk * ) calloc ( 1, sizeof ( talloc_chunk ) + length );
     if ( chunk == NULL ) {
         return NULL;
     }
-    return talloc_usual_process_new_chunk ( chunk, parent_data, length );
+    return talloc_usual_process_new_chunk ( chunk, parent_context, length );
 }
 
 inline

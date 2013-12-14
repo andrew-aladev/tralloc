@@ -26,7 +26,7 @@ for util in ${IUSE_UTILS}; do
     IUSE="${IUSE} talloc2_utils_${util}"
 done
 
-RDEPEND="man? ( app-text/docbook2X )"
+RDEPEND="man? ( app-text/asciidoc )"
 DEPEND="${RDEPEND}"
 
 src_unpack() {

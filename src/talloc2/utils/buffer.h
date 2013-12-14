@@ -18,7 +18,7 @@ typedef struct talloc_buffer_t {
 // Function creates new buffer and attaches it to ctx.
 // Function returns pointer to talloc_buffer or NULL if error occurred.
 inline
-talloc_buffer * talloc_buffer_new ( void * ctx )
+talloc_buffer * talloc_buffer_new ( const talloc_context * ctx )
 {
     talloc_buffer * buffer = talloc ( ctx, sizeof ( talloc_buffer ) );
     if ( buffer == NULL ) {
@@ -53,21 +53,21 @@ uint8_t talloc_buffer_readed ( talloc_buffer * buffer, size_t length )
 
 // Function returns read point of buffer.
 inline
-uint8_t * talloc_buffer_get_read_point ( talloc_buffer * buffer )
+uint8_t * talloc_buffer_get_read_point ( const talloc_buffer * buffer )
 {
     return buffer->buf + buffer->data_offset;
 }
 
 // Function returns write point of buffer.
 inline
-uint8_t * talloc_buffer_get_write_point ( talloc_buffer * buffer )
+uint8_t * talloc_buffer_get_write_point ( const talloc_buffer * buffer )
 {
     return buffer->buf + buffer->data_offset + buffer->data_length;
 }
 
 // Function returns length of buffer.
 inline
-size_t talloc_buffer_get_length ( talloc_buffer * buffer )
+size_t talloc_buffer_get_length ( const talloc_buffer * buffer )
 {
     return buffer->data_length;
 }

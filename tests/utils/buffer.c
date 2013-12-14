@@ -8,7 +8,7 @@
 
 #include <string.h>
 
-bool test_buffer ( void * root )
+bool test_buffer ( const talloc_context * root )
 {
     talloc_buffer * buffer = talloc_buffer_new ( root );
     if ( buffer == NULL ) {

@@ -16,8 +16,8 @@
 #include <stdbool.h>
 #include <math.h>
 
-static void *         root;
-static talloc_chunk * root_chunk;
+static talloc_context * root;
+static talloc_chunk   * root_chunk;
 
 static uint8_t *      data_1;
 static talloc_chunk * data_1_chunk;
@@ -145,7 +145,7 @@ bool test_alloc()
 #if defined(TALLOC_REFERENCE)
     trivium_reference_1 = talloc_add_reference                ( trivium, data_6 );
     trivium_reference_2 = talloc_add_reference_with_data      ( trivium, data_5, sizeof ( uint16_t ) * 2 );
-    trivium_reference_3 = talloc_add_reference_with_zero_data ( trivium, data_5, sizeof ( uint32_t ) );
+    trivium_reference_3 = talloc_add_reference_with_zero_data ( trivium, trivium_reference_2, sizeof ( uint32_t ) );
     if (
         trivium_reference_1 == NULL ||
         trivium_reference_2 == NULL ||
@@ -241,23 +241,23 @@ bool test_realloc ()
     }
 #endif
 
-    root_chunk    = talloc_chunk_from_data ( root );
-    data_1_chunk  = talloc_chunk_from_data ( data_1 );
-    data_2_chunk  = talloc_chunk_from_data ( data_2 );
-    data_3_chunk  = talloc_chunk_from_data ( data_3 );
-    data_4_chunk  = talloc_chunk_from_data ( data_4 );
-    data_5_chunk  = talloc_chunk_from_data ( data_5 );
-    data_6_chunk  = talloc_chunk_from_data ( data_6 );
-    data_7_chunk  = talloc_chunk_from_data ( data_7 );
-    trivium_chunk = talloc_chunk_from_data ( trivium );
+    root_chunk    = talloc_chunk_from_context ( root );
+    data_1_chunk  = talloc_chunk_from_context ( data_1 );
+    data_2_chunk  = talloc_chunk_from_context ( data_2 );
+    data_3_chunk  = talloc_chunk_from_context ( data_3 );
+    data_4_chunk  = talloc_chunk_from_context ( data_4 );
+    data_5_chunk  = talloc_chunk_from_context ( data_5 );
+    data_6_chunk  = talloc_chunk_from_context ( data_6 );
+    data_7_chunk  = talloc_chunk_from_context ( data_7 );
+    trivium_chunk = talloc_chunk_from_context ( trivium );
 
 #if defined(TALLOC_REFERENCE)
-    trivium_reference_1_chunk = talloc_chunk_from_data ( trivium_reference_1 );
-    trivium_reference_2_chunk = talloc_chunk_from_data ( trivium_reference_2 );
-    trivium_reference_3_chunk = talloc_chunk_from_data ( trivium_reference_3 );
-    data_8_chunk              = talloc_chunk_from_data ( data_8 );
-    data_9_chunk              = talloc_chunk_from_data ( data_9 );
-    data_10_chunk             = talloc_chunk_from_data ( data_10 );
+    trivium_reference_1_chunk = talloc_chunk_from_context ( trivium_reference_1 );
+    trivium_reference_2_chunk = talloc_chunk_from_context ( trivium_reference_2 );
+    trivium_reference_3_chunk = talloc_chunk_from_context ( trivium_reference_3 );
+    data_8_chunk              = talloc_chunk_from_context ( data_8 );
+    data_9_chunk              = talloc_chunk_from_context ( data_9 );
+    data_10_chunk             = talloc_chunk_from_context ( data_10 );
 #endif
 
     return true;

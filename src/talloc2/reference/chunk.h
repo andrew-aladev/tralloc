@@ -15,7 +15,7 @@
 #include <stdlib.h>
 
 inline
-talloc_reference * talloc_reference_process_new_chunk ( talloc_reference * reference, const void * parent_data, size_t length )
+talloc_reference * talloc_reference_process_new_chunk ( talloc_reference * reference, const talloc_context * parent_context, size_t length )
 {
     talloc_chunk * reference_chunk = talloc_chunk_from_reference ( reference );
     reference_chunk->mode          = TALLOC_MODE_REFERENCE;
@@ -25,29 +25,29 @@ talloc_reference * talloc_reference_process_new_chunk ( talloc_reference * refer
     reference_chunk->length       = length;
 #endif
 
-    talloc_add_chunk ( parent_data, reference_chunk );
+    talloc_add_chunk ( parent_context, reference_chunk );
 
     return reference;
 }
 
 inline
-talloc_reference * talloc_reference_malloc_chunk ( const void * parent_data, size_t length )
+talloc_reference * talloc_reference_malloc_chunk ( const talloc_context * parent_context, size_t length )
 {
     talloc_reference * reference = malloc ( sizeof ( talloc_reference ) + sizeof ( talloc_chunk ) + length );
     if ( reference == NULL ) {
         return NULL;
     }
-    return talloc_reference_process_new_chunk ( reference, parent_data, length );
+    return talloc_reference_process_new_chunk ( reference, parent_context, length );
 }
 
 inline
-talloc_reference * talloc_reference_calloc_chunk ( const void * parent_data, size_t length )
+talloc_reference * talloc_reference_calloc_chunk ( const talloc_context * parent_context, size_t length )
 {
     talloc_reference * reference = calloc ( 1, sizeof ( talloc_reference ) + sizeof ( talloc_chunk ) + length );
     if ( reference == NULL ) {
         return NULL;
     }
-    return talloc_reference_process_new_chunk ( reference, parent_data, length );
+    return talloc_reference_process_new_chunk ( reference, parent_context, length );
 }
 
 inline

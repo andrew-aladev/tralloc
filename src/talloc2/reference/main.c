@@ -6,24 +6,28 @@
 #include "main.h"
 #include "../extensions/chunk.h"
 
-typedef talloc_reference * ( * reference_alloc_chunk ) ( const void * parent_data, size_t length );
+typedef talloc_reference * ( * reference_alloc_chunk ) ( const talloc_context * parent_context, size_t length );
 
 static inline
-void * add_reference ( const void * child_data, const void * parent_data, size_t length, reference_alloc_chunk allocator )
+talloc_context * add_reference ( const talloc_context * child_context, const talloc_context * parent_context, size_t length, reference_alloc_chunk allocator )
 {
-    if ( parent_data == NULL || child_data == NULL || parent_data == child_data ) {
+    if ( parent_context == NULL || child_context == NULL || parent_context == child_context ) {
         return NULL;
     }
-    talloc_chunk * parent_chunk = talloc_chunk_from_data ( parent_data );
-    talloc_chunk * child_chunk  = talloc_chunk_from_data ( child_data );
+
+    talloc_chunk * parent_chunk = talloc_chunk_from_context ( parent_context );
     if ( parent_chunk->mode == TALLOC_MODE_REFERENCE ) {
-        return NULL;
+        talloc_reference * reference = talloc_reference_from_chunk ( parent_chunk );
+        parent_chunk                 = talloc_chunk_from_extensions ( reference->parent_extensions );
+        parent_context               = talloc_context_from_chunk ( parent_chunk );
     }
+
+    talloc_chunk * child_chunk = talloc_chunk_from_context ( child_context );
     if ( child_chunk->parent == parent_chunk ) {
         return NULL;
     }
 
-    talloc_reference * reference = allocator ( parent_data, length );
+    talloc_reference * reference = allocator ( parent_context, length );
     if ( reference == NULL ) {
         return NULL;
     }
@@ -42,22 +46,22 @@ void * add_reference ( const void * child_data, const void * parent_data, size_t
     }
     child_extensions->first_reference = reference;
 
-    return talloc_data_from_chunk ( talloc_chunk_from_reference ( reference ) );
+    return talloc_context_from_chunk ( talloc_chunk_from_reference ( reference ) );
 }
 
-void * talloc_add_reference_with_data ( const void * child_data, const void * parent_data, size_t length )
+talloc_context * talloc_add_reference_with_data ( const talloc_context * child_context, const talloc_context * parent_context, size_t length )
 {
-    return add_reference ( child_data, parent_data, length, talloc_reference_malloc_chunk );
+    return add_reference ( child_context, parent_context, length, talloc_reference_malloc_chunk );
 }
 
-void * talloc_add_reference_with_zero_data ( const void * child_data, const void * parent_data, size_t length )
+talloc_context * talloc_add_reference_with_zero_data ( const talloc_context * child_context, const talloc_context * parent_context, size_t length )
 {
-    return add_reference ( child_data, parent_data, length, talloc_reference_calloc_chunk );
+    return add_reference ( child_context, parent_context, length, talloc_reference_calloc_chunk );
 }
 
-uint8_t talloc_clear_references ( const void * chunk_data )
+uint8_t talloc_clear_references ( const talloc_context * chunk_context )
 {
-    talloc_extensions * extensions = talloc_extensions_from_chunk ( talloc_chunk_from_data ( chunk_data ) );
+    talloc_extensions * extensions = talloc_extensions_from_chunk ( talloc_chunk_from_context ( chunk_context ) );
     talloc_reference * reference   = extensions->first_reference;
     talloc_reference * next_reference;
 
@@ -77,4 +81,4 @@ uint8_t talloc_clear_references ( const void * chunk_data )
     return error;
 }
 
-extern inline void * talloc_add_reference ( const void * child_data, const void * parent_data );
+extern inline talloc_context * talloc_add_reference ( const talloc_context * child_context, const talloc_context * parent_context );

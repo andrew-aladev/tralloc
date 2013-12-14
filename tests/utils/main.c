@@ -19,7 +19,7 @@
 
 int main ()
 {
-    void * root = talloc_new ( NULL );
+    talloc_context * root = talloc_new ( NULL );
     if ( root == NULL ) {
         return 1;
     }
