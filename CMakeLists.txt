@@ -1,17 +1,19 @@
 cmake_minimum_required (VERSION 2.8)
 project (talloc2)
 
+set (CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/")
+
 set (TALLOC_VERSION "0.7.0")
 
-set (TALLOC_DEBUG        true CACHE BOOL "")
-set (TALLOC_DESTRUCTOR   true CACHE BOOL "")
-set (TALLOC_REFERENCE    true CACHE BOOL "")
-set (TALLOC_UTILS_BUFFER true CACHE BOOL "")
-set (TALLOC_UTILS_DYNARR true CACHE BOOL "")
-set (TALLOC_SHARED       true CACHE BOOL "")
-set (TALLOC_STATIC       true CACHE BOOL "")
-set (TALLOC_MAN          true CACHE BOOL "")
-set (TALLOC_TEST         true CACHE BOOL "")
+set (TALLOC_DEBUG        true CACHE BOOL "debug features")
+set (TALLOC_DESTRUCTOR   true CACHE BOOL "destructor feature")
+set (TALLOC_REFERENCE    true CACHE BOOL "reference feature")
+set (TALLOC_UTILS_BUFFER true CACHE BOOL "buffer util")
+set (TALLOC_UTILS_DYNARR true CACHE BOOL "dynamic array util")
+set (TALLOC_SHARED       true CACHE BOOL "build shared libs")
+set (TALLOC_STATIC       true CACHE BOOL "build static libs")
+set (TALLOC_MAN          true CACHE BOOL "create man")
+set (TALLOC_TEST         true CACHE BOOL "build tests")
 
 if (NOT DEFINED CMAKE_INSTALL_LIBDIR)
     set (CMAKE_INSTALL_LIBDIR "lib" CACHE PATH "Output directory for libraries")
