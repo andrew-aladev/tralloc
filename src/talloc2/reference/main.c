@@ -11,20 +11,23 @@ typedef talloc_reference * ( * reference_alloc_chunk ) ( const talloc_context * 
 static inline
 talloc_context * add_reference ( const talloc_context * child_context, const talloc_context * parent_context, size_t length, reference_alloc_chunk allocator )
 {
-    if ( parent_context == NULL || child_context == NULL || parent_context == child_context ) {
+    if ( child_context == NULL || parent_context == child_context ) {
         return NULL;
-    }
-
-    talloc_chunk * parent_chunk = talloc_chunk_from_context ( parent_context );
-    if ( parent_chunk->mode == TALLOC_MODE_REFERENCE ) {
-        talloc_reference * reference = talloc_reference_from_chunk ( parent_chunk );
-        parent_chunk                 = talloc_chunk_from_extensions ( reference->parent_extensions );
-        parent_context               = talloc_context_from_chunk ( parent_chunk );
     }
 
     talloc_chunk * child_chunk = talloc_chunk_from_context ( child_context );
-    if ( child_chunk->parent == parent_chunk ) {
-        return NULL;
+
+    if ( parent_context != NULL ) {
+        talloc_chunk * parent_chunk = talloc_chunk_from_context ( parent_context );
+        if ( parent_chunk->mode == TALLOC_MODE_REFERENCE ) {
+            talloc_reference * reference = talloc_reference_from_chunk ( parent_chunk );
+            parent_chunk                 = talloc_chunk_from_extensions ( reference->parent_extensions );
+            parent_context               = talloc_context_from_chunk ( parent_chunk );
+        }
+
+        if ( child_chunk->parent == parent_chunk ) {
+            return NULL;
+        }
     }
 
     talloc_reference * reference = allocator ( parent_context, length );

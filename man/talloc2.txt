@@ -29,6 +29,12 @@ SYNOPSIS
     char * talloc_strndup ( const talloc_context * parent_context, const char * str, size_t length );
     char * talloc_strdup  ( const talloc_context * parent_context, const char * str );
 
+*#include <talloc2/events.h>*
+
+    size_t talloc_get_chunks_count           ();
+    size_t talloc_get_chunks_overhead_length ();
+    size_t talloc_get_chunks_length          ();
+
 *#include <talloc2/extensions/destructor.h>*
 
     uint8_t talloc_clear_destructors          ( const talloc_context * chunk_context );
@@ -75,7 +81,8 @@ DESCRIPTION
 Talloc2 is a hierarchical memory allocator with some extensions.
 It is an alternative implementation of simplified talloc api.
 The main goal of the project is to minimize memory overhead.
-Size of usual chunk is 32-49 bytes, size of reference chunk is 57-65 on 64 bit system (depends on compiled features).
+Size of usual chunk is 32-49 bytes, size of reference chunk is 57-65 bytes on 64 bit system (depends on compiled features).
+Debug features will increase size of each chunk by 16 bytes.
 
 Implementation uses tree to store chunks, not graph. All important functions have O(1) complexity.
 Each chunk has one parent chunk, prev chunk, next chunk and child chunks list.
@@ -128,6 +135,7 @@ You can use talloc_context * to sign, that this pointer can be provided to tallo
 You can provide such function as a destructor. See talloc_add_destructor for more information.
 
 
+
 tree.h
 ------
 *talloc_context * talloc ( const talloc_context * parent_context, size_t length );*
@@ -137,11 +145,13 @@ If parent_context is NULL function will set new chunk as root independent chunk.
 Otherwise it will obtain parent chunk from parent_context and attach new chunk to parent chunk.
 parent_context can be both usual and reference.
 Function returns pointer to memory (with length size) or NULL if error occurred.
+Complexity is complexity of malloc + O(1).
 
 *talloc_context * talloc_zero ( const talloc_context * parent_context, size_t length );*
 
 Function works the same as "talloc".
 It will use calloc instead of malloc to allocate new chunk.
+Complexity is complexity of calloc + O(1).
 
 *talloc_context * talloc_new ( const talloc_context * parent_context );*
 
@@ -151,6 +161,7 @@ Otherwise it will obtain parent chunk from parent_context and attach new chunk t
 parent_context can be both usual and reference.
 Function returns pointer to memory (with zero size) or NULL if error occurred.
 This memory should not be used for storing information.
+Complexity is complexity of malloc + O(1).
 
 *uint8_t talloc_free ( const talloc_context * chunk_context );*
 
@@ -162,12 +173,15 @@ If chunk is reference it will be deleted. All it's destructors will be invoked.
 If linked usual chunk is root independent chunk and it has no references - it will be deleted. All it's destructors will be invoked.
 Function returns zero if delete operations were successful and non-zero value otherwise.
 Non-zero value meaning is "error code of the last failed operation". Function will not stop on errors.
+Complexity is complexity of free * number of deleted chunks + O(number of deleted chunks).
 
 *talloc_context * talloc_realloc ( const talloc_context * chunk_context, size_t length );*
 
 Function obtains chunk from chunk_context, uses realloc to change size of chunk from current_length to length.
 chunk_context can be both usual and reference.
 Function returns pointer to memory (with length size) or NULL if error occurred.
+If realloc changes memory pointer complexity will be complexity of realloc + O(number of linked chunks) + O(number of linked references);
+Otherwise complexity is complexity of realloc + O(1).
 
 *uint8_t talloc_move ( const talloc_context * child_context, const talloc_context * parent_context );*
 
@@ -175,6 +189,37 @@ Function obtains child chunk from child_context, parent chunk from parent_contex
 chunk_context and parent_context can be both usual and reference.
 Function detaches child chunk from it's parent and attaches it to new parent chunk.
 Function returns zero if move operation was successful and non-zero value otherwise.
+Complexity is O(1).
+
+*Example*
+
+    int main ()
+    {
+        talloc_context * root = talloc_new ( NULL );
+        if ( root == NULL ) {
+            return 1;
+        }
+        int16_t * numbers = talloc_zero ( root, sizeof ( int16_t ) * 5 );
+        char * string     = talloc      ( root, sizeof ( char ) * 10 );
+        if ( numbers == NULL || string == NULL ) {
+            talloc_free ( root );
+            return 2;
+        }
+        if ( talloc_move ( string, numbers ) != 0 ) {
+            talloc_free ( root );
+            return 3;
+        }
+        numbers = talloc_realloc ( numbers, sizeof ( int16_t ) * 3 );
+        string  = talloc_realloc ( string,  sizeof ( char ) * 20 );
+        if ( numbers == NULL || string == NULL ) {
+            talloc_free ( root );
+            return 4;
+        }
+        if ( talloc_free ( root ) != 0 ) {
+            return 5;
+        }
+        return 0;
+    }
 
 
 
@@ -186,6 +231,7 @@ Function makes duplicate from length bytes of str.
 If parent_context is NULL function will set new chunk as root independent chunk.
 Otherwise it will obtain parent chunk from parent_context and attach new chunk to parent chunk.
 Function returns pointer to memory (with length + 1 size) or NULL if error occurred.
+Complexity is complexity of talloc + complexity of memmove + O(1).
 
 *char * talloc_strdup ( const talloc_context * parent_context, const char * str );*
 
@@ -193,6 +239,66 @@ Function makes duplicate of str.
 If parent_context is NULL function will set new chunk as root independent chunk.
 Otherwise it will obtain parent chunk from parent_context and attach new chunk to parent chunk.
 Function returns pointer to memory (with strlen ( str ) + 1 size) or NULL if error occurred.
+Complexity is complexity of talloc_strndup.
+
+*Example*
+
+    int main ()
+    {
+        talloc_context * root = talloc_new ( NULL );
+        if ( root == NULL ) {
+            return 1;
+        }
+        char * string = talloc_strdup ( root, "Some test text." );
+        if ( string == NULL ) {
+            talloc_free ( root );
+            return 2;
+        }
+        char * text = talloc_strndup ( string, string + 10, 4 );
+        if ( text == NULL || strcmp ( text, "text" ) != 0 ) {
+            talloc_free ( root );
+            return 3;
+        }
+        if ( talloc_free ( root ) != 0 ) {
+            return 4;
+        }
+        return 0;
+    }
+
+
+
+talloc2/events.h
+----------------
+*size_t talloc_get_chunks_count ();*
+
+Function returns global count of chunks.
+
+*size_t talloc_get_chunks_overhead_length ();*
+
+Function returns global length used by chunk's controll structures.
+
+*size_t talloc_get_chunks_length ();*
+
+Function returns global usable for user length of chunks.
+
+*Example*
+
+    int main ()
+    {
+        ...
+        
+        #if defined(TALLOC_DEBUG)
+        if (
+            talloc_get_chunks_count()           != 0 ||
+            talloc_get_chunks_overhead_length() != 0 ||
+            talloc_get_chunks_length()          != 0
+            ) {
+            return 1;
+        }
+        #endif
+        
+        return 0;
+    }
 
 
 
@@ -204,30 +310,96 @@ If chunk_context is NULL function will return non-zero value.
 Otherwise function will obtain chunk from chunk_context and clear it's destructors list.
 Destructors will not be called.
 Function returns zero or non-zero value if error occurred.
+Complexity is complexity of free * number of destructors + O(number of destructors).
 
 *uint8_t talloc_add_destructor ( const talloc_context * chunk_context, talloc_destructor_function function, void * user_data );*
 
 If chunk_context is NULL function will return non-zero value.
 Otherwise function will obtain chunk from chunk_context, create destructor from function + user_data and add it to chunk's destructors list.
 Function returns zero or non-zero value if error occurred.
+Complexity is complexity of malloc + O(1).
 
 *uint8_t talloc_del_destructor ( const talloc_context * chunk_context, talloc_destructor_function function, void * user_data );*
 
 If chunk_context is NULL function will return non-zero value.
 Otherwise function will obtain chunk from chunk_context and delete destructor by function + user_data from it's destructors list.
 Function returns zero or non-zero value if error occurred.
+Complexity is complexity of free + O(number of linked destructors).
 
 *uint8_t talloc_del_destructor_by_function ( const talloc_context * chunk_context, talloc_destructor_function function );*
 
 If chunk_context is NULL function will return non-zero value.
 Otherwise function will obtain chunk from chunk_context and delete destructor by function from it's destructors list.
 Function returns zero or non-zero value if error occurred.
+Complexity is complexity of free + O(number of linked destructors).
 
 *uint8_t talloc_del_destructor_by_data ( const talloc_context * chunk_context, void * user_data );*
 
 If chunk_context is NULL function will return non-zero value.
 Otherwise function will obtain chunk from chunk_context and delete destructor by user_data from it's destructors list.
 Function returns zero or non-zero value if error occurred.
+Complexity is complexity of free + O(number of linked destructors).
+
+*Example*
+
+    uint8_t empty_destructor ( talloc_context * context, void * user_data )
+    {
+        return 0;
+    }
+
+    uint8_t bad_destructor ( talloc_context * context, void * user_data )
+    {
+        return 1;
+    }
+
+    uint8_t file_destructor ( talloc_context * context, void * user_data )
+    {
+        int file_descriptor = * ( ( int * ) context );
+        char * filename     = user_data;
+        printf ( "closing file %s\n", filename );
+        close ( file_descriptor );
+        return 0;
+    }
+
+    int main ()
+    {
+        talloc_context * root = talloc_new ( NULL );
+        if ( root == NULL ) {
+            return 1;
+        }
+        int * file_descriptor = talloc ( root, sizeof ( int ) );
+        if ( file_descriptor == NULL ) {
+            talloc_free ( root );
+            return 2;
+        }
+        char * filename = talloc_strdup ( file_descriptor, "/etc/fstab" );
+        * file_descriptor = open ( filename, O_RDONLY );
+        if ( * file_descriptor == -1 ) {
+            talloc_free ( root );
+            return 3;
+        }
+        if (
+            talloc_add_destructor ( file_descriptor, file_destructor,  filename ) != 0 ||
+            talloc_add_destructor ( file_descriptor, empty_destructor, filename ) != 0 ||
+            talloc_add_destructor ( file_descriptor, bad_destructor,   filename ) != 0 ||
+            talloc_add_destructor ( file_descriptor, empty_destructor, NULL )     != 0
+        ) {
+            talloc_free ( root );
+            return 4;
+        }
+        if (
+            talloc_del_destructor             ( file_descriptor, empty_destructor, filename ) != 0 ||
+            talloc_del_destructor_by_function ( file_descriptor, bad_destructor )             != 0 ||
+            talloc_del_destructor_by_data     ( file_descriptor, NULL )                       != 0
+        ) {
+            talloc_free ( root );
+            return 5;
+        }
+        if ( talloc_free ( root ) != 0 ) {
+            return 6;
+        }
+        return 0;
+    }
 
 
 
@@ -245,7 +417,7 @@ It will use calloc instead of malloc to allocate new reference.
 
 *talloc_context * talloc_add_reference ( const talloc_context * child_context, const talloc_context * parent_context );*
 
-If child_context is NULL or parent_context is NULL or child_context equals parent_context function will return non-zero value.
+If child_context is NULL or child_context equals parent_context function will return non-zero value.
 Function will obtain child chunk from child_context, parent chunk from parent_context.
 If child chunk's parent is parent chunk function will return non-zero value.
 Otherwise function will create reference to child_context and attach it to parent chunk.
@@ -257,6 +429,83 @@ This memory should not be used for storing information.
 If chunk_context is NULL function will return non-zero value.
 Otherwise function will obtain chunk from chunk_context and delete all it's references.
 Function returns zero or non-zero value if error occurred.
+
+*Example*
+
+    static inline
+    void random_sleep ()
+    {
+        uint miliseconds = ( ( double ) rand() ) / RAND_MAX * 300 + 100; // from 100 to 300 miliseconds
+        usleep ( miliseconds * 1000 );
+    }
+
+    void * thread_1 ( void * data )
+    {
+        char * common           = data;
+        void * common_reference = talloc_add_reference ( common, NULL );
+        if ( common_reference == NULL ) {
+            return ( void * ) 1;
+        }
+        random_sleep();
+        talloc_free ( common_reference ); // may free common
+        return ( void * ) 0;
+    }
+
+    void * thread_2 ( void * data )
+    {
+        char * common           = data;
+        void * common_reference = talloc_add_reference ( common, NULL );
+        if ( common_reference == NULL ) {
+            return ( void * ) 1;
+        }
+        random_sleep();
+        talloc_free ( common_reference ); // may free common
+        return ( void * ) 0;
+    }
+
+    int main ()
+    {
+        talloc_context * root = talloc_new ( NULL );
+        if ( root == NULL ) {
+            return 1;
+        }
+        char * common = talloc_strdup (
+            NULL,
+            "This is big data, that you dont want to duplicate."
+            "Different code needs it."
+            "You want it to be fried automaticaly when all code have finished it's processing."
+        );
+        if ( common == NULL ) {
+            talloc_free ( root );
+            return 2;
+        }
+
+        time_t seed = time ( NULL );
+        srand ( seed );
+
+        pthread_t thread_1_id, thread_2_id;
+        if (
+            pthread_create ( &thread_1_id, NULL, thread_1, common ) != 0 ||
+            pthread_create ( &thread_2_id, NULL, thread_2, common ) != 0
+        ) {
+            talloc_free ( root );
+            return 2;
+        }
+
+        void * result;
+        if (
+            pthread_join ( thread_1_id, &result ) != 0 || ( uint8_t ) result != 0 ||
+            pthread_join ( thread_2_id, &result ) != 0 || ( uint8_t ) result != 0
+        ) {
+            talloc_free ( root );
+            return 3;
+        }
+
+        if ( talloc_free ( root ) != 0 ) {
+            return 4;
+        }
+        return 0;
+    }
 
 
 

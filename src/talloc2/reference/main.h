@@ -16,7 +16,7 @@ talloc_context * talloc_add_reference_with_data ( const talloc_context * child_c
 // It will use calloc instead of malloc to allocate new reference.
 talloc_context * talloc_add_reference_with_zero_data ( const talloc_context * child_context, const talloc_context * parent_context, size_t length );
 
-// If child_context is NULL or parent_context is NULL or child_context equals parent_context function will return non-zero value.
+// If child_context is NULL or child_context equals parent_context function will return non-zero value.
 // Function will obtain child chunk from child_context, parent chunk from parent_context.
 // If child chunk's parent is parent chunk function will return non-zero value.
 // Otherwise function will create reference to child_context and attach it to parent chunk.

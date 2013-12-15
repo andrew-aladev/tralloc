@@ -25,7 +25,6 @@ bool test_shared ( const talloc_context * root )
     if (
         shared == NULL ||
         talloc_add_reference ( NULL, shared )   != NULL ||
-        talloc_add_reference ( shared, NULL )   != NULL ||
         talloc_add_reference ( NULL, NULL )     != NULL ||
         talloc_add_reference ( shared, shared ) != NULL ||
         talloc_add_reference ( shared, root )   != NULL
