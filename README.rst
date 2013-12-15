@@ -18,9 +18,10 @@ Debug build
 -----------
 
     ::
-    mkdir build && cd build
-    cmake .. -DTALLOC_EXAMPLES=ON
-    make test
+
+     $ mkdir build && cd build
+     $ cmake .. -DTALLOC_EXAMPLES=ON
+     $ make test
 
 
 Documentation
@@ -38,9 +39,10 @@ DEB and RPM
 -----------
 
     ::
-    mkdir build && cd build
-    cmake .. -DCMAKE_BUILD_TYPE=RELEASE
-    make test && make package
+    
+     $ mkdir build && cd build
+     $ cmake .. -DCMAKE_BUILD_TYPE=RELEASE
+     $ make test && make package
 
 
 LICENSE
