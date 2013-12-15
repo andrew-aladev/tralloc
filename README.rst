@@ -26,7 +26,7 @@ Debug build
 
 Documentation
 -------------
-Please read `man`_
+Please read `man`_.
 
 
 Gentoo
