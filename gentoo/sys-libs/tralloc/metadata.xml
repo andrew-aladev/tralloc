@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <herd>tralloc</herd>
+  <maintainer>
+    <email>aladjev.andrew@gmail.com</email>
+    <name>Andrew Aladjev</name>
+  </maintainer>
+  <longdescription>
+    Tralloc is a lightweight implementation of simplified talloc api.
+  </longdescription>
+  <use>
+    <flag name="debug">Enable extra features for testing</flag>
+    <flag name="shared-libs">Build shared libraries</flag>
+    <flag name="static-libs">Build static libraries</flag>
+    <flag name="man">Create man page</flag>
+    <flag name="test">Build and run tests</flag>
+
+    <flag name="tralloc_features_destructor">Enable destructor feature</flag>
+    <flag name="tralloc_features_reference">Enable reference feature</flag>
+    <flag name="tralloc_utils_buffer">Enable buffer utility</flag>
+    <flag name="tralloc_utils_dynarr">Enable dynamic array utility</flag>
+  </use>
+</pkgmetadata>

@@ -1,0 +1,607 @@
+TRALLOC(3)
+=========
+
+
+NAME
+----
+tralloc - Hierarchical memory allocator with some extensions.
+
+
+
+SYNOPSIS
+--------
+*#include <tralloc/types.h>*
+
+    typedef void tralloc_context;
+    typedef uint8_t ( * tralloc_destructor_function ) ( tralloc_context * chunk_context, void * user_data );
+    
+*#include <tralloc/tree.h>*
+
+    tralloc_context * tralloc         ( const tralloc_context * parent_context, size_t length );
+    tralloc_context * tralloc_zero    ( const tralloc_context * parent_context, size_t length );
+    tralloc_context * tralloc_new     ( const tralloc_context * parent_context );
+    tralloc_context * tralloc_realloc ( const tralloc_context * chunk_context, size_t length );
+    uint8_t           tralloc_move    ( const tralloc_context * child_context, const tralloc_context * parent_context );
+    uint8_t           tralloc_free    ( const tralloc_context * chunk_context );
+    
+*#include <tralloc/helpers.h>*
+
+    char * tralloc_strndup ( const tralloc_context * parent_context, const char * str, size_t length );
+    char * tralloc_strdup  ( const tralloc_context * parent_context, const char * str );
+
+*#include <tralloc/events.h>*
+
+    size_t tralloc_get_chunks_count           ();
+    size_t tralloc_get_chunks_overhead_length ();
+    size_t tralloc_get_chunks_length          ();
+
+*#include <tralloc/extensions/destructor.h>*
+
+    uint8_t tralloc_clear_destructors          ( const tralloc_context * chunk_context );
+    uint8_t tralloc_add_destructor             ( const tralloc_context * chunk_context, tralloc_destructor_function function, void * user_data );
+    uint8_t tralloc_del_destructor             ( const tralloc_context * chunk_context, tralloc_destructor_function function, void * user_data );
+    uint8_t tralloc_del_destructor_by_function ( const tralloc_context * chunk_context, tralloc_destructor_function function );
+    uint8_t tralloc_del_destructor_by_data     ( const tralloc_context * chunk_context, void * user_data );
+    
+*#include <tralloc/reference/main.h>*
+
+    tralloc_context * tralloc_add_reference                ( const tralloc_context * child_context, const tralloc_context * parent_context );
+    tralloc_context * tralloc_add_reference_with_data      ( const tralloc_context * child_context, const tralloc_context * parent_context, size_t length );
+    tralloc_context * tralloc_add_reference_with_zero_data ( const tralloc_context * child_context, const tralloc_context * parent_context, size_t length );
+    uint8_t           tralloc_clear_references             ( const tralloc_context * chunk_context );
+    
+*#include <tralloc/utils/dynarr.h>*
+
+    tralloc_dynarr * tralloc_dynarr_new           ( const tralloc_context * ctx, size_t capacity );
+    uint8_t          tralloc_dynarr_insert_before ( tralloc_dynarr * arr, size_t index, void * data );
+    uint8_t          tralloc_dynarr_insert_after  ( tralloc_dynarr * arr, size_t index, void * data );
+    uint8_t          tralloc_dynarr_grow_and_set  ( tralloc_dynarr * arr, size_t index, void * data );
+    void             tralloc_dynarr_set           ( tralloc_dynarr * arr, size_t index, void * data );
+    void *           tralloc_dynarr_get           ( const tralloc_dynarr * arr, size_t index );
+    size_t           tralloc_dynarr_get_length    ( const tralloc_dynarr * arr );
+    uint8_t          tralloc_dynarr_push          ( tralloc_dynarr * arr, void * data );
+    uint8_t          tralloc_dynarr_pop           ( tralloc_dynarr * arr );
+    uint8_t          tralloc_dynarr_delete        ( tralloc_dynarr * arr, size_t index );
+    
+*#include <tralloc/utils/buffer.h>*
+
+    tralloc_buffer * tralloc_buffer_new             ( const tralloc_context * ctx );
+    void             tralloc_buffer_written         ( tralloc_buffer * buffer, size_t length );
+    uint8_t          tralloc_buffer_readed          ( tralloc_buffer * buffer, size_t length );
+    uint8_t *        tralloc_buffer_get_read_point  ( const tralloc_buffer * buffer );
+    uint8_t *        tralloc_buffer_get_write_point ( const tralloc_buffer * buffer );
+    size_t           tralloc_buffer_get_length      ( const tralloc_buffer * buffer );
+    uint8_t          tralloc_buffer_prepare         ( tralloc_buffer * buffer, size_t length );
+    uint8_t          tralloc_buffer_trim            ( tralloc_buffer * buffer );
+
+
+
+DESCRIPTION
+-----------
+Tralloc (tree alloc) is a hierarchical memory allocator with some extensions.
+It is an alternative implementation of simplified talloc api.
+The main goal of the project is to minimize memory overhead.
+Size of usual chunk is 32-49 bytes, size of reference chunk is 57-65 bytes on 64 bit system (depends on compiled features).
+Debug features will increase size of each chunk by 16 bytes.
+
+Implementation uses tree to store chunks, not graph. All important functions have O(1) complexity.
+Each chunk has one parent chunk, prev chunk, next chunk and child chunks list.
+
+You can store data after each chunk.
+There is a data before each chunk : extensions or reference.
+Extensions store destructors and references lists.
+References store destructors, prev reference, next reference and related extensions.
+
+You can create, move, realloc and free any chunk.
+You can add reference chunk to any chunk. ( reference will be added to it's extensions. if you are adding reference to reference it will add reference to related extensions. )
+You can add destructors to any chunk.
+
+Deletion of chunk works as follows.
+If chunk is usual and it's references list is not empty - it with it's subtree will become root independent tree and delete operation will not proceed to it's children.
+Otherwise it will be deleted.
+If chunk is reference it will be deleted.
+If related chunk is a root of independent tree and it's references list is empty - it will be deleted.
+All chunk's destructors will be invoked on delete.
+
+
+
+WARNING
+-------
+Do not use tralloc on non-tralloc pointers.
+You will obtain unexpected behaviour.
+
+    char * a = malloc ( sizeof ( char ) * 5 );
+    tralloc_add_destructor ( a, destructor_function, NULL ); // unexpected behaviour
+
+Do not move reference to the subtree of it's related chunk.
+You can obtain a memory leak.
+
+    int * a     = tralloc ( NULL, sizeof( int ) );
+    int * b     = tralloc ( a,    sizeof( int ) );
+    int * b_ref = tralloc_add_reference ( b, a );
+    // tralloc_free ( a ); can't delete a, because it has references
+    tralloc_free ( b_ref ); tralloc_free ( a );
+
+
+
+types.h
+-------
+*typedef void tralloc_context;*
+
+You can use tralloc_context * to sign, that this pointer can be provided to tralloc functions.
+
+*typedef uint8_t ( * tralloc_destructor_function ) ( tralloc_context * chunk_context, void * user_data );*
+
+You can provide such function as a destructor. See tralloc_add_destructor for more information.
+
+
+
+tree.h
+------
+*tralloc_context * tralloc ( const tralloc_context * parent_context, size_t length );*
+
+Function uses malloc to allocate new chunk with size = sizeof ( chunk ) + length.
+If parent_context is NULL function will set new chunk as root independent chunk.
+Otherwise it will obtain parent chunk from parent_context and attach new chunk to parent chunk.
+parent_context can be both usual and reference.
+Function returns pointer to memory (with length size) or NULL if error occurred.
+Complexity is complexity of malloc + O(1).
+
+*tralloc_context * tralloc_zero ( const tralloc_context * parent_context, size_t length );*
+
+Function works the same as "tralloc".
+It will use calloc instead of malloc to allocate new chunk.
+Complexity is complexity of calloc + O(1).
+
+*tralloc_context * tralloc_new ( const tralloc_context * parent_context );*
+
+Function uses malloc to allocate new chunk with size = sizeof ( chunk ).
+If parent_context is NULL function will set new chunk as root independent chunk.
+Otherwise it will obtain parent chunk from parent_context and attach new chunk to parent chunk.
+parent_context can be both usual and reference.
+Function returns pointer to memory (with zero size) or NULL if error occurred.
+This memory should not be used for storing information.
+Complexity is complexity of malloc + O(1).
+
+*uint8_t tralloc_free ( const tralloc_context * chunk_context );*
+
+Function obtains chunk from chunk_context, detaches it from the tree and start delete operation on subtree starting from it.
+chunk_context can be both usual and reference.
+If chunk is usual and it has reference(s) - it will become root independent chunk and delete operation will not go to it's children.
+Otherwise it will be deleted. All it's destructors will be invoked.
+If chunk is reference it will be deleted. All it's destructors will be invoked.
+If linked usual chunk is root independent chunk and it has no references - it will be deleted. All it's destructors will be invoked.
+Function returns zero if delete operations were successful and non-zero value otherwise.
+Non-zero value meaning is "error code of the last failed operation". Function will not stop on errors.
+Complexity is complexity of free * number of deleted chunks + O(number of deleted chunks).
+
+*tralloc_context * tralloc_realloc ( const tralloc_context * chunk_context, size_t length );*
+
+Function obtains chunk from chunk_context, uses realloc to change size of chunk from current_length to length.
+chunk_context can be both usual and reference.
+Function returns pointer to memory (with length size) or NULL if error occurred.
+If realloc changes memory pointer complexity will be complexity of realloc + O(number of linked chunks) + O(number of linked references);
+Otherwise complexity is complexity of realloc + O(1).
+
+*uint8_t tralloc_move ( const tralloc_context * child_context, const tralloc_context * parent_context );*
+
+Function obtains child chunk from child_context, parent chunk from parent_context.
+chunk_context and parent_context can be both usual and reference.
+Function detaches child chunk from it's parent and attaches it to new parent chunk.
+Function returns zero if move operation was successful and non-zero value otherwise.
+Complexity is O(1).
+
+*Example*
+
+    int main ()
+    {
+        tralloc_context * root = tralloc_new ( NULL );
+        if ( root == NULL ) {
+            return 1;
+        }
+        int16_t * numbers = tralloc_zero ( root, sizeof ( int16_t ) * 5 );
+        char * string     = tralloc      ( root, sizeof ( char ) * 10 );
+        if ( numbers == NULL || string == NULL ) {
+            tralloc_free ( root );
+            return 2;
+        }
+        if ( tralloc_move ( string, numbers ) != 0 ) {
+            tralloc_free ( root );
+            return 3;
+        }
+        numbers = tralloc_realloc ( numbers, sizeof ( int16_t ) * 3 );
+        string  = tralloc_realloc ( string,  sizeof ( char ) * 20 );
+        if ( numbers == NULL || string == NULL ) {
+            tralloc_free ( root );
+            return 4;
+        }
+        if ( tralloc_free ( root ) != 0 ) {
+            return 5;
+        }
+        return 0;
+    }
+
+
+
+helpers.h
+---------
+*char * tralloc_strndup ( const tralloc_context * parent_context, const char * str, size_t length );*
+
+Function makes duplicate from length bytes of str.
+If parent_context is NULL function will set new chunk as root independent chunk.
+Otherwise it will obtain parent chunk from parent_context and attach new chunk to parent chunk.
+Function returns pointer to memory (with length + 1 size) or NULL if error occurred.
+Complexity is complexity of tralloc + complexity of memmove + O(1).
+
+*char * tralloc_strdup ( const tralloc_context * parent_context, const char * str );*
+
+Function makes duplicate of str.
+If parent_context is NULL function will set new chunk as root independent chunk.
+Otherwise it will obtain parent chunk from parent_context and attach new chunk to parent chunk.
+Function returns pointer to memory (with strlen ( str ) + 1 size) or NULL if error occurred.
+Complexity is complexity of tralloc_strndup.
+
+*Example*
+
+    int main ()
+    {
+        tralloc_context * root = tralloc_new ( NULL );
+        if ( root == NULL ) {
+            return 1;
+        }
+        char * string = tralloc_strdup ( root, "Some test text." );
+        if ( string == NULL ) {
+            tralloc_free ( root );
+            return 2;
+        }
+        char * text = tralloc_strndup ( string, string + 10, 4 );
+        if ( text == NULL || strcmp ( text, "text" ) != 0 ) {
+            tralloc_free ( root );
+            return 3;
+        }
+        if ( tralloc_free ( root ) != 0 ) {
+            return 4;
+        }
+        return 0;
+    }
+
+
+
+events.h
+----------------
+*size_t tralloc_get_chunks_count ();*
+
+Function returns global count of chunks.
+
+*size_t tralloc_get_chunks_overhead_length ();*
+
+Function returns global length used by chunk's controll structures.
+
+*size_t tralloc_get_chunks_length ();*
+
+Function returns global usable for user length of chunks.
+
+*Example*
+
+    int main ()
+    {
+        ...
+        
+        #if defined(TRALLOC_DEBUG)
+        if (
+            tralloc_get_chunks_count()           != 0 ||
+            tralloc_get_chunks_overhead_length() != 0 ||
+            tralloc_get_chunks_length()          != 0
+            ) {
+            return 1;
+        }
+        #endif
+        
+        return 0;
+    }
+
+
+
+extensions/destructor.h
+-----------------------
+*uint8_t tralloc_clear_destructors ( const tralloc_context * chunk_context );*
+
+If chunk_context is NULL function will return non-zero value.
+Otherwise function will obtain chunk from chunk_context and clear it's destructors list.
+Destructors will not be called.
+Function returns zero or non-zero value if error occurred.
+Complexity is complexity of free * number of destructors + O(number of destructors).
+
+*uint8_t tralloc_add_destructor ( const tralloc_context * chunk_context, tralloc_destructor_function function, void * user_data );*
+
+If chunk_context is NULL function will return non-zero value.
+Otherwise function will obtain chunk from chunk_context, create destructor from function + user_data and add it to chunk's destructors list.
+Function returns zero or non-zero value if error occurred.
+Complexity is complexity of malloc + O(1).
+
+*uint8_t tralloc_del_destructor ( const tralloc_context * chunk_context, tralloc_destructor_function function, void * user_data );*
+
+If chunk_context is NULL function will return non-zero value.
+Otherwise function will obtain chunk from chunk_context and delete destructor by function + user_data from it's destructors list.
+Function returns zero or non-zero value if error occurred.
+Complexity is complexity of free + O(number of linked destructors).
+
+*uint8_t tralloc_del_destructor_by_function ( const tralloc_context * chunk_context, tralloc_destructor_function function );*
+
+If chunk_context is NULL function will return non-zero value.
+Otherwise function will obtain chunk from chunk_context and delete destructor by function from it's destructors list.
+Function returns zero or non-zero value if error occurred.
+Complexity is complexity of free + O(number of linked destructors).
+
+*uint8_t tralloc_del_destructor_by_data ( const tralloc_context * chunk_context, void * user_data );*
+
+If chunk_context is NULL function will return non-zero value.
+Otherwise function will obtain chunk from chunk_context and delete destructor by user_data from it's destructors list.
+Function returns zero or non-zero value if error occurred.
+Complexity is complexity of free + O(number of linked destructors).
+
+*Example*
+
+    uint8_t empty_destructor ( tralloc_context * context, void * user_data )
+    {
+        return 0;
+    }
+
+    uint8_t bad_destructor ( tralloc_context * context, void * user_data )
+    {
+        return 1;
+    }
+
+    uint8_t file_destructor ( tralloc_context * context, void * user_data )
+    {
+        int file_descriptor = * ( ( int * ) context );
+        char * filename     = user_data;
+        printf ( "closing file %s\n", filename );
+        close ( file_descriptor );
+        return 0;
+    }
+
+    int main ()
+    {
+        tralloc_context * root = tralloc_new ( NULL );
+        if ( root == NULL ) {
+            return 1;
+        }
+        int * file_descriptor = tralloc ( root, sizeof ( int ) );
+        if ( file_descriptor == NULL ) {
+            tralloc_free ( root );
+            return 2;
+        }
+        char * filename = tralloc_strdup ( file_descriptor, "/etc/fstab" );
+        * file_descriptor = open ( filename, O_RDONLY );
+        if ( * file_descriptor == -1 ) {
+            tralloc_free ( root );
+            return 3;
+        }
+        if (
+            tralloc_add_destructor ( file_descriptor, file_destructor,  filename ) != 0 ||
+            tralloc_add_destructor ( file_descriptor, empty_destructor, filename ) != 0 ||
+            tralloc_add_destructor ( file_descriptor, bad_destructor,   filename ) != 0 ||
+            tralloc_add_destructor ( file_descriptor, empty_destructor, NULL )     != 0
+        ) {
+            tralloc_free ( root );
+            return 4;
+        }
+        if (
+            tralloc_del_destructor             ( file_descriptor, empty_destructor, filename ) != 0 ||
+            tralloc_del_destructor_by_function ( file_descriptor, bad_destructor )             != 0 ||
+            tralloc_del_destructor_by_data     ( file_descriptor, NULL )                       != 0
+        ) {
+            tralloc_free ( root );
+            return 5;
+        }
+        if ( tralloc_free ( root ) != 0 ) {
+            return 6;
+        }
+        return 0;
+    }
+
+
+
+reference/main.h
+----------------
+*tralloc_context * tralloc_add_reference_with_data ( const tralloc_context * child_context, const tralloc_context * parent_context, size_t length );*
+
+Function works the same as "tralloc_add_reference".
+Function returns pointer to memory (with length size) or NULL if error occurred.
+
+*tralloc_context * tralloc_add_reference_with_zero_data ( const tralloc_context * child_context, const tralloc_context * parent_context, size_t length );*
+
+Function works the same as "tralloc_add_reference_with_data".
+It will use calloc instead of malloc to allocate new reference.
+
+*tralloc_context * tralloc_add_reference ( const tralloc_context * child_context, const tralloc_context * parent_context );*
+
+If child_context is NULL or child_context equals parent_context function will return non-zero value.
+Function will obtain child chunk from child_context, parent chunk from parent_context.
+If child chunk's parent is parent chunk function will return non-zero value.
+Otherwise function will create reference to child_context and attach it to parent chunk.
+Function returns pointer to memory (with zero size) or NULL if error occurred.
+This memory should not be used for storing information.
+
+*uint8_t tralloc_clear_references ( const tralloc_context * chunk_context );*
+
+If chunk_context is NULL function will return non-zero value.
+Otherwise function will obtain chunk from chunk_context and delete all it's references.
+Function returns zero or non-zero value if error occurred.
+
+*Example*
+
+    static inline
+    void random_sleep ()
+    {
+        uint miliseconds = ( ( double ) rand() ) / RAND_MAX * 300 + 100; // from 100 to 300 miliseconds
+        usleep ( miliseconds * 1000 );
+    }
+
+    void * thread_1 ( void * data )
+    {
+        char * common           = data;
+        void * common_reference = tralloc_add_reference ( common, NULL );
+        if ( common_reference == NULL ) {
+            return ( void * ) 1;
+        }
+        random_sleep();
+        tralloc_free ( common_reference ); // may free common
+        return ( void * ) 0;
+    }
+
+    void * thread_2 ( void * data )
+    {
+        char * common           = data;
+        void * common_reference = tralloc_add_reference ( common, NULL );
+        if ( common_reference == NULL ) {
+            return ( void * ) 1;
+        }
+        random_sleep();
+        tralloc_free ( common_reference ); // may free common
+        return ( void * ) 0;
+    }
+
+    int main ()
+    {
+        tralloc_context * root = tralloc_new ( NULL );
+        if ( root == NULL ) {
+            return 1;
+        }
+        char * common = tralloc_strdup (
+            NULL,
+            "This is big data, that you dont want to duplicate."
+            "Different code needs it."
+            "You want it to be fried automaticaly when all code have finished it's processing."
+        );
+        if ( common == NULL ) {
+            tralloc_free ( root );
+            return 2;
+        }
+        time_t seed = time ( NULL );
+        srand ( seed );
+        pthread_t thread_1_id, thread_2_id;
+        if (
+            pthread_create ( &thread_1_id, NULL, thread_1, common ) != 0 ||
+            pthread_create ( &thread_2_id, NULL, thread_2, common ) != 0
+        ) {
+            tralloc_free ( root );
+            return 2;
+        }
+        void * result;
+        if (
+            pthread_join ( thread_1_id, &result ) != 0 || ( uint8_t ) result != 0 ||
+            pthread_join ( thread_2_id, &result ) != 0 || ( uint8_t ) result != 0
+        ) {
+            tralloc_free ( root );
+            return 3;
+        }
+        if ( tralloc_free ( root ) != 0 ) {
+            return 4;
+        }
+        return 0;
+    }
+
+
+
+utils/dynarr.h
+--------------
+*tralloc_dynarr * tralloc_dynarr_new ( const tralloc_context * ctx, size_t capacity );*
+
+Function creates new dynamic array with capacity and attaches it to ctx.
+Function returns pointer to tralloc_dynarr or NULL if error occurred.
+
+*uint8_t tralloc_dynarr_insert_before ( tralloc_dynarr * arr, size_t index, void * data );*
+
+Function inserts data before index position to arr.
+Function returns zero or non-zero value if error occurred.
+
+*uint8_t tralloc_dynarr_insert_after ( tralloc_dynarr * arr, size_t index, void * data );*
+
+Function inserts data after index position to arr.
+Function returns zero or non-zero value if error occurred.
+
+*uint8_t tralloc_dynarr_grow_and_set ( tralloc_dynarr * arr, size_t index, void * data );*
+
+Function grows arr to index + 1 position and sets data to index.
+Function returns zero or non-zero value if error occurred.
+
+*void tralloc_dynarr_set ( tralloc_dynarr * arr, size_t index, void * data );*
+
+Function sets data to index in arr.
+
+*void * tralloc_dynarr_get ( const tralloc_dynarr * arr, size_t index );*
+
+Function returns data from index in arr.
+
+*size_t tralloc_dynarr_get_length ( const tralloc_dynarr * arr );*
+
+Function returns length from arr.
+
+*uint8_t tralloc_dynarr_push ( tralloc_dynarr * arr, void * data );*
+
+Function pushes data to arr.
+Function returns zero or non-zero value if error occurred.
+
+*uint8_t tralloc_dynarr_pop ( tralloc_dynarr * arr );*
+
+Function deletes first data from arr.
+Function returns zero or non-zero value if error occurred.
+
+*uint8_t tralloc_dynarr_delete ( tralloc_dynarr * arr, size_t index );*
+
+Function deletes data from index in arr.
+Function returns zero or non-zero value if error occurred.
+
+
+
+utils/buffer.h
+--------------
+*tralloc_buffer * tralloc_buffer_new ( const tralloc_context * ctx );*
+
+Function creates new buffer and attaches it to ctx.
+Function returns pointer to tralloc_buffer or NULL if error occurred.
+
+*void tralloc_buffer_written ( tralloc_buffer * buffer, size_t length );*
+
+Function adds length written to buffer.
+
+*uint8_t tralloc_buffer_readed ( tralloc_buffer * buffer, size_t length );*
+
+Function deletes length readed from buffer.
+Function returns zero or non-zero value if error occurred.
+
+*uint8_t * tralloc_buffer_get_read_point ( const tralloc_buffer * buffer );*
+
+Function returns read point of buffer.
+
+*uint8_t * tralloc_buffer_get_write_point ( const tralloc_buffer * buffer );*
+
+Function returns write point of buffer.
+
+*size_t tralloc_buffer_get_length ( const tralloc_buffer * buffer );*
+
+Function returns length of buffer.
+
+*uint8_t tralloc_buffer_prepare ( tralloc_buffer * buffer, size_t length );*
+
+Function prepairs buffer for writing length bytes.
+Function returns zero or non-zero value if error occurred.
+
+*uint8_t tralloc_buffer_trim ( tralloc_buffer * buffer );*
+
+Function trims readed data and empty tail from buffer.
+Function returns zero or non-zero value if error occurred.
+
+
+
+SEE ALSO
+--------
+*talloc*(3)
+
+
+
+AUTHORS
+-------
+  Andrew Aladjev <aladjev.andrew@gmail.com>

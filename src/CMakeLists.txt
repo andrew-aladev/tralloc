@@ -1,2 +1,2 @@
-set (CURRENT_INCLUDEDIR "talloc2")
-add_subdirectory (talloc2)
+set (CURRENT_INCLUDEDIR "tralloc")
+add_subdirectory ("tralloc")

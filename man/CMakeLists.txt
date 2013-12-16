@@ -1,6 +1,6 @@
 find_package (Asciidoc REQUIRED)
-set (man     ${CMAKE_CURRENT_BINARY_DIR}/talloc2.3)
-set (man_src ${CMAKE_CURRENT_SOURCE_DIR}/talloc2.txt)
+set (man     ${CMAKE_CURRENT_BINARY_DIR}/tralloc.3)
+set (man_src ${CMAKE_CURRENT_SOURCE_DIR}/tralloc.txt)
 set (asciidoc_arguments -d manpage -f manpage -D ${CMAKE_CURRENT_BINARY_DIR} ${man_src})
 add_custom_command (
     OUTPUT  ${man}

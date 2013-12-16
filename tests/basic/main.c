@@ -1,60 +1,60 @@
-// This file is part of talloc2. Copyright (C) 2013 Andrew Aladjev aladjev.andrew@gmail.com
-// talloc2 is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
-// talloc2 is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
-// You should have received a copy of the GNU General Public License along with talloc2. If not, see <http://www.gnu.org/licenses/>.
+// This file is part of tralloc. Copyright (C) 2013 Andrew Aladjev aladjev.andrew@gmail.com
+// tralloc is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// tralloc is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
-#include <talloc2/tree.h>
+#include <tralloc/tree.h>
 
-#if defined(TALLOC_DEBUG)
-#include <talloc2/events.h>
+#if defined(TRALLOC_DEBUG)
+#include <tralloc/events.h>
 #endif
 
-#if defined(TALLOC_REFERENCE)
-#include <talloc2/reference/main.h>
+#if defined(TRALLOC_REFERENCE)
+#include <tralloc/reference/main.h>
 #endif
 
 #include <stdbool.h>
 #include <math.h>
 
-static talloc_context * root;
-static talloc_chunk   * root_chunk;
+static tralloc_context * root;
+static tralloc_chunk   * root_chunk;
 
-static uint8_t *      data_1;
-static talloc_chunk * data_1_chunk;
+static uint8_t *       data_1;
+static tralloc_chunk * data_1_chunk;
 
-static uint16_t *     data_2;
-static char *         data_3;
-static uint32_t *     data_4;
-static talloc_chunk * data_2_chunk;
-static talloc_chunk * data_3_chunk;
-static talloc_chunk * data_4_chunk;
+static uint16_t *      data_2;
+static char *          data_3;
+static uint32_t *      data_4;
+static tralloc_chunk * data_2_chunk;
+static tralloc_chunk * data_3_chunk;
+static tralloc_chunk * data_4_chunk;
 
-static size_t *       data_5;
-static double *       data_6;
-static float  *       data_7;
-static talloc_chunk * data_5_chunk;
-static talloc_chunk * data_6_chunk;
-static talloc_chunk * data_7_chunk;
+static size_t *        data_5;
+static double *        data_6;
+static float  *        data_7;
+static tralloc_chunk * data_5_chunk;
+static tralloc_chunk * data_6_chunk;
+static tralloc_chunk * data_7_chunk;
 
-static void *         trivium;
-static talloc_chunk * trivium_chunk;
+static void *          trivium;
+static tralloc_chunk * trivium_chunk;
 
-#if defined(TALLOC_REFERENCE)
-static void *         trivium_reference_1;
-static talloc_chunk * trivium_reference_1_chunk;
+#if defined(TRALLOC_REFERENCE)
+static void *          trivium_reference_1;
+static tralloc_chunk * trivium_reference_1_chunk;
 
-static uint16_t *     trivium_reference_2;
-static talloc_chunk * trivium_reference_2_chunk;
+static uint16_t *      trivium_reference_2;
+static tralloc_chunk * trivium_reference_2_chunk;
 
-static uint32_t *     trivium_reference_3;
-static talloc_chunk * trivium_reference_3_chunk;
+static uint32_t *      trivium_reference_3;
+static tralloc_chunk * trivium_reference_3_chunk;
 
-static int8_t *       data_8;
-static int16_t *      data_9;
-static int32_t *      data_10;
-static talloc_chunk * data_8_chunk;
-static talloc_chunk * data_9_chunk;
-static talloc_chunk * data_10_chunk;
+static int8_t *        data_8;
+static int16_t *       data_9;
+static int32_t *       data_10;
+static tralloc_chunk * data_8_chunk;
+static tralloc_chunk * data_9_chunk;
+static tralloc_chunk * data_10_chunk;
 #endif
 
 bool compare_float ( float a, float b )
@@ -85,20 +85,20 @@ trivium trivium_1 trivium_2 trivium_3
 
 bool test_alloc()
 {
-    root = talloc_new ( NULL );
+    root = tralloc_new ( NULL );
     if ( root == NULL ) {
         return false;
     }
 
-    data_1 = talloc ( root, sizeof ( uint8_t ) );
+    data_1 = tralloc ( root, sizeof ( uint8_t ) );
     if ( data_1 == NULL ) {
         return false;
     }
     * data_1 = 123;
 
-    data_2 = talloc_zero ( data_1, sizeof ( uint16_t ) * 4 );
-    data_3 = talloc      ( data_1, sizeof ( char ) * 3 );
-    data_4 = talloc_zero ( data_1, sizeof ( uint32_t ) * 2 );
+    data_2 = tralloc_zero ( data_1, sizeof ( uint16_t ) * 4 );
+    data_3 = tralloc      ( data_1, sizeof ( char ) * 3 );
+    data_4 = tralloc_zero ( data_1, sizeof ( uint32_t ) * 2 );
     if (
         data_2 == NULL || data_2[0] != 0 || data_2[1] != 0 || data_2[2] != 0 || data_2[3] != 0 ||
         data_3 == NULL ||
@@ -118,9 +118,9 @@ bool test_alloc()
     data_4[0] = 12345;
     data_4[1] = 67890;
 
-    data_5 = talloc      ( data_3, sizeof ( size_t ) * 3 );
-    data_6 = talloc_zero ( data_3, sizeof ( double ) );
-    data_7 = talloc      ( data_3, sizeof ( float ) * 2 );
+    data_5 = tralloc      ( data_3, sizeof ( size_t ) * 3 );
+    data_6 = tralloc_zero ( data_3, sizeof ( double ) );
+    data_7 = tralloc      ( data_3, sizeof ( float ) * 2 );
     if (
         data_5 == NULL ||
         data_6 == NULL || * data_6 != 0 ||
@@ -137,15 +137,15 @@ bool test_alloc()
     data_7[0] = 0.01234;
     data_7[1] = 0.56789;
 
-    trivium = talloc_new ( data_7 );
+    trivium = tralloc_new ( data_7 );
     if ( trivium == NULL ) {
         return false;
     }
 
-#if defined(TALLOC_REFERENCE)
-    trivium_reference_1 = talloc_add_reference                ( trivium, data_6 );
-    trivium_reference_2 = talloc_add_reference_with_data      ( trivium, data_5, sizeof ( uint16_t ) * 2 );
-    trivium_reference_3 = talloc_add_reference_with_zero_data ( trivium, trivium_reference_2, sizeof ( uint32_t ) );
+#if defined(TRALLOC_REFERENCE)
+    trivium_reference_1 = tralloc_add_reference                ( trivium, data_6 );
+    trivium_reference_2 = tralloc_add_reference_with_data      ( trivium, data_5, sizeof ( uint16_t ) * 2 );
+    trivium_reference_3 = tralloc_add_reference_with_zero_data ( trivium, trivium_reference_2, sizeof ( uint32_t ) );
     if (
         trivium_reference_1 == NULL ||
         trivium_reference_2 == NULL ||
@@ -159,9 +159,9 @@ bool test_alloc()
 
     * trivium_reference_3 = 500000;
 
-    data_8  = talloc      ( trivium_reference_1, sizeof ( int8_t ) * 2 );
-    data_9  = talloc      ( data_8, sizeof ( int16_t ) * 3 );
-    data_10 = talloc_zero ( data_8, sizeof ( int32_t ) * 2 );
+    data_8  = tralloc      ( trivium_reference_1, sizeof ( int8_t ) * 2 );
+    data_9  = tralloc      ( data_8, sizeof ( int16_t ) * 3 );
+    data_10 = tralloc_zero ( data_8, sizeof ( int32_t ) * 2 );
     if (
         data_8  == NULL ||
         data_9  == NULL ||
@@ -185,19 +185,19 @@ bool test_alloc()
 
 bool test_realloc ()
 {
-    void * null = talloc_realloc ( NULL, 1 );
+    void * null = tralloc_realloc ( NULL, 1 );
     if ( null != NULL ) {
         return false;
     }
 
-    data_1 = talloc_realloc ( data_1, sizeof ( uint8_t ) * 2 );
+    data_1 = tralloc_realloc ( data_1, sizeof ( uint8_t ) * 2 );
     if ( data_1 == NULL || data_1[0] != 123 ) {
         return false;
     }
 
-    data_2 = talloc_realloc ( data_2, sizeof ( uint16_t ) * 20 );
-    data_3 = talloc_realloc ( data_3, sizeof ( char ) );
-    data_4 = talloc_realloc ( data_4, sizeof ( uint32_t ) * 30 );
+    data_2 = tralloc_realloc ( data_2, sizeof ( uint16_t ) * 20 );
+    data_3 = tralloc_realloc ( data_3, sizeof ( char ) );
+    data_4 = tralloc_realloc ( data_4, sizeof ( uint32_t ) * 30 );
     if (
         data_2 == NULL || data_2[0] != 012   || data_2[1] != 345 || data_2[2] != 678 || data_2[3] != 901 ||
         data_3 == NULL || * data_3 != 'q'    ||
@@ -206,9 +206,9 @@ bool test_realloc ()
         return false;
     }
 
-    data_5 = talloc_realloc ( data_5, sizeof ( size_t ) * 2 );
-    data_6 = talloc_realloc ( data_6, sizeof ( double ) * 10 );
-    data_7 = talloc_realloc ( data_7, sizeof ( float ) );
+    data_5 = tralloc_realloc ( data_5, sizeof ( size_t ) * 2 );
+    data_6 = tralloc_realloc ( data_6, sizeof ( double ) * 10 );
+    data_7 = tralloc_realloc ( data_7, sizeof ( float ) );
     if (
         data_5 == NULL || data_5[0] != 123456789 || data_5[1] != 987654321 ||
         data_6 == NULL || !compare_double ( data_6[0], 0.0123456789 ) ||
@@ -217,10 +217,10 @@ bool test_realloc ()
         return false;
     }
 
-#if defined(TALLOC_REFERENCE)
-    trivium_reference_1 = talloc_realloc ( trivium_reference_1, sizeof ( float ) * 20 );
-    trivium_reference_2 = talloc_realloc ( trivium_reference_2, sizeof ( uint16_t ) );
-    trivium_reference_3 = talloc_realloc ( trivium_reference_3, sizeof ( uint32_t ) * 10 );
+#if defined(TRALLOC_REFERENCE)
+    trivium_reference_1 = tralloc_realloc ( trivium_reference_1, sizeof ( float ) * 20 );
+    trivium_reference_2 = tralloc_realloc ( trivium_reference_2, sizeof ( uint16_t ) );
+    trivium_reference_3 = tralloc_realloc ( trivium_reference_3, sizeof ( uint32_t ) * 10 );
     if (
         trivium_reference_1 == NULL ||
         trivium_reference_2 == NULL || * trivium_reference_2  != 3000 ||
@@ -229,9 +229,9 @@ bool test_realloc ()
         return false;
     }
 
-    data_8  = talloc_realloc ( data_8,  sizeof ( int8_t ) );
-    data_9  = talloc_realloc ( data_9,  sizeof ( int16_t ) * 2 );
-    data_10 = talloc_realloc ( data_10, sizeof ( int32_t ) );
+    data_8  = tralloc_realloc ( data_8,  sizeof ( int8_t ) );
+    data_9  = tralloc_realloc ( data_9,  sizeof ( int16_t ) * 2 );
+    data_10 = tralloc_realloc ( data_10, sizeof ( int32_t ) );
     if (
         data_8  == NULL || data_8[0]  != - 1    ||
         data_9  == NULL || data_9[0]  != 4000   || data_9[1] != - 5000 ||
@@ -241,23 +241,23 @@ bool test_realloc ()
     }
 #endif
 
-    root_chunk    = talloc_chunk_from_context ( root );
-    data_1_chunk  = talloc_chunk_from_context ( data_1 );
-    data_2_chunk  = talloc_chunk_from_context ( data_2 );
-    data_3_chunk  = talloc_chunk_from_context ( data_3 );
-    data_4_chunk  = talloc_chunk_from_context ( data_4 );
-    data_5_chunk  = talloc_chunk_from_context ( data_5 );
-    data_6_chunk  = talloc_chunk_from_context ( data_6 );
-    data_7_chunk  = talloc_chunk_from_context ( data_7 );
-    trivium_chunk = talloc_chunk_from_context ( trivium );
+    root_chunk    = tralloc_chunk_from_context ( root );
+    data_1_chunk  = tralloc_chunk_from_context ( data_1 );
+    data_2_chunk  = tralloc_chunk_from_context ( data_2 );
+    data_3_chunk  = tralloc_chunk_from_context ( data_3 );
+    data_4_chunk  = tralloc_chunk_from_context ( data_4 );
+    data_5_chunk  = tralloc_chunk_from_context ( data_5 );
+    data_6_chunk  = tralloc_chunk_from_context ( data_6 );
+    data_7_chunk  = tralloc_chunk_from_context ( data_7 );
+    trivium_chunk = tralloc_chunk_from_context ( trivium );
 
-#if defined(TALLOC_REFERENCE)
-    trivium_reference_1_chunk = talloc_chunk_from_context ( trivium_reference_1 );
-    trivium_reference_2_chunk = talloc_chunk_from_context ( trivium_reference_2 );
-    trivium_reference_3_chunk = talloc_chunk_from_context ( trivium_reference_3 );
-    data_8_chunk              = talloc_chunk_from_context ( data_8 );
-    data_9_chunk              = talloc_chunk_from_context ( data_9 );
-    data_10_chunk             = talloc_chunk_from_context ( data_10 );
+#if defined(TRALLOC_REFERENCE)
+    trivium_reference_1_chunk = tralloc_chunk_from_context ( trivium_reference_1 );
+    trivium_reference_2_chunk = tralloc_chunk_from_context ( trivium_reference_2 );
+    trivium_reference_3_chunk = tralloc_chunk_from_context ( trivium_reference_3 );
+    data_8_chunk              = tralloc_chunk_from_context ( data_8 );
+    data_9_chunk              = tralloc_chunk_from_context ( data_9 );
+    data_10_chunk             = tralloc_chunk_from_context ( data_10 );
 #endif
 
     return true;
@@ -266,30 +266,30 @@ bool test_realloc ()
 bool test_move ()
 {
     if (
-        talloc_move ( data_3, data_4 ) != 0            ||
-        data_3_chunk->parent           != data_4_chunk ||
+        tralloc_move ( data_3, data_4 ) != 0            ||
+        data_3_chunk->parent            != data_4_chunk ||
 
-        talloc_move ( data_3, data_4 ) != 0 ||
+        tralloc_move ( data_3, data_4 ) != 0 ||
 
-        talloc_move ( data_3, NULL ) != 0    ||
-        data_3_chunk->parent         != NULL ||
+        tralloc_move ( data_3, NULL ) != 0    ||
+        data_3_chunk->parent          != NULL ||
 
-        talloc_move ( data_3, NULL ) != 0 ||
+        tralloc_move ( data_3, NULL ) != 0 ||
 
-        talloc_move ( data_3, data_1 ) != 0 ||
-        data_3_chunk->parent           != data_1_chunk
+        tralloc_move ( data_3, data_1 ) != 0 ||
+        data_3_chunk->parent            != data_1_chunk
     ) {
         return false;
     }
 
-#if defined(TALLOC_REFERENCE)
+#if defined(TRALLOC_REFERENCE)
     if (
-        talloc_move ( trivium_reference_1, NULL )   != 0 ||
-        talloc_move ( trivium_reference_1, data_5 ) != 0 ||
-        trivium_reference_1_chunk->parent           != data_5_chunk ||
+        tralloc_move ( trivium_reference_1, NULL )   != 0 ||
+        tralloc_move ( trivium_reference_1, data_5 ) != 0 ||
+        trivium_reference_1_chunk->parent            != data_5_chunk ||
 
-        talloc_move ( trivium_reference_3, data_6 ) != 0 ||
-        trivium_reference_3_chunk->parent           != data_6_chunk
+        tralloc_move ( trivium_reference_3, data_6 ) != 0 ||
+        trivium_reference_3_chunk->parent            != data_6_chunk
     ) {
         return false;
     }
@@ -363,7 +363,7 @@ bool test_chunks ()
         return false;
     }
 
-#if defined(TALLOC_REFERENCE)
+#if defined(TRALLOC_REFERENCE)
     if (
         data_5_chunk->first_child != trivium_reference_1_chunk ||
         data_6_chunk->first_child != trivium_reference_3_chunk ||
@@ -424,7 +424,7 @@ bool test_chunks ()
         trivium_3 trivium_2
 */
 
-#if defined(TALLOC_REFERENCE)
+#if defined(TRALLOC_REFERENCE)
 bool test_chunks_without_trivium_and_first_reference ()
 {
     if (
@@ -528,54 +528,54 @@ bool test_chunks_without_data_3 ()
 int main ()
 {
     if ( !test_alloc() ) {
-        talloc_free ( root );
+        tralloc_free ( root );
         return 1;
     }
     if ( !test_realloc() ) {
-        talloc_free ( root );
+        tralloc_free ( root );
         return 2;
     }
     if ( !test_move() ) {
-        talloc_free ( root );
+        tralloc_free ( root );
         return 3;
     }
     if ( !test_chunks() ) {
-        talloc_free ( root );
+        tralloc_free ( root );
         return 4;
     }
 
-#if defined(TALLOC_REFERENCE)
+#if defined(TRALLOC_REFERENCE)
     if (
-        talloc_free ( trivium )             != 0 ||
-        talloc_free ( trivium_reference_1 ) != 0
+        tralloc_free ( trivium )             != 0 ||
+        tralloc_free ( trivium_reference_1 ) != 0
     ) {
-        talloc_free ( root );
+        tralloc_free ( root );
         return 5;
     }
     if ( !test_chunks_without_trivium_and_first_reference() ) {
-        talloc_free ( root );
+        tralloc_free ( root );
         return 6;
     }
 #endif
 
-    if ( talloc_free ( data_3 ) != 0 ) {
-        talloc_free ( root );
+    if ( tralloc_free ( data_3 ) != 0 ) {
+        tralloc_free ( root );
         return 7;
     }
     if ( !test_chunks_without_data_3() ) {
-        talloc_free ( root );
+        tralloc_free ( root );
         return 8;
     }
 
-    if ( talloc_free ( root ) != 0 ) {
+    if ( tralloc_free ( root ) != 0 ) {
         return 9;
     }
 
-#if defined(TALLOC_DEBUG)
+#if defined(TRALLOC_DEBUG)
     if (
-        talloc_get_chunks_count()           != 0 ||
-        talloc_get_chunks_overhead_length() != 0 ||
-        talloc_get_chunks_length()          != 0
+        tralloc_get_chunks_count()           != 0 ||
+        tralloc_get_chunks_overhead_length() != 0 ||
+        tralloc_get_chunks_length()          != 0
     ) {
         return 10;
     }

@@ -1,0 +1,7 @@
+#cmakedefine TRALLOC_DEBUG
+#cmakedefine TRALLOC_EXTENSIONS
+#cmakedefine TRALLOC_DESTRUCTOR
+#cmakedefine TRALLOC_REFERENCE
+#cmakedefine TRALLOC_UTILS_BUFFER
+#cmakedefine TRALLOC_UTILS_DYNARR
+#cmakedefine TRALLOC_UTILS

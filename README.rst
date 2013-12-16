@@ -1,7 +1,7 @@
-Hierarchical memory allocator Talloc2
+Hierarchical memory allocator Tralloc
 =====================================
 
-Talloc2 is a hierarchical memory allocator with some extensions. It is an alternative implementation of simplified talloc api.
+Tralloc (tree alloc) is a hierarchical memory allocator with some extensions. It is an alternative implementation of simplified `talloc`_ api.
 
 The main goal of the project is to minimize memory overhead.
 Size of usual chunk is 32-49 bytes, size of reference chunk is 57-65 bytes on 64 bit system (depends on compiled features).
@@ -20,7 +20,7 @@ Debug build
     ::
 
      $ mkdir build && cd build
-     $ cmake .. -DTALLOC_EXAMPLES=ON
+     $ cmake .. -DTRALLOC_EXAMPLES=ON
      $ make test
 
 
@@ -50,5 +50,6 @@ LICENSE
 LGPL v3+
 
 
-.. _man:     https://github.com/andrew-aladev/talloc2/blob/master/man/talloc2.txt
-.. _overlay: https://github.com/andrew-aladev/puchuu-overlay
+.. _talloc  : http://talloc.samba.org/talloc/doc/html/group__talloc.html
+.. _man     : https://github.com/andrew-aladev/tralloc/blob/master/man/tralloc.txt
+.. _overlay : https://github.com/andrew-aladev/puchuu-overlay
