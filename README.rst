@@ -50,6 +50,6 @@ LICENSE
 LGPL v3+
 
 
-.. _talloc  : http://talloc.samba.org/talloc/doc/html/group__talloc.html
-.. _man     : https://github.com/andrew-aladev/tralloc/blob/master/man/tralloc.txt
-.. _overlay : https://github.com/andrew-aladev/puchuu-overlay
+.. _talloc:  http://talloc.samba.org/talloc/doc/html/group__talloc.html
+.. _man:     https://github.com/andrew-aladev/tralloc/blob/master/man/tralloc.txt
+.. _overlay: https://github.com/andrew-aladev/puchuu-overlay
