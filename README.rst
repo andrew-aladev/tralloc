@@ -21,7 +21,7 @@ Debug build
 
      $ mkdir build && cd build
      $ cmake .. -DTRALLOC_EXAMPLES=ON
-     $ make test
+     $ make && make test
 
 
 Documentation
@@ -42,7 +42,7 @@ DEB and RPM
     
      $ mkdir build && cd build
      $ cmake .. -DCMAKE_BUILD_TYPE=RELEASE
-     $ make test && make package
+     $ make && make test && make package
 
 
 LICENSE

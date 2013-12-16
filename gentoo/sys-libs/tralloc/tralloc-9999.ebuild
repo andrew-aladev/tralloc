@@ -41,11 +41,11 @@ src_configure() {
         $(cmake-utils_use man         TRALLOC_MAN)
         $(cmake-utils_use test        TRALLOC_TEST)
         
-        $(cmake-utils_use tralloc2_features_destructor TRALLOC_DESTRUCTOR)
-        $(cmake-utils_use tralloc2_features_reference  TRALLOC_REFERENCE)
+        $(cmake-utils_use tralloc_features_destructor TRALLOC_DESTRUCTOR)
+        $(cmake-utils_use tralloc_features_reference  TRALLOC_REFERENCE)
         
-        $(cmake-utils_use tralloc2_utils_buffer TRALLOC_UTILS_BUFFER)
-        $(cmake-utils_use tralloc2_utils_dynarr TRALLOC_UTILS_DYNARR)
+        $(cmake-utils_use tralloc_utils_buffer TRALLOC_UTILS_BUFFER)
+        $(cmake-utils_use tralloc_utils_dynarr TRALLOC_UTILS_DYNARR)
     )
     cmake-utils_src_configure
 }
