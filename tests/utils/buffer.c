@@ -34,7 +34,7 @@ bool test_buffer ( const tralloc_context * root )
     buf[1] = '4';
     tralloc_buffer_written ( buffer, 2 );
 
-    if ( tralloc_buffer_prepare ( buffer, 10 ) != 0 ) {
+    if ( tralloc_buffer_prepare ( buffer, 5 ) != 0 ) {
         tralloc_free ( buffer );
         return false;
     }
@@ -44,7 +44,7 @@ bool test_buffer ( const tralloc_context * root )
 
     if (
         tralloc_buffer_get_length ( buffer ) != 6 ||
-        buffer->length != 15
+        buffer->length != 10
     ) {
         tralloc_free ( buffer );
         return false;
@@ -67,9 +67,9 @@ bool test_buffer ( const tralloc_context * root )
     }
 
     if (
-        buffer->data_offset != 0 ||
+        buffer->data_offset != 0  ||
+        buffer->length      != 10 ||
         tralloc_buffer_get_length ( buffer ) != 10 ||
-        buffer->length != 10 ||
         strncmp ( ( char * ) tralloc_buffer_get_read_point ( buffer ), "0123456789", 10 ) != 0
     ) {
         tralloc_free ( buffer );
@@ -82,9 +82,9 @@ bool test_buffer ( const tralloc_context * root )
     }
 
     if (
-        buffer->data_offset != 4 ||
+        buffer->data_offset != 4  ||
+        buffer->length      != 10 ||
         tralloc_buffer_get_length ( buffer ) != 6 ||
-        buffer->length != 10 ||
         strncmp ( ( char * ) tralloc_buffer_get_read_point ( buffer ), "456789", 6 ) != 0
     ) {
         tralloc_free ( buffer );
@@ -101,9 +101,21 @@ bool test_buffer ( const tralloc_context * root )
 
     if (
         buffer->data_offset != 0 ||
+        buffer->length      != 5 ||
         tralloc_buffer_get_length ( buffer ) != 5 ||
-        buffer->length != 5 ||
         strncmp ( ( char * ) tralloc_buffer_get_read_point ( buffer ), "56789", 5 ) != 0
+    ) {
+        tralloc_free ( buffer );
+        return false;
+    }
+
+    if (
+        tralloc_buffer_readed ( buffer, 5 )  != 0 ||
+        tralloc_buffer_trim ( buffer )       != 0 ||
+        tralloc_buffer_get_length ( buffer ) != 0 ||
+        buffer->data_offset != 0 ||
+        buffer->length      != 0 ||
+        buffer->buf         != NULL
     ) {
         tralloc_free ( buffer );
         return false;

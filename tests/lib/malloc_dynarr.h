@@ -13,7 +13,6 @@
 #include <stdbool.h>
 
 // this was implemented to store history of tralloc events
-// tralloc_dynarr cannot be used, because it will do self-excitation
 
 typedef void ( * free_item ) ( void * item );
 

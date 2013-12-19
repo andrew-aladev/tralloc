@@ -21,7 +21,7 @@ for feature in ${IUSE_FEATURES}; do
     IUSE="${IUSE} tralloc_features_${feature}"
 done
 
-IUSE_UTILS="buffer dynarr"
+IUSE_UTILS="buffer"
 for util in ${IUSE_UTILS}; do
     IUSE="${IUSE} tralloc_utils_${util}"
 done
@@ -45,7 +45,6 @@ src_configure() {
         $(cmake-utils_use tralloc_features_reference  TRALLOC_REFERENCE)
         
         $(cmake-utils_use tralloc_utils_buffer TRALLOC_UTILS_BUFFER)
-        $(cmake-utils_use tralloc_utils_dynarr TRALLOC_UTILS_DYNARR)
     )
     cmake-utils_src_configure
 }

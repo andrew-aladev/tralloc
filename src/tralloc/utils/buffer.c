@@ -47,8 +47,14 @@ uint8_t tralloc_buffer_trim ( tralloc_buffer * buffer )
         return 0;
     }
 
-    size_t data_length = buffer->data_length;
-    if ( data_length == 0 ) {
+    size_t data_offset = buffer->data_offset;
+    if ( data_offset == 0 ) {
+        return 0;
+    }
+
+    size_t length = buffer->length;
+    length        -= data_offset;
+    if ( length == 0 ) {
         if ( tralloc_free ( buf ) != 0 ) {
             return 1;
         }
@@ -58,20 +64,11 @@ uint8_t tralloc_buffer_trim ( tralloc_buffer * buffer )
         return 0;
     }
 
-    size_t data_offset = buffer->data_offset;
-    if ( data_offset != 0 ) {
-        memmove ( buf, buf + data_offset, data_length );
-        buffer->data_offset = 0;
-    }
+    size_t data_length = buffer->data_length;
+    memmove ( buf, buf + data_offset, data_length );
+    buffer->data_offset = 0;
+    buffer->length      = length;
 
-    uint8_t * new_buf = tralloc_realloc ( buf, sizeof ( uint8_t ) * data_length );
-    if ( new_buf == NULL ) {
-        return 2;
-    }
-    if ( new_buf != buf ) {
-        buffer->buf = new_buf;
-    }
-    buffer->length = data_length;
     return 0;
 }
 

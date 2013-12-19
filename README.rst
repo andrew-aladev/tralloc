@@ -8,6 +8,11 @@ Size of usual chunk is 32-49 bytes, size of reference chunk is 57-65 bytes on 64
 Debug features will increase size of each chunk by 16 bytes.
 
 
+TODO
+----
+Thread safety, pool, more helper functions.
+
+
 Supported platforms
 -------------------
 

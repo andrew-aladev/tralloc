@@ -76,7 +76,7 @@ size_t tralloc_buffer_get_length ( const tralloc_buffer * buffer )
 // Function returns zero or non-zero value if error occurred.
 uint8_t tralloc_buffer_prepare ( tralloc_buffer * buffer, size_t length );
 
-// Function trims readed data and empty tail from buffer.
+// Function trims readed data from buffer.
 // Function returns zero or non-zero value if error occurred.
 uint8_t tralloc_buffer_trim ( tralloc_buffer * buffer );
 

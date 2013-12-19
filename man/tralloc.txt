@@ -50,19 +50,6 @@ SYNOPSIS
     tralloc_context * tralloc_add_reference_with_zero_data ( const tralloc_context * child_context, const tralloc_context * parent_context, size_t length );
     uint8_t           tralloc_clear_references             ( const tralloc_context * chunk_context );
     
-*#include <tralloc/utils/dynarr.h>*
-
-    tralloc_dynarr * tralloc_dynarr_new           ( const tralloc_context * ctx, size_t capacity );
-    uint8_t          tralloc_dynarr_insert_before ( tralloc_dynarr * arr, size_t index, void * data );
-    uint8_t          tralloc_dynarr_insert_after  ( tralloc_dynarr * arr, size_t index, void * data );
-    uint8_t          tralloc_dynarr_grow_and_set  ( tralloc_dynarr * arr, size_t index, void * data );
-    void             tralloc_dynarr_set           ( tralloc_dynarr * arr, size_t index, void * data );
-    void *           tralloc_dynarr_get           ( const tralloc_dynarr * arr, size_t index );
-    size_t           tralloc_dynarr_get_length    ( const tralloc_dynarr * arr );
-    uint8_t          tralloc_dynarr_push          ( tralloc_dynarr * arr, void * data );
-    uint8_t          tralloc_dynarr_pop           ( tralloc_dynarr * arr );
-    uint8_t          tralloc_dynarr_delete        ( tralloc_dynarr * arr, size_t index );
-    
 *#include <tralloc/utils/buffer.h>*
 
     tralloc_buffer * tralloc_buffer_new             ( const tralloc_context * ctx );
@@ -473,57 +460,6 @@ Function returns zero or non-zero value if error occurred.
 
 
 
-utils/dynarr.h
---------------
-*tralloc_dynarr * tralloc_dynarr_new ( const tralloc_context * ctx, size_t capacity );*
-
-Function creates new dynamic array with capacity and attaches it to ctx.
-Function returns pointer to tralloc_dynarr or NULL if error occurred.
-
-*uint8_t tralloc_dynarr_insert_before ( tralloc_dynarr * arr, size_t index, void * data );*
-
-Function inserts data before index position to arr.
-Function returns zero or non-zero value if error occurred.
-
-*uint8_t tralloc_dynarr_insert_after ( tralloc_dynarr * arr, size_t index, void * data );*
-
-Function inserts data after index position to arr.
-Function returns zero or non-zero value if error occurred.
-
-*uint8_t tralloc_dynarr_grow_and_set ( tralloc_dynarr * arr, size_t index, void * data );*
-
-Function grows arr to index + 1 position and sets data to index.
-Function returns zero or non-zero value if error occurred.
-
-*void tralloc_dynarr_set ( tralloc_dynarr * arr, size_t index, void * data );*
-
-Function sets data to index in arr.
-
-*void * tralloc_dynarr_get ( const tralloc_dynarr * arr, size_t index );*
-
-Function returns data from index in arr.
-
-*size_t tralloc_dynarr_get_length ( const tralloc_dynarr * arr );*
-
-Function returns length from arr.
-
-*uint8_t tralloc_dynarr_push ( tralloc_dynarr * arr, void * data );*
-
-Function pushes data to arr.
-Function returns zero or non-zero value if error occurred.
-
-*uint8_t tralloc_dynarr_pop ( tralloc_dynarr * arr );*
-
-Function deletes first data from arr.
-Function returns zero or non-zero value if error occurred.
-
-*uint8_t tralloc_dynarr_delete ( tralloc_dynarr * arr, size_t index );*
-
-Function deletes data from index in arr.
-Function returns zero or non-zero value if error occurred.
-
-
-
 utils/buffer.h
 --------------
 *tralloc_buffer * tralloc_buffer_new ( const tralloc_context * ctx );*
@@ -559,8 +495,39 @@ Function returns zero or non-zero value if error occurred.
 
 *uint8_t tralloc_buffer_trim ( tralloc_buffer * buffer );*
 
-Function trims readed data and empty tail from buffer.
+Function trims readed data from buffer.
 Function returns zero or non-zero value if error occurred.
+
+*Example*
+
+Buffer is usefull for read-write asynchronous operations.
+
+    tralloc_buffer * buffer = tralloc_buffer_new ( NULL );
+    if ( buffer == NULL ) {
+        return 1;
+    }
+    if ( tralloc_buffer_prepare ( buffer, 7 ) != 0 ) {
+        tralloc_free ( buffer );
+        return 2;
+    }
+    uint8_t * buf = tralloc_buffer_get_write_point ( buffer );
+    buf[0] = '0';
+    buf[1] = '1';
+    buf[2] = '2';
+    buf[3] = '3';
+    tralloc_buffer_written ( buffer, 4 );
+    tralloc_buffer_readed ( buffer, 2 );
+    if (
+        tralloc_buffer_get_length ( buffer ) != 2 ||
+        tralloc_buffer_trim ( buffer )       != 0 ||
+        strncmp ( ( char * ) tralloc_buffer_get_read_point ( buffer ), "23", 2 ) != 0
+    ) {
+        tralloc_free ( buffer );
+        return 3;
+    }
+    if ( tralloc_free ( buffer ) != 0 ) {
+        return 4;
+    }
 
 
 

@@ -13,10 +13,6 @@
 #include "buffer.h"
 #endif
 
-#if defined(TRALLOC_UTILS_DYNARR)
-#include "dynarr.h"
-#endif
-
 int main ()
 {
     tralloc_context * root = tralloc_new ( NULL );
@@ -31,15 +27,8 @@ int main ()
     }
 #endif
 
-#if defined(TRALLOC_UTILS_DYNARR)
-    if ( !test_dynarr ( root ) ) {
-        tralloc_free ( root );
-        return 3;
-    }
-#endif
-
     if ( tralloc_free ( root ) != 0 ) {
-        return 5;
+        return 3;
     }
 
 #if defined(TRALLOC_DEBUG)
@@ -48,7 +37,7 @@ int main ()
         tralloc_get_chunks_overhead_length() != 0 ||
         tralloc_get_chunks_length()          != 0
     ) {
-        return 6;
+        return 4;
     }
 #endif
 
