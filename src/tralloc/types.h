@@ -28,20 +28,11 @@ typedef struct tralloc_reference_t {
     struct tralloc_extensions_t * parent_extensions;
     struct tralloc_reference_t *  prev;
     struct tralloc_reference_t *  next;
-
-#if defined(TRALLOC_DESTRUCTOR)
-    tralloc_destructor * first_destructor;
-#endif
-
 } tralloc_reference;
 #endif
 
 #if defined(TRALLOC_EXTENSIONS)
 typedef struct tralloc_extensions_t {
-
-#if defined(TRALLOC_DESTRUCTOR)
-    tralloc_destructor * first_destructor;
-#endif
 
 #if defined(TRALLOC_REFERENCE)
     tralloc_reference * first_reference;
@@ -62,6 +53,10 @@ typedef struct tralloc_chunk_t {
     struct tralloc_chunk_t * prev;
     struct tralloc_chunk_t * next;
     struct tralloc_chunk_t * first_child;
+
+#if defined(TRALLOC_DESTRUCTOR)
+    tralloc_destructor * first_destructor;
+#endif
 
 #if defined(TRALLOC_REFERENCE)
     uint8_t mode;

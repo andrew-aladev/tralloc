@@ -5,72 +5,12 @@
 
 #include "chunk.h"
 
-#if defined(TRALLOC_DESTRUCTOR)
-#include "destructor.h"
-#endif
-
-#if defined(TRALLOC_REFERENCE)
-#include "../reference/chunk.h"
-#endif
-
-tralloc_chunk * tralloc_extensions_realloc_chunk ( tralloc_chunk * extensions_chunk, size_t length )
-{
-    tralloc_extensions * old_extensions = tralloc_extensions_from_chunk ( extensions_chunk );
-    tralloc_extensions * new_extensions = realloc ( old_extensions, sizeof ( tralloc_extensions ) + sizeof ( tralloc_chunk ) + length );
-    if ( new_extensions == NULL ) {
-        return NULL;
-    }
-
-    extensions_chunk = tralloc_chunk_from_extensions ( new_extensions );
-
-#if defined(TRALLOC_DEBUG)
-    extensions_chunk->length = length;
-#endif
-
-#if defined(TRALLOC_REFERENCE)
-    if ( old_extensions != new_extensions ) {
-        // now pointers to old_extensions is invalid
-        // each pointer to old_extensions should be replaced with new_extensions
-        tralloc_reference_update_extensions ( new_extensions );
-    }
-#endif
-
-    return extensions_chunk;
-}
-
-uint8_t tralloc_extensions_free_chunk ( tralloc_chunk * extensions_chunk )
-{
-    tralloc_extensions * extensions = tralloc_extensions_from_chunk ( extensions_chunk );
-
-#if defined(TRALLOC_REFERENCE)
-    if ( extensions->first_reference != NULL ) {
-        tralloc_detach_chunk ( extensions_chunk );
-        return 0;
-    }
-#endif
-
-    uint8_t result, error = 0;
-
-#if defined(TRALLOC_DEBUG)
-    if ( ( result = tralloc_on_free ( extensions_chunk ) ) != 0 ) {
-        error = result;
-    }
-#endif
-
-#if defined(TRALLOC_DESTRUCTOR)
-    if ( ( result = tralloc_destructor_free ( extensions_chunk, extensions ) ) != 0 ) {
-        error = result;
-    }
-#endif
-
-    if ( ( result = tralloc_free_chunk_children ( extensions_chunk ) ) != 0 ) {
-        error = result;
-    }
-
-    free ( extensions );
-    return error;
-}
-
-extern inline tralloc_chunk * tralloc_extensions_process_new_chunk ( tralloc_extensions * extensions, const tralloc_context * parent_context, size_t length );
+extern inline tralloc_chunk * tralloc_extensions_process_new_chunk ( tralloc_extensions * extensions, tralloc_chunk * chunk, const tralloc_context * parent_context );
 extern inline tralloc_chunk * tralloc_extensions_malloc_chunk      ( const tralloc_context * parent_context, size_t length );
 extern inline tralloc_chunk * tralloc_extensions_calloc_chunk      ( const tralloc_context * parent_context, size_t length );
+extern inline tralloc_chunk * tralloc_extensions_realloc_chunk     ( tralloc_chunk * extensions_chunk, size_t length );
+extern inline uint8_t         tralloc_extensions_free_chunk        ( tralloc_chunk * extensions_chunk );
+
+#if defined(TRALLOC_REFERENCE)
+extern inline void tralloc_extensions_update_reference ( tralloc_extensions * extensions );
+#endif

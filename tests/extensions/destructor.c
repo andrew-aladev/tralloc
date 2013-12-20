@@ -6,7 +6,7 @@
 #include "destructor.h"
 #include "../lib/malloc_dynarr.h"
 #include <tralloc/helpers.h>
-#include <tralloc/extensions/destructor.h>
+#include <tralloc/destructor.h>
 
 static
 uint8_t destructor ( tralloc_context * chunk_context, void * user_data )
@@ -101,11 +101,11 @@ bool test_destructor ( const tralloc_context * root )
         return false;
     }
 
-    tralloc_extensions * extensions_03 = tralloc_extensions_from_chunk ( tralloc_chunk_from_context ( text_03 ) );
+    tralloc_chunk * chunk_03 = tralloc_chunk_from_context ( text_03 );
     tralloc_destructor * destructor;
 
     if (
-        ( destructor = extensions_03->first_destructor ) == NULL ||
+        ( destructor = chunk_03->first_destructor ) == NULL ||
         destructor->function != destructor_empty_1 || destructor->user_data != NULL            || ( destructor = destructor->next ) == NULL ||
         destructor->function != destructor_empty_1 || destructor->user_data != tralloc_history || ( destructor = destructor->next ) == NULL ||
         destructor->function != destructor_empty_2 || destructor->user_data != tralloc_history || ( destructor = destructor->next ) == NULL ||
@@ -121,7 +121,7 @@ bool test_destructor ( const tralloc_context * root )
 
     if (
         tralloc_del_destructor ( text_03, destructor_empty_2, NULL ) != 0 ||
-        ( destructor = extensions_03->first_destructor ) == NULL ||
+        ( destructor = chunk_03->first_destructor ) == NULL ||
         destructor->function != destructor_empty_1 || destructor->user_data != NULL            || ( destructor = destructor->next ) == NULL ||
         destructor->function != destructor_empty_1 || destructor->user_data != tralloc_history || ( destructor = destructor->next ) == NULL ||
         destructor->function != destructor_empty_2 || destructor->user_data != tralloc_history || ( destructor = destructor->next ) == NULL ||
@@ -136,7 +136,7 @@ bool test_destructor ( const tralloc_context * root )
 
     if (
         tralloc_del_destructor_by_function ( text_03, destructor_empty_2 ) != 0 ||
-        ( destructor = extensions_03->first_destructor ) == NULL ||
+        ( destructor = chunk_03->first_destructor ) == NULL ||
         destructor->function != destructor_empty_1 || destructor->user_data != NULL            || ( destructor = destructor->next ) == NULL ||
         destructor->function != destructor_empty_1 || destructor->user_data != tralloc_history || ( destructor = destructor->next ) == NULL ||
         destructor->function != destructor_empty_1 || destructor->user_data != NULL            ||
@@ -149,7 +149,7 @@ bool test_destructor ( const tralloc_context * root )
 
     if (
         tralloc_del_destructor_by_data ( text_03, NULL ) != 0 ||
-        ( destructor = extensions_03->first_destructor ) == NULL ||
+        ( destructor = chunk_03->first_destructor ) == NULL ||
         destructor->function != destructor_empty_1 || destructor->user_data != tralloc_history ||
         destructor->next != NULL
     ) {
@@ -160,7 +160,7 @@ bool test_destructor ( const tralloc_context * root )
 
     if (
         tralloc_del_destructor_by_data ( text_03, tralloc_history ) != 0 ||
-        extensions_03->first_destructor != NULL
+        chunk_03->first_destructor != NULL
     ) {
         tralloc_free ( strings );
         free_history ( tralloc_history );

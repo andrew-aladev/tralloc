@@ -28,7 +28,7 @@ endif ()
 if (${TRALLOC_UTILS_BUFFER})
     set (TRALLOC_UTILS true)
 endif ()
-if (${TRALLOC_DESTRUCTOR} OR ${TRALLOC_REFERENCE})
+if (${TRALLOC_REFERENCE})
     set (TRALLOC_EXTENSIONS true)
 endif ()
 

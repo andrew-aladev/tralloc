@@ -4,9 +4,9 @@
 // You should have received a copy of the GNU General Lesser Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
 #include "main.h"
-#include "../extensions/chunk.h"
+#include "chunk.h"
 
-typedef tralloc_reference * ( * reference_alloc_chunk ) ( const tralloc_context * parent_context, size_t length );
+typedef tralloc_chunk * ( * reference_alloc_chunk ) ( const tralloc_context * parent_context, size_t length );
 
 static inline
 tralloc_context * add_reference ( const tralloc_context * child_context, const tralloc_context * parent_context, size_t length, reference_alloc_chunk allocator )
@@ -30,26 +30,27 @@ tralloc_context * add_reference ( const tralloc_context * child_context, const t
         }
     }
 
-    tralloc_reference * reference = allocator ( parent_context, length );
-    if ( reference == NULL ) {
+    tralloc_chunk * chunk = allocator ( parent_context, length );
+    if ( chunk == NULL ) {
         return NULL;
     }
 
-    tralloc_extensions * child_extensions = tralloc_extensions_from_chunk ( child_chunk );
+    tralloc_extensions * extensions = tralloc_extensions_from_chunk ( child_chunk );
+    tralloc_reference  * reference  = tralloc_reference_from_chunk  ( chunk );
 
-    reference->parent_extensions = child_extensions;
+    reference->parent_extensions = extensions;
     reference->prev              = NULL;
 
-    tralloc_reference * first_reference = child_extensions->first_reference;
+    tralloc_reference * first_reference = extensions->first_reference;
     if ( first_reference == NULL ) {
         reference->next = NULL;
     } else {
         reference->next       = first_reference;
         first_reference->prev = reference;
     }
-    child_extensions->first_reference = reference;
+    extensions->first_reference = reference;
 
-    return tralloc_context_from_chunk ( tralloc_chunk_from_reference ( reference ) );
+    return tralloc_context_from_chunk ( chunk );
 }
 
 tralloc_context * tralloc_add_reference_with_data ( const tralloc_context * child_context, const tralloc_context * parent_context, size_t length )

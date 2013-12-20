@@ -10,10 +10,6 @@
 #include "tree.h"
 #include "chunk.h"
 
-#if defined(TRALLOC_DEBUG)
-#include "events.h"
-#endif
-
 #if defined(TRALLOC_EXTENSIONS)
 #include "extensions/chunk.h"
 #endif
@@ -21,27 +17,6 @@
 #if defined(TRALLOC_REFERENCE)
 #include "reference/chunk.h"
 #endif
-
-uint8_t tralloc_add_chunk ( const tralloc_context * parent_context, tralloc_chunk * child )
-{
-    child->first_child = NULL;
-
-    if ( parent_context != NULL ) {
-        tralloc_chunk * parent = tralloc_chunk_from_context ( parent_context );
-        tralloc_set_child_chunk ( parent, child );
-    } else {
-        child->parent = NULL;
-        child->prev   = NULL;
-        child->next   = NULL;
-    }
-
-#if defined(TRALLOC_DEBUG)
-    return tralloc_on_add ( child );
-#else
-    return 0;
-#endif
-
-}
 
 tralloc_context * tralloc ( const tralloc_context * parent_context, size_t length )
 {
@@ -205,6 +180,7 @@ uint8_t tralloc_free_chunk ( tralloc_chunk * chunk )
 
 }
 
+extern inline uint8_t           tralloc_add_chunk           ( const tralloc_context * parent_context, tralloc_chunk * child );
 extern inline void              tralloc_set_child_chunk     ( tralloc_chunk * parent, tralloc_chunk * child );
 extern inline void              tralloc_detach_chunk        ( tralloc_chunk * chunk );
 extern inline tralloc_context * tralloc_new                 ( const tralloc_context * parent_context );

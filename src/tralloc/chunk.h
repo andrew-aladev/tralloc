@@ -12,15 +12,18 @@
 #include "events.h"
 #endif
 
+#if defined(TRALLOC_DESTRUCTOR)
+#include "destructor.h"
+#endif
+
 #include <stdlib.h>
 
 inline
-tralloc_chunk * tralloc_usual_process_new_chunk ( tralloc_chunk * chunk, const tralloc_context * parent_context, size_t length )
+tralloc_chunk * tralloc_usual_process_new_chunk ( tralloc_chunk * chunk, const tralloc_context * parent_context )
 {
 
-#if defined(TRALLOC_DEBUG)
-    chunk->chunk_length = sizeof ( tralloc_chunk );
-    chunk->length       = length;
+#if defined(TRALLOC_DESTRUCTOR)
+    chunk->first_destructor = NULL;
 #endif
 
     tralloc_add_chunk ( parent_context, chunk );
@@ -34,7 +37,13 @@ tralloc_chunk * tralloc_usual_malloc_chunk ( const tralloc_context * parent_cont
     if ( chunk == NULL ) {
         return NULL;
     }
-    return tralloc_usual_process_new_chunk ( chunk, parent_context, length );
+
+#if defined(TRALLOC_DEBUG)
+    chunk->chunk_length = sizeof ( tralloc_chunk );
+    chunk->length       = length;
+#endif
+
+    return tralloc_usual_process_new_chunk ( chunk, parent_context );
 }
 
 inline
@@ -44,7 +53,13 @@ tralloc_chunk * tralloc_usual_calloc_chunk ( const tralloc_context * parent_cont
     if ( chunk == NULL ) {
         return NULL;
     }
-    return tralloc_usual_process_new_chunk ( chunk, parent_context, length );
+
+#if defined(TRALLOC_DEBUG)
+    chunk->chunk_length = sizeof ( tralloc_chunk );
+    chunk->length       = length;
+#endif
+
+    return tralloc_usual_process_new_chunk ( chunk, parent_context );
 }
 
 inline
@@ -63,7 +78,7 @@ tralloc_chunk * tralloc_usual_realloc_chunk ( tralloc_chunk * chunk, size_t leng
 }
 
 inline
-uint8_t tralloc_usual_free_chunk ( tralloc_chunk * chunk )
+uint8_t tralloc_usual_process_free_chunk ( tralloc_chunk * chunk )
 {
     uint8_t result, error = 0;
 
@@ -73,10 +88,23 @@ uint8_t tralloc_usual_free_chunk ( tralloc_chunk * chunk )
     }
 #endif
 
+#if defined(TRALLOC_DESTRUCTOR)
+    if ( ( result = tralloc_destructor_free ( chunk ) ) != 0 ) {
+        error = result;
+    }
+#endif
+
     if ( ( result = tralloc_free_chunk_children ( chunk ) ) != 0 ) {
         error = result;
     }
 
+    return error;
+}
+
+inline
+uint8_t tralloc_usual_free_chunk ( tralloc_chunk * chunk )
+{
+    uint8_t error = tralloc_usual_process_free_chunk ( chunk );
     free ( chunk );
     return error;
 }

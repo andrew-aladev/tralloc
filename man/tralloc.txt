@@ -72,12 +72,12 @@ Size of usual chunk is 32-49 bytes, size of reference chunk is 57-65 bytes on 64
 Debug features will increase size of each chunk by 16 bytes.
 
 Implementation uses tree to store chunks, not graph. All important functions have O(1) complexity.
-Each chunk has one parent chunk, prev chunk, next chunk and child chunks list.
+Each chunk has one parent chunk, prev chunk, next chunk, child chunks list and destructors list.
 
 You can store data after each chunk.
 There is a data before each chunk : extensions or reference.
-Extensions store destructors and references lists.
-References store destructors, prev reference, next reference and related extensions.
+Extensions store and references lists.
+References store prev reference, next reference and related extensions.
 
 You can create, move, realloc and free any chunk.
 You can add reference chunk to any chunk. ( reference will be added to it's extensions. if you are adding reference to reference it will add reference to related extensions. )
@@ -155,9 +155,10 @@ Complexity is complexity of malloc + O(1).
 Function obtains chunk from chunk_context, detaches it from the tree and start delete operation on subtree starting from it.
 chunk_context can be both usual and reference.
 If chunk is usual and it has reference(s) - it will become root independent chunk and delete operation will not go to it's children.
-Otherwise it will be deleted. All it's destructors will be invoked.
-If chunk is reference it will be deleted. All it's destructors will be invoked.
-If linked usual chunk is root independent chunk and it has no references - it will be deleted. All it's destructors will be invoked.
+Otherwise it will be deleted.
+If chunk is reference it will be deleted.
+If linked usual chunk is root independent chunk and it has no references - it will be deleted.
+All chunk's destructors will be invoked on delete.
 Function returns zero if delete operations were successful and non-zero value otherwise.
 Non-zero value meaning is "error code of the last failed operation". Function will not stop on errors.
 Complexity is complexity of free * number of deleted chunks + O(number of deleted chunks).
@@ -294,8 +295,11 @@ extensions/destructor.h
 *uint8_t tralloc_clear_destructors ( const tralloc_context * chunk_context );*
 
 If chunk_context is NULL function will return non-zero value.
-Otherwise function will obtain chunk from chunk_context and clear it's destructors list.
-Destructors will not be called.
+Otherwise function will obtain chunk from chunk_context, create destructor from function + user_data and add it to chunk's destructors list.
+Order of calls are:
+1. Destructor from root to it's children.
+2. Free from children to root.
+If you want to use some data in destructor - tralloc it to the chunk_context and pass as user_data.
 Function returns zero or non-zero value if error occurred.
 Complexity is complexity of free * number of destructors + O(number of destructors).
 

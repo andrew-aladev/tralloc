@@ -6,7 +6,7 @@
 #ifndef TRALLOC_REFERENCE_MAIN_H
 #define TRALLOC_REFERENCE_MAIN_H
 
-#include "chunk.h"
+#include "../types.h"
 
 // Function works the same as "tralloc_add_reference".
 // Function returns pointer to memory (with length size) or NULL if error occurred.

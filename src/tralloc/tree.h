@@ -8,6 +8,10 @@
 
 #include "common.h"
 
+#if defined(TRALLOC_DEBUG)
+#include "events.h"
+#endif
+
 inline
 void tralloc_set_child_chunk ( tralloc_chunk * parent, tralloc_chunk * child )
 {
@@ -23,6 +27,28 @@ void tralloc_set_child_chunk ( tralloc_chunk * parent, tralloc_chunk * child )
         child->prev = NULL;
     }
     parent->first_child = child;
+}
+
+inline
+uint8_t tralloc_add_chunk ( const tralloc_context * parent_context, tralloc_chunk * child )
+{
+    child->first_child = NULL;
+
+    if ( parent_context != NULL ) {
+        tralloc_chunk * parent = tralloc_chunk_from_context ( parent_context );
+        tralloc_set_child_chunk ( parent, child );
+    } else {
+        child->parent = NULL;
+        child->prev   = NULL;
+        child->next   = NULL;
+    }
+
+#if defined(TRALLOC_DEBUG)
+    return tralloc_on_add ( child );
+#else
+    return 0;
+#endif
+
 }
 
 inline
@@ -97,9 +123,10 @@ uint8_t tralloc_free_chunk_children ( tralloc_chunk * chunk )
 // Function obtains chunk from chunk_context, detaches it from the tree and start delete operation on subtree starting from it.
 // chunk_context can be both usual and reference.
 // If chunk is usual and it has reference(s) - it will become root independent chunk and delete operation will not go to it's children.
-// Otherwise it will be deleted. All it's destructors will be invoked.
-// If chunk is reference it will be deleted. All it's destructors will be invoked.
-// If linked usual chunk is root independent chunk and it has no references - it will be deleted. All it's destructors will be invoked.
+// Otherwise it will be deleted.
+// If chunk is reference it will be deleted.
+// If linked usual chunk is root independent chunk and it has no references - it will be deleted.
+// All chunk's destructors will be invoked on delete.
 // Function returns zero if delete operations were successful and non-zero value otherwise.
 // Non-zero value meaning is "error code of the last failed operation". Function will not stop on errors.
 inline
@@ -112,8 +139,6 @@ uint8_t tralloc_free ( const tralloc_context * chunk_context )
     tralloc_detach_chunk ( chunk );
     return tralloc_free_chunk ( chunk );
 }
-
-uint8_t tralloc_add_chunk ( const tralloc_context * parent_context, tralloc_chunk * child );
 
 // Function obtains chunk from chunk_context, uses realloc to change size of chunk from current_length to length.
 // chunk_context can be both usual and reference.

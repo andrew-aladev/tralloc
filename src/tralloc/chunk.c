@@ -5,8 +5,9 @@
 
 #include "chunk.h"
 
-extern inline tralloc_chunk * tralloc_usual_process_new_chunk ( tralloc_chunk * chunk, const tralloc_context * parent_context, size_t length );
-extern inline tralloc_chunk * tralloc_usual_malloc_chunk      ( const tralloc_context * parent_context, size_t length );
-extern inline tralloc_chunk * tralloc_usual_calloc_chunk      ( const tralloc_context * parent_context, size_t length );
-extern inline tralloc_chunk * tralloc_usual_realloc_chunk     ( tralloc_chunk * chunk, size_t length );
-extern inline uint8_t         tralloc_usual_free_chunk        ( tralloc_chunk * chunk );
+extern inline tralloc_chunk * tralloc_usual_process_new_chunk  ( tralloc_chunk * chunk, const tralloc_context * parent_context );
+extern inline tralloc_chunk * tralloc_usual_malloc_chunk       ( const tralloc_context * parent_context, size_t length );
+extern inline tralloc_chunk * tralloc_usual_calloc_chunk       ( const tralloc_context * parent_context, size_t length );
+extern inline tralloc_chunk * tralloc_usual_realloc_chunk      ( tralloc_chunk * chunk, size_t length );
+extern inline uint8_t         tralloc_usual_process_free_chunk ( tralloc_chunk * chunk );
+extern inline uint8_t         tralloc_usual_free_chunk         ( tralloc_chunk * chunk );
