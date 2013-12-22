@@ -300,7 +300,7 @@ Function works the same as "tralloc_open". You can pass mode to it.
 
 
 events.h
-----------------
+--------
 *size_t tralloc_get_chunks_count ();*
 
 Function returns global count of chunks.
