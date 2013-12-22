@@ -65,7 +65,7 @@ if (${TRALLOC_STATIC})
     
     if (${TRALLOC_DEBUG})
         set (NAME ${TRALLOC_TARGET}-static-test-events)
-        add_executable (${NAME} ${HELPERS})
+        add_executable (${NAME} ${EVENTS})
         target_link_libraries (${NAME} ${TRALLOC_TARGET}_static)
         add_test (${NAME} ${NAME})
     endif ()

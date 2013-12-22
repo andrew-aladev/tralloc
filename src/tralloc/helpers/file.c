@@ -3,11 +3,18 @@
 // tralloc is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Lesser Public License for more details.
 // You should have received a copy of the GNU General Lesser Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
-#include "chunk.h"
+#include "file.h"
 
-extern inline tralloc_chunk * _tralloc_usual_process_new_chunk  ( tralloc_chunk * chunk, const tralloc_context * parent_context );
-extern inline tralloc_chunk * _tralloc_usual_malloc_chunk       ( const tralloc_context * parent_context, size_t length );
-extern inline tralloc_chunk * _tralloc_usual_calloc_chunk       ( const tralloc_context * parent_context, size_t length );
-extern inline tralloc_chunk * _tralloc_usual_realloc_chunk      ( tralloc_chunk * chunk, size_t length );
-extern inline uint8_t         _tralloc_usual_process_free_chunk ( tralloc_chunk * chunk );
-extern inline uint8_t         _tralloc_usual_free_chunk         ( tralloc_chunk * chunk );
+uint8_t _tralloc_close ( tralloc_context * chunk_context, void * user_data )
+{
+    int * descriptor_ptr = chunk_context;
+    if ( close ( * descriptor_ptr ) != 0 ) {
+        return 1;
+    } else {
+        return 0;
+    }
+}
+
+extern inline int *   _tralloc_process_descriptor ( const tralloc_context * parent_context, int descriptor );
+extern inline int *   tralloc_open                ( const tralloc_context * parent_context, const char * path_name, int flags );
+extern inline int *   tralloc_open_mode           ( const tralloc_context * parent_context, const char * path_name, int flags, mode_t mode );

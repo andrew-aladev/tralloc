@@ -29,8 +29,11 @@ uint8_t file_destructor ( tralloc_context * context, void * user_data )
     int file_descriptor = * ( ( int * ) context );
     char * filename     = user_data;
     printf ( "closing file %s\n", filename );
-    close ( file_descriptor );
-    return 0;
+    if ( close ( file_descriptor ) != 0 ) {
+        return 1;
+    } else {
+        return 0;
+    }
 }
 
 int main ()
@@ -44,17 +47,17 @@ int main ()
         tralloc_free ( root );
         return 2;
     }
-    char * filename = tralloc_strdup ( file_descriptor, "/etc/fstab" );
+    char * filename = tralloc_strdup ( file_descriptor, "/etc/hosts" );
     * file_descriptor = open ( filename, O_RDONLY );
     if ( * file_descriptor == -1 ) {
         tralloc_free ( root );
         return 3;
     }
     if (
-        tralloc_add_destructor ( file_descriptor, file_destructor,  filename ) != 0 ||
-        tralloc_add_destructor ( file_descriptor, empty_destructor, filename ) != 0 ||
-        tralloc_add_destructor ( file_descriptor, bad_destructor,   filename ) != 0 ||
-        tralloc_add_destructor ( file_descriptor, empty_destructor, NULL )     != 0
+        tralloc_prepend_destructor ( file_descriptor, empty_destructor, filename ) != 0 ||
+        tralloc_append_destructor  ( file_descriptor, file_destructor,  filename ) != 0 ||
+        tralloc_append_destructor  ( file_descriptor, bad_destructor,   filename ) != 0 ||
+        tralloc_prepend_destructor ( file_descriptor, empty_destructor, NULL )     != 0
     ) {
         tralloc_free ( root );
         return 4;

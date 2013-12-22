@@ -5,6 +5,21 @@
 
 #include <tralloc/helpers/string.h>
 
+#if defined(TRALLOC_DESTRUCTOR)
+#include <tralloc/helpers/file.h>
+
+uint8_t destructor_unlink_file ( tralloc_context * chunk_context, void * user_data )
+{
+    char * file_name = user_data;
+    if ( unlink ( file_name ) != 0 ) {
+        return 1;
+    } else {
+        return 0;
+    }
+}
+
+#endif
+
 #if defined(TRALLOC_DEBUG)
 #include <tralloc/events.h>
 #endif
@@ -29,6 +44,27 @@ int main ()
         return 4;
     }
 
+#if defined(TRALLOC_DESTRUCTOR)
+    char * file_name = tralloc_strdup ( NULL, "/tmp/tralloc_test_file" );
+    int * test_file  = tralloc_open_mode ( NULL, file_name, O_CREAT | O_WRONLY, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH ); // 0644
+    if ( test_file == NULL ) {
+        tralloc_free ( file_name );
+        return 5;
+    }
+    if ( tralloc_move ( file_name, test_file ) != 0 ) {
+        tralloc_free ( test_file );
+        tralloc_free ( file_name );
+        return 6;
+    }
+    if ( tralloc_append_destructor ( test_file, destructor_unlink_file, file_name ) != 0 ) {
+        tralloc_free ( test_file );
+        return 7;
+    }
+    if ( tralloc_free ( test_file ) != 0 ) {
+        return 8;
+    }
+#endif
+    
 #if defined(TRALLOC_DEBUG)
     if ( tralloc_get_chunks_count() != 0 ) {
         return 5;

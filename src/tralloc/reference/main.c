@@ -6,23 +6,23 @@
 #include "main.h"
 #include "chunk.h"
 
-typedef tralloc_chunk * ( * reference_alloc_chunk ) ( const tralloc_context * parent_context, size_t length );
+typedef tralloc_chunk * ( * _reference_alloc_chunk ) ( const tralloc_context * parent_context, size_t length );
 
 static inline
-tralloc_context * add_reference ( const tralloc_context * child_context, const tralloc_context * parent_context, size_t length, reference_alloc_chunk allocator )
+tralloc_context * _add_reference ( const tralloc_context * child_context, const tralloc_context * parent_context, size_t length, _reference_alloc_chunk allocator )
 {
     if ( child_context == NULL || parent_context == child_context ) {
         return NULL;
     }
 
-    tralloc_chunk * child_chunk = tralloc_chunk_from_context ( child_context );
+    tralloc_chunk * child_chunk = _tralloc_chunk_from_context ( child_context );
 
     if ( parent_context != NULL ) {
-        tralloc_chunk * parent_chunk = tralloc_chunk_from_context ( parent_context );
+        tralloc_chunk * parent_chunk = _tralloc_chunk_from_context ( parent_context );
         if ( parent_chunk->mode == TRALLOC_MODE_REFERENCE ) {
-            tralloc_reference * reference = tralloc_reference_from_chunk ( parent_chunk );
-            parent_chunk                  = tralloc_chunk_from_extensions ( reference->parent_extensions );
-            parent_context                = tralloc_context_from_chunk ( parent_chunk );
+            tralloc_reference * reference = _tralloc_reference_from_chunk ( parent_chunk );
+            parent_chunk                  = _tralloc_chunk_from_extensions ( reference->parent_extensions );
+            parent_context                = _tralloc_context_from_chunk ( parent_chunk );
         }
 
         if ( child_chunk->parent == parent_chunk ) {
@@ -35,8 +35,8 @@ tralloc_context * add_reference ( const tralloc_context * child_context, const t
         return NULL;
     }
 
-    tralloc_extensions * extensions = tralloc_extensions_from_chunk ( child_chunk );
-    tralloc_reference  * reference  = tralloc_reference_from_chunk  ( chunk );
+    tralloc_extensions * extensions = _tralloc_extensions_from_chunk ( child_chunk );
+    tralloc_reference  * reference  = _tralloc_reference_from_chunk  ( chunk );
 
     reference->parent_extensions = extensions;
     reference->prev              = NULL;
@@ -50,22 +50,22 @@ tralloc_context * add_reference ( const tralloc_context * child_context, const t
     }
     extensions->first_reference = reference;
 
-    return tralloc_context_from_chunk ( chunk );
+    return _tralloc_context_from_chunk ( chunk );
 }
 
 tralloc_context * tralloc_add_reference_with_data ( const tralloc_context * child_context, const tralloc_context * parent_context, size_t length )
 {
-    return add_reference ( child_context, parent_context, length, tralloc_reference_malloc_chunk );
+    return _add_reference ( child_context, parent_context, length, _tralloc_reference_malloc_chunk );
 }
 
 tralloc_context * tralloc_add_reference_with_zero_data ( const tralloc_context * child_context, const tralloc_context * parent_context, size_t length )
 {
-    return add_reference ( child_context, parent_context, length, tralloc_reference_calloc_chunk );
+    return _add_reference ( child_context, parent_context, length, _tralloc_reference_calloc_chunk );
 }
 
 uint8_t tralloc_clear_references ( const tralloc_context * chunk_context )
 {
-    tralloc_extensions * extensions = tralloc_extensions_from_chunk ( tralloc_chunk_from_context ( chunk_context ) );
+    tralloc_extensions * extensions = _tralloc_extensions_from_chunk ( _tralloc_chunk_from_context ( chunk_context ) );
     tralloc_reference * reference   = extensions->first_reference;
     tralloc_reference * next_reference;
 
@@ -73,9 +73,9 @@ uint8_t tralloc_clear_references ( const tralloc_context * chunk_context )
     tralloc_chunk * chunk;
     while ( reference != NULL ) {
         next_reference = reference->next;
-        chunk = tralloc_chunk_from_reference ( reference );
-        tralloc_detach_chunk ( chunk );
-        if ( ( result = tralloc_free_chunk ( chunk ) ) != 0 ) {
+        chunk = _tralloc_chunk_from_reference ( reference );
+        _tralloc_detach_chunk ( chunk );
+        if ( ( result = _tralloc_free_chunk ( chunk ) ) != 0 ) {
             error = result;
         }
         reference = next_reference;

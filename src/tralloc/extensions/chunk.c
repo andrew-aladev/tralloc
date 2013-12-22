@@ -5,12 +5,12 @@
 
 #include "chunk.h"
 
-extern inline tralloc_chunk * tralloc_extensions_process_new_chunk ( tralloc_extensions * extensions, tralloc_chunk * chunk, const tralloc_context * parent_context );
-extern inline tralloc_chunk * tralloc_extensions_malloc_chunk      ( const tralloc_context * parent_context, size_t length );
-extern inline tralloc_chunk * tralloc_extensions_calloc_chunk      ( const tralloc_context * parent_context, size_t length );
-extern inline tralloc_chunk * tralloc_extensions_realloc_chunk     ( tralloc_chunk * extensions_chunk, size_t length );
-extern inline uint8_t         tralloc_extensions_free_chunk        ( tralloc_chunk * extensions_chunk );
+extern inline tralloc_chunk * _tralloc_extensions_process_new_chunk ( tralloc_extensions * extensions, tralloc_chunk * chunk, const tralloc_context * parent_context );
+extern inline tralloc_chunk * _tralloc_extensions_malloc_chunk      ( const tralloc_context * parent_context, size_t length );
+extern inline tralloc_chunk * _tralloc_extensions_calloc_chunk      ( const tralloc_context * parent_context, size_t length );
+extern inline tralloc_chunk * _tralloc_extensions_realloc_chunk     ( tralloc_chunk * extensions_chunk, size_t length );
+extern inline uint8_t         _tralloc_extensions_free_chunk        ( tralloc_chunk * extensions_chunk );
 
 #if defined(TRALLOC_REFERENCE)
-extern inline void tralloc_extensions_update_reference ( tralloc_extensions * extensions );
+extern inline void _tralloc_extensions_update_reference ( tralloc_extensions * extensions );
 #endif

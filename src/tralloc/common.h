@@ -9,26 +9,26 @@
 #include "types.h"
 
 inline
-tralloc_context * tralloc_context_from_chunk ( tralloc_chunk * chunk )
+tralloc_context * _tralloc_context_from_chunk ( tralloc_chunk * chunk )
 {
     return ( tralloc_context * ) ( ( uintptr_t ) chunk + sizeof ( tralloc_chunk ) );
 }
 
 inline
-tralloc_chunk * tralloc_chunk_from_context ( const tralloc_context * context )
+tralloc_chunk * _tralloc_chunk_from_context ( const tralloc_context * context )
 {
     return ( tralloc_chunk * ) ( ( uintptr_t ) context - sizeof ( tralloc_chunk ) );
 }
 
 #ifdef TRALLOC_EXTENSIONS
 inline
-tralloc_chunk * tralloc_chunk_from_extensions ( tralloc_extensions * extensions )
+tralloc_chunk * _tralloc_chunk_from_extensions ( tralloc_extensions * extensions )
 {
     return ( tralloc_chunk * ) ( ( uintptr_t ) extensions + sizeof ( tralloc_extensions ) );
 }
 
 inline
-tralloc_extensions * tralloc_extensions_from_chunk ( tralloc_chunk * chunk )
+tralloc_extensions * _tralloc_extensions_from_chunk ( tralloc_chunk * chunk )
 {
     return ( tralloc_extensions * ) ( ( uintptr_t ) chunk - sizeof ( tralloc_extensions ) );
 }
@@ -36,13 +36,13 @@ tralloc_extensions * tralloc_extensions_from_chunk ( tralloc_chunk * chunk )
 
 #ifdef TRALLOC_REFERENCE
 inline
-tralloc_chunk * tralloc_chunk_from_reference ( tralloc_reference * reference )
+tralloc_chunk * _tralloc_chunk_from_reference ( tralloc_reference * reference )
 {
     return ( tralloc_chunk * ) ( ( uintptr_t ) reference + sizeof ( tralloc_reference ) );
 }
 
 inline
-tralloc_reference * tralloc_reference_from_chunk ( tralloc_chunk * chunk )
+tralloc_reference * _tralloc_reference_from_chunk ( tralloc_chunk * chunk )
 {
     return ( tralloc_reference * ) ( ( uintptr_t ) chunk - sizeof ( tralloc_reference ) );
 }

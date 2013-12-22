@@ -79,7 +79,7 @@ bool test_shared ( const tralloc_context * root )
         return false;
     }
 
-    tralloc_chunk * shared_chunk = tralloc_chunk_from_context ( shared );
+    tralloc_chunk * shared_chunk = _tralloc_chunk_from_context ( shared );
     if ( shared_chunk->mode != TRALLOC_MODE_EXTENSIONS ) {
         tralloc_free ( a );
         tralloc_free ( b );
@@ -87,10 +87,10 @@ bool test_shared ( const tralloc_context * root )
         return false;
     }
 
-    tralloc_extensions * shared_extensions = tralloc_extensions_from_chunk ( shared_chunk );
-    tralloc_reference * a_reference        = tralloc_reference_from_chunk ( tralloc_chunk_from_context ( a_shared ) );
-    tralloc_reference * b_reference        = tralloc_reference_from_chunk ( tralloc_chunk_from_context ( b_shared ) );
-    tralloc_reference * c_reference        = tralloc_reference_from_chunk ( tralloc_chunk_from_context ( c_shared ) );
+    tralloc_extensions * shared_extensions = _tralloc_extensions_from_chunk ( shared_chunk );
+    tralloc_reference * a_reference        = _tralloc_reference_from_chunk ( _tralloc_chunk_from_context ( a_shared ) );
+    tralloc_reference * b_reference        = _tralloc_reference_from_chunk ( _tralloc_chunk_from_context ( b_shared ) );
+    tralloc_reference * c_reference        = _tralloc_reference_from_chunk ( _tralloc_chunk_from_context ( c_shared ) );
     tralloc_reference * reference          = shared_extensions->first_reference;
     if (
         reference != a_reference ||
@@ -116,7 +116,7 @@ bool test_shared ( const tralloc_context * root )
 
     a_shared = tralloc_add_reference ( shared, a );
 
-    a_reference = tralloc_reference_from_chunk ( tralloc_chunk_from_context ( a_shared ) );
+    a_reference = _tralloc_reference_from_chunk ( _tralloc_chunk_from_context ( a_shared ) );
     reference   = shared_extensions->first_reference;
     if (
         reference != a_reference ||
@@ -141,7 +141,7 @@ bool test_shared ( const tralloc_context * root )
         return false;
     }
 
-    b_reference = tralloc_reference_from_chunk ( tralloc_chunk_from_context ( b_shared ) );
+    b_reference = _tralloc_reference_from_chunk ( _tralloc_chunk_from_context ( b_shared ) );
     reference   = shared_extensions->first_reference;
     if (
         reference != b_reference ||

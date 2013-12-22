@@ -29,6 +29,11 @@ SYNOPSIS
     char * tralloc_strndup ( const tralloc_context * parent_context, const char * str, size_t length );
     char * tralloc_strdup  ( const tralloc_context * parent_context, const char * str );
 
+*#include <tralloc/helpers/file.h>*
+
+    int * tralloc_open      ( const tralloc_context * parent_context, const char * path_name, int flags );
+    int * tralloc_open_mode ( const tralloc_context * parent_context, const char * path_name, int flags, mode_t mode );
+
 *#include <tralloc/events.h>*
 
     size_t tralloc_get_chunks_count           ();
@@ -38,7 +43,8 @@ SYNOPSIS
 *#include <tralloc/extensions/destructor.h>*
 
     uint8_t tralloc_clear_destructors          ( const tralloc_context * chunk_context );
-    uint8_t tralloc_add_destructor             ( const tralloc_context * chunk_context, tralloc_destructor_function function, void * user_data );
+    uint8_t tralloc_append_destructor          ( const tralloc_context * chunk_context, tralloc_destructor_function function, void * user_data );
+    uint8_t tralloc_prepend_destructor         ( const tralloc_context * chunk_context, tralloc_destructor_function function, void * user_data );
     uint8_t tralloc_del_destructor             ( const tralloc_context * chunk_context, tralloc_destructor_function function, void * user_data );
     uint8_t tralloc_del_destructor_by_function ( const tralloc_context * chunk_context, tralloc_destructor_function function );
     uint8_t tralloc_del_destructor_by_data     ( const tralloc_context * chunk_context, void * user_data );
@@ -95,10 +101,10 @@ All chunk's destructors will be invoked on delete.
 WARNING
 -------
 Do not use tralloc on non-tralloc pointers.
-You will obtain unexpected behaviour.
+You will obtain unknown behaviour.
 
     char * a = malloc ( sizeof ( char ) * 5 );
-    tralloc_add_destructor ( a, destructor_function, NULL ); // unexpected behaviour
+    tralloc_append_destructor ( a, destructor_function, NULL ); // unknown behaviour
 
 Do not move reference to the subtree of it's related chunk.
 You can obtain a memory leak.
@@ -119,7 +125,7 @@ You can use tralloc_context * to sign, that this pointer can be provided to tral
 
 *typedef uint8_t ( * tralloc_destructor_function ) ( tralloc_context * chunk_context, void * user_data );*
 
-You can provide such function as a destructor. See tralloc_add_destructor for more information.
+You can provide such function as a destructor. See tralloc_append_destructor for more information.
 
 
 
@@ -132,13 +138,11 @@ If parent_context is NULL function will set new chunk as root independent chunk.
 Otherwise it will obtain parent chunk from parent_context and attach new chunk to parent chunk.
 parent_context can be both usual and reference.
 Function returns pointer to memory (with length size) or NULL if error occurred.
-Complexity is complexity of malloc + O(1).
 
 *tralloc_context * tralloc_zero ( const tralloc_context * parent_context, size_t length );*
 
 Function works the same as "tralloc".
 It will use calloc instead of malloc to allocate new chunk.
-Complexity is complexity of calloc + O(1).
 
 *tralloc_context * tralloc_new ( const tralloc_context * parent_context );*
 
@@ -148,7 +152,6 @@ Otherwise it will obtain parent chunk from parent_context and attach new chunk t
 parent_context can be both usual and reference.
 Function returns pointer to memory (with zero size) or NULL if error occurred.
 This memory should not be used for storing information.
-Complexity is complexity of malloc + O(1).
 
 *uint8_t tralloc_free ( const tralloc_context * chunk_context );*
 
@@ -161,15 +164,12 @@ If linked usual chunk is root independent chunk and it has no references - it wi
 All chunk's destructors will be invoked on delete.
 Function returns zero if delete operations were successful and non-zero value otherwise.
 Non-zero value meaning is "error code of the last failed operation". Function will not stop on errors.
-Complexity is complexity of free * number of deleted chunks + O(number of deleted chunks).
 
 *tralloc_context * tralloc_realloc ( const tralloc_context * chunk_context, size_t length );*
 
 Function obtains chunk from chunk_context, uses realloc to change size of chunk from current_length to length.
 chunk_context can be both usual and reference.
 Function returns pointer to memory (with length size) or NULL if error occurred.
-If realloc changes memory pointer complexity will be complexity of realloc + O(number of linked chunks) + O(number of linked references);
-Otherwise complexity is complexity of realloc + O(1).
 
 *uint8_t tralloc_move ( const tralloc_context * child_context, const tralloc_context * parent_context );*
 
@@ -177,7 +177,6 @@ Function obtains child chunk from child_context, parent chunk from parent_contex
 chunk_context and parent_context can be both usual and reference.
 Function detaches child chunk from it's parent and attaches it to new parent chunk.
 Function returns zero if move operation was successful and non-zero value otherwise.
-Complexity is O(1).
 
 *Example*
 
@@ -212,14 +211,13 @@ Complexity is O(1).
 
 
 helpers/string.h
----------
+----------------
 *char * tralloc_strndup ( const tralloc_context * parent_context, const char * str, size_t length );*
 
 Function makes duplicate from length bytes of str.
 If parent_context is NULL function will set new chunk as root independent chunk.
 Otherwise it will obtain parent chunk from parent_context and attach new chunk to parent chunk.
 Function returns pointer to memory (with length + 1 size) or NULL if error occurred.
-Complexity is complexity of tralloc + complexity of memmove + O(1).
 
 *char * tralloc_strdup ( const tralloc_context * parent_context, const char * str );*
 
@@ -227,7 +225,6 @@ Function makes duplicate of str.
 If parent_context is NULL function will set new chunk as root independent chunk.
 Otherwise it will obtain parent chunk from parent_context and attach new chunk to parent chunk.
 Function returns pointer to memory (with strlen ( str ) + 1 size) or NULL if error occurred.
-Complexity is complexity of tralloc_strndup.
 
 *Example*
 
@@ -248,6 +245,53 @@ Complexity is complexity of tralloc_strndup.
             return 3;
         }
         if ( tralloc_free ( root ) != 0 ) {
+            return 4;
+        }
+        return 0;
+    }
+
+
+
+helpers/file.h
+--------------
+*int * tralloc_open ( const tralloc_context * parent_context, const char * path_name, int flags );*
+
+Function opens descriptor and appends destructor, that will close it.
+Function returns pointer to descriptor or NULL if error occurred.
+
+*int * tralloc_open_mode ( const tralloc_context * parent_context, const char * path_name, int flags, mode_t mode );*
+
+Function works the same as "tralloc_open". You can pass mode to it.
+
+*Example*
+    
+    uint8_t destructor_unlink_file ( tralloc_context * chunk_context, void * user_data )
+    {
+        char * file_name = user_data;
+        if ( unlink ( file_name ) != 0 ) {
+            return 1;
+        } else {
+            return 0;
+        }
+    }
+    
+    int main () {
+        char * file_name = tralloc_strdup ( NULL, "/tmp/tralloc_test_file" );
+        int * test_file  = tralloc_open_mode ( NULL, file_name, O_CREAT | O_WRONLY, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH ); // 0644
+        if ( test_file == NULL ) {
+            tralloc_free ( file_name );
+            return 1;
+        }
+        if ( tralloc_move ( file_name, test_file ) != 0 ) {
+            tralloc_free ( test_file );
+            tralloc_free ( file_name );
+            return 2;
+        }
+        if ( tralloc_append_destructor ( test_file, destructor_unlink_file, file_name ) != 0 ) {
+            tralloc_free ( test_file );
+            return 3;
+        }
+        if ( tralloc_free ( test_file ) != 0 ) {
             return 4;
         }
         return 0;
@@ -295,41 +339,42 @@ extensions/destructor.h
 *uint8_t tralloc_clear_destructors ( const tralloc_context * chunk_context );*
 
 If chunk_context is NULL function will return non-zero value.
-Otherwise function will obtain chunk from chunk_context, create destructor from function + user_data and add it to chunk's destructors list.
+Otherwise function will obtain chunk from chunk_context and clear it's destructors list.
+Destructors will not be called.
+Function returns zero or non-zero value if error occurred.
+
+*uint8_t tralloc_append_destructor ( const tralloc_context * chunk_context, tralloc_destructor_function function, void * user_data );*
+
+If chunk_context is NULL function will return non-zero value.
+Otherwise function will obtain chunk from chunk_context, create destructor from function + user_data and append it to chunk's destructors list.
 Order of calls are:
 1. Destructor from root to it's children.
 2. Free from children to root.
 If you want to use some data in destructor - tralloc it to the chunk_context and pass as user_data.
 Function returns zero or non-zero value if error occurred.
-Complexity is complexity of free * number of destructors + O(number of destructors).
 
-*uint8_t tralloc_add_destructor ( const tralloc_context * chunk_context, tralloc_destructor_function function, void * user_data );*
+*uint8_t tralloc_prepend_destructor ( const tralloc_context * chunk_context, tralloc_destructor_function function, void * user_data );*
 
-If chunk_context is NULL function will return non-zero value.
-Otherwise function will obtain chunk from chunk_context, create destructor from function + user_data and add it to chunk's destructors list.
-Function returns zero or non-zero value if error occurred.
-Complexity is complexity of malloc + O(1).
+Function works the same as "tralloc_append_destructor".
+It will use prepend destructor to destructors list instead of append.
 
 *uint8_t tralloc_del_destructor ( const tralloc_context * chunk_context, tralloc_destructor_function function, void * user_data );*
 
 If chunk_context is NULL function will return non-zero value.
 Otherwise function will obtain chunk from chunk_context and delete destructor by function + user_data from it's destructors list.
 Function returns zero or non-zero value if error occurred.
-Complexity is complexity of free + O(number of linked destructors).
 
 *uint8_t tralloc_del_destructor_by_function ( const tralloc_context * chunk_context, tralloc_destructor_function function );*
 
 If chunk_context is NULL function will return non-zero value.
 Otherwise function will obtain chunk from chunk_context and delete destructor by function from it's destructors list.
 Function returns zero or non-zero value if error occurred.
-Complexity is complexity of free + O(number of linked destructors).
 
 *uint8_t tralloc_del_destructor_by_data ( const tralloc_context * chunk_context, void * user_data );*
 
 If chunk_context is NULL function will return non-zero value.
 Otherwise function will obtain chunk from chunk_context and delete destructor by user_data from it's destructors list.
 Function returns zero or non-zero value if error occurred.
-Complexity is complexity of free + O(number of linked destructors).
 
 *Example*
 
@@ -348,8 +393,11 @@ Complexity is complexity of free + O(number of linked destructors).
         int file_descriptor = * ( ( int * ) context );
         char * filename     = user_data;
         printf ( "closing file %s\n", filename );
-        close ( file_descriptor );
-        return 0;
+        if ( close ( file_descriptor ) != 0 ) {
+            return 1;
+        } else {
+            return 0;
+        }
     }
 
     int main ()
@@ -363,17 +411,17 @@ Complexity is complexity of free + O(number of linked destructors).
             tralloc_free ( root );
             return 2;
         }
-        char * filename = tralloc_strdup ( file_descriptor, "/etc/fstab" );
+        char * filename = tralloc_strdup ( file_descriptor, "/etc/hosts" );
         * file_descriptor = open ( filename, O_RDONLY );
         if ( * file_descriptor == -1 ) {
             tralloc_free ( root );
             return 3;
         }
         if (
-            tralloc_add_destructor ( file_descriptor, file_destructor,  filename ) != 0 ||
-            tralloc_add_destructor ( file_descriptor, empty_destructor, filename ) != 0 ||
-            tralloc_add_destructor ( file_descriptor, bad_destructor,   filename ) != 0 ||
-            tralloc_add_destructor ( file_descriptor, empty_destructor, NULL )     != 0
+            tralloc_prepend_destructor ( file_descriptor, empty_destructor, filename ) != 0 ||
+            tralloc_append_destructor  ( file_descriptor, file_destructor,  filename ) != 0 ||
+            tralloc_append_destructor  ( file_descriptor, bad_destructor,   filename ) != 0 ||
+            tralloc_prepend_destructor ( file_descriptor, empty_destructor, NULL )     != 0
         ) {
             tralloc_free ( root );
             return 4;

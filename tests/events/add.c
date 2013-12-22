@@ -19,7 +19,7 @@ malloc_dynarr * malloc_history()
     if ( tralloc_history == NULL ) {
         return NULL;
     }
-    tralloc_set_user_data ( tralloc_history );
+    _tralloc_set_user_data ( tralloc_history );
     return tralloc_history;
 }
 
@@ -45,7 +45,7 @@ bool test_add ( const tralloc_context * root )
     if ( tralloc_history == NULL ) {
         return false;
     }
-    tralloc_set_callback ( on_add, NULL, NULL, NULL );
+    _tralloc_set_callback ( on_add, NULL, NULL, NULL );
 
     int * a   = tralloc ( root, sizeof ( int ) * 2 );
     char * b  = tralloc ( root, sizeof ( char ) * 3 );
@@ -58,9 +58,9 @@ bool test_add ( const tralloc_context * root )
         return false;
     }
 
-    tralloc_chunk * a_chunk = tralloc_chunk_from_context ( a );
-    tralloc_chunk * b_chunk = tralloc_chunk_from_context ( b );
-    tralloc_chunk * c_chunk = tralloc_chunk_from_context ( c );
+    tralloc_chunk * a_chunk = _tralloc_chunk_from_context ( a );
+    tralloc_chunk * b_chunk = _tralloc_chunk_from_context ( b );
+    tralloc_chunk * c_chunk = _tralloc_chunk_from_context ( c );
 
 #if defined(TRALLOC_REFERENCE)
     void * c_reference = tralloc_add_reference ( c, b );
@@ -70,7 +70,7 @@ bool test_add ( const tralloc_context * root )
         free_history ( tralloc_history );
         return false;
     }
-    tralloc_chunk * c_reference_chunk = tralloc_chunk_from_context ( c_reference );
+    tralloc_chunk * c_reference_chunk = _tralloc_chunk_from_context ( c_reference );
 
     double * d = tralloc ( c_reference, sizeof ( double ) * 2 );
     if ( d == NULL ) {
@@ -79,7 +79,7 @@ bool test_add ( const tralloc_context * root )
         free_history ( tralloc_history );
         return false;
     }
-    tralloc_chunk * d_chunk = tralloc_chunk_from_context ( d );
+    tralloc_chunk * d_chunk = _tralloc_chunk_from_context ( d );
 
     tralloc_chunk * chunk;
     if (

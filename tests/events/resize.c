@@ -21,7 +21,7 @@ malloc_dynarr * malloc_history()
         return NULL;
     }
     malloc_dynarr_set_free_item ( tralloc_history, free );
-    tralloc_set_user_data ( tralloc_history );
+    _tralloc_set_user_data ( tralloc_history );
     return tralloc_history;
 }
 
@@ -54,7 +54,7 @@ bool test_resize ( const tralloc_context * root )
     if ( tralloc_history == NULL ) {
         return false;
     }
-    tralloc_set_callback ( NULL, on_resize, NULL, NULL );
+    _tralloc_set_callback ( NULL, on_resize, NULL, NULL );
 
     int * a   = tralloc ( root, sizeof ( int ) * 2 );
     char * b  = tralloc ( root, sizeof ( char ) * 3 );
@@ -78,9 +78,9 @@ bool test_resize ( const tralloc_context * root )
         return false;
     }
 
-    tralloc_chunk * a_chunk = tralloc_chunk_from_context ( a );
-    tralloc_chunk * b_chunk = tralloc_chunk_from_context ( b );
-    tralloc_chunk * c_chunk = tralloc_chunk_from_context ( c );
+    tralloc_chunk * a_chunk = _tralloc_chunk_from_context ( a );
+    tralloc_chunk * b_chunk = _tralloc_chunk_from_context ( b );
+    tralloc_chunk * c_chunk = _tralloc_chunk_from_context ( c );
     resize_info * info;
 
     if (

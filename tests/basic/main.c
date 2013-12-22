@@ -241,23 +241,23 @@ bool test_realloc ()
     }
 #endif
 
-    root_chunk    = tralloc_chunk_from_context ( root );
-    data_1_chunk  = tralloc_chunk_from_context ( data_1 );
-    data_2_chunk  = tralloc_chunk_from_context ( data_2 );
-    data_3_chunk  = tralloc_chunk_from_context ( data_3 );
-    data_4_chunk  = tralloc_chunk_from_context ( data_4 );
-    data_5_chunk  = tralloc_chunk_from_context ( data_5 );
-    data_6_chunk  = tralloc_chunk_from_context ( data_6 );
-    data_7_chunk  = tralloc_chunk_from_context ( data_7 );
-    trivium_chunk = tralloc_chunk_from_context ( trivium );
+    root_chunk    = _tralloc_chunk_from_context ( root );
+    data_1_chunk  = _tralloc_chunk_from_context ( data_1 );
+    data_2_chunk  = _tralloc_chunk_from_context ( data_2 );
+    data_3_chunk  = _tralloc_chunk_from_context ( data_3 );
+    data_4_chunk  = _tralloc_chunk_from_context ( data_4 );
+    data_5_chunk  = _tralloc_chunk_from_context ( data_5 );
+    data_6_chunk  = _tralloc_chunk_from_context ( data_6 );
+    data_7_chunk  = _tralloc_chunk_from_context ( data_7 );
+    trivium_chunk = _tralloc_chunk_from_context ( trivium );
 
 #if defined(TRALLOC_REFERENCE)
-    trivium_reference_1_chunk = tralloc_chunk_from_context ( trivium_reference_1 );
-    trivium_reference_2_chunk = tralloc_chunk_from_context ( trivium_reference_2 );
-    trivium_reference_3_chunk = tralloc_chunk_from_context ( trivium_reference_3 );
-    data_8_chunk              = tralloc_chunk_from_context ( data_8 );
-    data_9_chunk              = tralloc_chunk_from_context ( data_9 );
-    data_10_chunk             = tralloc_chunk_from_context ( data_10 );
+    trivium_reference_1_chunk = _tralloc_chunk_from_context ( trivium_reference_1 );
+    trivium_reference_2_chunk = _tralloc_chunk_from_context ( trivium_reference_2 );
+    trivium_reference_3_chunk = _tralloc_chunk_from_context ( trivium_reference_3 );
+    data_8_chunk              = _tralloc_chunk_from_context ( data_8 );
+    data_9_chunk              = _tralloc_chunk_from_context ( data_9 );
+    data_10_chunk             = _tralloc_chunk_from_context ( data_10 );
 #endif
 
     return true;

@@ -50,15 +50,15 @@ bool test_common ( const tralloc_context * root )
         return false;
     }
 
-    tralloc_chunk * common_chunk = tralloc_chunk_from_context ( common );
+    tralloc_chunk * common_chunk = _tralloc_chunk_from_context ( common );
     if ( common_chunk->mode != TRALLOC_MODE_EXTENSIONS ) {
         tralloc_free ( a );
         return false;
     }
 
-    tralloc_extensions * common_extensions = tralloc_extensions_from_chunk ( common_chunk );
-    tralloc_reference * b_reference        = tralloc_reference_from_chunk ( tralloc_chunk_from_context ( b_common ) );
-    tralloc_reference * c_reference        = tralloc_reference_from_chunk ( tralloc_chunk_from_context ( c_common ) );
+    tralloc_extensions * common_extensions = _tralloc_extensions_from_chunk ( common_chunk );
+    tralloc_reference * b_reference        = _tralloc_reference_from_chunk ( _tralloc_chunk_from_context ( b_common ) );
+    tralloc_reference * c_reference        = _tralloc_reference_from_chunk ( _tralloc_chunk_from_context ( c_common ) );
     tralloc_reference * reference          = common_extensions->first_reference;
 
     if (

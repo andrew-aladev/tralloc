@@ -19,19 +19,19 @@
 #include <stdlib.h>
 
 inline
-tralloc_chunk * tralloc_usual_process_new_chunk ( tralloc_chunk * chunk, const tralloc_context * parent_context )
+tralloc_chunk * _tralloc_usual_process_new_chunk ( tralloc_chunk * chunk, const tralloc_context * parent_context )
 {
 
 #if defined(TRALLOC_DESTRUCTOR)
-    chunk->first_destructor = NULL;
+    chunk->destructors = NULL;
 #endif
 
-    tralloc_add_chunk ( parent_context, chunk );
+    _tralloc_add_chunk ( parent_context, chunk );
     return chunk;
 }
 
 inline
-tralloc_chunk * tralloc_usual_malloc_chunk ( const tralloc_context * parent_context, size_t length )
+tralloc_chunk * _tralloc_usual_malloc_chunk ( const tralloc_context * parent_context, size_t length )
 {
     tralloc_chunk * chunk = ( tralloc_chunk * ) malloc ( sizeof ( tralloc_chunk ) + length );
     if ( chunk == NULL ) {
@@ -43,11 +43,11 @@ tralloc_chunk * tralloc_usual_malloc_chunk ( const tralloc_context * parent_cont
     chunk->length       = length;
 #endif
 
-    return tralloc_usual_process_new_chunk ( chunk, parent_context );
+    return _tralloc_usual_process_new_chunk ( chunk, parent_context );
 }
 
 inline
-tralloc_chunk * tralloc_usual_calloc_chunk ( const tralloc_context * parent_context, size_t length )
+tralloc_chunk * _tralloc_usual_calloc_chunk ( const tralloc_context * parent_context, size_t length )
 {
     tralloc_chunk * chunk = ( tralloc_chunk * ) calloc ( 1, sizeof ( tralloc_chunk ) + length );
     if ( chunk == NULL ) {
@@ -59,11 +59,11 @@ tralloc_chunk * tralloc_usual_calloc_chunk ( const tralloc_context * parent_cont
     chunk->length       = length;
 #endif
 
-    return tralloc_usual_process_new_chunk ( chunk, parent_context );
+    return _tralloc_usual_process_new_chunk ( chunk, parent_context );
 }
 
 inline
-tralloc_chunk * tralloc_usual_realloc_chunk ( tralloc_chunk * chunk, size_t length )
+tralloc_chunk * _tralloc_usual_realloc_chunk ( tralloc_chunk * chunk, size_t length )
 {
     tralloc_chunk * new_chunk = ( tralloc_chunk * ) realloc ( chunk, sizeof ( tralloc_chunk ) + length );
     if ( new_chunk == NULL ) {
@@ -78,23 +78,23 @@ tralloc_chunk * tralloc_usual_realloc_chunk ( tralloc_chunk * chunk, size_t leng
 }
 
 inline
-uint8_t tralloc_usual_process_free_chunk ( tralloc_chunk * chunk )
+uint8_t _tralloc_usual_process_free_chunk ( tralloc_chunk * chunk )
 {
     uint8_t result, error = 0;
 
 #if defined(TRALLOC_DEBUG)
-    if ( ( result = tralloc_on_free ( chunk ) ) != 0 ) {
+    if ( ( result = _tralloc_on_free ( chunk ) ) != 0 ) {
         error = result;
     }
 #endif
 
 #if defined(TRALLOC_DESTRUCTOR)
-    if ( ( result = tralloc_destructor_free ( chunk ) ) != 0 ) {
+    if ( ( result = _tralloc_destructor_free ( chunk ) ) != 0 ) {
         error = result;
     }
 #endif
 
-    if ( ( result = tralloc_free_chunk_children ( chunk ) ) != 0 ) {
+    if ( ( result = _tralloc_free_chunk_children ( chunk ) ) != 0 ) {
         error = result;
     }
 
@@ -102,9 +102,9 @@ uint8_t tralloc_usual_process_free_chunk ( tralloc_chunk * chunk )
 }
 
 inline
-uint8_t tralloc_usual_free_chunk ( tralloc_chunk * chunk )
+uint8_t _tralloc_usual_free_chunk ( tralloc_chunk * chunk )
 {
-    uint8_t error = tralloc_usual_process_free_chunk ( chunk );
+    uint8_t error = _tralloc_usual_process_free_chunk ( chunk );
     free ( chunk );
     return error;
 }

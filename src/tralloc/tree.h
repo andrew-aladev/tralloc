@@ -13,7 +13,7 @@
 #endif
 
 inline
-void tralloc_set_child_chunk ( tralloc_chunk * parent, tralloc_chunk * child )
+void _tralloc_set_child_chunk ( tralloc_chunk * parent, tralloc_chunk * child )
 {
     tralloc_chunk * parent_first_child = parent->first_child;
 
@@ -30,13 +30,13 @@ void tralloc_set_child_chunk ( tralloc_chunk * parent, tralloc_chunk * child )
 }
 
 inline
-uint8_t tralloc_add_chunk ( const tralloc_context * parent_context, tralloc_chunk * child )
+uint8_t _tralloc_add_chunk ( const tralloc_context * parent_context, tralloc_chunk * child )
 {
     child->first_child = NULL;
 
     if ( parent_context != NULL ) {
-        tralloc_chunk * parent = tralloc_chunk_from_context ( parent_context );
-        tralloc_set_child_chunk ( parent, child );
+        tralloc_chunk * parent = _tralloc_chunk_from_context ( parent_context );
+        _tralloc_set_child_chunk ( parent, child );
     } else {
         child->parent = NULL;
         child->prev   = NULL;
@@ -44,7 +44,7 @@ uint8_t tralloc_add_chunk ( const tralloc_context * parent_context, tralloc_chun
     }
 
 #if defined(TRALLOC_DEBUG)
-    return tralloc_on_add ( child );
+    return _tralloc_on_add ( child );
 #else
     return 0;
 #endif
@@ -52,7 +52,7 @@ uint8_t tralloc_add_chunk ( const tralloc_context * parent_context, tralloc_chun
 }
 
 inline
-void tralloc_detach_chunk ( tralloc_chunk * chunk )
+void _tralloc_detach_chunk ( tralloc_chunk * chunk )
 {
     tralloc_chunk * prev   = chunk->prev;
     tralloc_chunk * next   = chunk->next;
@@ -100,10 +100,10 @@ tralloc_context * tralloc_new ( const tralloc_context * parent_context )
     return tralloc ( parent_context, 0 );
 }
 
-uint8_t tralloc_free_chunk ( tralloc_chunk * chunk );
+uint8_t _tralloc_free_chunk ( tralloc_chunk * chunk );
 
 inline
-uint8_t tralloc_free_chunk_children ( tralloc_chunk * chunk )
+uint8_t _tralloc_free_chunk_children ( tralloc_chunk * chunk )
 {
     uint8_t result, error = 0;
     tralloc_chunk * child = chunk->first_child;
@@ -111,7 +111,7 @@ uint8_t tralloc_free_chunk_children ( tralloc_chunk * chunk )
     tralloc_chunk * next_child;
     while ( child != NULL ) {
         next_child = child->next;
-        if ( ( result = tralloc_free_chunk ( child ) ) != 0 ) {
+        if ( ( result = _tralloc_free_chunk ( child ) ) != 0 ) {
             error = result;
         }
         child = next_child;
@@ -135,9 +135,9 @@ uint8_t tralloc_free ( const tralloc_context * chunk_context )
     if ( chunk_context == NULL ) {
         return 0;
     }
-    tralloc_chunk * chunk = tralloc_chunk_from_context ( chunk_context );
-    tralloc_detach_chunk ( chunk );
-    return tralloc_free_chunk ( chunk );
+    tralloc_chunk * chunk = _tralloc_chunk_from_context ( chunk_context );
+    _tralloc_detach_chunk ( chunk );
+    return _tralloc_free_chunk ( chunk );
 }
 
 // Function obtains chunk from chunk_context, uses realloc to change size of chunk from current_length to length.

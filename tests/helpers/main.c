@@ -9,6 +9,10 @@
 #include <tralloc/events.h>
 #endif
 
+#if defined(TRALLOC_DESTRUCTOR)
+#include "file.h"
+#endif
+
 int main ()
 {
     tralloc_context * ctx = tralloc_new ( NULL );
@@ -21,8 +25,15 @@ int main ()
         return 2;
     }
 
-    if ( tralloc_free ( ctx ) != 0 ) {
+#if defined(TRALLOC_DESTRUCTOR)
+    if ( !test_file ( ctx ) ) {
+        tralloc_free ( ctx );
         return 3;
+    }
+#endif
+
+    if ( tralloc_free ( ctx ) != 0 ) {
+        return 4;
     }
 
 #if defined(TRALLOC_DEBUG)
@@ -31,7 +42,7 @@ int main ()
         tralloc_get_chunks_overhead_length() != 0 ||
         tralloc_get_chunks_length()          != 0
     ) {
-        return 4;
+        return 5;
     }
 #endif
 

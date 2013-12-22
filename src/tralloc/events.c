@@ -5,70 +5,70 @@
 
 #include "events.h"
 
-static void *                     tralloc_user_data;
-static tralloc_callback_on_add    tralloc_debug_on_add;
-static tralloc_callback_on_resize tralloc_debug_on_resize;
-static tralloc_callback_on_move   tralloc_debug_on_move;
-static tralloc_callback_on_free   tralloc_debug_on_free;
+static void *                      _user_data;
+static _tralloc_callback_on_add    _debug_on_add;
+static _tralloc_callback_on_resize _debug_on_resize;
+static _tralloc_callback_on_move   _debug_on_move;
+static _tralloc_callback_on_free   _debug_on_free;
 
-void tralloc_set_user_data ( void * user_data )
+void _tralloc_set_user_data ( void * user_data )
 {
-    tralloc_user_data = user_data;
+    _user_data = user_data;
 }
 
-void tralloc_set_callback ( tralloc_callback_on_add on_add, tralloc_callback_on_resize on_resize, tralloc_callback_on_move on_move, tralloc_callback_on_free on_free )
+void _tralloc_set_callback ( _tralloc_callback_on_add on_add, _tralloc_callback_on_resize on_resize, _tralloc_callback_on_move on_move, _tralloc_callback_on_free on_free )
 {
-    tralloc_debug_on_add    = on_add;
-    tralloc_debug_on_resize = on_resize;
-    tralloc_debug_on_move   = on_move;
-    tralloc_debug_on_free   = on_free;
+    _debug_on_add    = on_add;
+    _debug_on_resize = on_resize;
+    _debug_on_move   = on_move;
+    _debug_on_free   = on_free;
 }
 
-static size_t tralloc_chunks_count           = 0;
-static size_t tralloc_chunks_overhead_length = 0;
-static size_t tralloc_chunks_length          = 0;
+static size_t _chunks_count           = 0;
+static size_t _chunks_overhead_length = 0;
+static size_t _chunks_length          = 0;
 
-uint8_t tralloc_on_add ( tralloc_chunk * chunk )
+uint8_t _tralloc_on_add ( tralloc_chunk * chunk )
 {
-    tralloc_chunks_count++;
-    tralloc_chunks_overhead_length += chunk->chunk_length;
-    tralloc_chunks_length          += chunk->length;
+    _chunks_count++;
+    _chunks_overhead_length += chunk->chunk_length;
+    _chunks_length          += chunk->length;
 
-    if ( tralloc_debug_on_add != NULL ) {
-        return tralloc_debug_on_add ( tralloc_user_data, chunk );
+    if ( _debug_on_add != NULL ) {
+        return _debug_on_add ( _user_data, chunk );
     }
 
     return 0;
 }
 
-uint8_t tralloc_on_resize ( tralloc_chunk * chunk, size_t old_length )
+uint8_t _tralloc_on_resize ( tralloc_chunk * chunk, size_t old_length )
 {
-    tralloc_chunks_length += chunk->length - old_length;
+    _chunks_length += chunk->length - old_length;
 
-    if ( tralloc_debug_on_resize != NULL ) {
-        return tralloc_debug_on_resize ( tralloc_user_data, chunk, old_length );
+    if ( _debug_on_resize != NULL ) {
+        return _debug_on_resize ( _user_data, chunk, old_length );
     }
 
     return 0;
 }
 
-uint8_t tralloc_on_move ( tralloc_chunk * chunk, tralloc_chunk * old_parent_chunk )
+uint8_t _tralloc_on_move ( tralloc_chunk * chunk, tralloc_chunk * old_parent_chunk )
 {
-    if ( tralloc_debug_on_move != NULL ) {
-        return tralloc_debug_on_move ( tralloc_user_data, chunk, old_parent_chunk );
+    if ( _debug_on_move != NULL ) {
+        return _debug_on_move ( _user_data, chunk, old_parent_chunk );
     }
 
     return 0;
 }
 
-uint8_t tralloc_on_free ( tralloc_chunk * chunk )
+uint8_t _tralloc_on_free ( tralloc_chunk * chunk )
 {
-    tralloc_chunks_count--;
-    tralloc_chunks_overhead_length -= chunk->chunk_length;
-    tralloc_chunks_length          -= chunk->length;
+    _chunks_count--;
+    _chunks_overhead_length -= chunk->chunk_length;
+    _chunks_length          -= chunk->length;
 
-    if ( tralloc_debug_on_free != NULL ) {
-        return tralloc_debug_on_free ( tralloc_user_data, chunk );
+    if ( _debug_on_free != NULL ) {
+        return _debug_on_free ( _user_data, chunk );
     }
 
     return 0;
@@ -76,15 +76,15 @@ uint8_t tralloc_on_free ( tralloc_chunk * chunk )
 
 size_t tralloc_get_chunks_count ()
 {
-    return tralloc_chunks_count;
+    return _chunks_count;
 }
 
 size_t tralloc_get_chunks_overhead_length ()
 {
-    return tralloc_chunks_overhead_length;
+    return _chunks_overhead_length;
 }
 
 size_t tralloc_get_chunks_length ()
 {
-    return tralloc_chunks_length;
+    return _chunks_length;
 }

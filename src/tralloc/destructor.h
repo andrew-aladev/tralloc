@@ -11,15 +11,19 @@
 #include <stdlib.h>
 
 inline
-void tralloc_destructor_free_silent ( tralloc_chunk * chunk )
+void _tralloc_destructor_free_silent ( tralloc_destructors_list * destructors )
 {
-    tralloc_destructor * destructor = chunk->first_destructor;
+    if ( destructors == NULL ) {
+        return;
+    }
+    tralloc_destructor * destructor = destructors->first_destructor;
     tralloc_destructor * next_destructor;
     while ( destructor != NULL ) {
         next_destructor = destructor->next;
         free ( destructor );
         destructor = next_destructor;
     }
+    free ( destructors );
 }
 
 // If chunk_context is NULL function will return non-zero value.
@@ -32,21 +36,24 @@ uint8_t tralloc_clear_destructors ( const tralloc_context * chunk_context )
     if ( chunk_context == NULL ) {
         return 1;
     }
-    tralloc_chunk * chunk = tralloc_chunk_from_context ( chunk_context );
-
-    tralloc_destructor_free_silent ( chunk );
-    chunk->first_destructor = NULL;
+    tralloc_chunk * chunk = _tralloc_chunk_from_context ( chunk_context );
+    _tralloc_destructor_free_silent ( chunk->destructors );
+    chunk->destructors = NULL;
     return 0;
 }
 
 // If chunk_context is NULL function will return non-zero value.
-// Otherwise function will obtain chunk from chunk_context, create destructor from function + user_data and add it to chunk's destructors list.
+// Otherwise function will obtain chunk from chunk_context, create destructor from function + user_data and append it to chunk's destructors list.
 // Order of calls are:
 // 1. Destructor from root to it's children.
 // 2. Free from children to root.
 // If you want to use some data in destructor - tralloc it to the chunk_context and pass as user_data.
 // Function returns zero or non-zero value if error occurred.
-uint8_t tralloc_add_destructor ( const tralloc_context * chunk_context, tralloc_destructor_function function, void * user_data );
+uint8_t tralloc_append_destructor ( const tralloc_context * chunk_context, tralloc_destructor_function function, void * user_data );
+
+// Function works the same as "tralloc_append_destructor".
+// It will use prepend destructor to destructors list instead of append.
+uint8_t tralloc_prepend_destructor ( const tralloc_context * chunk_context, tralloc_destructor_function function, void * user_data );
 
 // If chunk_context is NULL function will return non-zero value.
 // Otherwise function will obtain chunk from chunk_context and delete destructor by function + user_data from it's destructors list.
@@ -64,11 +71,16 @@ uint8_t tralloc_del_destructor_by_function ( const tralloc_context * chunk_conte
 uint8_t tralloc_del_destructor_by_data ( const tralloc_context * chunk_context, void * user_data );
 
 inline
-uint8_t tralloc_destructor_free ( tralloc_chunk * chunk )
+uint8_t _tralloc_destructor_free ( tralloc_chunk * chunk )
 {
+    tralloc_destructors_list * destructors = chunk->destructors;
+    if ( destructors == NULL ) {
+        return 0;
+    }
+
     uint8_t result, error = 0;
-    tralloc_context    * chunk_context = tralloc_context_from_chunk ( chunk );
-    tralloc_destructor * destructor    = chunk->first_destructor;
+    tralloc_context * chunk_context = _tralloc_context_from_chunk ( chunk );
+    tralloc_destructor * destructor = destructors->first_destructor;
     tralloc_destructor * next_destructor;
     tralloc_destructor_function function;
 
@@ -84,6 +96,7 @@ uint8_t tralloc_destructor_free ( tralloc_chunk * chunk )
         free ( destructor );
         destructor = next_destructor;
     }
+    free ( destructors );
     return error;
 }
 

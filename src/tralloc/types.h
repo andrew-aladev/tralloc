@@ -21,6 +21,11 @@ typedef struct tralloc_destructor_t {
     tralloc_destructor_function function;
     void * user_data;
 } tralloc_destructor;
+
+typedef struct tralloc_destructors_list_t {
+    tralloc_destructor * first_destructor;
+    tralloc_destructor * last_destructor;
+} tralloc_destructors_list;
 #endif
 
 #if defined(TRALLOC_REFERENCE)
@@ -55,7 +60,7 @@ typedef struct tralloc_chunk_t {
     struct tralloc_chunk_t * first_child;
 
 #if defined(TRALLOC_DESTRUCTOR)
-    tralloc_destructor * first_destructor;
+    tralloc_destructors_list * destructors;
 #endif
 
 #if defined(TRALLOC_REFERENCE)
