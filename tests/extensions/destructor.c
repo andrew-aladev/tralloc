@@ -5,7 +5,7 @@
 
 #include "destructor.h"
 #include "../lib/malloc_dynarr.h"
-#include <tralloc/helpers.h>
+#include <tralloc/helpers/string.h>
 #include <tralloc/destructor.h>
 
 static

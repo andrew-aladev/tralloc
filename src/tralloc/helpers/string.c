@@ -3,7 +3,7 @@
 // tralloc is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Lesser Public License for more details.
 // You should have received a copy of the GNU General Lesser Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
-#include "helpers.h"
+#include "string.h"
 
 extern inline char * tralloc_strndup ( const tralloc_context * parent_context, const char * str, size_t length );
 extern inline char * tralloc_strdup  ( const tralloc_context * parent_context, const char * str );

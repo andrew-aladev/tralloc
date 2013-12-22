@@ -24,7 +24,7 @@ SYNOPSIS
     uint8_t           tralloc_move    ( const tralloc_context * child_context, const tralloc_context * parent_context );
     uint8_t           tralloc_free    ( const tralloc_context * chunk_context );
     
-*#include <tralloc/helpers.h>*
+*#include <tralloc/helpers/string.h>*
 
     char * tralloc_strndup ( const tralloc_context * parent_context, const char * str, size_t length );
     char * tralloc_strdup  ( const tralloc_context * parent_context, const char * str );
@@ -211,7 +211,7 @@ Complexity is O(1).
 
 
 
-helpers.h
+helpers/string.h
 ---------
 *char * tralloc_strndup ( const tralloc_context * parent_context, const char * str, size_t length );*
 
