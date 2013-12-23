@@ -26,8 +26,10 @@ SYNOPSIS
     
 *#include <tralloc/helpers/string.h>*
 
-    char * tralloc_strndup ( const tralloc_context * parent_context, const char * str, size_t length );
-    char * tralloc_strdup  ( const tralloc_context * parent_context, const char * str );
+    char * tralloc_strndup   ( const tralloc_context * parent_context, const char * str, size_t length );
+    char * tralloc_strdup    ( const tralloc_context * parent_context, const char * str );
+    char * tralloc_vasprintf ( const tralloc_context * parent_context, const char * format, va_list arguments );
+    char * tralloc_asprintf  ( const tralloc_context * parent_context, const char * format, ... );
 
 *#include <tralloc/helpers/file.h>*
 
@@ -114,6 +116,9 @@ You can obtain a memory leak.
     int * b_ref = tralloc_add_reference ( b, a );
     // tralloc_free ( a ); can't delete a, because it has references
     tralloc_free ( b_ref ); tralloc_free ( a );
+
+Do not use tralloc_asprintf and tralloc_vasprintf functions if you care about performance.
+It runs formating two times, because there is no ability to pass custom allocator to asprintf.
 
 
 
@@ -226,6 +231,17 @@ If parent_context is NULL function will set new chunk as root independent chunk.
 Otherwise it will obtain parent chunk from parent_context and attach new chunk to parent chunk.
 Function returns pointer to memory (with strlen ( str ) + 1 size) or NULL if error occurred.
 
+*char * tralloc_vasprintf ( const tralloc_context * parent_context, const char * format, va_list arguments );*
+
+Function creates string from provided format.
+Function returns pointer to string or NULL if error occurred.
+Do not use this function if you care about performance.
+It runs formating two times, because there is no ability to pass custom allocator to asprintf.
+
+*char * tralloc_asprintf ( const tralloc_context * parent_context, const char * format, ... );*
+
+Function works the same as "tralloc_vasprintf", but takes variable arguments instead of va_list.
+
 *Example*
 
     int main ()
@@ -244,8 +260,13 @@ Function returns pointer to memory (with strlen ( str ) + 1 size) or NULL if err
             tralloc_free ( root );
             return 3;
         }
-        if ( tralloc_free ( root ) != 0 ) {
+        char * formatted_text = tralloc_asprintf ( root, "%s %s %s.", "Some", "test", "text" );
+        if ( formatted_text == NULL || strcmp ( formatted_text, "Some test text." ) != 0 ) {
+            tralloc_free ( root );
             return 4;
+        }
+        if ( tralloc_free ( root ) != 0 ) {
+            return 5;
         }
         return 0;
     }

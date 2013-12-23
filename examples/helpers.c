@@ -40,8 +40,13 @@ int main ()
         tralloc_free ( root );
         return 3;
     }
-    if ( tralloc_free ( root ) != 0 ) {
+    char * formatted_text = tralloc_asprintf ( root, "%s %s %s.", "Some", "test", "text" );
+    if ( formatted_text == NULL || strcmp ( formatted_text, "Some test text." ) != 0 ) {
+        tralloc_free ( root );
         return 4;
+    }
+    if ( tralloc_free ( root ) != 0 ) {
+        return 5;
     }
 
 #if defined(TRALLOC_DESTRUCTOR)
@@ -49,25 +54,25 @@ int main ()
     int * test_file  = tralloc_open_mode ( NULL, file_name, O_CREAT | O_WRONLY, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH ); // 0644
     if ( test_file == NULL ) {
         tralloc_free ( file_name );
-        return 5;
+        return 6;
     }
     if ( tralloc_move ( file_name, test_file ) != 0 ) {
         tralloc_free ( test_file );
         tralloc_free ( file_name );
-        return 6;
+        return 7;
     }
     if ( tralloc_append_destructor ( test_file, destructor_unlink_file, file_name ) != 0 ) {
         tralloc_free ( test_file );
-        return 7;
-    }
-    if ( tralloc_free ( test_file ) != 0 ) {
         return 8;
     }
+    if ( tralloc_free ( test_file ) != 0 ) {
+        return 9;
+    }
 #endif
-    
+
 #if defined(TRALLOC_DEBUG)
     if ( tralloc_get_chunks_count() != 0 ) {
-        return 5;
+        return 10;
     }
 #endif
 

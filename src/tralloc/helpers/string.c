@@ -5,5 +5,7 @@
 
 #include "string.h"
 
-extern inline char * tralloc_strndup ( const tralloc_context * parent_context, const char * str, size_t length );
-extern inline char * tralloc_strdup  ( const tralloc_context * parent_context, const char * str );
+extern inline char * tralloc_strndup   ( const tralloc_context * parent_context, const char * str, size_t length );
+extern inline char * tralloc_strdup    ( const tralloc_context * parent_context, const char * str );
+extern inline char * tralloc_vasprintf ( const tralloc_context * parent_context, const char * format, va_list arguments );
+extern inline char * tralloc_asprintf  ( const tralloc_context * parent_context, const char * format, ... );

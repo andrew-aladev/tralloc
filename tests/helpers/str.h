@@ -25,19 +25,26 @@ bool test_str ( const tralloc_context * ctx )
     walk += 7;
     char * part_5 = tralloc_strndup ( full, walk, 3 );
     if (
-        ! (
-            part_1 != NULL &&
-            part_2 != NULL &&
-            part_3 != NULL &&
-            part_4 != NULL &&
-            part_5 != NULL &&
-            !strcmp ( full, str )        &&
-            !strcmp ( part_1, "Viktor" ) &&
-            !strcmp ( part_2, "Tsoi" )   &&
-            !strcmp ( part_3, "Star" )   &&
-            !strcmp ( part_4, "Called" ) &&
-            !strcmp ( part_5, "Sun" )
-        )
+        part_1 == NULL ||
+        part_2 == NULL ||
+        part_3 == NULL ||
+        part_4 == NULL ||
+        part_5 == NULL ||
+        strcmp ( full, str )        != 0 ||
+        strcmp ( part_1, "Viktor" ) != 0 ||
+        strcmp ( part_2, "Tsoi" )   != 0 ||
+        strcmp ( part_3, "Star" )   != 0 ||
+        strcmp ( part_4, "Called" ) != 0 ||
+        strcmp ( part_5, "Sun" )    != 0
+    ) {
+        tralloc_free ( full );
+        return false;
+    }
+
+    char * formatted_string = tralloc_asprintf ( full, "%s %s %s %s %s", part_1, part_2, part_3, part_4, part_5 );
+    if (
+        formatted_string == NULL ||
+        strcmp ( formatted_string, "Viktor Tsoi Star Called Sun" ) != 0
     ) {
         tralloc_free ( full );
         return false;
