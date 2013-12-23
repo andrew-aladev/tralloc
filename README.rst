@@ -10,7 +10,7 @@ Debug features will increase size of each chunk by 16 bytes.
 
 TODO
 ----
-Thread safety, pool, more helper functions.
+Thread safety, pool.
 
 
 Supported platforms

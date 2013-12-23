@@ -612,4 +612,4 @@ SEE ALSO
 
 AUTHORS
 -------
-  Andrew Aladjev <aladjev.andrew@gmail.com>
+Andrew Aladjev <aladjev.andrew@gmail.com>
