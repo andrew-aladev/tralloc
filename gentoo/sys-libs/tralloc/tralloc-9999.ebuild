@@ -1,6 +1,5 @@
 # Copyright 1999-2013 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/net-im/vacuum/vacuum-9999.ebuild,v 1.10 2013/09/21 12:55:34 tomwij Exp $
 
 EAPI="5"
 
@@ -26,7 +25,10 @@ for util in ${IUSE_UTILS}; do
     IUSE="${IUSE} tralloc_utils_${util}"
 done
 
-RDEPEND="man? ( app-text/asciidoc )"
+RDEPEND="
+    virtual/libc
+    man? ( app-text/asciidoc )
+"
 DEPEND="${RDEPEND}"
 
 src_unpack() {
