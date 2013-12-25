@@ -4,7 +4,7 @@
 
 EAPI="5"
 
-inherit cmake-utils git-2
+inherit cmake-multilib cmake-utils git-2
 
 DESCRIPTION="Lightweight implementation of simplified talloc api."
 HOMEPAGE="https://github.com/andrew-aladev/tralloc"
@@ -46,13 +46,13 @@ src_configure() {
         
         $(cmake-utils_use tralloc_utils_buffer TRALLOC_UTILS_BUFFER)
     )
-    cmake-utils_src_configure
+    cmake-multilib_src_configure
 }
 
 src_test() {
-    cmake-utils_src_test
+    cmake-multilib_src_test
 }
 
 src_install() {
-    cmake-utils_src_install
+    cmake-multilib_src_install
 }
