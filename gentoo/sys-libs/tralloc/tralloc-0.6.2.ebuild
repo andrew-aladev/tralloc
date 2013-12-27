@@ -3,11 +3,11 @@
 
 EAPI="5"
 
-inherit cmake-multilib cmake-utils git-2
+inherit cmake-multilib cmake-utils
 
 DESCRIPTION="Lightweight implementation of simplified talloc api."
 HOMEPAGE="https://github.com/andrew-aladev/tralloc"
-EGIT_REPO_URI="git://github.com/andrew-aladev/tralloc.git"
+SRC_URI="https://github.com/andrew-aladev/tralloc/archive/v${PV}.tar.gz"
 
 LICENSE="LGPL-3+"
 SLOT="0/9999"
@@ -30,10 +30,6 @@ RDEPEND="
     man? ( app-text/asciidoc )
 "
 DEPEND="${RDEPEND}"
-
-src_unpack() {
-    git-2_src_unpack
-}
 
 src_configure() {
     local mycmakeargs=(
