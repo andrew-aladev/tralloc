@@ -11,13 +11,13 @@
 #include <stdlib.h>
 
 inline
-void _tralloc_destructor_free_silent ( tralloc_destructors_list * destructors )
+void _tralloc_destructor_free_silent ( _tralloc_destructors * destructors )
 {
     if ( destructors == NULL ) {
         return;
     }
-    tralloc_destructor * destructor = destructors->first_destructor;
-    tralloc_destructor * next_destructor;
+    _tralloc_destructor * destructor = destructors->first_destructor;
+    _tralloc_destructor * next_destructor;
     while ( destructor != NULL ) {
         next_destructor = destructor->next;
         free ( destructor );
@@ -36,7 +36,7 @@ uint8_t tralloc_clear_destructors ( const tralloc_context * chunk_context )
     if ( chunk_context == NULL ) {
         return 1;
     }
-    tralloc_chunk * chunk = _tralloc_chunk_from_context ( chunk_context );
+    _tralloc_chunk * chunk = _tralloc_chunk_from_context ( chunk_context );
     _tralloc_destructor_free_silent ( chunk->destructors );
     chunk->destructors = NULL;
     return 0;
@@ -71,17 +71,17 @@ uint8_t tralloc_del_destructor_by_function ( const tralloc_context * chunk_conte
 uint8_t tralloc_del_destructor_by_data ( const tralloc_context * chunk_context, void * user_data );
 
 inline
-uint8_t _tralloc_destructor_free ( tralloc_chunk * chunk )
+uint8_t _tralloc_destructor_free ( _tralloc_chunk * chunk )
 {
-    tralloc_destructors_list * destructors = chunk->destructors;
+    _tralloc_destructors * destructors = chunk->destructors;
     if ( destructors == NULL ) {
         return 0;
     }
 
     uint8_t result, error = 0;
-    tralloc_context * chunk_context = _tralloc_context_from_chunk ( chunk );
-    tralloc_destructor * destructor = destructors->first_destructor;
-    tralloc_destructor * next_destructor;
+    tralloc_context * chunk_context  = _tralloc_context_from_chunk ( chunk );
+    _tralloc_destructor * destructor = destructors->first_destructor;
+    _tralloc_destructor * next_destructor;
     tralloc_destructor_function function;
 
     while ( destructor != NULL ) {

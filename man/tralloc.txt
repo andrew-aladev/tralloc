@@ -42,7 +42,7 @@ SYNOPSIS
     size_t tralloc_get_chunks_overhead_length ();
     size_t tralloc_get_chunks_length          ();
 
-*#include <tralloc/extensions/destructor.h>*
+*#include <tralloc/destructor.h>*
 
     uint8_t tralloc_clear_destructors          ( const tralloc_context * chunk_context );
     uint8_t tralloc_append_destructor          ( const tralloc_context * chunk_context, tralloc_destructor_function function, void * user_data );
@@ -53,10 +53,10 @@ SYNOPSIS
     
 *#include <tralloc/reference/main.h>*
 
-    tralloc_context * tralloc_add_reference                ( const tralloc_context * child_context, const tralloc_context * parent_context );
-    tralloc_context * tralloc_add_reference_with_data      ( const tralloc_context * child_context, const tralloc_context * parent_context, size_t length );
-    tralloc_context * tralloc_add_reference_with_zero_data ( const tralloc_context * child_context, const tralloc_context * parent_context, size_t length );
-    uint8_t           tralloc_clear_references             ( const tralloc_context * chunk_context );
+    tralloc_context * tralloc_reference                ( const tralloc_context * child_context, const tralloc_context * parent_context );
+    tralloc_context * tralloc_reference_with_data      ( const tralloc_context * child_context, const tralloc_context * parent_context, size_t length );
+    tralloc_context * tralloc_reference_with_zero_data ( const tralloc_context * child_context, const tralloc_context * parent_context, size_t length );
+    uint8_t           tralloc_clear_references         ( const tralloc_context * chunk_context );
     
 *#include <tralloc/utils/buffer.h>*
 
@@ -83,12 +83,11 @@ Implementation uses tree to store chunks, not graph. All important functions hav
 Each chunk has one parent chunk, prev chunk, next chunk, child chunks list and destructors list.
 
 You can store data after each chunk.
-There is a data before each chunk : extensions or reference.
-Extensions store and references lists.
-References store prev reference, next reference and related extensions.
+There is a data before each chunk : references list or reference.
+Reference store prev reference, next reference and related references.
 
 You can create, move, realloc and free any chunk.
-You can add reference chunk to any chunk. ( reference will be added to it's extensions. if you are adding reference to reference it will add reference to related extensions. )
+You can add reference chunk to any chunk. ( reference will be added to it's references list. if you are adding reference to reference it will add reference to related references list. )
 You can add destructors to any chunk.
 
 Deletion of chunk works as follows.
@@ -113,7 +112,7 @@ You can obtain a memory leak.
 
     int * a     = tralloc ( NULL, sizeof( int ) );
     int * b     = tralloc ( a,    sizeof( int ) );
-    int * b_ref = tralloc_add_reference ( b, a );
+    int * b_ref = tralloc_reference ( b, a );
     // tralloc_free ( a ); can't delete a, because it has references
     tralloc_free ( b_ref ); tralloc_free ( a );
 
@@ -355,8 +354,8 @@ Function returns global usable for user length of chunks.
 
 
 
-extensions/destructor.h
------------------------
+destructor.h
+------------
 *uint8_t tralloc_clear_destructors ( const tralloc_context * chunk_context );*
 
 If chunk_context is NULL function will return non-zero value.
@@ -465,17 +464,17 @@ Function returns zero or non-zero value if error occurred.
 
 reference/main.h
 ----------------
-*tralloc_context * tralloc_add_reference_with_data ( const tralloc_context * child_context, const tralloc_context * parent_context, size_t length );*
+*tralloc_context * tralloc_reference_with_data ( const tralloc_context * child_context, const tralloc_context * parent_context, size_t length );*
 
-Function works the same as "tralloc_add_reference".
+Function works the same as "tralloc_reference".
 Function returns pointer to memory (with length size) or NULL if error occurred.
 
-*tralloc_context * tralloc_add_reference_with_zero_data ( const tralloc_context * child_context, const tralloc_context * parent_context, size_t length );*
+*tralloc_context * tralloc_reference_with_zero_data ( const tralloc_context * child_context, const tralloc_context * parent_context, size_t length );*
 
-Function works the same as "tralloc_add_reference_with_data".
+Function works the same as "tralloc_reference_with_data".
 It will use calloc instead of malloc to allocate new reference.
 
-*tralloc_context * tralloc_add_reference ( const tralloc_context * child_context, const tralloc_context * parent_context );*
+*tralloc_context * tralloc_reference ( const tralloc_context * child_context, const tralloc_context * parent_context );*
 
 If child_context is NULL or child_context equals parent_context function will return non-zero value.
 Function will obtain child chunk from child_context, parent chunk from parent_context.
@@ -494,7 +493,7 @@ Function returns zero or non-zero value if error occurred.
 
     uint8_t code_1 ( char * common )
     {
-        void * common_reference = tralloc_add_reference ( common, NULL );
+        void * common_reference = tralloc_reference ( common, NULL );
         if ( common_reference == NULL ) {
             return 1;
         }
@@ -503,7 +502,7 @@ Function returns zero or non-zero value if error occurred.
 
     uint8_t code_2 ( char * common )
     {
-        void * common_reference = tralloc_add_reference ( common, NULL );
+        void * common_reference = tralloc_reference ( common, NULL );
         if ( common_reference == NULL ) {
             return 1;
         }

@@ -82,12 +82,12 @@ bool test_destructor ( const tralloc_context * root )
         return false;
     }
 
-    tralloc_chunk * chunk_01 = _tralloc_chunk_from_context ( text_01 );
-    tralloc_chunk * chunk_02 = _tralloc_chunk_from_context ( text_02 );
-    tralloc_chunk * chunk_03 = _tralloc_chunk_from_context ( text_03 );
-    tralloc_chunk * chunk_04 = _tralloc_chunk_from_context ( text_04 );
-    tralloc_destructors_list * destructors;
-    tralloc_destructor * destructor;
+    _tralloc_chunk * chunk_01 = _tralloc_chunk_from_context ( text_01 );
+    _tralloc_chunk * chunk_02 = _tralloc_chunk_from_context ( text_02 );
+    _tralloc_chunk * chunk_03 = _tralloc_chunk_from_context ( text_03 );
+    _tralloc_chunk * chunk_04 = _tralloc_chunk_from_context ( text_04 );
+    _tralloc_destructors * destructors;
+    _tralloc_destructor * destructor;
 
     if (
         ( destructors = chunk_01->destructors ) == NULL || ( destructor = destructors->first_destructor ) == NULL ||

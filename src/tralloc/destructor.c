@@ -6,9 +6,9 @@
 #include "destructor.h"
 
 static inline
-tralloc_destructor * _new_destructor ( tralloc_destructor_function function, void * user_data )
+_tralloc_destructor * _new_destructor ( tralloc_destructor_function function, void * user_data )
 {
-    tralloc_destructor * destructor = malloc ( sizeof ( tralloc_destructor ) );
+    _tralloc_destructor * destructor = malloc ( sizeof ( _tralloc_destructor ) );
     if ( destructor == NULL ) {
         return NULL;
     }
@@ -22,16 +22,16 @@ uint8_t tralloc_append_destructor ( const tralloc_context * chunk_context, trall
     if ( chunk_context == NULL ) {
         return 1;
     }
-    tralloc_destructor * destructor = _new_destructor ( function, user_data );
+    _tralloc_destructor * destructor = _new_destructor ( function, user_data );
     if ( destructor == NULL ) {
         return 2;
     }
     destructor->next = NULL;
 
-    tralloc_chunk * chunk                  = _tralloc_chunk_from_context ( chunk_context );
-    tralloc_destructors_list * destructors = chunk->destructors;
+    _tralloc_chunk * chunk             = _tralloc_chunk_from_context ( chunk_context );
+    _tralloc_destructors * destructors = chunk->destructors;
     if ( destructors == NULL ) {
-        destructors = malloc ( sizeof ( tralloc_destructors_list ) );
+        destructors = malloc ( sizeof ( _tralloc_destructors ) );
         if ( destructors == NULL ) {
             free ( destructor );
             return 3;
@@ -42,9 +42,9 @@ uint8_t tralloc_append_destructor ( const tralloc_context * chunk_context, trall
         return 0;
     }
 
-    tralloc_destructor * last_destructor = destructors->last_destructor;
-    last_destructor->next                = destructor;
-    destructors->last_destructor         = destructor;
+    _tralloc_destructor * last_destructor = destructors->last_destructor;
+    last_destructor->next                 = destructor;
+    destructors->last_destructor          = destructor;
 
     return 0;
 }
@@ -54,15 +54,15 @@ uint8_t tralloc_prepend_destructor ( const tralloc_context * chunk_context, tral
     if ( chunk_context == NULL ) {
         return 1;
     }
-    tralloc_destructor * destructor = _new_destructor ( function, user_data );
+    _tralloc_destructor * destructor = _new_destructor ( function, user_data );
     if ( destructor == NULL ) {
         return 2;
     }
 
-    tralloc_chunk * chunk                  = _tralloc_chunk_from_context ( chunk_context );
-    tralloc_destructors_list * destructors = chunk->destructors;
+    _tralloc_chunk * chunk             = _tralloc_chunk_from_context ( chunk_context );
+    _tralloc_destructors * destructors = chunk->destructors;
     if ( destructors == NULL ) {
-        destructors = malloc ( sizeof ( tralloc_destructors_list ) );
+        destructors = malloc ( sizeof ( _tralloc_destructors ) );
         if ( destructors == NULL ) {
             free ( destructor );
             return 3;
@@ -73,45 +73,45 @@ uint8_t tralloc_prepend_destructor ( const tralloc_context * chunk_context, tral
         chunk->destructors            = destructors;
         return 0;
     }
-    
-    tralloc_destructor * first_destructor = destructors->first_destructor;
-    destructor->next                      = first_destructor;
-    destructors->first_destructor         = destructor;
+
+    _tralloc_destructor * first_destructor = destructors->first_destructor;
+    destructor->next                       = first_destructor;
+    destructors->first_destructor          = destructor;
 
     return 0;
 }
 
 static inline
-bool _destructor_comparator_by_function ( tralloc_destructor * destructor, tralloc_destructor_function function, void * user_data )
+bool _destructor_comparator_by_function ( _tralloc_destructor * destructor, tralloc_destructor_function function, void * user_data )
 {
     return destructor->function == function;
 }
 
 static inline
-bool _destructor_comparator_by_data ( tralloc_destructor * destructor, tralloc_destructor_function function, void * user_data )
+bool _destructor_comparator_by_data ( _tralloc_destructor * destructor, tralloc_destructor_function function, void * user_data )
 {
     return destructor->user_data == user_data;
 }
 
 static inline
-bool _destructor_comparator_strict ( tralloc_destructor * destructor, tralloc_destructor_function function, void * user_data )
+bool _destructor_comparator_strict ( _tralloc_destructor * destructor, tralloc_destructor_function function, void * user_data )
 {
     return destructor->function == function && destructor->user_data == user_data;
 }
 
-typedef bool ( * destructor_comparator ) ( tralloc_destructor * destructor, tralloc_destructor_function function, void * user_data );
+typedef bool ( * destructor_comparator ) ( _tralloc_destructor * destructor, tralloc_destructor_function function, void * user_data );
 
 static inline
-void _delete_destructors_by_comparator ( tralloc_chunk * chunk, destructor_comparator comparator, tralloc_destructor_function function, void * user_data )
+void _delete_destructors_by_comparator ( _tralloc_chunk * chunk, destructor_comparator comparator, tralloc_destructor_function function, void * user_data )
 {
-    tralloc_destructors_list * destructors = chunk->destructors;
+    _tralloc_destructors * destructors = chunk->destructors;
     if ( destructors == NULL ) {
         return;
     }
-    tralloc_destructor * first_destructor = destructors->first_destructor;
-    tralloc_destructor * last_destructor  = NULL;
-    tralloc_destructor * destructor       = first_destructor;
-    tralloc_destructor * next_destructor;
+    _tralloc_destructor * first_destructor = destructors->first_destructor;
+    _tralloc_destructor * last_destructor  = NULL;
+    _tralloc_destructor * destructor       = first_destructor;
+    _tralloc_destructor * next_destructor;
 
     while ( destructor != NULL ) {
         next_destructor = destructor->next;
@@ -147,8 +147,7 @@ uint8_t _delete_destructors ( const tralloc_context * chunk_context, destructor_
     if ( chunk_context == NULL ) {
         return 1;
     }
-    tralloc_chunk * chunk = _tralloc_chunk_from_context ( chunk_context );
-
+    _tralloc_chunk * chunk = _tralloc_chunk_from_context ( chunk_context );
     _delete_destructors_by_comparator ( chunk, comparator, function, user_data );
     return 0;
 }
@@ -169,5 +168,5 @@ uint8_t tralloc_del_destructor_by_data ( const tralloc_context * chunk_context, 
 }
 
 extern inline uint8_t tralloc_clear_destructors       ( const tralloc_context * chunk_context );
-extern inline void    _tralloc_destructor_free_silent ( tralloc_destructors_list * destructors );
-extern inline uint8_t _tralloc_destructor_free        ( tralloc_chunk * chunk );
+extern inline void    _tralloc_destructor_free_silent ( _tralloc_destructors * destructors );
+extern inline uint8_t _tralloc_destructor_free        ( _tralloc_chunk * chunk );

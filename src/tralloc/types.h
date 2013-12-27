@@ -16,51 +16,47 @@ typedef void tralloc_context;
 #if defined(TRALLOC_DESTRUCTOR)
 typedef uint8_t ( * tralloc_destructor_function ) ( tralloc_context * chunk_context, void * user_data );
 
-typedef struct tralloc_destructor_t {
-    struct tralloc_destructor_t * next;
+typedef struct _tralloc_destructor_t {
+    struct _tralloc_destructor_t * next;
     tralloc_destructor_function function;
     void * user_data;
-} tralloc_destructor;
+} _tralloc_destructor;
 
-typedef struct tralloc_destructors_list_t {
-    tralloc_destructor * first_destructor;
-    tralloc_destructor * last_destructor;
-} tralloc_destructors_list;
+typedef struct _tralloc_destructors_t {
+    _tralloc_destructor * first_destructor;
+    _tralloc_destructor * last_destructor;
+} _tralloc_destructors;
 #endif
 
 #if defined(TRALLOC_REFERENCE)
-typedef struct tralloc_reference_t {
-    struct tralloc_extensions_t * parent_extensions;
-    struct tralloc_reference_t *  prev;
-    struct tralloc_reference_t *  next;
-} tralloc_reference;
+typedef struct _tralloc_reference_t {
+    struct _tralloc_references_t * references;
+    struct _tralloc_reference_t *  prev;
+    struct _tralloc_reference_t *  next;
+} _tralloc_reference;
 #endif
-
-#if defined(TRALLOC_EXTENSIONS)
-typedef struct tralloc_extensions_t {
 
 #if defined(TRALLOC_REFERENCE)
-    tralloc_reference * first_reference;
-#endif
-
-} tralloc_extensions;
+typedef struct _tralloc_references_t {
+    _tralloc_reference * first_reference;
+} _tralloc_references;
 #endif
 
 #if defined(TRALLOC_REFERENCE)
 enum {
-    TRALLOC_MODE_EXTENSIONS = 0,
+    TRALLOC_MODE_REFERENCES = 0,
     TRALLOC_MODE_REFERENCE
 };
 #endif
 
-typedef struct tralloc_chunk_t {
-    struct tralloc_chunk_t * parent;
-    struct tralloc_chunk_t * prev;
-    struct tralloc_chunk_t * next;
-    struct tralloc_chunk_t * first_child;
+typedef struct _tralloc_chunk_t {
+    struct _tralloc_chunk_t * parent;
+    struct _tralloc_chunk_t * prev;
+    struct _tralloc_chunk_t * next;
+    struct _tralloc_chunk_t * first_child;
 
 #if defined(TRALLOC_DESTRUCTOR)
-    tralloc_destructors_list * destructors;
+    _tralloc_destructors * destructors;
 #endif
 
 #if defined(TRALLOC_REFERENCE)
@@ -72,6 +68,6 @@ typedef struct tralloc_chunk_t {
     size_t length;
 #endif
 
-} tralloc_chunk;
+} _tralloc_chunk;
 
 #endif

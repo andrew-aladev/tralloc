@@ -12,7 +12,7 @@
 
 uint8_t code_1 ( char * common )
 {
-    void * common_reference = tralloc_add_reference ( common, NULL );
+    void * common_reference = tralloc_reference ( common, NULL );
     if ( common_reference == NULL ) {
         return 1;
     }
@@ -21,7 +21,7 @@ uint8_t code_1 ( char * common )
 
 uint8_t code_2 ( char * common )
 {
-    void * common_reference = tralloc_add_reference ( common, NULL );
+    void * common_reference = tralloc_reference ( common, NULL );
     if ( common_reference == NULL ) {
         return 1;
     }

@@ -9,42 +9,40 @@
 #include "types.h"
 
 inline
-tralloc_context * _tralloc_context_from_chunk ( tralloc_chunk * chunk )
+tralloc_context * _tralloc_context_from_chunk ( _tralloc_chunk * chunk )
 {
-    return ( tralloc_context * ) ( ( uintptr_t ) chunk + sizeof ( tralloc_chunk ) );
+    return ( tralloc_context * ) ( ( uintptr_t ) chunk + sizeof ( _tralloc_chunk ) );
 }
 
 inline
-tralloc_chunk * _tralloc_chunk_from_context ( const tralloc_context * context )
+_tralloc_chunk * _tralloc_chunk_from_context ( const tralloc_context * context )
 {
-    return ( tralloc_chunk * ) ( ( uintptr_t ) context - sizeof ( tralloc_chunk ) );
+    return ( _tralloc_chunk * ) ( ( uintptr_t ) context - sizeof ( _tralloc_chunk ) );
 }
-
-#ifdef TRALLOC_EXTENSIONS
-inline
-tralloc_chunk * _tralloc_chunk_from_extensions ( tralloc_extensions * extensions )
-{
-    return ( tralloc_chunk * ) ( ( uintptr_t ) extensions + sizeof ( tralloc_extensions ) );
-}
-
-inline
-tralloc_extensions * _tralloc_extensions_from_chunk ( tralloc_chunk * chunk )
-{
-    return ( tralloc_extensions * ) ( ( uintptr_t ) chunk - sizeof ( tralloc_extensions ) );
-}
-#endif
 
 #ifdef TRALLOC_REFERENCE
 inline
-tralloc_chunk * _tralloc_chunk_from_reference ( tralloc_reference * reference )
+_tralloc_chunk * _tralloc_chunk_from_references ( _tralloc_references * references )
 {
-    return ( tralloc_chunk * ) ( ( uintptr_t ) reference + sizeof ( tralloc_reference ) );
+    return ( _tralloc_chunk * ) ( ( uintptr_t ) references + sizeof ( _tralloc_references ) );
 }
 
 inline
-tralloc_reference * _tralloc_reference_from_chunk ( tralloc_chunk * chunk )
+_tralloc_references * _tralloc_references_from_chunk ( _tralloc_chunk * chunk )
 {
-    return ( tralloc_reference * ) ( ( uintptr_t ) chunk - sizeof ( tralloc_reference ) );
+    return ( _tralloc_references * ) ( ( uintptr_t ) chunk - sizeof ( _tralloc_references ) );
+}
+
+inline
+_tralloc_chunk * _tralloc_chunk_from_reference ( _tralloc_reference * reference )
+{
+    return ( _tralloc_chunk * ) ( ( uintptr_t ) reference + sizeof ( _tralloc_reference ) );
+}
+
+inline
+_tralloc_reference * _tralloc_reference_from_chunk ( _tralloc_chunk * chunk )
+{
+    return ( _tralloc_reference * ) ( ( uintptr_t ) chunk - sizeof ( _tralloc_reference ) );
 }
 #endif
 

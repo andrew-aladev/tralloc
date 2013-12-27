@@ -17,44 +17,44 @@
 #include <math.h>
 
 static tralloc_context * root;
-static tralloc_chunk   * root_chunk;
+static _tralloc_chunk  * root_chunk;
 
-static uint8_t *       data_1;
-static tralloc_chunk * data_1_chunk;
+static uint8_t *        data_1;
+static _tralloc_chunk * data_1_chunk;
 
-static uint16_t *      data_2;
-static char *          data_3;
-static uint32_t *      data_4;
-static tralloc_chunk * data_2_chunk;
-static tralloc_chunk * data_3_chunk;
-static tralloc_chunk * data_4_chunk;
+static uint16_t *       data_2;
+static char *           data_3;
+static uint32_t *       data_4;
+static _tralloc_chunk * data_2_chunk;
+static _tralloc_chunk * data_3_chunk;
+static _tralloc_chunk * data_4_chunk;
 
-static size_t *        data_5;
-static double *        data_6;
-static float  *        data_7;
-static tralloc_chunk * data_5_chunk;
-static tralloc_chunk * data_6_chunk;
-static tralloc_chunk * data_7_chunk;
+static size_t *         data_5;
+static double *         data_6;
+static float  *         data_7;
+static _tralloc_chunk * data_5_chunk;
+static _tralloc_chunk * data_6_chunk;
+static _tralloc_chunk * data_7_chunk;
 
-static void *          trivium;
-static tralloc_chunk * trivium_chunk;
+static void *           trivium;
+static _tralloc_chunk * trivium_chunk;
 
 #if defined(TRALLOC_REFERENCE)
-static void *          trivium_reference_1;
-static tralloc_chunk * trivium_reference_1_chunk;
+static void *           trivium_reference_1;
+static _tralloc_chunk * trivium_reference_1_chunk;
 
-static uint16_t *      trivium_reference_2;
-static tralloc_chunk * trivium_reference_2_chunk;
+static uint16_t *       trivium_reference_2;
+static _tralloc_chunk * trivium_reference_2_chunk;
 
-static uint32_t *      trivium_reference_3;
-static tralloc_chunk * trivium_reference_3_chunk;
+static uint32_t *       trivium_reference_3;
+static _tralloc_chunk * trivium_reference_3_chunk;
 
-static int8_t *        data_8;
-static int16_t *       data_9;
-static int32_t *       data_10;
-static tralloc_chunk * data_8_chunk;
-static tralloc_chunk * data_9_chunk;
-static tralloc_chunk * data_10_chunk;
+static int8_t *         data_8;
+static int16_t *        data_9;
+static int32_t *        data_10;
+static _tralloc_chunk * data_8_chunk;
+static _tralloc_chunk * data_9_chunk;
+static _tralloc_chunk * data_10_chunk;
 #endif
 
 bool compare_float ( float a, float b )
@@ -143,9 +143,9 @@ bool test_alloc()
     }
 
 #if defined(TRALLOC_REFERENCE)
-    trivium_reference_1 = tralloc_add_reference                ( trivium, data_6 );
-    trivium_reference_2 = tralloc_add_reference_with_data      ( trivium, data_5, sizeof ( uint16_t ) * 2 );
-    trivium_reference_3 = tralloc_add_reference_with_zero_data ( trivium, trivium_reference_2, sizeof ( uint32_t ) );
+    trivium_reference_1 = tralloc_reference                ( trivium, data_6 );
+    trivium_reference_2 = tralloc_reference_with_data      ( trivium, data_5, sizeof ( uint16_t ) * 2 );
+    trivium_reference_3 = tralloc_reference_with_zero_data ( trivium, trivium_reference_2, sizeof ( uint32_t ) );
     if (
         trivium_reference_1 == NULL ||
         trivium_reference_2 == NULL ||

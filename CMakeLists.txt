@@ -3,7 +3,7 @@ project (tralloc)
 
 set (CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
 
-set (TRALLOC_VERSION "0.7.0")
+set (TRALLOC_VERSION "0.6.2")
 
 set (TRALLOC_DEBUG        true  CACHE BOOL "debug features")
 set (TRALLOC_DESTRUCTOR   true  CACHE BOOL "destructor feature")
@@ -27,9 +27,6 @@ endif ()
 
 if (${TRALLOC_UTILS_BUFFER})
     set (TRALLOC_UTILS true)
-endif ()
-if (${TRALLOC_REFERENCE})
-    set (TRALLOC_EXTENSIONS true)
 endif ()
 
 if (NOT ${TRALLOC_STATIC} AND NOT ${TRALLOC_SHARED})

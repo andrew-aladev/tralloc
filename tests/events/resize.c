@@ -9,7 +9,7 @@
 #include <tralloc/events.h>
 
 typedef struct resize_info_t {
-    tralloc_chunk * chunk;
+    _tralloc_chunk * chunk;
     size_t old_length;
 } resize_info;
 
@@ -32,7 +32,7 @@ void free_history ( malloc_dynarr * tralloc_history )
 }
 
 static
-uint8_t on_resize ( void * user_data, tralloc_chunk * chunk, size_t old_length )
+uint8_t on_resize ( void * user_data, _tralloc_chunk * chunk, size_t old_length )
 {
     malloc_dynarr * tralloc_history = ( malloc_dynarr * ) user_data;
     resize_info * info = malloc ( sizeof ( resize_info ) );
@@ -78,9 +78,9 @@ bool test_resize ( const tralloc_context * root )
         return false;
     }
 
-    tralloc_chunk * a_chunk = _tralloc_chunk_from_context ( a );
-    tralloc_chunk * b_chunk = _tralloc_chunk_from_context ( b );
-    tralloc_chunk * c_chunk = _tralloc_chunk_from_context ( c );
+    _tralloc_chunk * a_chunk = _tralloc_chunk_from_context ( a );
+    _tralloc_chunk * b_chunk = _tralloc_chunk_from_context ( b );
+    _tralloc_chunk * c_chunk = _tralloc_chunk_from_context ( c );
     resize_info * info;
 
     if (

@@ -13,8 +13,8 @@
 #endif
 
 typedef struct move_info_t {
-    tralloc_chunk * chunk;
-    tralloc_chunk * old_parent;
+    _tralloc_chunk * chunk;
+    _tralloc_chunk * old_parent;
 } move_info;
 
 static
@@ -36,7 +36,7 @@ void free_history ( malloc_dynarr * tralloc_history )
 }
 
 static
-uint8_t on_move ( void * user_data, tralloc_chunk * chunk, tralloc_chunk * old_parent )
+uint8_t on_move ( void * user_data, _tralloc_chunk * chunk, _tralloc_chunk * old_parent )
 {
     malloc_dynarr * tralloc_history = ( malloc_dynarr * ) user_data;
     move_info * info = malloc ( sizeof ( move_info ) );
@@ -72,7 +72,7 @@ bool test_move ( const tralloc_context * root )
     }
 
 #if defined(TRALLOC_REFERENCE)
-    void * c_reference = tralloc_add_reference ( c, b );
+    void * c_reference = tralloc_reference ( c, b );
     if ( c_reference == NULL ) {
         tralloc_free ( a );
         tralloc_free ( b );
@@ -93,10 +93,10 @@ bool test_move ( const tralloc_context * root )
         return false;
     }
 
-    tralloc_chunk * root_chunk = _tralloc_chunk_from_context ( root );
-    tralloc_chunk * a_chunk    = _tralloc_chunk_from_context ( a );
-    tralloc_chunk * b_chunk    = _tralloc_chunk_from_context ( b );
-    tralloc_chunk * c_chunk    = _tralloc_chunk_from_context ( c );
+    _tralloc_chunk * root_chunk = _tralloc_chunk_from_context ( root );
+    _tralloc_chunk * a_chunk    = _tralloc_chunk_from_context ( a );
+    _tralloc_chunk * b_chunk    = _tralloc_chunk_from_context ( b );
+    _tralloc_chunk * c_chunk    = _tralloc_chunk_from_context ( c );
 
 #if defined(TRALLOC_REFERENCE)
     if ( tralloc_move ( c_reference, a ) != 0 ) {
@@ -104,7 +104,7 @@ bool test_move ( const tralloc_context * root )
         free_history ( tralloc_history );
         return false;
     }
-    tralloc_chunk * c_reference_chunk = _tralloc_chunk_from_context ( c_reference );
+    _tralloc_chunk * c_reference_chunk = _tralloc_chunk_from_context ( c_reference );
 #endif
 
     move_info * info;

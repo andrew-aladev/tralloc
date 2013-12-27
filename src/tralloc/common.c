@@ -5,15 +5,12 @@
 
 #include "common.h"
 
-extern inline tralloc_context * _tralloc_context_from_chunk ( tralloc_chunk * chunk );
-extern inline tralloc_chunk *   _tralloc_chunk_from_context ( const tralloc_context * context );
-
-#ifdef TRALLOC_EXTENSIONS
-extern inline tralloc_chunk *      _tralloc_chunk_from_extensions ( tralloc_extensions * extensions );
-extern inline tralloc_extensions * _tralloc_extensions_from_chunk ( tralloc_chunk * chunk );
-#endif
+extern inline tralloc_context * _tralloc_context_from_chunk ( _tralloc_chunk * chunk );
+extern inline _tralloc_chunk *  _tralloc_chunk_from_context ( const tralloc_context * context );
 
 #ifdef TRALLOC_REFERENCE
-extern inline tralloc_chunk *     _tralloc_chunk_from_reference ( tralloc_reference * reference );
-extern inline tralloc_reference * _tralloc_reference_from_chunk ( tralloc_chunk * chunk );
+extern inline _tralloc_chunk *      _tralloc_chunk_from_references ( _tralloc_references * references );
+extern inline _tralloc_references * _tralloc_references_from_chunk ( _tralloc_chunk * chunk );
+extern inline _tralloc_chunk *      _tralloc_chunk_from_reference  ( _tralloc_reference * reference );
+extern inline _tralloc_reference *  _tralloc_reference_from_chunk  ( _tralloc_chunk * chunk );
 #endif

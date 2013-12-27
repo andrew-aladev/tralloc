@@ -13,9 +13,9 @@
 #endif
 
 inline
-void _tralloc_set_child_chunk ( tralloc_chunk * parent, tralloc_chunk * child )
+void _tralloc_set_child_chunk ( _tralloc_chunk * parent, _tralloc_chunk * child )
 {
-    tralloc_chunk * parent_first_child = parent->first_child;
+    _tralloc_chunk * parent_first_child = parent->first_child;
 
     child->parent = parent;
     if ( parent_first_child != NULL ) {
@@ -30,12 +30,12 @@ void _tralloc_set_child_chunk ( tralloc_chunk * parent, tralloc_chunk * child )
 }
 
 inline
-uint8_t _tralloc_add_chunk ( const tralloc_context * parent_context, tralloc_chunk * child )
+uint8_t _tralloc_add_chunk ( const tralloc_context * parent_context, _tralloc_chunk * child )
 {
     child->first_child = NULL;
 
     if ( parent_context != NULL ) {
-        tralloc_chunk * parent = _tralloc_chunk_from_context ( parent_context );
+        _tralloc_chunk * parent = _tralloc_chunk_from_context ( parent_context );
         _tralloc_set_child_chunk ( parent, child );
     } else {
         child->parent = NULL;
@@ -52,11 +52,11 @@ uint8_t _tralloc_add_chunk ( const tralloc_context * parent_context, tralloc_chu
 }
 
 inline
-void _tralloc_detach_chunk ( tralloc_chunk * chunk )
+void _tralloc_detach_chunk ( _tralloc_chunk * chunk )
 {
-    tralloc_chunk * prev   = chunk->prev;
-    tralloc_chunk * next   = chunk->next;
-    tralloc_chunk * parent = chunk->parent;
+    _tralloc_chunk * prev   = chunk->prev;
+    _tralloc_chunk * next   = chunk->next;
+    _tralloc_chunk * parent = chunk->parent;
 
     if ( prev != NULL ) {
         if ( next != NULL ) {
@@ -100,15 +100,15 @@ tralloc_context * tralloc_new ( const tralloc_context * parent_context )
     return tralloc ( parent_context, 0 );
 }
 
-uint8_t _tralloc_free_chunk ( tralloc_chunk * chunk );
+uint8_t _tralloc_free_chunk ( _tralloc_chunk * chunk );
 
 inline
-uint8_t _tralloc_free_chunk_children ( tralloc_chunk * chunk )
+uint8_t _tralloc_free_chunk_children ( _tralloc_chunk * chunk )
 {
-    uint8_t result, error = 0;
-    tralloc_chunk * child = chunk->first_child;
+    uint8_t result, error  = 0;
+    _tralloc_chunk * child = chunk->first_child;
 
-    tralloc_chunk * next_child;
+    _tralloc_chunk * next_child;
     while ( child != NULL ) {
         next_child = child->next;
         if ( ( result = _tralloc_free_chunk ( child ) ) != 0 ) {
@@ -135,7 +135,7 @@ uint8_t tralloc_free ( const tralloc_context * chunk_context )
     if ( chunk_context == NULL ) {
         return 0;
     }
-    tralloc_chunk * chunk = _tralloc_chunk_from_context ( chunk_context );
+    _tralloc_chunk * chunk = _tralloc_chunk_from_context ( chunk_context );
     _tralloc_detach_chunk ( chunk );
     return _tralloc_free_chunk ( chunk );
 }

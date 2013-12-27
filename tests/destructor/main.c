@@ -9,9 +9,7 @@
 #include <tralloc/events.h>
 #endif
 
-#if defined(TRALLOC_DESTRUCTOR)
 #include "destructor.h"
-#endif
 
 int main ()
 {
@@ -19,14 +17,10 @@ int main ()
     if ( root == NULL ) {
         return 1;
     }
-
-#if defined(TRALLOC_DESTRUCTOR)
     if ( !test_destructor (root) ) {
         tralloc_free ( root );
         return 2;
     }
-#endif
-
     if ( tralloc_free ( root ) != 0 ) {
         return 3;
     }

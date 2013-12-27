@@ -10,20 +10,17 @@
 #include "tree.h"
 #include "chunk.h"
 
-#if defined(TRALLOC_EXTENSIONS)
-#include "extensions/chunk.h"
-#endif
-
 #if defined(TRALLOC_REFERENCE)
+#include "reference/head_chunk.h"
 #include "reference/chunk.h"
 #endif
 
 tralloc_context * tralloc ( const tralloc_context * parent_context, size_t length )
 {
-    tralloc_chunk * chunk;
+    _tralloc_chunk * chunk;
 
-#if defined(TRALLOC_EXTENSIONS)
-    chunk = _tralloc_extensions_malloc_chunk ( parent_context, length );
+#if defined(TRALLOC_REFERENCE)
+    chunk = _tralloc_references_malloc_chunk ( parent_context, length );
 #else
     chunk = _tralloc_usual_malloc_chunk ( parent_context, length );
 #endif
@@ -37,10 +34,10 @@ tralloc_context * tralloc ( const tralloc_context * parent_context, size_t lengt
 
 tralloc_context * tralloc_zero ( const tralloc_context * parent_context, size_t length )
 {
-    tralloc_chunk * chunk;
+    _tralloc_chunk * chunk;
 
-#if defined(TRALLOC_EXTENSIONS)
-    chunk = _tralloc_extensions_calloc_chunk ( parent_context, length );
+#if defined(TRALLOC_REFERENCE)
+    chunk = _tralloc_references_calloc_chunk ( parent_context, length );
 #else
     chunk = _tralloc_usual_calloc_chunk ( parent_context, length );
 #endif
@@ -53,23 +50,23 @@ tralloc_context * tralloc_zero ( const tralloc_context * parent_context, size_t 
 }
 
 static inline
-void _update_chunk ( tralloc_chunk * chunk )
+void _update_chunk ( _tralloc_chunk * chunk )
 {
-    tralloc_chunk * prev = chunk->prev;
+    _tralloc_chunk * prev = chunk->prev;
     if ( prev == NULL ) {
-        tralloc_chunk * parent = chunk->parent;
+        _tralloc_chunk * parent = chunk->parent;
         if ( parent != NULL ) {
             parent->first_child = chunk;
         }
     } else {
         prev->next = chunk;
     }
-    tralloc_chunk * next = chunk->next;
+    _tralloc_chunk * next = chunk->next;
     if ( next != NULL ) {
         next->prev = chunk;
     }
 
-    tralloc_chunk * next_child = chunk->first_child;
+    _tralloc_chunk * next_child = chunk->first_child;
     while ( next_child != NULL ) {
         next_child->parent = chunk;
         next_child = next_child->next;
@@ -81,22 +78,20 @@ tralloc_context * tralloc_realloc ( const tralloc_context * chunk_context, size_
     if ( chunk_context == NULL ) {
         return NULL;
     }
-    tralloc_chunk * old_chunk = _tralloc_chunk_from_context ( chunk_context );
+    _tralloc_chunk * old_chunk = _tralloc_chunk_from_context ( chunk_context );
 
 #if defined(TRALLOC_DEBUG)
     size_t old_length = old_chunk->length;
 #endif
 
-    tralloc_chunk * new_chunk;
+    _tralloc_chunk * new_chunk;
 
 #if defined(TRALLOC_REFERENCE)
-    if ( old_chunk->mode == TRALLOC_MODE_EXTENSIONS ) {
-        new_chunk = _tralloc_extensions_realloc_chunk ( old_chunk, length );
+    if ( old_chunk->mode == TRALLOC_MODE_REFERENCES ) {
+        new_chunk = _tralloc_references_realloc_chunk ( old_chunk, length );
     } else {
         new_chunk = _tralloc_reference_realloc_chunk ( old_chunk, length );
     }
-#elif defined(TRALLOC_EXTENSIONS)
-    new_chunk = _tralloc_extensions_realloc_chunk ( old_chunk, length );
 #else
     new_chunk = _tralloc_usual_realloc_chunk ( old_chunk, length );
 #endif
@@ -124,10 +119,10 @@ uint8_t tralloc_move ( const tralloc_context * child_context, const tralloc_cont
     if ( child_context == NULL || parent_context == child_context ) {
         return 1;
     }
-    tralloc_chunk * child = _tralloc_chunk_from_context ( child_context );
+    _tralloc_chunk * child = _tralloc_chunk_from_context ( child_context );
 
 #if defined(TRALLOC_DEBUG)
-    tralloc_chunk * old_parent;
+    _tralloc_chunk * old_parent;
 #endif
 
     if ( parent_context == NULL ) {
@@ -142,7 +137,7 @@ uint8_t tralloc_move ( const tralloc_context * child_context, const tralloc_cont
         _tralloc_detach_chunk ( child );
         child->parent = NULL;
     } else {
-        tralloc_chunk * new_parent = _tralloc_chunk_from_context ( parent_context );
+        _tralloc_chunk * new_parent = _tralloc_chunk_from_context ( parent_context );
         if ( child->parent == new_parent ) {
             return 0;
         }
@@ -163,26 +158,24 @@ uint8_t tralloc_move ( const tralloc_context * child_context, const tralloc_cont
 
 }
 
-uint8_t _tralloc_free_chunk ( tralloc_chunk * chunk )
+uint8_t _tralloc_free_chunk ( _tralloc_chunk * chunk )
 {
 
 #if defined(TRALLOC_REFERENCE)
-    if ( chunk->mode == TRALLOC_MODE_EXTENSIONS ) {
-        return _tralloc_extensions_free_chunk ( chunk );
+    if ( chunk->mode == TRALLOC_MODE_REFERENCES ) {
+        return _tralloc_references_free_chunk ( chunk );
     } else {
         return _tralloc_reference_free_chunk ( chunk );
     }
-#elif defined(TRALLOC_EXTENSIONS)
-    return _tralloc_extensions_free_chunk ( chunk );
 #else
     return _tralloc_usual_free_chunk ( chunk );
 #endif
 
 }
 
-extern inline uint8_t           _tralloc_add_chunk           ( const tralloc_context * parent_context, tralloc_chunk * child );
-extern inline void              _tralloc_set_child_chunk     ( tralloc_chunk * parent, tralloc_chunk * child );
-extern inline void              _tralloc_detach_chunk        ( tralloc_chunk * chunk );
+extern inline uint8_t           _tralloc_add_chunk           ( const tralloc_context * parent_context, _tralloc_chunk * child );
+extern inline void              _tralloc_set_child_chunk     ( _tralloc_chunk * parent, _tralloc_chunk * child );
+extern inline void              _tralloc_detach_chunk        ( _tralloc_chunk * chunk );
 extern inline tralloc_context * tralloc_new                  ( const tralloc_context * parent_context );
 extern inline uint8_t           tralloc_free                 ( const tralloc_context * root_context );
-extern inline uint8_t           _tralloc_free_chunk_children ( tralloc_chunk * chunk );
+extern inline uint8_t           _tralloc_free_chunk_children ( _tralloc_chunk * chunk );

@@ -30,7 +30,7 @@ void free_history ( malloc_dynarr * tralloc_history )
 }
 
 static
-uint8_t on_free ( void * user_data, tralloc_chunk * chunk )
+uint8_t on_free ( void * user_data, _tralloc_chunk * chunk )
 {
     malloc_dynarr * tralloc_history = ( malloc_dynarr * ) user_data;
     if ( malloc_dynarr_append ( tralloc_history, chunk ) != 0 ) {
@@ -58,19 +58,19 @@ bool test_free ( const tralloc_context * root )
         return false;
     }
 
-    tralloc_chunk * a_chunk = _tralloc_chunk_from_context ( a );
-    tralloc_chunk * b_chunk = _tralloc_chunk_from_context ( b );
-    tralloc_chunk * c_chunk = _tralloc_chunk_from_context ( c );
+    _tralloc_chunk * a_chunk = _tralloc_chunk_from_context ( a );
+    _tralloc_chunk * b_chunk = _tralloc_chunk_from_context ( b );
+    _tralloc_chunk * c_chunk = _tralloc_chunk_from_context ( c );
 
 #if defined(TRALLOC_REFERENCE)
-    void * c_reference = tralloc_add_reference ( c, b );
+    void * c_reference = tralloc_reference ( c, b );
     if ( c_reference == NULL ) {
         tralloc_free ( a );
         tralloc_free ( b );
         free_history ( tralloc_history );
         return false;
     }
-    tralloc_chunk * c_reference_chunk = _tralloc_chunk_from_context ( c_reference );
+    _tralloc_chunk * c_reference_chunk = _tralloc_chunk_from_context ( c_reference );
 #endif
 
     if (
@@ -82,7 +82,7 @@ bool test_free ( const tralloc_context * root )
     }
 
 #if defined(TRALLOC_REFERENCE)
-    tralloc_chunk * chunk;
+    _tralloc_chunk * chunk;
     if (
         malloc_dynarr_get_length ( tralloc_history ) != 4 ||
         ( chunk = malloc_dynarr_get ( tralloc_history, 0 ) ) == NULL ||
@@ -98,7 +98,7 @@ bool test_free ( const tralloc_context * root )
         return false;
     }
 #else
-    tralloc_chunk * chunk;
+    _tralloc_chunk * chunk;
     if (
         malloc_dynarr_get_length ( tralloc_history ) != 3 ||
         ( chunk = malloc_dynarr_get ( tralloc_history, 0 ) ) == NULL ||

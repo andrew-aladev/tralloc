@@ -5,7 +5,7 @@
 
 #include "common.h"
 #include <tralloc/tree.h>
-#include <tralloc/extensions/chunk.h>
+#include <tralloc/reference/head_chunk.h>
 #include <tralloc/reference/main.h>
 
 #include <string.h>
@@ -22,8 +22,8 @@ bool test_common ( const tralloc_context * root )
     char * common = tralloc ( NULL, sizeof ( char ) * 7 );
     strcpy ( common, "common" );
 
-    void * b_common = tralloc_add_reference ( common, c );
-    void * c_common = tralloc_add_reference ( common, b );
+    void * b_common = tralloc_reference ( common, c );
+    void * c_common = tralloc_reference ( common, b );
     if ( b_common == NULL || c_common == NULL ) {
         tralloc_free ( a );
         return false;
@@ -50,22 +50,22 @@ bool test_common ( const tralloc_context * root )
         return false;
     }
 
-    tralloc_chunk * common_chunk = _tralloc_chunk_from_context ( common );
-    if ( common_chunk->mode != TRALLOC_MODE_EXTENSIONS ) {
+    _tralloc_chunk * common_chunk = _tralloc_chunk_from_context ( common );
+    if ( common_chunk->mode != TRALLOC_MODE_REFERENCES ) {
         tralloc_free ( a );
         return false;
     }
 
-    tralloc_extensions * common_extensions = _tralloc_extensions_from_chunk ( common_chunk );
-    tralloc_reference * b_reference        = _tralloc_reference_from_chunk ( _tralloc_chunk_from_context ( b_common ) );
-    tralloc_reference * c_reference        = _tralloc_reference_from_chunk ( _tralloc_chunk_from_context ( c_common ) );
-    tralloc_reference * reference          = common_extensions->first_reference;
+    _tralloc_references * common_references = _tralloc_references_from_chunk ( common_chunk );
+    _tralloc_reference * b_reference        = _tralloc_reference_from_chunk ( _tralloc_chunk_from_context ( b_common ) );
+    _tralloc_reference * c_reference        = _tralloc_reference_from_chunk ( _tralloc_chunk_from_context ( c_common ) );
+    _tralloc_reference * reference          = common_references->first_reference;
 
     if (
         reference != c_reference ||
-        reference->prev != NULL || reference->parent_extensions != common_extensions ||
+        reference->prev != NULL || reference->references != common_references ||
         ( reference = reference->next ) != b_reference ||
-        reference->prev != c_reference || reference->parent_extensions != common_extensions ||
+        reference->prev != c_reference || reference->references != common_references ||
         ( reference = reference->next ) != NULL
     ) {
         tralloc_free ( a );

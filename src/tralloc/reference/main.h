@@ -8,13 +8,13 @@
 
 #include "../types.h"
 
-// Function works the same as "tralloc_add_reference".
+// Function works the same as "tralloc_reference".
 // Function returns pointer to memory (with length size) or NULL if error occurred.
-tralloc_context * tralloc_add_reference_with_data ( const tralloc_context * child_context, const tralloc_context * parent_context, size_t length );
+tralloc_context * tralloc_reference_with_data ( const tralloc_context * child_context, const tralloc_context * parent_context, size_t length );
 
-// Function works the same as "tralloc_add_reference_with_data".
+// Function works the same as "tralloc_reference_with_data".
 // It will use calloc instead of malloc to allocate new reference.
-tralloc_context * tralloc_add_reference_with_zero_data ( const tralloc_context * child_context, const tralloc_context * parent_context, size_t length );
+tralloc_context * tralloc_reference_with_zero_data ( const tralloc_context * child_context, const tralloc_context * parent_context, size_t length );
 
 // If child_context is NULL or child_context equals parent_context function will return non-zero value.
 // Function will obtain child chunk from child_context, parent chunk from parent_context.
@@ -23,9 +23,9 @@ tralloc_context * tralloc_add_reference_with_zero_data ( const tralloc_context *
 // Function returns pointer to memory (with zero size) or NULL if error occurred.
 // This memory should not be used for storing information.
 inline
-tralloc_context * tralloc_add_reference ( const tralloc_context * child_context, const tralloc_context * parent_context )
+tralloc_context * tralloc_reference ( const tralloc_context * child_context, const tralloc_context * parent_context )
 {
-    return tralloc_add_reference_with_data ( child_context, parent_context, 0 );
+    return tralloc_reference_with_data ( child_context, parent_context, 0 );
 }
 
 // If chunk_context is NULL function will return non-zero value.
