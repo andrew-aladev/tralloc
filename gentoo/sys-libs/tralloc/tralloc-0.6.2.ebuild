@@ -10,7 +10,7 @@ HOMEPAGE="https://github.com/andrew-aladev/tralloc"
 SRC_URI="https://github.com/andrew-aladev/tralloc/archive/v${PV}.tar.gz"
 
 LICENSE="LGPL-3+"
-SLOT="0/9999"
+SLOT="0/6"
 KEYWORDS=""
 
 IUSE="debug shared-libs static-libs man test"
