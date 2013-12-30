@@ -80,7 +80,7 @@ bool test_shared ( const tralloc_context * root )
     }
 
     _tralloc_chunk * shared_chunk = _tralloc_chunk_from_context ( shared );
-    if ( shared_chunk->mode != TRALLOC_MODE_REFERENCES ) {
+    if ( shared_chunk->extensions != TRALLOC_HAVE_REFERENCES ) {
         tralloc_free ( a );
         tralloc_free ( b );
         tralloc_free ( c );

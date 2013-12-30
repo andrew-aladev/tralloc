@@ -7,110 +7,43 @@
 #define TRALLOC_REFERENCE_HEAD_CHUNK_H
 
 #include "../chunk.h"
+#include "../tree.h"
 
 #if defined(TRALLOC_DEBUG)
 #include "../events.h"
 #endif
 
-inline
-_tralloc_chunk * _tralloc_references_process_new_chunk ( _tralloc_references * references, _tralloc_chunk * chunk, const tralloc_context * parent_context )
-{
-
-#if defined(TRALLOC_REFERENCE)
-    chunk->mode = TRALLOC_MODE_REFERENCES;
-    references->first_reference = NULL;
-#endif
-
-    return _tralloc_usual_process_new_chunk ( chunk, parent_context );
-}
+#include <stdbool.h>
 
 inline
-_tralloc_chunk * _tralloc_references_malloc_chunk ( const tralloc_context * parent_context, size_t length )
-{
-    _tralloc_references * references = malloc ( sizeof ( _tralloc_references ) + sizeof ( _tralloc_chunk ) + length );
-    if ( references == NULL ) {
-        return NULL;
-    }
-    _tralloc_chunk * chunk = _tralloc_chunk_from_references ( references );
-
-#if defined(TRALLOC_DEBUG)
-    chunk->chunk_length = sizeof ( _tralloc_references ) + sizeof ( _tralloc_chunk );
-    chunk->length       = length;
-#endif
-
-    return _tralloc_references_process_new_chunk ( references, chunk, parent_context );
-}
-
-inline
-_tralloc_chunk * _tralloc_references_calloc_chunk ( const tralloc_context * parent_context, size_t length )
-{
-    _tralloc_references * references = calloc ( 1, sizeof ( _tralloc_references ) + sizeof ( _tralloc_chunk ) + length );
-    if ( references == NULL ) {
-        return NULL;
-    }
-    _tralloc_chunk * chunk = _tralloc_chunk_from_references ( references );
-
-#if defined(TRALLOC_DEBUG)
-    chunk->chunk_length = sizeof ( _tralloc_references ) + sizeof ( _tralloc_chunk );
-    chunk->length       = length;
-#endif
-
-    return _tralloc_references_process_new_chunk ( references, chunk, parent_context );
-}
-
-#if defined(TRALLOC_REFERENCE)
-inline
-void _tralloc_references_update_reference ( _tralloc_references * references )
-{
-    _tralloc_reference * reference = references->first_reference;
-    while ( reference != NULL ) {
-        reference->references = references;
-        reference = reference->next;
-    }
-}
-#endif
-
-inline
-_tralloc_chunk * _tralloc_references_realloc_chunk ( _tralloc_chunk * chunk, size_t length )
-{
-    _tralloc_references * old_references = _tralloc_references_from_chunk ( chunk );
-    _tralloc_references * new_references = realloc ( old_references, sizeof ( _tralloc_references ) + sizeof ( _tralloc_chunk ) + length );
-    if ( new_references == NULL ) {
-        return NULL;
-    }
-
-    chunk = _tralloc_chunk_from_references ( new_references );
-
-#if defined(TRALLOC_DEBUG)
-    chunk->length = length;
-#endif
-
-#if defined(TRALLOC_REFERENCE)
-    if ( old_references != new_references ) {
-        // now pointers to old_references is invalid
-        // each pointer to old_references should be replaced with new_references
-        _tralloc_references_update_reference ( new_references );
-    }
-#endif
-
-    return chunk;
-}
-
-inline
-uint8_t _tralloc_references_free_chunk ( _tralloc_chunk * chunk )
+void _tralloc_references_new_chunk ( _tralloc_chunk * chunk )
 {
     _tralloc_references * references = _tralloc_references_from_chunk ( chunk );
+    references->first_reference      = NULL;
+}
 
-#if defined(TRALLOC_REFERENCE)
+inline
+void _tralloc_references_update_chunk ( _tralloc_chunk * references_chunk )
+{
+    _tralloc_references * references = _tralloc_references_from_chunk ( references_chunk );
+    _tralloc_chunk * reference_chunk = references->first_reference;
+    _tralloc_reference * reference;
+    while ( reference_chunk != NULL ) {
+        reference             = _tralloc_reference_from_chunk ( reference_chunk );
+        reference->references = references_chunk;
+        reference_chunk       = reference_chunk->next;
+    }
+}
+
+inline
+bool _tralloc_references_try_free_chunk ( _tralloc_chunk * chunk )
+{
+    _tralloc_references * references = _tralloc_references_from_chunk ( chunk );
     if ( references->first_reference != NULL ) {
         _tralloc_detach_chunk ( chunk );
-        return 0;
+        return false;
     }
-#endif
-
-    uint8_t error = _tralloc_usual_process_free_chunk ( chunk );
-    free ( references );
-    return error;
+    return true;
 }
 
 #endif

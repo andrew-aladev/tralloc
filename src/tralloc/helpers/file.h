@@ -7,7 +7,7 @@
 #define TRALLOC_HELPERS_FILE_H
 
 #include "../tree.h"
-#include "../destructor.h"
+#include "../destructor/main.h"
 #include <fcntl.h>
 #include <unistd.h>
 
@@ -16,7 +16,7 @@ uint8_t _tralloc_close ( tralloc_context * chunk_context, void * user_data );
 inline
 int * _tralloc_process_descriptor ( const tralloc_context * parent_context, int descriptor )
 {
-    int * descriptor_ptr = tralloc ( parent_context, sizeof ( int ) );
+    int * descriptor_ptr = tralloc_with_extensions ( parent_context, sizeof ( int ), TRALLOC_HAVE_DESTRUCTORS );
     if ( descriptor_ptr == NULL ) {
         close ( descriptor );
         return NULL;

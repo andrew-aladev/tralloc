@@ -8,9 +8,11 @@
 extern inline tralloc_context * _tralloc_context_from_chunk ( _tralloc_chunk * chunk );
 extern inline _tralloc_chunk *  _tralloc_chunk_from_context ( const tralloc_context * context );
 
+#ifdef TRALLOC_DESTRUCTOR
+extern inline _tralloc_destructors * _tralloc_destructors_from_chunk ( _tralloc_chunk * chunk );
+#endif
+
 #ifdef TRALLOC_REFERENCE
-extern inline _tralloc_chunk *      _tralloc_chunk_from_references ( _tralloc_references * references );
 extern inline _tralloc_references * _tralloc_references_from_chunk ( _tralloc_chunk * chunk );
-extern inline _tralloc_chunk *      _tralloc_chunk_from_reference  ( _tralloc_reference * reference );
 extern inline _tralloc_reference *  _tralloc_reference_from_chunk  ( _tralloc_chunk * chunk );
 #endif

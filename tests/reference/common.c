@@ -51,7 +51,7 @@ bool test_common ( const tralloc_context * root )
     }
 
     _tralloc_chunk * common_chunk = _tralloc_chunk_from_context ( common );
-    if ( common_chunk->mode != TRALLOC_MODE_REFERENCES ) {
+    if ( common_chunk->extensions != TRALLOC_HAVE_REFERENCES ) {
         tralloc_free ( a );
         return false;
     }
