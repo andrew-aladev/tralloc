@@ -5,8 +5,9 @@
 
 #include "common.h"
 
+
 extern inline tralloc_context * _tralloc_context_from_chunk ( _tralloc_chunk * chunk );
-extern inline _tralloc_chunk *  _tralloc_chunk_from_context ( const tralloc_context * context );
+extern inline _tralloc_chunk *  _tralloc_chunk_from_context ( tralloc_context * context );
 
 #ifdef TRALLOC_DESTRUCTOR
 extern inline _tralloc_destructors * _tralloc_destructors_from_chunk ( _tralloc_chunk * chunk );

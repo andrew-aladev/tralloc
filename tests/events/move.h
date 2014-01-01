@@ -6,4 +6,4 @@
 #include <tralloc/types.h>
 #include <stdbool.h>
 
-bool test_move ( const tralloc_context * root );
+bool test_move ( tralloc_context * root );

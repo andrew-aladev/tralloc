@@ -6,4 +6,5 @@
 #include <tralloc/types.h>
 #include <stdbool.h>
 
-bool test_shared ( const tralloc_context * root );
+
+bool test_shared ( tralloc_context * root );

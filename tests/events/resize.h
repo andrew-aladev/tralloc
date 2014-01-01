@@ -6,4 +6,4 @@
 #include <tralloc/types.h>
 #include <stdbool.h>
 
-bool test_resize ( const tralloc_context * root );
+bool test_resize ( tralloc_context * root );

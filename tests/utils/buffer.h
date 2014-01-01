@@ -6,4 +6,4 @@
 #include <tralloc/types.h>
 #include <stdbool.h>
 
-bool test_buffer ( const tralloc_context * root );
+bool test_buffer ( tralloc_context * root );

@@ -1,13 +1,7 @@
 configure_file (${CMAKE_CURRENT_SOURCE_DIR}/config.h.in ${CMAKE_CURRENT_SOURCE_DIR}/config.h)
 
 install (FILES config.h types.h common.h chunk.h tree.h DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/${CURRENT_INCLUDEDIR}")
-set (SOURCES common.c chunk.c tree.c)
-
-if (${TRALLOC_EXTENSIONS})
-    set (SOURCES ${SOURCES} tree_with_extensions.c)
-else ()
-    set (SOURCES ${SOURCES} tree_without_extensions.c)
-endif ()
+set (SOURCES common.c chunk.c)
 
 if (${TRALLOC_DEBUG})
     install (FILES events.h DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/${CURRENT_INCLUDEDIR}")
@@ -16,8 +10,8 @@ endif ()
 
 set (INCLUDEDIR ${CURRENT_INCLUDEDIR})
 
-set (CURRENT_INCLUDEDIR "${INCLUDEDIR}/helpers")
-add_subdirectory ("helpers")
+set (CURRENT_INCLUDEDIR "${INCLUDEDIR}/tree")
+add_subdirectory ("tree")
 
 if (${TRALLOC_DESTRUCTOR})
     set (CURRENT_INCLUDEDIR "${INCLUDEDIR}/destructor")
@@ -27,6 +21,10 @@ if (${TRALLOC_REFERENCE})
     set (CURRENT_INCLUDEDIR "${INCLUDEDIR}/reference")
     add_subdirectory ("reference")
 endif ()
+
+set (CURRENT_INCLUDEDIR "${INCLUDEDIR}/helpers")
+add_subdirectory ("helpers")
+
 if (${TRALLOC_UTILS})
     set (CURRENT_INCLUDEDIR "${INCLUDEDIR}/utils")
     add_subdirectory ("utils")

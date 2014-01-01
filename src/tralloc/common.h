@@ -7,6 +7,8 @@
 #define TRALLOC_COMMON_H
 
 #include "types.h"
+#include "macro.h"
+
 
 inline
 tralloc_context * _tralloc_context_from_chunk ( _tralloc_chunk * chunk )
@@ -15,7 +17,7 @@ tralloc_context * _tralloc_context_from_chunk ( _tralloc_chunk * chunk )
 }
 
 inline
-_tralloc_chunk * _tralloc_chunk_from_context ( const tralloc_context * context )
+_tralloc_chunk * _tralloc_chunk_from_context ( tralloc_context * context )
 {
     return ( _tralloc_chunk * ) ( ( uintptr_t ) context - sizeof ( _tralloc_chunk ) );
 }
@@ -24,7 +26,7 @@ _tralloc_chunk * _tralloc_chunk_from_context ( const tralloc_context * context )
 inline
 _tralloc_destructors * _tralloc_destructors_from_chunk ( _tralloc_chunk * chunk )
 {
-    return ( _tralloc_destructors * ) ( ( uintptr_t ) chunk + sizeof ( _tralloc_destructors ) );
+    return ( _tralloc_destructors * ) ( ( uintptr_t ) chunk - sizeof ( _tralloc_destructors ) );
 }
 #endif
 
@@ -35,12 +37,12 @@ _tralloc_references * _tralloc_references_from_chunk ( _tralloc_chunk * chunk )
     uint8_t offset = sizeof ( _tralloc_references );
 
 #ifdef TRALLOC_DESTRUCTOR
-    if ( chunk->extensions & TRALLOC_HAVE_DESTRUCTORS != 0 ) {
+    if ( ( chunk->extensions & TRALLOC_HAVE_DESTRUCTORS ) != 0 ) {
         offset += sizeof ( _tralloc_destructors );
     }
 #endif
 
-    return ( _tralloc_references * ) ( ( uintptr_t ) chunk + offset );
+    return ( _tralloc_references * ) ( ( uintptr_t ) chunk - offset );
 }
 
 inline
@@ -49,13 +51,14 @@ _tralloc_reference * _tralloc_reference_from_chunk ( _tralloc_chunk * chunk )
     uint8_t offset = sizeof ( _tralloc_reference );
 
 #ifdef TRALLOC_DESTRUCTOR
-    if ( chunk->extensions & TRALLOC_HAVE_DESTRUCTORS != 0 ) {
+    if ( ( chunk->extensions & TRALLOC_HAVE_DESTRUCTORS ) != 0 ) {
         offset += sizeof ( _tralloc_destructors );
     }
 #endif
 
-    return ( _tralloc_reference * ) ( ( uintptr_t ) chunk + offset );
+    return ( _tralloc_reference * ) ( ( uintptr_t ) chunk - offset );
 }
 #endif
+
 
 #endif

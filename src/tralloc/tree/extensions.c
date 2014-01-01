@@ -3,19 +3,23 @@
 // tralloc is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Lesser Public License for more details.
 // You should have received a copy of the GNU General Lesser Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
-#include <stdlib.h>
+#include "common.h"
+#include "extensions.h"
 
-#include "tree.h"
-#include "chunk.h"
+#include "../chunk.h"
 
 #if defined(TRALLOC_DESTRUCTOR)
-#include "destructor/chunk.h"
+#include "../destructor/chunk.h"
 #endif
 
 #if defined(TRALLOC_REFERENCE)
-#include "reference/head_chunk.h"
-#include "reference/chunk.h"
+#include "../reference/head_chunk.h"
+#include "../reference/chunk.h"
 #endif
+
+#include <stdlib.h>
+#include <stdbool.h>
+
 
 typedef void * ( * _allocator ) ( size_t length );
 
@@ -32,7 +36,7 @@ void * _calloc ( size_t length )
 }
 
 static inline
-_tralloc_chunk * _tralloc_with_extensions_with_allocator ( const tralloc_context * parent_context, size_t length, uint8_t extensions, _allocator allocator )
+_tralloc_chunk * _tralloc_with_extensions_with_allocator ( tralloc_context * parent_context, uint8_t extensions, size_t length, _allocator allocator )
 {
     uint8_t extensions_length = 0;
 
@@ -86,30 +90,25 @@ _tralloc_chunk * _tralloc_with_extensions_with_allocator ( const tralloc_context
     return chunk;
 }
 
-_tralloc_chunk * _tralloc_with_extensions ( const tralloc_context * parent_context, size_t length, uint8_t extensions )
+_tralloc_chunk * _tralloc_with_extensions ( tralloc_context * parent_context, uint8_t extensions, size_t length )
 {
-    return _tralloc_with_extensions_with_allocator ( parent_context, length, extensions, _malloc );
+    return _tralloc_with_extensions_with_allocator ( parent_context, extensions, length, _malloc );
 }
 
-extern inline tralloc_context * tralloc_with_extensions ( const tralloc_context * parent_context, size_t length, uint8_t extensions );
+extern inline tralloc_context * tralloc_with_extensions ( tralloc_context * parent_context, uint8_t extensions, size_t length );
+extern inline tralloc_context * tralloc                 ( tralloc_context * parent_context, size_t length );
 
-tralloc_context * tralloc ( const tralloc_context * parent_context, size_t length )
+
+_tralloc_chunk * _tralloc_zero_with_extensions ( tralloc_context * parent_context, uint8_t extensions, size_t length )
 {
-    return tralloc_with_extensions ( parent_context, length, 0 );
+    return _tralloc_with_extensions_with_allocator ( parent_context, extensions, length, _calloc );
 }
 
+extern inline tralloc_context * tralloc_zero_with_extensions ( tralloc_context * parent_context, uint8_t extensions, size_t length );
+extern inline tralloc_context * tralloc_zero                 ( tralloc_context * parent_context, size_t length );
 
-_tralloc_chunk * _tralloc_zero_with_extensions ( const tralloc_context * parent_context, size_t length, uint8_t extensions )
-{
-    return _tralloc_with_extensions_with_allocator ( parent_context, length, extensions, _calloc );
-}
-
-extern inline tralloc_context * tralloc_zero_with_extensions ( const tralloc_context * parent_context, size_t length, uint8_t extensions );
-
-tralloc_context * tralloc_zero ( const tralloc_context * parent_context, size_t length )
-{
-    return tralloc_zero_with_extensions ( parent_context, length, 0 );
-}
+extern inline tralloc_context * tralloc_new                 ( tralloc_context * parent_context );
+extern inline tralloc_context * tralloc_with_extensions_new ( tralloc_context * parent_context, uint8_t extensions );
 
 
 _tralloc_chunk * _tralloc_realloc ( _tralloc_chunk * old_chunk, size_t length )
@@ -144,9 +143,8 @@ _tralloc_chunk * _tralloc_realloc ( _tralloc_chunk * old_chunk, size_t length )
     }
 
     if ( old_memory == new_memory ) {
-        old_chunk->length = length;
-
 #if defined(TRALLOC_DEBUG)
+        old_chunk->length = length;
         if ( _tralloc_on_resize ( old_chunk, old_length ) != 0 ) {
             return NULL;
         }
@@ -155,8 +153,6 @@ _tralloc_chunk * _tralloc_realloc ( _tralloc_chunk * old_chunk, size_t length )
         return old_chunk;
     } else {
         _tralloc_chunk * new_chunk = ( _tralloc_chunk * ) ( ( uintptr_t ) new_memory + extensions_length );
-        new_chunk->length          = length;
-
         _tralloc_usual_update_chunk ( new_chunk );
 
 #if defined(TRALLOC_REFERENCE)
@@ -168,6 +164,7 @@ _tralloc_chunk * _tralloc_realloc ( _tralloc_chunk * old_chunk, size_t length )
 #endif
 
 #if defined(TRALLOC_DEBUG)
+        new_chunk->length = length;
         if ( _tralloc_on_resize ( new_chunk, old_length ) != 0 ) {
             return NULL;
         }
@@ -176,8 +173,6 @@ _tralloc_chunk * _tralloc_realloc ( _tralloc_chunk * old_chunk, size_t length )
         return new_chunk;
     }
 }
-
-extern inline tralloc_context * tralloc_realloc ( const tralloc_context * chunk_context, size_t length );
 
 
 uint8_t _tralloc_free_chunk ( _tralloc_chunk * chunk )
@@ -206,6 +201,9 @@ uint8_t _tralloc_free_chunk ( _tralloc_chunk * chunk )
     if ( references ) {
         extensions_length += sizeof ( _tralloc_references );
     } else if ( ( chunk->extensions & TRALLOC_HAVE_REFERENCE ) != 0 ) {
+        if ( ( result = _tralloc_reference_free_chunk ( chunk ) ) != 0 ) {
+            error = result;
+        }
         extensions_length += sizeof ( _tralloc_reference );
     }
 #endif
@@ -227,3 +225,4 @@ uint8_t _tralloc_free_chunk ( _tralloc_chunk * chunk )
     free ( memory );
     return error;
 }
+

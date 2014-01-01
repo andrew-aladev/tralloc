@@ -8,6 +8,7 @@
 
 #include "types.h"
 
+
 inline
 void _tralloc_usual_update_chunk ( _tralloc_chunk * chunk )
 {
@@ -31,5 +32,6 @@ void _tralloc_usual_update_chunk ( _tralloc_chunk * chunk )
         next_child = next_child->next;
     }
 }
+
 
 #endif

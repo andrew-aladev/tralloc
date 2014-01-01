@@ -10,7 +10,8 @@
 
 #include <string.h>
 
-bool test_common ( const tralloc_context * root )
+
+bool test_common ( tralloc_context * root )
 {
     int *    a = tralloc ( root, sizeof ( int ) * 2 );
     char *   b = tralloc ( a, sizeof ( char ) * 3 );
@@ -19,11 +20,11 @@ bool test_common ( const tralloc_context * root )
         return false;
     }
 
-    char * common = tralloc ( NULL, sizeof ( char ) * 7 );
+    char * common = tralloc_with_extensions ( NULL, TRALLOC_HAVE_REFERENCES, sizeof ( char ) * 7 );
     strcpy ( common, "common" );
 
-    void * b_common = tralloc_reference ( common, c );
-    void * c_common = tralloc_reference ( common, b );
+    void * b_common = tralloc_reference_new ( common, c );
+    void * c_common = tralloc_reference_new ( common, b );
     if ( b_common == NULL || c_common == NULL ) {
         tralloc_free ( a );
         return false;
@@ -57,16 +58,17 @@ bool test_common ( const tralloc_context * root )
     }
 
     _tralloc_references * common_references = _tralloc_references_from_chunk ( common_chunk );
-    _tralloc_reference * b_reference        = _tralloc_reference_from_chunk ( _tralloc_chunk_from_context ( b_common ) );
-    _tralloc_reference * c_reference        = _tralloc_reference_from_chunk ( _tralloc_chunk_from_context ( c_common ) );
-    _tralloc_reference * reference          = common_references->first_reference;
+    _tralloc_chunk * b_chunk                = _tralloc_chunk_from_context ( b_common );
+    _tralloc_chunk * c_chunk                = _tralloc_chunk_from_context ( c_common );
+    _tralloc_chunk * chunk                  = common_references->first_reference;
+    _tralloc_reference * reference          = _tralloc_reference_from_chunk ( chunk );
 
     if (
-        reference != c_reference ||
-        reference->prev != NULL || reference->references != common_references ||
-        ( reference = reference->next ) != b_reference ||
-        reference->prev != c_reference || reference->references != common_references ||
-        ( reference = reference->next ) != NULL
+        chunk != c_chunk ||
+        reference->prev != NULL || reference->references != common_chunk ||
+        ( chunk = reference->next ) != b_chunk || ( reference = _tralloc_reference_from_chunk ( chunk ) ) == NULL ||
+        reference->prev != c_chunk || reference->references != common_chunk ||
+        reference->next != NULL
     ) {
         tralloc_free ( a );
         return false;

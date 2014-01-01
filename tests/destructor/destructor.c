@@ -6,7 +6,8 @@
 #include "destructor.h"
 #include "../lib/malloc_dynarr.h"
 #include <tralloc/helpers/string.h>
-#include <tralloc/destructor.h>
+#include <tralloc/destructor/main.h>
+
 
 static
 uint8_t normal_destructor ( tralloc_context * chunk_context, void * user_data )
@@ -22,13 +23,13 @@ uint8_t normal_destructor ( tralloc_context * chunk_context, void * user_data )
 }
 
 static
-uint8_t empty_destructor_1 ( tralloc_context * chunk_context, void * user_data )
+uint8_t empty_destructor_1 ( tralloc_context * UNUSED ( chunk_context ), void * UNUSED ( user_data ) )
 {
     return 0;
 }
 
 static
-uint8_t empty_destructor_2 ( tralloc_context * chunk_context, void * user_data )
+uint8_t empty_destructor_2 ( tralloc_context * UNUSED ( chunk_context ), void * UNUSED ( user_data ) )
 {
     return 0;
 }
@@ -49,7 +50,7 @@ void free_history ( malloc_dynarr * tralloc_history )
     malloc_dynarr_free ( tralloc_history );
 }
 
-bool test_destructor ( const tralloc_context * root )
+bool test_destructor ( tralloc_context * root )
 {
     malloc_dynarr * tralloc_history = malloc_history();
     if ( tralloc_history == NULL ) {
@@ -57,10 +58,10 @@ bool test_destructor ( const tralloc_context * root )
     }
 
     void * strings = tralloc_new ( root );
-    char * text_01 = tralloc_strdup ( strings, "test text 01" );
-    char * text_02 = tralloc_strdup ( strings, "test text 02" );
-    char * text_03 = tralloc_strdup ( strings, "test text 03" );
-    char * text_04 = tralloc_strdup ( strings, "test text 04" );
+    char * text_01 = tralloc_strdup_with_extensions ( strings, TRALLOC_HAVE_DESTRUCTORS, "test text 01" );
+    char * text_02 = tralloc_strdup_with_extensions ( strings, TRALLOC_HAVE_DESTRUCTORS, "test text 02" );
+    char * text_03 = tralloc_strdup_with_extensions ( strings, TRALLOC_HAVE_DESTRUCTORS, "test text 03" );
+    char * text_04 = tralloc_strdup_with_extensions ( strings, TRALLOC_HAVE_DESTRUCTORS, "test text 04" );
     if ( strings == NULL || text_01 == NULL || text_02 == NULL || text_03 == NULL || text_04 == NULL ) {
         tralloc_free ( strings );
         free_history ( tralloc_history );
@@ -90,20 +91,20 @@ bool test_destructor ( const tralloc_context * root )
     _tralloc_destructor * destructor;
 
     if (
-        ( destructors = chunk_01->destructors ) == NULL || ( destructor = destructors->first_destructor ) == NULL ||
+        ( destructors = _tralloc_destructors_from_chunk ( chunk_01 ) ) == NULL || ( destructor = destructors->first_destructor ) == NULL ||
         destructor->function != normal_destructor  || destructor->user_data != tralloc_history || destructor->next != NULL ||
         destructors->last_destructor != destructor ||
 
-        ( destructors = chunk_02->destructors ) == NULL || ( destructor = destructors->first_destructor ) == NULL ||
+        ( destructors = _tralloc_destructors_from_chunk ( chunk_02 ) ) == NULL || ( destructor = destructors->first_destructor ) == NULL ||
         destructor->function != normal_destructor  || destructor->user_data != NULL || destructor->next != NULL ||
         destructors->last_destructor != destructor ||
 
-        ( destructors = chunk_03->destructors ) == NULL || ( destructor = destructors->first_destructor ) == NULL ||
+        ( destructors = _tralloc_destructors_from_chunk ( chunk_03 ) ) == NULL || ( destructor = destructors->first_destructor ) == NULL ||
         destructor->function != normal_destructor  || destructor->user_data != tralloc_history || ( destructor = destructor->next ) == NULL ||
         destructor->function != normal_destructor  || destructor->user_data != tralloc_history || destructor->next                  != NULL ||
         destructors->last_destructor != destructor ||
 
-        ( destructors = chunk_04->destructors ) == NULL || ( destructor = destructors->first_destructor ) == NULL ||
+        ( destructors = _tralloc_destructors_from_chunk ( chunk_04 ) ) == NULL || ( destructor = destructors->first_destructor ) == NULL ||
         destructor->function != normal_destructor || destructor->user_data != tralloc_history || ( destructor = destructor->next ) == NULL ||
         destructor->function != normal_destructor || destructor->user_data != NULL            || ( destructor = destructor->next ) == NULL ||
         destructor->function != normal_destructor || destructor->user_data != NULL            || ( destructor = destructor->next ) == NULL ||
@@ -116,8 +117,9 @@ bool test_destructor ( const tralloc_context * root )
     }
 
     if (
-        tralloc_clear_destructors ( text_03 )   != 0 ||
-        ( destructors = chunk_03->destructors ) != NULL
+        tralloc_clear_destructors ( text_03 ) != 0 ||
+        ( destructors = _tralloc_destructors_from_chunk ( chunk_03 ) ) == NULL ||
+        destructors->first_destructor != NULL || destructors->last_destructor != NULL
     ) {
         tralloc_free ( strings );
         free_history ( tralloc_history );
@@ -139,7 +141,7 @@ bool test_destructor ( const tralloc_context * root )
     }
 
     if (
-        ( destructors = chunk_03->destructors ) == NULL || ( destructor = destructors->first_destructor ) == NULL ||
+        ( destructors = _tralloc_destructors_from_chunk ( chunk_03 ) ) == NULL || ( destructor = destructors->first_destructor ) == NULL ||
         destructor->function != empty_destructor_1 || destructor->user_data != NULL            || ( destructor = destructor->next ) == NULL ||
         destructor->function != empty_destructor_1 || destructor->user_data != tralloc_history || ( destructor = destructor->next ) == NULL ||
         destructor->function != empty_destructor_2 || destructor->user_data != NULL            || ( destructor = destructor->next ) == NULL ||
@@ -154,9 +156,9 @@ bool test_destructor ( const tralloc_context * root )
     }
 
     if (
-        tralloc_del_destructor ( text_03, empty_destructor_1, NULL ) != 0 ||
+        tralloc_delete_destructors ( text_03, empty_destructor_1, NULL ) != 0 ||
 
-        ( destructors = chunk_03->destructors ) == NULL || ( destructor = destructors->first_destructor ) == NULL ||
+        ( destructors = _tralloc_destructors_from_chunk ( chunk_03 ) ) == NULL || ( destructor = destructors->first_destructor ) == NULL ||
         destructor->function != empty_destructor_1 || destructor->user_data != tralloc_history || ( destructor = destructor->next ) == NULL ||
         destructor->function != empty_destructor_2 || destructor->user_data != NULL            || ( destructor = destructor->next ) == NULL ||
         destructor->function != empty_destructor_2 || destructor->user_data != tralloc_history || ( destructor = destructor->next ) == NULL ||
@@ -169,9 +171,9 @@ bool test_destructor ( const tralloc_context * root )
     }
 
     if (
-        tralloc_del_destructor_by_function ( text_03, empty_destructor_2 ) != 0 ||
+        tralloc_delete_destructors_by_function ( text_03, empty_destructor_2 ) != 0 ||
 
-        ( destructors = chunk_03->destructors ) == NULL || ( destructor = destructors->first_destructor ) == NULL ||
+        ( destructors = _tralloc_destructors_from_chunk ( chunk_03 ) ) == NULL || ( destructor = destructors->first_destructor ) == NULL ||
         destructor->function != empty_destructor_1 || destructor->user_data != tralloc_history || destructor->next != NULL ||
         destructors->last_destructor != destructor
     ) {
@@ -181,20 +183,21 @@ bool test_destructor ( const tralloc_context * root )
     }
 
     if (
-        tralloc_del_destructor_by_data ( text_03, NULL ) != 0 ||
+        tralloc_delete_destructors_by_data ( text_03, NULL ) != 0 ||
 
-        ( destructors = chunk_03->destructors ) == NULL || ( destructor = destructors->first_destructor ) == NULL ||
+        ( destructors = _tralloc_destructors_from_chunk ( chunk_03 ) ) == NULL || ( destructor = destructors->first_destructor ) == NULL ||
         destructor->function != empty_destructor_1 || destructor->user_data != tralloc_history || destructor->next != NULL ||
         destructors->last_destructor != destructor ||
 
-        tralloc_del_destructor_by_data ( text_03, tralloc_history ) != 0 ||
-        chunk_03->destructors != NULL
+        tralloc_delete_destructors_by_data ( text_03, tralloc_history ) != 0 ||
+        ( destructors = _tralloc_destructors_from_chunk ( chunk_03 ) ) == NULL ||
+        destructors->first_destructor != NULL || destructors->last_destructor != NULL
     ) {
         tralloc_free ( strings );
         free_history ( tralloc_history );
         return false;
     }
-    
+
     if (
         tralloc_free ( text_02 ) != 0 ||
         tralloc_free ( text_01 ) != 0 ||

@@ -8,6 +8,7 @@
 
 #include "../tree.h"
 
+
 typedef struct tralloc_buffer_t {
     uint8_t * buf;
     size_t    data_offset;
@@ -15,10 +16,32 @@ typedef struct tralloc_buffer_t {
     size_t    length;
 } tralloc_buffer;
 
-// Function creates new buffer and attaches it to ctx.
-// Function returns pointer to tralloc_buffer or NULL if error occurred.
+#if defined(TRALLOC_EXTENSIONS)
+
 inline
-tralloc_buffer * tralloc_buffer_new ( const tralloc_context * ctx )
+tralloc_buffer * tralloc_buffer_with_extensions_new ( tralloc_context * ctx, uint8_t extensions )
+{
+    tralloc_buffer * buffer = tralloc_with_extensions ( ctx, extensions, sizeof ( tralloc_buffer ) );
+    if ( buffer == NULL ) {
+        return NULL;
+    }
+    buffer->buf         = NULL;
+    buffer->data_offset = 0;
+    buffer->data_length = 0;
+    buffer->length      = 0;
+    return buffer;
+}
+
+inline
+tralloc_buffer * tralloc_buffer_new ( tralloc_context * ctx )
+{
+    return tralloc_buffer_with_extensions_new ( ctx, 0 );
+}
+
+#else
+
+inline
+tralloc_buffer * tralloc_buffer_new ( tralloc_context * ctx )
 {
     tralloc_buffer * buffer = tralloc ( ctx, sizeof ( tralloc_buffer ) );
     if ( buffer == NULL ) {
@@ -31,15 +54,14 @@ tralloc_buffer * tralloc_buffer_new ( const tralloc_context * ctx )
     return buffer;
 }
 
-// Function adds length written to buffer.
+#endif
+
 inline
 void tralloc_buffer_written ( tralloc_buffer * buffer, size_t length )
 {
     buffer->data_length += length;
 }
 
-// Function deletes length readed from buffer.
-// Function returns zero or non-zero value if error occurred.
 inline
 uint8_t tralloc_buffer_readed ( tralloc_buffer * buffer, size_t length )
 {
@@ -51,33 +73,27 @@ uint8_t tralloc_buffer_readed ( tralloc_buffer * buffer, size_t length )
     return 0;
 }
 
-// Function returns read point of buffer.
 inline
 uint8_t * tralloc_buffer_get_read_point ( const tralloc_buffer * buffer )
 {
     return buffer->buf + buffer->data_offset;
 }
 
-// Function returns write point of buffer.
 inline
 uint8_t * tralloc_buffer_get_write_point ( const tralloc_buffer * buffer )
 {
     return buffer->buf + buffer->data_offset + buffer->data_length;
 }
 
-// Function returns length of buffer.
 inline
 size_t tralloc_buffer_get_length ( const tralloc_buffer * buffer )
 {
     return buffer->data_length;
 }
 
-// Function prepairs buffer for writing length bytes.
-// Function returns zero or non-zero value if error occurred.
 uint8_t tralloc_buffer_prepare ( tralloc_buffer * buffer, size_t length );
 
-// Function trims readed data from buffer.
-// Function returns zero or non-zero value if error occurred.
 uint8_t tralloc_buffer_trim ( tralloc_buffer * buffer );
+
 
 #endif

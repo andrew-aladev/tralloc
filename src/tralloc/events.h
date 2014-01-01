@@ -8,6 +8,7 @@
 
 #include "types.h"
 
+
 typedef uint8_t ( * _tralloc_callback_on_add )    ( void * user_data, _tralloc_chunk * chunk );
 typedef uint8_t ( * _tralloc_callback_on_resize ) ( void * user_data, _tralloc_chunk * chunk, size_t old_length );
 typedef uint8_t ( * _tralloc_callback_on_move )   ( void * user_data, _tralloc_chunk * chunk, _tralloc_chunk * old_parent_chunk );
@@ -21,13 +22,9 @@ uint8_t _tralloc_on_resize ( _tralloc_chunk * chunk, size_t old_length );
 uint8_t _tralloc_on_move   ( _tralloc_chunk * chunk, _tralloc_chunk * old_parent_chunk );
 uint8_t _tralloc_on_free   ( _tralloc_chunk * chunk );
 
-// Function returns global count of chunks.
-size_t tralloc_get_chunks_count ();
-
-// Function returns global length used by chunk's controll structures.
+size_t tralloc_get_chunks_count           ();
 size_t tralloc_get_chunks_overhead_length ();
+size_t tralloc_get_chunks_length          ();
 
-// Function returns global usable for user length of chunks.
-size_t tralloc_get_chunks_length ();
 
 #endif

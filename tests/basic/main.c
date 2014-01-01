@@ -16,6 +16,7 @@
 #include <stdbool.h>
 #include <math.h>
 
+
 static tralloc_context * root;
 static _tralloc_chunk  * root_chunk;
 
@@ -76,7 +77,7 @@ bool compare_double ( double a, double b )
            /|\
    7        6        5
    |        |        |\
-trivium trivium_1 trivium_2 trivium_3
+trivium trivium_1 trivium_3 trivium_2
             |
             8
            /|\
@@ -137,15 +138,15 @@ bool test_alloc()
     data_7[0] = 0.01234;
     data_7[1] = 0.56789;
 
-    trivium = tralloc_new ( data_7 );
+#if defined(TRALLOC_REFERENCE)
+    trivium = tralloc_with_extensions_new ( data_7, TRALLOC_HAVE_REFERENCES );
     if ( trivium == NULL ) {
         return false;
     }
 
-#if defined(TRALLOC_REFERENCE)
-    trivium_reference_1 = tralloc_reference                ( trivium, data_6 );
-    trivium_reference_2 = tralloc_reference_with_data      ( trivium, data_5, sizeof ( uint16_t ) * 2 );
-    trivium_reference_3 = tralloc_reference_with_zero_data ( trivium, trivium_reference_2, sizeof ( uint32_t ) );
+    trivium_reference_1 = tralloc_reference_new  ( trivium, data_6 );
+    trivium_reference_2 = tralloc_reference      ( trivium, data_5, sizeof ( uint16_t ) * 2 );
+    trivium_reference_3 = tralloc_reference_zero ( trivium, trivium_reference_2, sizeof ( uint32_t ) );
     if (
         trivium_reference_1 == NULL ||
         trivium_reference_2 == NULL ||
@@ -178,6 +179,14 @@ bool test_alloc()
 
     data_10[0] = - 123456;
     data_10[1] = 789012;
+
+#else
+
+    trivium = tralloc_new ( data_7 );
+    if ( trivium == NULL ) {
+        return false;
+    }
+
 #endif
 
     return true;
@@ -583,4 +592,3 @@ int main ()
 
     return 0;
 }
-

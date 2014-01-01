@@ -6,4 +6,5 @@
 #include <tralloc/types.h>
 #include <stdbool.h>
 
-bool test_common ( const tralloc_context * root );
+
+bool test_common ( tralloc_context * root );

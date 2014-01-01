@@ -4,7 +4,7 @@
 // You should have received a copy of the GNU General Lesser Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
 #include <tralloc/helpers/string.h>
-#include <tralloc/destructor.h>
+#include <tralloc/destructor/main.h>
 
 #if defined(TRALLOC_DEBUG)
 #include <tralloc/events.h>
@@ -14,12 +14,12 @@
 #include <unistd.h>
 #include <stdio.h>
 
-uint8_t empty_destructor ( tralloc_context * context, void * user_data )
+uint8_t empty_destructor ( tralloc_context * UNUSED ( context ), void * UNUSED ( user_data ) )
 {
     return 0;
 }
 
-uint8_t bad_destructor ( tralloc_context * context, void * user_data )
+uint8_t bad_destructor ( tralloc_context * UNUSED ( context ), void * UNUSED ( user_data ) )
 {
     return 1;
 }
@@ -42,7 +42,7 @@ int main ()
     if ( root == NULL ) {
         return 1;
     }
-    int * file_descriptor = tralloc ( root, sizeof ( int ) );
+    int * file_descriptor = tralloc_with_extensions ( root, TRALLOC_HAVE_DESTRUCTORS, sizeof ( int ) );
     if ( file_descriptor == NULL ) {
         tralloc_free ( root );
         return 2;
@@ -63,9 +63,9 @@ int main ()
         return 4;
     }
     if (
-        tralloc_del_destructor             ( file_descriptor, empty_destructor, filename ) != 0 ||
-        tralloc_del_destructor_by_function ( file_descriptor, bad_destructor )             != 0 ||
-        tralloc_del_destructor_by_data     ( file_descriptor, NULL )                       != 0
+        tralloc_delete_destructors             ( file_descriptor, empty_destructor, filename ) != 0 ||
+        tralloc_delete_destructors_by_function ( file_descriptor, bad_destructor )             != 0 ||
+        tralloc_delete_destructors_by_data     ( file_descriptor, NULL )                       != 0
     ) {
         tralloc_free ( root );
         return 5;

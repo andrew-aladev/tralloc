@@ -52,7 +52,7 @@ uint8_t on_move ( void * user_data, _tralloc_chunk * chunk, _tralloc_chunk * old
     return 0;
 }
 
-bool test_move ( const tralloc_context * root )
+bool test_move ( tralloc_context * root )
 {
     malloc_dynarr * tralloc_history = malloc_history();
     if ( tralloc_history == NULL ) {
@@ -60,9 +60,14 @@ bool test_move ( const tralloc_context * root )
     }
     _tralloc_set_callback ( NULL, NULL, on_move, NULL );
 
-    int * a   = tralloc ( root, sizeof ( int ) * 2 );
-    char * b  = tralloc ( root, sizeof ( char ) * 3 );
-    float * c = tralloc ( a,    sizeof ( float ) * 4 );
+    int * a  = tralloc ( root, sizeof ( int ) * 2 );
+    char * b = tralloc ( root, sizeof ( char ) * 3 );
+
+#if defined(TRALLOC_REFERENCE)
+    float * c = tralloc_with_extensions ( a, TRALLOC_HAVE_REFERENCES, sizeof ( float ) * 4 );
+#else
+    float * c = tralloc ( a, sizeof ( float ) * 4 );
+#endif
 
     if ( a == NULL || b == NULL || c == NULL ) {
         tralloc_free ( a );
@@ -72,7 +77,7 @@ bool test_move ( const tralloc_context * root )
     }
 
 #if defined(TRALLOC_REFERENCE)
-    void * c_reference = tralloc_reference ( c, b );
+    void * c_reference = tralloc_reference_new ( c, b );
     if ( c_reference == NULL ) {
         tralloc_free ( a );
         tralloc_free ( b );

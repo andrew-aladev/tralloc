@@ -8,7 +8,7 @@
 
 #include <string.h>
 
-bool test_buffer ( const tralloc_context * root )
+bool test_buffer ( tralloc_context * root )
 {
     tralloc_buffer * buffer = tralloc_buffer_new ( root );
     if ( buffer == NULL ) {

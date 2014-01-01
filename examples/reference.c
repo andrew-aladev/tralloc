@@ -10,39 +10,25 @@
 #include <tralloc/events.h>
 #endif
 
-uint8_t code_1 ( char * common )
-{
-    void * common_reference = tralloc_reference ( common, NULL );
-    if ( common_reference == NULL ) {
-        return 1;
-    }
-    return tralloc_free ( common_reference ); // may free common
-}
-
-uint8_t code_2 ( char * common )
-{
-    void * common_reference = tralloc_reference ( common, NULL );
-    if ( common_reference == NULL ) {
-        return 1;
-    }
-    return tralloc_free ( common_reference ); // may free common
-}
-
 int main ()
 {
-    char * common = tralloc_strdup ( NULL,
-                                     "This is big data, that you dont want to duplicate."
-                                     "Different code needs it."
-                                     "You want it to be fried automaticaly when all code have finished it's processing."
-                                   );
+    char * common = tralloc_strdup_with_extensions (
+                        NULL,
+                        TRALLOC_HAVE_REFERENCES,
+                        "This is big data, that you dont want to duplicate."
+                        "Different code needs it."
+                        "You want it to be fried automaticaly when all code have finished it's processing."
+                    );
     if ( common == NULL ) {
         return 1;
     }
+    void * common_reference_1 = tralloc_reference_new ( common, NULL );
+    void * common_reference_2 = tralloc_reference_new ( common, NULL );
+
     if (
-        code_1 ( common ) != 0 ||
-        code_2 ( common ) != 0
+        tralloc_free ( common_reference_1 ) != 0 ||
+        tralloc_free ( common_reference_2 ) != 0
     ) {
-        tralloc_free ( common );
         return 2;
     }
 

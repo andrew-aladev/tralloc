@@ -4,8 +4,20 @@
 // You should have received a copy of the GNU General Lesser Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
 #include "buffer.h"
-
 #include <string.h>
+
+
+#if defined(TRALLOC_EXTENSIONS)
+
+extern inline tralloc_buffer * tralloc_buffer_with_extensions_new ( tralloc_context * ctx, uint8_t extensions );
+extern inline tralloc_buffer * tralloc_buffer_new                 ( tralloc_context * ctx );
+
+#else
+
+extern inline tralloc_buffer * tralloc_buffer_new ( tralloc_context * ctx );
+
+#endif
+
 
 uint8_t tralloc_buffer_prepare ( tralloc_buffer * buffer, size_t length )
 {
@@ -72,7 +84,6 @@ uint8_t tralloc_buffer_trim ( tralloc_buffer * buffer )
     return 0;
 }
 
-extern inline tralloc_buffer * tralloc_buffer_new             ( const tralloc_context * ctx );
 extern inline void             tralloc_buffer_written         ( tralloc_buffer * buffer, size_t length );
 extern inline uint8_t          tralloc_buffer_readed          ( tralloc_buffer * buffer, size_t length );
 extern inline uint8_t *        tralloc_buffer_get_read_point  ( const tralloc_buffer * buffer );

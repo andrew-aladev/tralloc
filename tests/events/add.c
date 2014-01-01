@@ -39,7 +39,7 @@ uint8_t on_add ( void * user_data, _tralloc_chunk * chunk )
     return 0;
 }
 
-bool test_add ( const tralloc_context * root )
+bool test_add ( tralloc_context * root )
 {
     malloc_dynarr * tralloc_history = malloc_history();
     if ( tralloc_history == NULL ) {
@@ -47,9 +47,14 @@ bool test_add ( const tralloc_context * root )
     }
     _tralloc_set_callback ( on_add, NULL, NULL, NULL );
 
-    int * a   = tralloc ( root, sizeof ( int ) * 2 );
-    char * b  = tralloc ( root, sizeof ( char ) * 3 );
-    float * c = tralloc ( a,    sizeof ( float ) * 4 );
+    int * a  = tralloc ( root, sizeof ( int ) * 2 );
+    char * b = tralloc ( root, sizeof ( char ) * 3 );
+
+#if defined(TRALLOC_REFERENCE)
+    float * c = tralloc_with_extensions ( a, TRALLOC_HAVE_REFERENCES, sizeof ( float ) * 4 );
+#else
+    float * c = tralloc ( a, sizeof ( float ) * 4 );
+#endif
 
     if ( a == NULL || b == NULL || c == NULL ) {
         tralloc_free ( a );
@@ -63,7 +68,7 @@ bool test_add ( const tralloc_context * root )
     _tralloc_chunk * c_chunk = _tralloc_chunk_from_context ( c );
 
 #if defined(TRALLOC_REFERENCE)
-    void * c_reference = tralloc_reference ( c, b );
+    void * c_reference = tralloc_reference_new ( c, b );
     if ( c_reference == NULL ) {
         tralloc_free ( a );
         tralloc_free ( b );

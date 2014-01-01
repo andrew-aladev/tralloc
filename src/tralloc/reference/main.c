@@ -4,78 +4,75 @@
 // You should have received a copy of the GNU General Lesser Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
 #include "main.h"
-#include "chunk.h"
+#include "../tree/common.h"
+#include "../tree/extensions.h"
 
 
-// typedef _tralloc_chunk * ( * _reference_alloc_chunk ) ( const tralloc_context * parent_context, size_t length );
-//
-// static inline
-// tralloc_context * _add_reference ( const tralloc_context * child_context, const tralloc_context * parent_context, size_t length, _reference_alloc_chunk allocator )
-// {
-//     if ( child_context == NULL || parent_context == child_context ) {
-//         return NULL;
-//     }
-//
-//     _tralloc_chunk * child_chunk = _tralloc_chunk_from_context ( child_context );
-//
-//     if ( parent_context != NULL ) {
-//         _tralloc_chunk * parent_chunk = _tralloc_chunk_from_context ( parent_context );
-//         if ( parent_chunk->extensions == TRALLOC_HAVE_REFERENCE ) {
-//             _tralloc_reference * reference = _tralloc_reference_from_chunk  ( parent_chunk );
-//             parent_chunk                   = _tralloc_chunk_from_references ( reference->references );
-//             parent_context                 = _tralloc_context_from_chunk    ( parent_chunk );
-//         }
-//
-//         if ( child_chunk->parent == parent_chunk ) {
-//             return NULL;
-//         }
-//     }
-//
-//     _tralloc_chunk * chunk = allocator ( parent_context, length );
-//     if ( chunk == NULL ) {
-//         return NULL;
-//     }
-//
-//     _tralloc_references * references = _tralloc_references_from_chunk ( child_chunk );
-//     _tralloc_reference  * reference  = _tralloc_reference_from_chunk  ( chunk );
-//
-//     reference->references = references;
-//     reference->prev       = NULL;
-//
-//     _tralloc_reference * first_reference = references->first_reference;
-//     if ( first_reference == NULL ) {
-//         reference->next = NULL;
-//     } else {
-//         reference->next       = first_reference;
-//         first_reference->prev = reference;
-//     }
-//     references->first_reference = reference;
-//
-//     return _tralloc_context_from_chunk ( chunk );
-// }
-//
-// tralloc_context * tralloc_reference_with_data ( const tralloc_context * child_context, const tralloc_context * parent_context, size_t length )
-// {
-//     return _add_reference ( child_context, parent_context, length, _tralloc_reference_malloc_chunk );
-// }
-//
-// tralloc_context * tralloc_reference_with_zero_data ( const tralloc_context * child_context, const tralloc_context * parent_context, size_t length )
-// {
-//     return _add_reference ( child_context, parent_context, length, _tralloc_reference_calloc_chunk );
-// }
+typedef _tralloc_chunk * ( * _reference_alloc_chunk ) ( tralloc_context * parent_context, uint8_t extensions, size_t length );
 
-
-typedef _tralloc_chunk * ( * _reference_alloc_chunk ) ( const tralloc_context * parent_context, size_t length );
-
-_tralloc_chunk * _tralloc_reference_with_extensions ( _tralloc_chunk * child_chunk, _tralloc_chunk * parent_chunk, size_t length, uint8_t extensions )
+static inline
+_tralloc_chunk * _add_reference ( _tralloc_chunk * child_chunk, tralloc_context * parent_context, uint8_t extensions, size_t length, _reference_alloc_chunk allocator )
 {
-    ;
+    if ( ( child_chunk->extensions & TRALLOC_HAVE_REFERENCES ) == 0 ) {
+        return NULL;
+    }
+
+    if ( parent_context != NULL ) {
+        _tralloc_chunk * parent_chunk = _tralloc_chunk_from_context ( parent_context );
+        if ( parent_chunk->extensions == TRALLOC_HAVE_REFERENCE ) {
+            parent_chunk   = parent_chunk->parent;
+            parent_context = _tralloc_context_from_chunk ( parent_chunk );
+        }
+
+        if ( child_chunk->parent == parent_chunk ) {
+            return NULL;
+        }
+    }
+
+    _tralloc_chunk * chunk = allocator ( parent_context, extensions | TRALLOC_HAVE_REFERENCE, length );
+    if ( chunk == NULL ) {
+        return NULL;
+    }
+
+    _tralloc_reference * reference = _tralloc_reference_from_chunk ( chunk );
+    reference->references          = child_chunk;
+    reference->prev                = NULL;
+
+    _tralloc_references * references       = _tralloc_references_from_chunk ( child_chunk );
+    _tralloc_chunk * first_reference_chunk = references->first_reference;
+    if ( first_reference_chunk == NULL ) {
+        reference->next = NULL;
+    } else {
+        reference->next = first_reference_chunk;
+
+        _tralloc_reference * first_reference = _tralloc_reference_from_chunk ( first_reference_chunk );
+        first_reference->prev = chunk;
+    }
+    references->first_reference = chunk;
+
+    return chunk;
 }
 
-_tralloc_chunk * _tralloc_reference_zero_with_extensions ( _tralloc_chunk * child_chunk, _tralloc_chunk * parent_chunk, size_t length, uint8_t extensions )
+
+_tralloc_chunk * _tralloc_reference_with_extensions ( _tralloc_chunk * child_chunk, tralloc_context * parent_context, uint8_t extensions, size_t length )
 {
-    ;
+    return _add_reference ( child_chunk, parent_context, extensions, length, _tralloc_with_extensions );
 }
+
+extern inline tralloc_context * tralloc_reference_with_extensions ( tralloc_context * child_context, tralloc_context * parent_context, uint8_t extensions, size_t length );
+extern inline tralloc_context * tralloc_reference                 ( tralloc_context * child_context, tralloc_context * parent_context, size_t length );
+
+
+_tralloc_chunk * _tralloc_reference_zero_with_extensions ( _tralloc_chunk * child_chunk, tralloc_context * parent_context, uint8_t extensions, size_t length )
+{
+    return _add_reference ( child_chunk, parent_context, extensions, length, _tralloc_zero_with_extensions );
+}
+
+extern inline tralloc_context * tralloc_reference_zero_with_extensions ( tralloc_context * child_context, tralloc_context * parent_context, uint8_t extensions, size_t length );
+extern inline tralloc_context * tralloc_reference_zero                 ( tralloc_context * child_context, tralloc_context * parent_context, size_t length );
+
+
+extern inline tralloc_context * tralloc_reference_new ( tralloc_context * child_context, tralloc_context * parent_context );
 
 
 uint8_t _tralloc_clear_references ( _tralloc_chunk * chunk )
@@ -99,4 +96,4 @@ uint8_t _tralloc_clear_references ( _tralloc_chunk * chunk )
     return error;
 }
 
-extern inline uint8_t tralloc_clear_references ( const tralloc_context * chunk_context );
+extern inline uint8_t tralloc_clear_references ( tralloc_context * chunk_context );

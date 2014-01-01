@@ -8,7 +8,8 @@
 #if defined(TRALLOC_DESTRUCTOR)
 #include <tralloc/helpers/file.h>
 
-uint8_t destructor_unlink_file ( tralloc_context * chunk_context, void * user_data )
+
+uint8_t destructor_unlink_file ( tralloc_context * UNUSED ( chunk_context ), void * user_data )
 {
     char * file_name = user_data;
     if ( unlink ( file_name ) != 0 ) {

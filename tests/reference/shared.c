@@ -10,7 +10,8 @@
 
 #include <string.h>
 
-bool test_shared ( const tralloc_context * root )
+
+bool test_shared ( tralloc_context * root )
 {
     int *    a = tralloc ( root, sizeof ( int ) * 2 );
     char *   b = tralloc ( root, sizeof ( char ) * 3 );
@@ -19,15 +20,15 @@ bool test_shared ( const tralloc_context * root )
         return false;
     }
 
-    char * shared = tralloc ( root, sizeof ( char ) * 7 );
+    char * shared = tralloc_with_extensions ( root, TRALLOC_HAVE_REFERENCES, sizeof ( char ) * 7 );
     strcpy ( shared, "shared" );
 
     if (
         shared == NULL ||
-        tralloc_reference ( NULL, shared )   != NULL ||
-        tralloc_reference ( NULL, NULL )     != NULL ||
-        tralloc_reference ( shared, shared ) != NULL ||
-        tralloc_reference ( shared, root )   != NULL
+        tralloc_reference_new ( NULL, shared )   != NULL ||
+        tralloc_reference_new ( NULL, NULL )     != NULL ||
+        tralloc_reference_new ( shared, shared ) != NULL ||
+        tralloc_reference_new ( shared, root )   != NULL
     ) {
         tralloc_free ( a );
         tralloc_free ( b );
@@ -35,15 +36,15 @@ bool test_shared ( const tralloc_context * root )
         return false;
     }
 
-    void * b_shared = tralloc_reference ( shared, c );
-    void * c_shared = tralloc_reference ( shared, b );
+    void * b_shared = tralloc_reference_new ( shared, c );
+    void * c_shared = tralloc_reference_new ( shared, b );
     if ( b_shared == NULL || c_shared == NULL ) {
         tralloc_free ( a );
         tralloc_free ( b );
         tralloc_free ( c );
         return false;
     }
-    
+
     if (
         tralloc_move ( b_shared, NULL ) != 0 ||
         tralloc_move ( b_shared, b )    != 0 ||
@@ -55,14 +56,14 @@ bool test_shared ( const tralloc_context * root )
         return false;
     }
 
-    void * a_shared = tralloc_reference ( shared, a );
+    void * a_shared = tralloc_reference_new ( shared, a );
     if ( a_shared == NULL ) {
         tralloc_free ( a );
         tralloc_free ( b );
         tralloc_free ( c );
         return false;
     }
-    
+
     a_shared = tralloc_realloc ( a_shared, sizeof ( uint8_t ) * 40 );
     if ( a_shared == NULL ) {
         tralloc_free ( a );
@@ -88,18 +89,19 @@ bool test_shared ( const tralloc_context * root )
     }
 
     _tralloc_references * shared_references = _tralloc_references_from_chunk ( shared_chunk );
-    _tralloc_reference * a_reference        = _tralloc_reference_from_chunk ( _tralloc_chunk_from_context ( a_shared ) );
-    _tralloc_reference * b_reference        = _tralloc_reference_from_chunk ( _tralloc_chunk_from_context ( b_shared ) );
-    _tralloc_reference * c_reference        = _tralloc_reference_from_chunk ( _tralloc_chunk_from_context ( c_shared ) );
-    _tralloc_reference * reference          = shared_references->first_reference;
+    _tralloc_chunk * a_chunk                = _tralloc_chunk_from_context ( a_shared );
+    _tralloc_chunk * b_chunk                = _tralloc_chunk_from_context ( b_shared );
+    _tralloc_chunk * c_chunk                = _tralloc_chunk_from_context ( c_shared );
+    _tralloc_chunk * chunk                  = shared_references->first_reference;
+    _tralloc_reference * reference          = _tralloc_reference_from_chunk ( chunk );
     if (
-        reference != a_reference ||
-        reference->prev != NULL || reference->references != shared_references ||
-        ( reference = reference->next ) != c_reference ||
-        reference->prev != a_reference || reference->references != shared_references ||
-        ( reference = reference->next ) != b_reference ||
-        reference->prev != c_reference || reference->references != shared_references ||
-        ( reference = reference->next ) != NULL
+        chunk != a_chunk ||
+        reference->prev != NULL || reference->references != shared_chunk ||
+        ( chunk = reference->next ) != c_chunk || ( reference = _tralloc_reference_from_chunk ( chunk ) ) == NULL ||
+        reference->prev != a_chunk || reference->references != shared_chunk ||
+        ( chunk = reference->next ) != b_chunk || ( reference = _tralloc_reference_from_chunk ( chunk ) ) == NULL ||
+        reference->prev != c_chunk || reference->references != shared_chunk ||
+        reference->next != NULL
     ) {
         tralloc_free ( a );
         tralloc_free ( b );
@@ -107,20 +109,9 @@ bool test_shared ( const tralloc_context * root )
         return false;
     }
 
-    if ( tralloc_clear_references ( shared ) != 0 ) {
-        tralloc_free ( a );
-        tralloc_free ( b );
-        tralloc_free ( c );
-        return false;
-    }
-
-    a_shared = tralloc_reference ( shared, a );
-
-    a_reference = _tralloc_reference_from_chunk ( _tralloc_chunk_from_context ( a_shared ) );
-    reference   = shared_references->first_reference;
     if (
-        reference != a_reference ||
-        reference->prev != NULL || reference->references != shared_references || reference->next != NULL
+        tralloc_clear_references ( shared ) != 0 ||
+        ( a_shared = tralloc_reference_new ( shared, a ) ) == NULL
     ) {
         tralloc_free ( a );
         tralloc_free ( b );
@@ -128,8 +119,21 @@ bool test_shared ( const tralloc_context * root )
         return false;
     }
 
-    b_shared = tralloc_reference ( shared, b );
-    c_shared = tralloc_reference ( shared, c );
+    a_chunk = _tralloc_chunk_from_context ( a_shared );
+    chunk   = shared_references->first_reference;
+    if (
+        chunk != a_chunk || ( reference = _tralloc_reference_from_chunk ( chunk ) ) == NULL ||
+        reference->prev != NULL || reference->references != shared_chunk ||
+        reference->next != NULL
+    ) {
+        tralloc_free ( a );
+        tralloc_free ( b );
+        tralloc_free ( c );
+        return false;
+    }
+
+    b_shared = tralloc_reference_new ( shared, b );
+    c_shared = tralloc_reference_new ( shared, c );
 
     if (
         tralloc_free ( a_shared ) != 0 ||
@@ -141,11 +145,12 @@ bool test_shared ( const tralloc_context * root )
         return false;
     }
 
-    b_reference = _tralloc_reference_from_chunk ( _tralloc_chunk_from_context ( b_shared ) );
-    reference   = shared_references->first_reference;
+    b_chunk = _tralloc_chunk_from_context ( b_shared );
+    chunk   = shared_references->first_reference;
     if (
-        reference != b_reference ||
-        reference->prev != NULL || reference->references != shared_references || reference->next != NULL
+        chunk != b_chunk || ( reference = _tralloc_reference_from_chunk ( chunk ) ) == NULL ||
+        reference->prev != NULL || reference->references != shared_chunk ||
+        reference->next != NULL
     ) {
         tralloc_free ( a );
         tralloc_free ( b );

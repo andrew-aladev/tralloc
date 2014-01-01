@@ -48,7 +48,7 @@ uint8_t on_resize ( void * user_data, _tralloc_chunk * chunk, size_t old_length 
     return 0;
 }
 
-bool test_resize ( const tralloc_context * root )
+bool test_resize ( tralloc_context * root )
 {
     malloc_dynarr * tralloc_history = malloc_history();
     if ( tralloc_history == NULL ) {

@@ -6,4 +6,5 @@
 #include <tralloc/types.h>
 #include <stdbool.h>
 
-bool test_destructor ( const tralloc_context * root );
+
+bool test_destructor ( tralloc_context * root );

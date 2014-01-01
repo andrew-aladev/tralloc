@@ -5,7 +5,8 @@
 
 #include "file.h"
 
-uint8_t _tralloc_close ( tralloc_context * chunk_context, void * user_data )
+
+uint8_t _tralloc_close ( tralloc_context * chunk_context, void * UNUSED ( user_data ) )
 {
     int * descriptor_ptr = chunk_context;
     if ( close ( * descriptor_ptr ) != 0 ) {
@@ -15,6 +16,10 @@ uint8_t _tralloc_close ( tralloc_context * chunk_context, void * user_data )
     }
 }
 
-extern inline int *   _tralloc_process_descriptor ( const tralloc_context * parent_context, int descriptor );
-extern inline int *   tralloc_open                ( const tralloc_context * parent_context, const char * path_name, int flags );
-extern inline int *   tralloc_open_mode           ( const tralloc_context * parent_context, const char * path_name, int flags, mode_t mode );
+extern inline int * _tralloc_process_descriptor ( tralloc_context * parent_context, int descriptor, uint8_t extensions );
+
+extern inline int * tralloc_open_with_extensions      ( tralloc_context * parent_context, uint8_t extensions, const char * path_name, int flags );
+extern inline int * tralloc_open_mode_with_extensions ( tralloc_context * parent_context, uint8_t extensions, const char * path_name, int flags, mode_t mode );
+
+extern inline int * tralloc_open      ( tralloc_context * parent_context, const char * path_name, int flags );
+extern inline int * tralloc_open_mode ( tralloc_context * parent_context, const char * path_name, int flags, mode_t mode );

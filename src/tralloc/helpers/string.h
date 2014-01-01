@@ -6,77 +6,14 @@
 #ifndef TRALLOC_HELPERS_STRING_H
 #define TRALLOC_HELPERS_STRING_H
 
-#include "../tree.h"
-#include <string.h>
-#include <stdio.h>
-#include <stdarg.h>
+#include "../config.h"
 
-// Function makes duplicate from length bytes of str.
-// If parent_context is NULL function will set new chunk as root independent chunk.
-// Otherwise it will obtain parent chunk from parent_context and attach new chunk to parent chunk.
-// Function returns pointer to memory (with length + 1 size) or NULL if error occurred.
-inline
-char * tralloc_strndup ( const tralloc_context * parent_context, const char * str, size_t length )
-{
-    char * child_data = tralloc ( parent_context, sizeof ( char ) * ( length + 1 ) );
-    if ( child_data == NULL ) {
-        return NULL;
-    }
-    memmove ( child_data, str, length );
-    child_data[length] = '\0';
-    return child_data;
-};
 
-// Function makes duplicate of str.
-// If parent_context is NULL function will set new chunk as root independent chunk.
-// Otherwise it will obtain parent chunk from parent_context and attach new chunk to parent chunk.
-// Function returns pointer to memory (with strlen ( str ) + 1 size) or NULL if error occurred.
-inline
-char * tralloc_strdup ( const tralloc_context * parent_context, const char * str )
-{
-    return tralloc_strndup ( parent_context, str, strlen ( str ) );
-};
+#if defined(TRALLOC_EXTENSIONS)
+#include "string/extensions.h"
+#else
+#include "string/pure.h"
+#endif
 
-// Function creates string from provided format.
-// Function returns pointer to string or NULL if error occurred.
-// Do not use this function if you care about performance.
-// It runs formating two times, because there is no ability to pass custom allocator to asprintf.
-inline
-char * tralloc_vasprintf ( const tralloc_context * parent_context, const char * format, va_list arguments )
-{
-    va_list arguments_copy;
-
-    va_copy ( arguments_copy, arguments );
-    int predicted_length = vsnprintf ( NULL, 0, format, arguments_copy );
-    va_end ( arguments_copy );
-    if ( predicted_length <= 0 ) {
-        return NULL;
-    }
-    predicted_length++;
-
-    char * result = tralloc ( parent_context, sizeof ( char ) * predicted_length );
-    if ( result == NULL ) {
-        return NULL;
-    }
-    va_copy ( arguments_copy, arguments );
-    int length = vsnprintf ( result, predicted_length, format, arguments_copy );
-    va_end ( arguments_copy );
-    if ( length + 1 != predicted_length ) {
-        tralloc_free ( result );
-        return NULL;
-    }
-    return result;
-}
-
-// Function works the same as "tralloc_vasprintf", but takes variable arguments instead of va_list.
-inline
-char * tralloc_asprintf ( const tralloc_context * parent_context, const char * format, ... )
-{
-    va_list arguments;
-    va_start ( arguments, format );
-    char * result = tralloc_vasprintf ( parent_context, format, arguments );
-    va_end ( arguments );
-    return result;
-}
 
 #endif

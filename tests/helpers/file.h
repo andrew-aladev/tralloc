@@ -10,7 +10,7 @@
 #include <unistd.h>
 
 static
-uint8_t destructor_unlink_file ( tralloc_context * chunk_context, void * user_data )
+uint8_t destructor_unlink_file ( tralloc_context * UNUSED ( chunk_context ), void * user_data )
 {
     char * file_name = user_data;
     if ( unlink ( file_name ) != 0 ) {
@@ -20,7 +20,7 @@ uint8_t destructor_unlink_file ( tralloc_context * chunk_context, void * user_da
     }
 }
 
-bool test_file ( const tralloc_context * ctx )
+bool test_file ( tralloc_context * ctx )
 {
     int * hosts = tralloc_open ( ctx, "/etc/hosts", O_RDONLY );
     if ( hosts == NULL ) {

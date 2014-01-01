@@ -31,7 +31,7 @@ void _tralloc_references_update_chunk ( _tralloc_chunk * references_chunk )
     while ( reference_chunk != NULL ) {
         reference             = _tralloc_reference_from_chunk ( reference_chunk );
         reference->references = references_chunk;
-        reference_chunk       = reference_chunk->next;
+        reference_chunk       = reference->next;
     }
 }
 

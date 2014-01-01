@@ -11,6 +11,7 @@
 
 #include "config.h"
 
+
 typedef void tralloc_context;
 
 #if defined(TRALLOC_DESTRUCTOR)
@@ -73,5 +74,6 @@ typedef struct _tralloc_chunk_t {
 #endif
 
 } _tralloc_chunk;
+
 
 #endif

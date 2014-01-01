@@ -3,7 +3,7 @@ project (tralloc)
 
 set (CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
 
-set (TRALLOC_VERSION "0.6.2")
+set (TRALLOC_VERSION "0.7.0")
 
 set (TRALLOC_DEBUG        true  CACHE BOOL "debug features")
 set (TRALLOC_DESTRUCTOR   true  CACHE BOOL "destructor feature")
@@ -44,7 +44,7 @@ if (NOT DEFINED CMAKE_BUILD_TYPE OR CMAKE_BUILD_TYPE STREQUAL "")
     set (CMAKE_BUILD_TYPE DEBUG)
 endif ()
 
-set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -Winline -std=gnu99")
+set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -Winline -std=gnu99 -pedantic")
 
 set (CMAKE_C_FLAGS_DEBUG    "-O0 -g")
 set (CMAKE_C_FLAGS_RELEASE  "-O2 -flto")

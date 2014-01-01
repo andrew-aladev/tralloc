@@ -6,7 +6,7 @@
 #include <tralloc/helpers/string.h>
 #include <stdbool.h>
 
-bool test_str ( const tralloc_context * ctx )
+bool test_str ( tralloc_context * ctx )
 {
     char * str  = "Viktor Tsoi Star Called Sun";
     char * full = tralloc_strdup ( ctx, str );

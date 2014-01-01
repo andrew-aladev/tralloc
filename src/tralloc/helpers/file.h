@@ -11,12 +11,13 @@
 #include <fcntl.h>
 #include <unistd.h>
 
+
 uint8_t _tralloc_close ( tralloc_context * chunk_context, void * user_data );
 
 inline
-int * _tralloc_process_descriptor ( const tralloc_context * parent_context, int descriptor )
+int * _tralloc_process_descriptor ( tralloc_context * parent_context, int descriptor, uint8_t extensions )
 {
-    int * descriptor_ptr = tralloc_with_extensions ( parent_context, sizeof ( int ), TRALLOC_HAVE_DESTRUCTORS );
+    int * descriptor_ptr = tralloc_with_extensions ( parent_context, extensions | TRALLOC_HAVE_DESTRUCTORS, sizeof ( int ) );
     if ( descriptor_ptr == NULL ) {
         close ( descriptor );
         return NULL;
@@ -30,27 +31,37 @@ int * _tralloc_process_descriptor ( const tralloc_context * parent_context, int 
     return descriptor_ptr;
 }
 
-// Function opens descriptor and appends destructor, that will close it.
-// Function returns pointer to descriptor or NULL if error occurred.
 inline
-int * tralloc_open ( const tralloc_context * parent_context, const char * path_name, int flags )
+int * tralloc_open_with_extensions ( tralloc_context * parent_context, uint8_t extensions, const char * path_name, int flags )
 {
     int descriptor = open ( path_name, flags );
     if ( descriptor == -1 ) {
         return NULL;
     }
-    return _tralloc_process_descriptor ( parent_context, descriptor );
+    return _tralloc_process_descriptor ( parent_context, descriptor, extensions );
 }
 
-// Function works the same as "tralloc_open". You can pass mode to it.
 inline
-int * tralloc_open_mode ( const tralloc_context * parent_context, const char * path_name, int flags, mode_t mode )
+int * tralloc_open_mode_with_extensions ( tralloc_context * parent_context, uint8_t extensions, const char * path_name, int flags, mode_t mode )
 {
     int descriptor = open ( path_name, flags, mode );
     if ( descriptor == -1 ) {
         return NULL;
     }
-    return _tralloc_process_descriptor ( parent_context, descriptor );
+    return _tralloc_process_descriptor ( parent_context, descriptor, extensions );
 }
+
+inline
+int * tralloc_open ( tralloc_context * parent_context, const char * path_name, int flags )
+{
+    return tralloc_open_with_extensions ( parent_context, 0, path_name, flags );
+}
+
+inline
+int * tralloc_open_mode ( tralloc_context * parent_context, const char * path_name, int flags, mode_t mode )
+{
+    return tralloc_open_mode_with_extensions ( parent_context, 0, path_name, flags, mode );
+}
+
 
 #endif

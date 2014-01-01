@@ -11,15 +11,10 @@
 #include <stdbool.h>
 
 
-// If chunk_context is NULL function will return non-zero value.
-// Otherwise function will obtain chunk from chunk_context and clear it's destructors list.
-// Destructors will not be called.
-// Function returns zero or non-zero value if error occurred.
-
 void _tralloc_clear_destructors ( _tralloc_chunk * chunk );
 
 inline
-uint8_t tralloc_clear_destructors ( const tralloc_context * chunk_context )
+uint8_t tralloc_clear_destructors ( tralloc_context * chunk_context )
 {
     if ( chunk_context == NULL ) {
         return 1;
@@ -29,18 +24,10 @@ uint8_t tralloc_clear_destructors ( const tralloc_context * chunk_context )
 }
 
 
-// If chunk_context is NULL function will return non-zero value.
-// Otherwise function will obtain chunk from chunk_context, create destructor from function + user_data and append it to chunk's destructors list.
-// Order of calls are:
-// 1. Destructor from root to it's children.
-// 2. Free from children to root.
-// If you want to use some data in destructor - tralloc it to the chunk_context and pass as user_data.
-// Function returns zero or non-zero value if error occurred.
-
 uint8_t _tralloc_append_destructor ( _tralloc_chunk * chunk, tralloc_destructor_function function, void * user_data );
 
 inline
-uint8_t tralloc_append_destructor ( const tralloc_context * chunk_context, tralloc_destructor_function function, void * user_data )
+uint8_t tralloc_append_destructor ( tralloc_context * chunk_context, tralloc_destructor_function function, void * user_data )
 {
     if ( chunk_context == NULL ) {
         return 1;
@@ -49,13 +36,10 @@ uint8_t tralloc_append_destructor ( const tralloc_context * chunk_context, trall
 }
 
 
-// Function works the same as "tralloc_append_destructor".
-// It will use prepend destructor to destructors list instead of append.
-
 uint8_t _tralloc_prepend_destructor ( _tralloc_chunk * chunk, tralloc_destructor_function function, void * user_data );
 
 inline
-uint8_t tralloc_prepend_destructor ( const tralloc_context * chunk_context, tralloc_destructor_function function, void * user_data )
+uint8_t tralloc_prepend_destructor ( tralloc_context * chunk_context, tralloc_destructor_function function, void * user_data )
 {
     if ( chunk_context == NULL ) {
         return 1;
@@ -65,13 +49,13 @@ uint8_t tralloc_prepend_destructor ( const tralloc_context * chunk_context, tral
 
 
 inline
-bool _tralloc_destructor_comparator_by_function ( _tralloc_destructor * destructor, tralloc_destructor_function function, void * user_data )
+bool _tralloc_destructor_comparator_by_function ( _tralloc_destructor * destructor, tralloc_destructor_function function, void * UNUSED ( user_data ) )
 {
     return destructor->function == function;
 }
 
 inline
-bool _tralloc_destructor_comparator_by_data ( _tralloc_destructor * destructor, tralloc_destructor_function function, void * user_data )
+bool _tralloc_destructor_comparator_by_data ( _tralloc_destructor * destructor, tralloc_destructor_function UNUSED_FUNCTION ( function ), void * user_data )
 {
     return destructor->user_data == user_data;
 }
@@ -87,7 +71,7 @@ typedef bool ( * _tralloc_destructor_comparator ) ( _tralloc_destructor * destru
 void _tralloc_delete_destructors_by_comparator ( _tralloc_chunk * chunk, _tralloc_destructor_comparator comparator, tralloc_destructor_function function, void * user_data );
 
 inline
-uint8_t _tralloc_delete_destructors ( const tralloc_context * chunk_context, _tralloc_destructor_comparator comparator, tralloc_destructor_function function, void * user_data )
+uint8_t _tralloc_delete_destructors ( tralloc_context * chunk_context, _tralloc_destructor_comparator comparator, tralloc_destructor_function function, void * user_data )
 {
     if ( chunk_context == NULL ) {
         return 1;
@@ -96,32 +80,23 @@ uint8_t _tralloc_delete_destructors ( const tralloc_context * chunk_context, _tr
     return 0;
 }
 
-// If chunk_context is NULL function will return non-zero value.
-// Otherwise function will obtain chunk from chunk_context and delete destructor by function + user_data from it's destructors list.
-// Function returns zero or non-zero value if error occurred.
-
 inline
-uint8_t tralloc_delete_destructor ( const tralloc_context * chunk_context, tralloc_destructor_function function, void * user_data )
+uint8_t tralloc_delete_destructors ( tralloc_context * chunk_context, tralloc_destructor_function function, void * user_data )
 {
     return _tralloc_delete_destructors ( chunk_context, _tralloc_destructor_comparator_strict, function, user_data );
 }
 
-// If chunk_context is NULL function will return non-zero value.
-// Otherwise function will obtain chunk from chunk_context and delete destructor by function from it's destructors list.
-// Function returns zero or non-zero value if error occurred.
-
 inline
-uint8_t tralloc_delete_destructor_by_function ( const tralloc_context * chunk_context, tralloc_destructor_function function )
+uint8_t tralloc_delete_destructors_by_function ( tralloc_context * chunk_context, tralloc_destructor_function function )
 {
     return _tralloc_delete_destructors ( chunk_context, _tralloc_destructor_comparator_by_function, function, NULL );
 }
 
-// If chunk_context is NULL function will return non-zero value.
-// Otherwise function will obtain chunk from chunk_context and delete destructor by user_data from it's destructors list.
-// Function returns zero or non-zero value if error occurred.
-
 inline
-uint8_t tralloc_delete_destructor_by_data ( const tralloc_context * chunk_context, void * user_data )
+uint8_t tralloc_delete_destructors_by_data ( tralloc_context * chunk_context, void * user_data )
 {
     return _tralloc_delete_destructors ( chunk_context, _tralloc_destructor_comparator_by_data, NULL, user_data );
 }
+
+
+#endif

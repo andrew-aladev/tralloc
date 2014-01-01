@@ -3,7 +3,10 @@
 // tralloc is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Lesser Public License for more details.
 // You should have received a copy of the GNU General Lesser Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
-#include "chunk.h"
+#include "pure.h"
 
 
-extern inline void _tralloc_usual_update_chunk ( _tralloc_chunk * chunk );
+extern inline char * tralloc_strndup   ( tralloc_context * parent_context, const char * str, size_t length );
+extern inline char * tralloc_strdup    ( tralloc_context * parent_context, const char * str );
+extern inline char * tralloc_vasprintf ( tralloc_context * parent_context, const char * format, va_list arguments );
+extern inline char * tralloc_asprintf  ( tralloc_context * parent_context, const char * format, ... );
