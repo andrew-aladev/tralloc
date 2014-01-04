@@ -8,8 +8,21 @@
 #include <tralloc/reference/head_chunk.h>
 #include <tralloc/reference/main.h>
 
+#if defined(TRALLOC_DESTRUCTOR)
+#include <tralloc/destructor/main.h>
+#endif
+
 #include <string.h>
 
+
+#if defined(TRALLOC_DESTRUCTOR)
+
+uint8_t empty_destructor ( tralloc_context * UNUSED ( chunk_context ), void * UNUSED ( user_data ) )
+{
+    return 0;
+}
+
+#endif
 
 bool test_common ( tralloc_context * root )
 {
@@ -24,11 +37,28 @@ bool test_common ( tralloc_context * root )
     strcpy ( common, "common" );
 
     void * b_common = tralloc_reference_new ( common, c );
-    void * c_common = tralloc_reference_new ( common, b );
-    if ( b_common == NULL || c_common == NULL ) {
+    if ( b_common == NULL ) {
         tralloc_free ( a );
         return false;
     }
+
+#if defined(TRALLOC_DESTRUCTOR)
+
+    int16_t * c_common = tralloc_reference_with_extensions ( common, b, TRALLOC_HAVE_DESTRUCTORS, sizeof ( int16_t ) * 2 );
+    if ( c_common == NULL || tralloc_append_destructor ( c_common, empty_destructor, NULL ) != 0 ) {
+        tralloc_free ( a );
+        return false;
+    }
+
+#else
+
+    void * c_common = tralloc_reference_new ( common, b );
+    if ( c_common == NULL ) {
+        tralloc_free ( a );
+        return false;
+    }
+
+#endif
 
     common = tralloc_realloc ( common, sizeof ( char ) * 256 );
     if ( common == NULL || strncmp ( common, "common", 6 ) != 0 ) {

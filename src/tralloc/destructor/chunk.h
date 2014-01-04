@@ -9,6 +9,7 @@
 #include "../common.h"
 #include <stdlib.h>
 
+
 inline
 void _tralloc_destructors_new_chunk ( _tralloc_chunk * chunk )
 {
@@ -45,5 +46,6 @@ uint8_t _tralloc_destructor_free_chunk ( _tralloc_chunk * chunk )
     }
     return error;
 }
+
 
 #endif

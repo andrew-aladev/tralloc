@@ -7,7 +7,6 @@
 #define TRALLOC_COMMON_H
 
 #include "types.h"
-#include "macro.h"
 
 
 inline

@@ -5,5 +5,6 @@
 
 #include "chunk.h"
 
+
 extern inline void    _tralloc_destructors_new_chunk ( _tralloc_chunk * chunk );
 extern inline uint8_t _tralloc_destructor_free_chunk ( _tralloc_chunk * chunk );

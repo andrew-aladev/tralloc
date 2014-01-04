@@ -7,13 +7,9 @@
 #define TRALLOC_REFERENCE_HEAD_CHUNK_H
 
 #include "../chunk.h"
-#include "../tree.h"
-
-#if defined(TRALLOC_DEBUG)
-#include "../events.h"
-#endif
-
+#include "../tree/common.h"
 #include <stdbool.h>
+
 
 inline
 void _tralloc_references_new_chunk ( _tralloc_chunk * chunk )
@@ -45,5 +41,6 @@ bool _tralloc_references_try_free_chunk ( _tralloc_chunk * chunk )
     }
     return true;
 }
+
 
 #endif

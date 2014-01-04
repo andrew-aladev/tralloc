@@ -7,6 +7,7 @@
 #define TRALLOC_DESTRUCTOR_H
 
 #include "../common.h"
+#include "../macro.h"
 #include <stdlib.h>
 #include <stdbool.h>
 

@@ -3,10 +3,11 @@
 // tralloc is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
-#include "resize.h"
+#include "common.h"
 #include "../lib/malloc_dynarr.h"
 #include <tralloc/tree.h>
 #include <tralloc/events.h>
+
 
 typedef struct resize_info_t {
     _tralloc_chunk * chunk;

@@ -44,14 +44,13 @@ if (NOT DEFINED CMAKE_BUILD_TYPE OR CMAKE_BUILD_TYPE STREQUAL "")
     set (CMAKE_BUILD_TYPE DEBUG)
 endif ()
 
-set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -Winline -std=gnu99 -pedantic")
+set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -Winline -std=gnu99")
 
 set (CMAKE_C_FLAGS_DEBUG    "-O0 -g")
 set (CMAKE_C_FLAGS_RELEASE  "-O2 -flto")
 set (CMAKE_LD_FLAGS_RELEASE "-flto")
 
-add_subdirectory (src)
-
+add_subdirectory ("src")
 include_directories ("src")
 
 if (${TRALLOC_TEST})

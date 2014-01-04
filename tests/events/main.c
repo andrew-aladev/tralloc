@@ -3,13 +3,11 @@
 // tralloc is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
-#include "add.h"
-#include "resize.h"
-#include "move.h"
-#include "free.h"
+#include "common.h"
 
 #include <tralloc/tree.h>
 #include <tralloc/events.h>
+
 
 int main ()
 {

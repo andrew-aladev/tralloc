@@ -9,7 +9,7 @@
 #include <tralloc/events.h>
 #endif
 
-#include "destructor.h"
+#include "common.h"
 
 
 int main ()
@@ -18,7 +18,7 @@ int main ()
     if ( root == NULL ) {
         return 1;
     }
-    if ( !test_destructor (root) ) {
+    if ( !test_destructor ( root ) ) {
         tralloc_free ( root );
         return 2;
     }

@@ -3,7 +3,7 @@
 // tralloc is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
-#include "shared.h"
+#include "common.h"
 #include <tralloc/tree.h>
 #include <tralloc/reference/head_chunk.h>
 #include <tralloc/reference/main.h>
@@ -56,8 +56,13 @@ bool test_shared ( tralloc_context * root )
         return false;
     }
 
-    void * a_shared = tralloc_reference_new ( shared, a );
-    if ( a_shared == NULL ) {
+    uint8_t * a_shared = tralloc_reference_zero ( shared, a, sizeof ( uint8_t ) * 3 );
+    if (
+        a_shared == NULL ||
+        a_shared[0] != 0 ||
+        a_shared[1] != 0 ||
+        a_shared[2] != 0
+    ) {
         tralloc_free ( a );
         tralloc_free ( b );
         tralloc_free ( c );
