@@ -14,6 +14,12 @@
 
 typedef void tralloc_context;
 
+#if defined(TRALLOC_LENGTH)
+typedef struct _tralloc_length_t {
+    size_t length;
+} _tralloc_length;
+#endif
+
 #if defined(TRALLOC_DESTRUCTOR)
 typedef uint8_t ( * tralloc_destructor_function ) ( tralloc_context * chunk_context, void * user_data );
 
@@ -47,12 +53,16 @@ typedef struct _tralloc_references_t {
 enum {
 
 #if defined(TRALLOC_DESTRUCTOR)
-    TRALLOC_HAVE_DESTRUCTORS = 1,
+    TRALLOC_HAVE_LENGTH = 1,
+#endif
+
+#if defined(TRALLOC_LENGTH)
+    TRALLOC_HAVE_DESTRUCTORS = 1 << 1,
 #endif
 
 #if defined(TRALLOC_REFERENCE)
-    TRALLOC_HAVE_REFERENCE  = 1 << 1,
-    TRALLOC_HAVE_REFERENCES = 1 << 2,
+    TRALLOC_HAVE_REFERENCE  = 1 << 2,
+    TRALLOC_HAVE_REFERENCES = 1 << 3,
 #endif
 
 };
@@ -66,11 +76,11 @@ typedef struct _tralloc_chunk_t {
 
 #if defined(TRALLOC_EXTENSIONS)
     uint8_t extensions;
+    size_t length;
 #endif
 
 #if defined(TRALLOC_DEBUG)
     uint8_t chunk_length;
-    size_t  length;
 #endif
 
 } _tralloc_chunk;

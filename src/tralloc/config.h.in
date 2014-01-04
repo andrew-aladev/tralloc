@@ -1,4 +1,5 @@
 #cmakedefine TRALLOC_DEBUG
+#cmakedefine TRALLOC_LENGTH
 #cmakedefine TRALLOC_EXTENSIONS
 #cmakedefine TRALLOC_DESTRUCTOR
 #cmakedefine TRALLOC_REFERENCE

@@ -3,21 +3,15 @@
 // tralloc is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Lesser Public License for more details.
 // You should have received a copy of the GNU General Lesser Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
-#include "common.h"
+#include "main.h"
 
 
-extern inline tralloc_context * _tralloc_context_from_chunk ( _tralloc_chunk * chunk );
-extern inline _tralloc_chunk *  _tralloc_chunk_from_context ( tralloc_context * context );
-
-#if defined(TRALLOC_LENGTH)
-extern inline _tralloc_length * _tralloc_length_from_chunk ( _tralloc_chunk * chunk );
-#endif
-
-#if defined(TRALLOC_DESTRUCTOR)
-extern inline _tralloc_destructors * _tralloc_destructors_from_chunk ( _tralloc_chunk * chunk );
-#endif
-
-#if defined(TRALLOC_REFERENCE)
-extern inline _tralloc_references * _tralloc_references_from_chunk ( _tralloc_chunk * chunk );
-extern inline _tralloc_reference *  _tralloc_reference_from_chunk  ( _tralloc_chunk * chunk );
-#endif
+uint8_t _tralloc_get_length ( _tralloc_chunk * chunk, size_t * length )
+{
+    if ( ( chunk->extensions & TRALLOC_HAVE_LENGTH ) == 0 ) {
+        return 2;
+    }
+    _tralloc_length * length_ext = _tralloc_length_from_chunk ( chunk );
+    * length                     = length_ext->length;
+    return 0;
+}

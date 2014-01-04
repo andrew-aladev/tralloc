@@ -21,21 +21,43 @@ _tralloc_chunk * _tralloc_chunk_from_context ( tralloc_context * context )
     return ( _tralloc_chunk * ) ( ( uintptr_t ) context - sizeof ( _tralloc_chunk ) );
 }
 
-#ifdef TRALLOC_DESTRUCTOR
+#if defined(TRALLOC_LENGTH)
 inline
-_tralloc_destructors * _tralloc_destructors_from_chunk ( _tralloc_chunk * chunk )
+_tralloc_length * _tralloc_length_from_chunk ( _tralloc_chunk * chunk )
 {
-    return ( _tralloc_destructors * ) ( ( uintptr_t ) chunk - sizeof ( _tralloc_destructors ) );
+    return ( _tralloc_length * ) ( ( uintptr_t ) chunk - sizeof ( _tralloc_length ) );
 }
 #endif
 
-#ifdef TRALLOC_REFERENCE
+#if defined(TRALLOC_DESTRUCTOR)
+inline
+_tralloc_destructors * _tralloc_destructors_from_chunk ( _tralloc_chunk * chunk )
+{
+    uint8_t offset = sizeof ( _tralloc_destructors );
+
+#if defined(TRALLOC_LENGTH)
+    if ( ( chunk->extensions & TRALLOC_HAVE_LENGTH ) != 0 ) {
+        offset += sizeof ( _tralloc_length );
+    }
+#endif
+
+    return ( _tralloc_destructors * ) ( ( uintptr_t ) chunk - offset );
+}
+#endif
+
+#if defined(TRALLOC_REFERENCE)
 inline
 _tralloc_references * _tralloc_references_from_chunk ( _tralloc_chunk * chunk )
 {
     uint8_t offset = sizeof ( _tralloc_references );
 
-#ifdef TRALLOC_DESTRUCTOR
+#if defined(TRALLOC_LENGTH)
+    if ( ( chunk->extensions & TRALLOC_HAVE_LENGTH ) != 0 ) {
+        offset += sizeof ( _tralloc_length );
+    }
+#endif
+
+#if defined(TRALLOC_DESTRUCTOR)
     if ( ( chunk->extensions & TRALLOC_HAVE_DESTRUCTORS ) != 0 ) {
         offset += sizeof ( _tralloc_destructors );
     }
@@ -49,7 +71,13 @@ _tralloc_reference * _tralloc_reference_from_chunk ( _tralloc_chunk * chunk )
 {
     uint8_t offset = sizeof ( _tralloc_reference );
 
-#ifdef TRALLOC_DESTRUCTOR
+#if defined(TRALLOC_LENGTH)
+    if ( ( chunk->extensions & TRALLOC_HAVE_LENGTH ) != 0 ) {
+        offset += sizeof ( _tralloc_length );
+    }
+#endif
+
+#if defined(TRALLOC_DESTRUCTOR)
     if ( ( chunk->extensions & TRALLOC_HAVE_DESTRUCTORS ) != 0 ) {
         offset += sizeof ( _tralloc_destructors );
     }

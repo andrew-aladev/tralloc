@@ -8,6 +8,10 @@
 
 #include "../chunk.h"
 
+#if defined(TRALLOC_LENGTH)
+#include "../length/chunk.h"
+#endif
+
 #if defined(TRALLOC_DESTRUCTOR)
 #include "../destructor/chunk.h"
 #endif
@@ -40,22 +44,29 @@ _tralloc_chunk * _tralloc_with_extensions_with_allocator ( tralloc_context * par
 {
     uint8_t extensions_length = 0;
 
+#if defined(TRALLOC_LENGTH)
+    bool have_length = ( extensions & TRALLOC_HAVE_LENGTH ) != 0;
+    if ( have_length ) {
+        extensions_length += sizeof ( _tralloc_length );
+    }
+#endif
+
 #if defined(TRALLOC_DESTRUCTOR)
-    bool destructors = ( extensions & TRALLOC_HAVE_DESTRUCTORS ) != 0;
-    if ( destructors ) {
+    bool have_destructors = ( extensions & TRALLOC_HAVE_DESTRUCTORS ) != 0;
+    if ( have_destructors ) {
         extensions_length += sizeof ( _tralloc_destructors );
     }
 #endif
 
 #if defined(TRALLOC_REFERENCE)
-    bool references = ( extensions & TRALLOC_HAVE_REFERENCES ) != 0;
-    bool reference  = ( extensions & TRALLOC_HAVE_REFERENCE )  != 0;
-    if ( references ) {
+    bool have_references = ( extensions & TRALLOC_HAVE_REFERENCES ) != 0;
+    bool have_reference  = ( extensions & TRALLOC_HAVE_REFERENCE )  != 0;
+    if ( have_references ) {
         extensions_length += sizeof ( _tralloc_references );
-        if ( reference ) {
+        if ( have_reference ) {
             extensions &= ~ ( TRALLOC_HAVE_REFERENCE );
         }
-    } else if ( reference ) {
+    } else if ( have_reference ) {
         extensions_length += sizeof ( _tralloc_reference );
     }
 #endif
@@ -74,14 +85,20 @@ _tralloc_chunk * _tralloc_with_extensions_with_allocator ( tralloc_context * par
     chunk->length       = length;
 #endif
 
+#if defined(TRALLOC_LENGTH)
+    if ( have_length ) {
+        _tralloc_length_set ( chunk, length );
+    }
+#endif
+
 #if defined(TRALLOC_DESTRUCTOR)
-    if ( destructors ) {
+    if ( have_destructors ) {
         _tralloc_destructors_new_chunk ( chunk );
     }
 #endif
 
 #if defined(TRALLOC_REFERENCE)
-    if ( references ) {
+    if ( have_references ) {
         _tralloc_references_new_chunk ( chunk );
     }
 #endif
@@ -120,6 +137,13 @@ _tralloc_chunk * _tralloc_realloc ( _tralloc_chunk * old_chunk, size_t length )
 
     uint8_t extensions_length = 0;
 
+#if defined(TRALLOC_LENGTH)
+    bool have_length = ( old_chunk->extensions & TRALLOC_HAVE_LENGTH ) != 0;
+    if ( have_length ) {
+        extensions_length += sizeof ( _tralloc_length );
+    }
+#endif
+
 #if defined(TRALLOC_DESTRUCTOR)
     if ( ( old_chunk->extensions & TRALLOC_HAVE_DESTRUCTORS ) != 0 ) {
         extensions_length += sizeof ( _tralloc_destructors );
@@ -127,11 +151,11 @@ _tralloc_chunk * _tralloc_realloc ( _tralloc_chunk * old_chunk, size_t length )
 #endif
 
 #if defined(TRALLOC_REFERENCE)
-    bool references = ( old_chunk->extensions & TRALLOC_HAVE_REFERENCES ) != 0;
-    bool reference  = ( old_chunk->extensions & TRALLOC_HAVE_REFERENCE )  != 0;
-    if ( references ) {
+    bool have_references = ( old_chunk->extensions & TRALLOC_HAVE_REFERENCES ) != 0;
+    bool have_reference  = ( old_chunk->extensions & TRALLOC_HAVE_REFERENCE )  != 0;
+    if ( have_references ) {
         extensions_length += sizeof ( _tralloc_references );
-    } else if ( reference ) {
+    } else if ( have_reference ) {
         extensions_length += sizeof ( _tralloc_reference );
     }
 #endif
@@ -143,6 +167,13 @@ _tralloc_chunk * _tralloc_realloc ( _tralloc_chunk * old_chunk, size_t length )
     }
 
     if ( old_memory == new_memory ) {
+
+#if defined(TRALLOC_LENGTH)
+        if ( have_length ) {
+            _tralloc_length_set ( old_chunk, length );
+        }
+#endif
+
 #if defined(TRALLOC_DEBUG)
         old_chunk->length = length;
         if ( _tralloc_on_resize ( old_chunk, old_length ) != 0 ) {
@@ -155,10 +186,16 @@ _tralloc_chunk * _tralloc_realloc ( _tralloc_chunk * old_chunk, size_t length )
         _tralloc_chunk * new_chunk = ( _tralloc_chunk * ) ( ( uintptr_t ) new_memory + extensions_length );
         _tralloc_usual_update_chunk ( new_chunk );
 
+#if defined(TRALLOC_LENGTH)
+        if ( have_length ) {
+            _tralloc_length_set ( new_chunk, length );
+        }
+#endif
+
 #if defined(TRALLOC_REFERENCE)
-        if ( references ) {
+        if ( have_references ) {
             _tralloc_references_update_chunk ( new_chunk );
-        } else if ( reference ) {
+        } else if ( have_reference ) {
             _tralloc_reference_update_chunk ( new_chunk );
         }
 #endif
@@ -179,8 +216,8 @@ uint8_t _tralloc_free_chunk ( _tralloc_chunk * chunk )
 {
 
 #if defined(TRALLOC_REFERENCE)
-    bool references = ( chunk->extensions & TRALLOC_HAVE_REFERENCES ) != 0;
-    if ( references ) {
+    bool have_references = ( chunk->extensions & TRALLOC_HAVE_REFERENCES ) != 0;
+    if ( have_references ) {
         if ( !_tralloc_references_try_free_chunk ( chunk ) ) {
             return 0;
         }
@@ -197,8 +234,14 @@ uint8_t _tralloc_free_chunk ( _tralloc_chunk * chunk )
 
     uint8_t extensions_length = 0;
 
+#if defined(TRALLOC_LENGTH)
+    if ( ( chunk->extensions & TRALLOC_HAVE_LENGTH ) != 0 ) {
+        extensions_length += sizeof ( _tralloc_length );
+    }
+#endif
+
 #if defined(TRALLOC_REFERENCE)
-    if ( references ) {
+    if ( have_references ) {
         extensions_length += sizeof ( _tralloc_references );
     } else if ( ( chunk->extensions & TRALLOC_HAVE_REFERENCE ) != 0 ) {
         if ( ( result = _tralloc_reference_free_chunk ( chunk ) ) != 0 ) {
@@ -225,4 +268,3 @@ uint8_t _tralloc_free_chunk ( _tralloc_chunk * chunk )
     free ( memory );
     return error;
 }
-

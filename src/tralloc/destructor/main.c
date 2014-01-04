@@ -30,12 +30,12 @@ extern inline uint8_t tralloc_clear_destructors ( tralloc_context * chunk_contex
 uint8_t _tralloc_append_destructor ( _tralloc_chunk * chunk, tralloc_destructor_function function, void * user_data )
 {
     if ( ( chunk->extensions & TRALLOC_HAVE_DESTRUCTORS ) == 0 ) {
-        return 1;
+        return 2;
     }
 
     _tralloc_destructor * destructor = malloc ( sizeof ( _tralloc_destructor ) );
     if ( destructor == NULL ) {
-        return 2;
+        return 3;
     }
     destructor->function  = function;
     destructor->user_data = user_data;
@@ -60,12 +60,12 @@ extern inline uint8_t tralloc_append_destructor ( tralloc_context * chunk_contex
 uint8_t _tralloc_prepend_destructor ( _tralloc_chunk * chunk, tralloc_destructor_function function, void * user_data )
 {
     if ( ( chunk->extensions & TRALLOC_HAVE_DESTRUCTORS ) == 0 ) {
-        return 1;
+        return 2;
     }
 
     _tralloc_destructor * destructor = malloc ( sizeof ( _tralloc_destructor ) );
     if ( destructor == NULL ) {
-        return 2;
+        return 3;
     }
     destructor->function  = function;
     destructor->user_data = user_data;
