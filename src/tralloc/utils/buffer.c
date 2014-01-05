@@ -23,11 +23,12 @@ uint8_t tralloc_buffer_prepare ( tralloc_buffer * buffer, size_t length )
 {
     uint8_t * buf = buffer->buf;
     uint8_t * new_buf;
+    uint8_t result;
 
     if ( buf == NULL ) {
-        new_buf = tralloc ( buffer, sizeof ( uint8_t ) * length );
-        if ( new_buf == NULL ) {
-            return 1;
+        result = tralloc ( buffer, ( tralloc_context ** ) &new_buf, sizeof ( uint8_t ) * length );
+        if ( result != 0 ) {
+            return result;
         }
         buffer->buf    = new_buf;
         buffer->length = length;
@@ -41,9 +42,10 @@ uint8_t tralloc_buffer_prepare ( tralloc_buffer * buffer, size_t length )
     }
 
     size_t new_length = data_length + length;
-    new_buf = tralloc_realloc ( buf, sizeof ( uint8_t ) * new_length );
-    if ( new_buf == NULL ) {
-        return 2;
+    new_buf = buf;
+    result  = tralloc_realloc ( ( tralloc_context ** ) &new_buf, sizeof ( uint8_t ) * new_length );
+    if ( result != 0 ) {
+        return result;
     }
     if ( new_buf != buf ) {
         buffer->buf = new_buf;

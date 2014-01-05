@@ -19,14 +19,14 @@ void _tralloc_destructors_new_chunk ( _tralloc_chunk * chunk )
 }
 
 inline
-uint8_t _tralloc_destructor_free_chunk ( _tralloc_chunk * chunk )
+tralloc_error _tralloc_destructor_free_chunk ( _tralloc_chunk * chunk )
 {
     _tralloc_destructors * destructors = _tralloc_destructors_from_chunk ( chunk );
     if ( destructors == NULL ) {
         return 0;
     }
 
-    uint8_t result, error = 0;
+    tralloc_error result, error = 0;
     tralloc_context * chunk_context  = _tralloc_context_from_chunk ( chunk );
     _tralloc_destructor * destructor = destructors->first_destructor;
     _tralloc_destructor * next_destructor;

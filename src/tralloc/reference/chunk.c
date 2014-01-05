@@ -6,5 +6,5 @@
 #include "chunk.h"
 
 
-extern inline void    _tralloc_reference_update_chunk ( _tralloc_chunk * reference_chunk );
-extern inline uint8_t _tralloc_reference_free_chunk   ( _tralloc_chunk * chunk );
+extern inline void          _tralloc_reference_update_chunk ( _tralloc_chunk * reference_chunk );
+extern inline tralloc_error _tralloc_reference_free_chunk   ( _tralloc_chunk * chunk );

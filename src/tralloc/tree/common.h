@@ -13,23 +13,8 @@
 #endif
 
 
-_tralloc_chunk * _tralloc_realloc ( _tralloc_chunk * chunk, size_t length );
-
-inline
-tralloc_context * tralloc_realloc ( tralloc_context * chunk_context, size_t length )
-{
-    if ( chunk_context == NULL ) {
-        return NULL;
-    }
-    _tralloc_chunk * chunk = _tralloc_realloc ( _tralloc_chunk_from_context ( chunk_context ), length );
-    if ( chunk == NULL ) {
-        return NULL;
-    }
-    return _tralloc_context_from_chunk ( chunk );
-}
-
-
-uint8_t tralloc_move ( tralloc_context * child_context, tralloc_context * parent_context );
+uint8_t tralloc_realloc ( tralloc_context ** chunk_context, size_t length );
+uint8_t tralloc_move    ( tralloc_context * child_context, tralloc_context * parent_context );
 
 
 inline

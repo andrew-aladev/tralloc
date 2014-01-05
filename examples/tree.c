@@ -11,27 +11,31 @@
 
 int main ()
 {
-    tralloc_context * root = tralloc_new ( NULL );
-    if ( root == NULL ) {
+    tralloc_context * ctx;
+    if ( tralloc_new ( NULL, &ctx ) != 0 ) {
         return 1;
     }
-    int16_t * numbers = tralloc_zero ( root, sizeof ( int16_t ) * 5 );
-    char * string     = tralloc      ( root, sizeof ( char ) * 10 );
-    if ( numbers == NULL || string == NULL ) {
-        tralloc_free ( root );
+    int16_t * numbers;
+    char * string;
+    if (
+        tralloc_zero ( ctx, ( tralloc_context ** ) &numbers, sizeof ( int16_t ) * 5 ) != 0 ||
+        tralloc ( ctx, ( tralloc_context ** ) &string, sizeof ( char ) * 10 ) != 0
+    ) {
+        tralloc_free ( ctx );
         return 2;
     }
     if ( tralloc_move ( string, numbers ) != 0 ) {
-        tralloc_free ( root );
+        tralloc_free ( ctx );
         return 3;
     }
-    numbers = tralloc_realloc ( numbers, sizeof ( int16_t ) * 3 );
-    string  = tralloc_realloc ( string,  sizeof ( char ) * 20 );
-    if ( numbers == NULL || string == NULL ) {
-        tralloc_free ( root );
+    if (
+        tralloc_realloc ( ( tralloc_context ** ) &numbers, sizeof ( int16_t ) * 3 ) != 0 ||
+        tralloc_realloc ( ( tralloc_context ** ) &string,  sizeof ( char ) * 20 )   != 0
+    ) {
+        tralloc_free ( ctx );
         return 4;
     }
-    if ( tralloc_free ( root ) != 0 ) {
+    if ( tralloc_free ( ctx ) != 0 ) {
         return 5;
     }
 

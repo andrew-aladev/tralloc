@@ -6,8 +6,12 @@
 #include "main.h"
 
 
-uint8_t _tralloc_get_length ( _tralloc_chunk * chunk, size_t * length )
+tralloc_error tralloc_get_length ( tralloc_context * context, size_t * length )
 {
+    if ( context == NULL ) {
+        return TRALLOC_ERROR_CONTEXT_IS_NULL;
+    }
+    _tralloc_chunk * chunk = _tralloc_chunk_from_context ( context );
     if ( ( chunk->extensions & TRALLOC_HAVE_LENGTH ) == 0 ) {
         return TRALLOC_ERROR_NO_SUCH_EXTENSION;
     }
@@ -15,5 +19,3 @@ uint8_t _tralloc_get_length ( _tralloc_chunk * chunk, size_t * length )
     * length                     = length_ext->length;
     return 0;
 }
-
-extern inline uint8_t tralloc_get_length ( tralloc_context * context, size_t * length );

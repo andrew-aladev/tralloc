@@ -57,24 +57,23 @@ bool test_resize ( tralloc_context * ctx )
     }
     _tralloc_set_callback ( NULL, on_resize, NULL, NULL );
 
-    int * a   = tralloc ( ctx, sizeof ( int ) * 2 );
-    char * b  = tralloc ( ctx, sizeof ( char ) * 3 );
-    float * c = tralloc ( a,   sizeof ( float ) * 4 );
-
-    if ( a == NULL || b == NULL || c == NULL ) {
-        tralloc_free ( a );
-        tralloc_free ( b );
+    int * a;
+    char * b;
+    float * c;
+    if (
+        tralloc ( ctx, ( tralloc_context ** ) &a, sizeof ( int ) * 2 )   != 0 ||
+        tralloc ( ctx, ( tralloc_context ** ) &b, sizeof ( char ) * 3 )  != 0 ||
+        tralloc ( a,   ( tralloc_context ** ) &c, sizeof ( float ) * 4 ) != 0
+    ) {
         free_history ( tralloc_history );
         return false;
     }
 
-    b = tralloc_realloc ( b, sizeof ( char ) * 8 );
-    a = tralloc_realloc ( a, sizeof ( int ) * 9 );
-    c = tralloc_realloc ( c, sizeof ( float ) * 10 );
-
-    if ( a == NULL || b == NULL || c == NULL ) {
-        tralloc_free ( a );
-        tralloc_free ( b );
+    if (
+        tralloc_realloc ( ( tralloc_context ** ) &b, sizeof ( char ) * 8 )   != 0 ||
+        tralloc_realloc ( ( tralloc_context ** ) &a, sizeof ( int ) * 9 )    != 0 ||
+        tralloc_realloc ( ( tralloc_context ** ) &c, sizeof ( float ) * 10 ) != 0
+    ) {
         free_history ( tralloc_history );
         return false;
     }
@@ -93,8 +92,6 @@ bool test_resize ( tralloc_context * ctx )
         ( info = malloc_dynarr_get ( tralloc_history, 2 ) ) == NULL ||
         info->chunk != c_chunk || info->old_length != sizeof ( float ) * 4 || info->chunk->length != sizeof ( float ) * 10
     ) {
-        tralloc_free ( a );
-        tralloc_free ( b );
         free_history ( tralloc_history );
         return false;
     }

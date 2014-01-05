@@ -23,22 +23,24 @@ uint8_t destructor_unlink_file ( tralloc_context * UNUSED ( chunk_context ), voi
 
 bool test_file ( tralloc_context * ctx )
 {
-    int * hosts = tralloc_open ( ctx, "/etc/hosts", O_RDONLY );
-    if ( hosts == NULL ) {
+    int * hosts;
+    if ( tralloc_open ( ctx, &hosts, "/etc/hosts", O_RDONLY ) != 0 ) {
         return false;
     }
     if ( tralloc_free ( hosts ) != 0 ) {
         return false;
     }
-    hosts = tralloc_open ( ctx, "/etc/hosts", O_RDONLY | O_DIRECTORY );
-    if ( hosts != NULL ) {
+    if ( tralloc_open ( ctx, &hosts, "/etc/hosts", O_RDONLY | O_DIRECTORY ) == 0 ) {
         tralloc_free ( hosts );
         return false;
     }
 
-    char * file_name = tralloc_strdup ( ctx, "/tmp/tralloc_test_file" );
-    int * test_file  = tralloc_open_mode ( ctx, file_name, O_CREAT | O_WRONLY, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH ); // 0644
-    if ( test_file == NULL ) {
+    char * file_name;
+    int * test_file;
+    if (
+        tralloc_strdup ( ctx, &file_name, "/tmp/tralloc_test_file" ) != 0 ||
+        tralloc_open_mode ( ctx, &test_file, file_name, O_CREAT | O_WRONLY, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH ) != 0 // 0644
+    ) {
         tralloc_free ( file_name );
         return false;
     }

@@ -13,35 +13,37 @@
 
 bool test_shared ( tralloc_context * ctx )
 {
-    int *    a = tralloc ( ctx, sizeof ( int ) * 2 );
-    char *   b = tralloc ( ctx, sizeof ( char ) * 3 );
-    size_t * c = tralloc ( ctx, sizeof ( size_t ) * 4 );
-    if ( a == NULL || b == NULL || c == NULL ) {
+    int * a;
+    char * b;
+    size_t * c;
+    char * shared;
+    if (
+        tralloc ( ctx, ( tralloc_context ** ) &a, sizeof ( int ) * 2 )    != 0 ||
+        tralloc ( ctx, ( tralloc_context ** ) &b, sizeof ( char ) * 3 )   != 0 ||
+        tralloc ( ctx, ( tralloc_context ** ) &c, sizeof ( size_t ) * 4 ) != 0 ||
+        tralloc_with_extensions ( ctx, ( tralloc_context ** ) &shared, TRALLOC_HAVE_REFERENCES, sizeof ( char ) * 7 ) != 0
+    ) {
         return false;
     }
 
-    char * shared = tralloc_with_extensions ( ctx, TRALLOC_HAVE_REFERENCES, sizeof ( char ) * 7 );
     strcpy ( shared, "shared" );
 
+    tralloc_context * empty;
     if (
-        shared == NULL ||
-        tralloc_reference_new ( NULL, shared )   != NULL ||
-        tralloc_reference_new ( NULL, NULL )     != NULL ||
-        tralloc_reference_new ( shared, shared ) != NULL ||
-        tralloc_reference_new ( shared, ctx )    != NULL
+        tralloc_reference_new ( NULL, shared, &empty )   == 0 ||
+        tralloc_reference_new ( NULL, NULL, &empty )     == 0 ||
+        tralloc_reference_new ( shared, shared, &empty ) == 0 ||
+        tralloc_reference_new ( shared, ctx, &empty )    == 0
     ) {
-        tralloc_free ( a );
-        tralloc_free ( b );
-        tralloc_free ( c );
         return false;
     }
 
-    void * b_shared = tralloc_reference_new ( shared, c );
-    void * c_shared = tralloc_reference_new ( shared, b );
-    if ( b_shared == NULL || c_shared == NULL ) {
-        tralloc_free ( a );
-        tralloc_free ( b );
-        tralloc_free ( c );
+    tralloc_context * b_shared;
+    tralloc_context * c_shared;
+    if (
+        tralloc_reference_new ( shared, c, &b_shared ) != 0 ||
+        tralloc_reference_new ( shared, b, &c_shared ) != 0
+    ) {
         return false;
     }
 
@@ -50,46 +52,32 @@ bool test_shared ( tralloc_context * ctx )
         tralloc_move ( b_shared, b )    != 0 ||
         tralloc_move ( c_shared, c )    != 0
     ) {
-        tralloc_free ( a );
-        tralloc_free ( b );
-        tralloc_free ( c );
         return false;
     }
 
-    uint8_t * a_shared = tralloc_reference_zero ( shared, a, sizeof ( uint8_t ) * 3 );
+    uint8_t * a_shared;
     if (
-        a_shared == NULL ||
+        tralloc_reference_zero ( shared, a, ( tralloc_context ** ) &a_shared, sizeof ( uint8_t ) * 3 ) != 0 ||
         a_shared[0] != 0 ||
         a_shared[1] != 0 ||
         a_shared[2] != 0
     ) {
-        tralloc_free ( a );
-        tralloc_free ( b );
-        tralloc_free ( c );
         return false;
     }
 
-    a_shared = tralloc_realloc ( a_shared, sizeof ( uint8_t ) * 40 );
-    if ( a_shared == NULL ) {
-        tralloc_free ( a );
-        tralloc_free ( b );
-        tralloc_free ( c );
+    if ( tralloc_realloc ( ( tralloc_context ** ) &a_shared, sizeof ( uint8_t ) * 40 ) != 0 ) {
         return false;
     }
 
-    shared = tralloc_realloc ( shared, sizeof ( char ) * 256 );
-    if ( shared == NULL || strncmp ( shared, "shared", 6 ) != 0 ) {
-        tralloc_free ( a );
-        tralloc_free ( b );
-        tralloc_free ( c );
+    if (
+        tralloc_realloc ( ( tralloc_context ** ) &shared, sizeof ( char ) * 256 ) != 0 ||
+        strncmp ( shared, "shared", 6 ) != 0
+    ) {
         return false;
     }
 
     _tralloc_chunk * shared_chunk = _tralloc_chunk_from_context ( shared );
     if ( shared_chunk->extensions != TRALLOC_HAVE_REFERENCES ) {
-        tralloc_free ( a );
-        tralloc_free ( b );
-        tralloc_free ( c );
         return false;
     }
 
@@ -108,19 +96,13 @@ bool test_shared ( tralloc_context * ctx )
         reference->prev != c_chunk || reference->references != shared_chunk ||
         reference->next != NULL
     ) {
-        tralloc_free ( a );
-        tralloc_free ( b );
-        tralloc_free ( c );
         return false;
     }
 
     if (
         tralloc_clear_references ( shared ) != 0 ||
-        ( a_shared = tralloc_reference_new ( shared, a ) ) == NULL
+        tralloc_reference_new ( shared, a, ( tralloc_context ** ) &a_shared ) != 0
     ) {
-        tralloc_free ( a );
-        tralloc_free ( b );
-        tralloc_free ( c );
         return false;
     }
 
@@ -131,22 +113,15 @@ bool test_shared ( tralloc_context * ctx )
         reference->prev != NULL || reference->references != shared_chunk ||
         reference->next != NULL
     ) {
-        tralloc_free ( a );
-        tralloc_free ( b );
-        tralloc_free ( c );
         return false;
     }
 
-    b_shared = tralloc_reference_new ( shared, b );
-    c_shared = tralloc_reference_new ( shared, c );
-
     if (
+        tralloc_reference_new ( shared, b, &b_shared ) != 0 ||
+        tralloc_reference_new ( shared, c, &c_shared ) != 0 ||
         tralloc_free ( a_shared ) != 0 ||
         tralloc_free ( c_shared ) != 0
     ) {
-        tralloc_free ( a );
-        tralloc_free ( b );
-        tralloc_free ( c );
         return false;
     }
 
@@ -157,9 +132,6 @@ bool test_shared ( tralloc_context * ctx )
         reference->prev != NULL || reference->references != shared_chunk ||
         reference->next != NULL
     ) {
-        tralloc_free ( a );
-        tralloc_free ( b );
-        tralloc_free ( c );
         return false;
     }
 

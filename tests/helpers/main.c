@@ -13,8 +13,8 @@
 
 int main ()
 {
-    tralloc_context * ctx = tralloc_new ( NULL );
-    if ( ctx == NULL ) {
+    tralloc_context * ctx;
+    if ( tralloc_new ( NULL, &ctx ) != 0 ) {
         return 1;
     }
 

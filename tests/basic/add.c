@@ -29,125 +29,110 @@ trivium trivium_1 trivium_3 trivium_2
 
 bool test_add ( tree * tr )
 {
-    uint8_t * data_1 = tralloc ( tr, sizeof ( uint8_t ) );
-    if ( data_1 == NULL ) {
+    if ( tralloc ( tr, ( tralloc_context ** ) &tr->data_1, sizeof ( uint8_t ) ) != 0 ) {
         return false;
     }
-    * data_1   = 123;
-    tr->data_1 = data_1;
+    * tr->data_1 = 123;
 
-    uint16_t * data_2 = tralloc_zero ( data_1, sizeof ( uint16_t ) * 4 );
-    if ( data_2 == NULL || data_2[0] != 0 || data_2[1] != 0 || data_2[2] != 0 || data_2[3] != 0 ) {
+    if (
+        tralloc_zero ( tr->data_1, ( tralloc_context ** ) &tr->data_2, sizeof ( uint16_t ) * 4 ) != 0 ||
+        tr->data_2[0] != 0 || tr->data_2[1] != 0 || tr->data_2[2] != 0 || tr->data_2[3] != 0
+    ) {
         return false;
     }
-    data_2[0]  = 012;
-    data_2[1]  = 345;
-    data_2[2]  = 678;
-    data_2[3]  = 901;
-    tr->data_2 = data_2;
+    tr->data_2[0] = 012;
+    tr->data_2[1] = 345;
+    tr->data_2[2] = 678;
+    tr->data_2[3] = 901;
 
-    char * data_3 = tralloc ( data_1, sizeof ( char ) * 3 );
-    if ( data_3 == NULL ) {
+    if ( tralloc ( tr->data_1, ( tralloc_context ** ) &tr->data_3, sizeof ( char ) * 3 ) != 0 ) {
         return false;
     }
-    data_3[0]  = 'q';
-    data_3[1]  = 'w';
-    data_3[2]  = 'e';
-    tr->data_3 = data_3;
+    tr->data_3[0] = 'q';
+    tr->data_3[1] = 'w';
+    tr->data_3[2] = 'e';
 
-    uint32_t * data_4 = tralloc_zero ( data_1, sizeof ( uint32_t ) * 2 );
-    if ( data_4 == NULL || data_4[0] != 0 || data_4[1] != 0 ) {
+    if (
+        tralloc_zero ( tr->data_1, ( tralloc_context ** ) &tr->data_4, sizeof ( uint32_t ) * 2 ) != 0 ||
+        tr->data_4 == NULL || tr->data_4[0] != 0 || tr->data_4[1] != 0
+    ) {
         return false;
     }
-    data_4[0]  = 12345;
-    data_4[1]  = 67890;
-    tr->data_4 = data_4;
+    tr->data_4[0] = 12345;
+    tr->data_4[1] = 67890;
 
-    size_t * data_5 = tralloc ( data_3, sizeof ( size_t ) * 3 );
-    if ( data_5 == NULL ) {
+    if ( tralloc ( tr->data_3, ( tralloc_context ** ) &tr->data_5, sizeof ( size_t ) * 3 ) != 0 ) {
         return false;
     }
-    data_5[0]  = 123456789;
-    data_5[1]  = 987654321;
-    data_5[2]  = 123456789;
-    tr->data_5 = data_5;
+    tr->data_5[0] = 123456789;
+    tr->data_5[1] = 987654321;
+    tr->data_5[2] = 123456789;
 
-    double * data_6 = tralloc_zero ( data_3, sizeof ( double ) );
-    if ( data_6 == NULL || * data_6 != 0 ) {
+    if (
+        tralloc_zero ( tr->data_3, ( tralloc_context ** ) &tr->data_6, sizeof ( double ) ) != 0 ||
+        * tr->data_6 != 0
+    ) {
         return false;
     }
-    * data_6   = 0.0123456789;
-    tr->data_6 = data_6;
+    * tr->data_6 = 0.0123456789;
 
-    float * data_7 = tralloc ( data_3, sizeof ( float ) * 2 );
-    if ( data_7 == NULL ) {
+    if ( tralloc ( tr->data_3, ( tralloc_context ** ) &tr->data_7, sizeof ( float ) * 2 ) != 0 ) {
         return false;
     }
-    data_7[0]  = 0.01234;
-    data_7[1]  = 0.56789;
-    tr->data_7 = data_7;
+    tr->data_7[0] = 0.01234;
+    tr->data_7[1] = 0.56789;
 
 #if defined(TRALLOC_REFERENCE)
 
-    void * trivium = tralloc_with_extensions_new ( data_7, TRALLOC_HAVE_REFERENCES );
-    if ( trivium == NULL ) {
+    if ( tralloc_with_extensions_new ( tr->data_7, ( tralloc_context ** ) &tr->trivium, TRALLOC_HAVE_REFERENCES ) != 0 ) {
         return false;
     }
-    tr->trivium = trivium;
 
-    void * trivium_reference_1 = tralloc_reference_new ( trivium, data_6 );
-    if ( trivium_reference_1 == NULL ) {
+    if ( tralloc_reference_new ( tr->trivium, tr->data_6, ( tralloc_context ** ) &tr->trivium_reference_1 ) != 0 ) {
         return false;
     }
-    tr->trivium_reference_1 = trivium_reference_1;
 
-    uint16_t * trivium_reference_2 = tralloc_reference ( trivium, data_5, sizeof ( uint16_t ) * 2 );
-    if ( trivium_reference_2 == NULL ) {
+    if ( tralloc_reference ( tr->trivium, tr->data_5, ( tralloc_context ** ) &tr->trivium_reference_2, sizeof ( uint16_t ) * 2 ) != 0 ) {
         return false;
     }
-    trivium_reference_2[0]  = 3000;
-    trivium_reference_2[1]  = 4000;
-    tr->trivium_reference_2 = trivium_reference_2;
+    tr->trivium_reference_2[0] = 3000;
+    tr->trivium_reference_2[1] = 4000;
 
-    uint32_t * trivium_reference_3 = tralloc_reference_zero ( trivium, trivium_reference_2, sizeof ( uint32_t ) );
-    if ( trivium_reference_3 == NULL || * trivium_reference_3 != 0 ) {
+    if (
+        tralloc_reference_zero ( tr->trivium, tr->trivium_reference_2, ( tralloc_context ** ) &tr->trivium_reference_3, sizeof ( uint32_t ) ) != 0 ||
+        * tr->trivium_reference_3 != 0
+    ) {
         return false;
     }
-    * trivium_reference_3   = 500000;
-    tr->trivium_reference_3 = trivium_reference_3;
+    * tr->trivium_reference_3 = 500000;
 
-    int8_t * data_8 = tralloc ( trivium_reference_1, sizeof ( int8_t ) * 2 );
-    if ( data_8 == NULL ) {
+    if ( tralloc ( tr->trivium_reference_1, ( tralloc_context ** ) &tr->data_8, sizeof ( int8_t ) * 2 ) != 0 ) {
         return false;
     }
-    data_8[0]  = - 1;
-    data_8[1]  = 2;
-    tr->data_8 = data_8;
+    tr->data_8[0] = - 1;
+    tr->data_8[1] = 2;
 
-    int16_t * data_9 = tralloc ( data_8, sizeof ( int16_t ) * 3 );
-    if ( data_9 == NULL ) {
+    if ( tralloc ( tr->data_8, ( tralloc_context ** ) &tr->data_9, sizeof ( int16_t ) * 3 ) != 0 ) {
         return false;
     }
-    data_9[0]  = 4000;
-    data_9[1]  = - 5000;
-    data_9[2]  = 6000;
-    tr->data_9 = data_9;
+    tr->data_9[0] = 4000;
+    tr->data_9[1] = - 5000;
+    tr->data_9[2] = 6000;
 
-    int32_t * data_10 = tralloc_zero ( data_8, sizeof ( int32_t ) * 2 );
-    if ( data_10 == NULL || data_10[0] != 0 || data_10[1] != 0 ) {
+    if (
+        tralloc_zero ( tr->data_8, ( tralloc_context ** ) &tr->data_10, sizeof ( int32_t ) * 2 ) != 0 ||
+        tr->data_10[0] != 0 || tr->data_10[1] != 0
+    ) {
         return false;
     }
-    data_10[0]  = - 123456;
-    data_10[1]  = 789012;
-    tr->data_10 = data_10;
+    tr->data_10[0] = - 123456;
+    tr->data_10[1] = 789012;
 
 #else
 
-    void * trivium = tralloc_new ( data_7 );
-    if ( trivium == NULL ) {
+    if ( tralloc_new ( tr->data_7, ( tralloc_context ** ) &tr->trivium ) != 0 ) {
         return false;
     }
-    tr->trivium = trivium;
 
 #endif
 

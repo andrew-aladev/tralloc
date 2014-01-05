@@ -29,7 +29,7 @@ void _tralloc_reference_update_chunk ( _tralloc_chunk * reference_chunk )
 }
 
 inline
-uint8_t _tralloc_reference_free_chunk ( _tralloc_chunk * chunk )
+tralloc_error _tralloc_reference_free_chunk ( _tralloc_chunk * chunk )
 {
     _tralloc_reference * reference  = _tralloc_reference_from_chunk ( chunk );
     _tralloc_chunk *     prev_chunk = reference->prev;

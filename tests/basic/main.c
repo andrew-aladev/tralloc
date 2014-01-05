@@ -9,8 +9,9 @@
 
 int main ()
 {
-    tree * tr = tralloc ( NULL, sizeof ( tree ) );
-    if ( tr == NULL ) {
+    tree * tr;
+    uint8_t result = tralloc ( NULL, ( tralloc_context ** ) &tr, sizeof ( tree ) );
+    if ( result != 0 ) {
         return 1;
     }
     if ( !test_add ( tr ) ) {

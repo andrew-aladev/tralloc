@@ -4,14 +4,20 @@
 // You should have received a copy of the GNU General Lesser Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
 #include "main.h"
+#include <stdlib.h>
 
 
-void _tralloc_clear_destructors ( _tralloc_chunk * chunk )
+tralloc_error tralloc_clear_destructors ( tralloc_context * chunk_context )
 {
+    if ( chunk_context == NULL ) {
+        return TRALLOC_ERROR_CONTEXT_IS_NULL;
+    }
+    _tralloc_chunk * chunk = _tralloc_chunk_from_context ( chunk_context );
+
     _tralloc_destructors * destructors = _tralloc_destructors_from_chunk ( chunk );
     _tralloc_destructor * destructor   = destructors->first_destructor;
     if ( destructor == NULL ) {
-        return;
+        return 0;
     }
 
     _tralloc_destructor * next_destructor;
@@ -22,20 +28,24 @@ void _tralloc_clear_destructors ( _tralloc_chunk * chunk )
     }
     destructors->first_destructor = NULL;
     destructors->last_destructor  = NULL;
+    return 0;
 }
 
-extern inline uint8_t tralloc_clear_destructors ( tralloc_context * chunk_context );
 
-
-uint8_t _tralloc_append_destructor ( _tralloc_chunk * chunk, tralloc_destructor_function function, void * user_data )
+tralloc_error tralloc_append_destructor ( tralloc_context * chunk_context, tralloc_destructor_function function, void * user_data )
 {
+    if ( chunk_context == NULL ) {
+        return TRALLOC_ERROR_CONTEXT_IS_NULL;
+    }
+    _tralloc_chunk * chunk = _tralloc_chunk_from_context ( chunk_context );
+
     if ( ( chunk->extensions & TRALLOC_HAVE_DESTRUCTORS ) == 0 ) {
-        return 2;
+        return TRALLOC_ERROR_NO_SUCH_EXTENSION;
     }
 
     _tralloc_destructor * destructor = malloc ( sizeof ( _tralloc_destructor ) );
     if ( destructor == NULL ) {
-        return 3;
+        return TRALLOC_ERROR_MALLOC_FAILED;
     }
     destructor->function  = function;
     destructor->user_data = user_data;
@@ -54,18 +64,20 @@ uint8_t _tralloc_append_destructor ( _tralloc_chunk * chunk, tralloc_destructor_
     return 0;
 }
 
-extern inline uint8_t tralloc_append_destructor ( tralloc_context * chunk_context, tralloc_destructor_function function, void * user_data );
-
-
-uint8_t _tralloc_prepend_destructor ( _tralloc_chunk * chunk, tralloc_destructor_function function, void * user_data )
+tralloc_error tralloc_prepend_destructor ( tralloc_context * chunk_context, tralloc_destructor_function function, void * user_data )
 {
+    if ( chunk_context == NULL ) {
+        return TRALLOC_ERROR_CONTEXT_IS_NULL;
+    }
+    _tralloc_chunk * chunk = _tralloc_chunk_from_context ( chunk_context );
+
     if ( ( chunk->extensions & TRALLOC_HAVE_DESTRUCTORS ) == 0 ) {
-        return 2;
+        return TRALLOC_ERROR_NO_SUCH_EXTENSION;
     }
 
     _tralloc_destructor * destructor = malloc ( sizeof ( _tralloc_destructor ) );
     if ( destructor == NULL ) {
-        return 3;
+        return TRALLOC_ERROR_MALLOC_FAILED;
     }
     destructor->function  = function;
     destructor->user_data = user_data;
@@ -84,15 +96,18 @@ uint8_t _tralloc_prepend_destructor ( _tralloc_chunk * chunk, tralloc_destructor
     return 0;
 }
 
-extern inline uint8_t tralloc_prepend_destructor ( tralloc_context * chunk_context, tralloc_destructor_function function, void * user_data );
 
-
-void _tralloc_delete_destructors_by_comparator ( _tralloc_chunk * chunk, _tralloc_destructor_comparator comparator, tralloc_destructor_function function, void * user_data )
+tralloc_error _tralloc_delete_destructors_by_comparator ( tralloc_context * chunk_context, _tralloc_destructor_comparator comparator, tralloc_destructor_function function, void * user_data )
 {
+    if ( chunk_context == NULL ) {
+        return TRALLOC_ERROR_CONTEXT_IS_NULL;
+    }
+    _tralloc_chunk * chunk = _tralloc_chunk_from_context ( chunk_context );
+
     _tralloc_destructors * destructors     = _tralloc_destructors_from_chunk ( chunk );
     _tralloc_destructor * first_destructor = destructors->first_destructor;
     if ( first_destructor == NULL ) {
-        return;
+        return 0;
     }
 
     _tralloc_destructor * last_destructor = NULL;
@@ -120,12 +135,12 @@ void _tralloc_delete_destructors_by_comparator ( _tralloc_chunk * chunk, _trallo
     if ( destructors->last_destructor != last_destructor ) {
         destructors->last_destructor = last_destructor;
     }
+    return 0;
 }
 
-extern inline bool    _tralloc_destructor_comparator_by_function ( _tralloc_destructor * destructor, tralloc_destructor_function function, void * user_data );
-extern inline bool    _tralloc_destructor_comparator_by_data     ( _tralloc_destructor * destructor, tralloc_destructor_function function, void * user_data );
-extern inline bool    _tralloc_destructor_comparator_strict      ( _tralloc_destructor * destructor, tralloc_destructor_function function, void * user_data );
-extern inline uint8_t _tralloc_delete_destructors                ( tralloc_context * chunk_context, _tralloc_destructor_comparator comparator, tralloc_destructor_function function, void * user_data );
-extern inline uint8_t tralloc_delete_destructors                 ( tralloc_context * chunk_context, tralloc_destructor_function function, void * user_data );
-extern inline uint8_t tralloc_delete_destructors_by_function     ( tralloc_context * chunk_context, tralloc_destructor_function function );
-extern inline uint8_t tralloc_delete_destructors_by_data         ( tralloc_context * chunk_context, void * user_data );
+extern inline bool          _tralloc_destructor_comparator_by_function ( _tralloc_destructor * destructor, tralloc_destructor_function function, void * user_data );
+extern inline bool          _tralloc_destructor_comparator_by_data     ( _tralloc_destructor * destructor, tralloc_destructor_function function, void * user_data );
+extern inline bool          _tralloc_destructor_comparator_strict      ( _tralloc_destructor * destructor, tralloc_destructor_function function, void * user_data );
+extern inline tralloc_error tralloc_delete_destructors                 ( tralloc_context * chunk_context, tralloc_destructor_function function, void * user_data );
+extern inline tralloc_error tralloc_delete_destructors_by_function     ( tralloc_context * chunk_context, tralloc_destructor_function function );
+extern inline tralloc_error tralloc_delete_destructors_by_data         ( tralloc_context * chunk_context, void * user_data );

@@ -13,22 +13,28 @@
 
 int main ()
 {
-    tralloc_context * ctx = tralloc_new ( NULL );
-    if ( ctx == NULL ) {
+    tralloc_context * ctx;
+    if ( tralloc_new ( NULL, &ctx ) != 0 ) {
         return 1;
     }
     if ( !test_basic ( ctx ) ) {
         tralloc_free ( ctx );
         return 2;
     }
+
+#if defined(TRALLOC_DESTRUCTOR)
     if ( !test_destructor ( ctx ) ) {
         tralloc_free ( ctx );
         return 3;
     }
+#endif
+
+#if defined(TRALLOC_REFERENCE)
     if ( !test_reference ( ctx ) ) {
         tralloc_free ( ctx );
         return 4;
     }
+#endif
 
     if ( tralloc_free ( ctx ) != 0 ) {
         return 5;

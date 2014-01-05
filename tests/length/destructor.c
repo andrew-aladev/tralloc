@@ -18,9 +18,9 @@ uint8_t empty_destructor ( tralloc_context * UNUSED ( chunk_context ), void * UN
 bool test_destructor ( tralloc_context * ctx )
 {
     size_t length;
-    uint32_t * data = tralloc_with_extensions ( ctx, TRALLOC_HAVE_DESTRUCTORS | TRALLOC_HAVE_LENGTH, sizeof ( uint32_t ) * 20 );
+    uint32_t * data;
     if (
-        data == NULL ||
+        tralloc_with_extensions ( ctx, ( tralloc_context ** ) &data, TRALLOC_HAVE_DESTRUCTORS | TRALLOC_HAVE_LENGTH, sizeof ( uint32_t ) * 20 ) != 0 ||
         tralloc_append_destructor ( data, empty_destructor, NULL ) != 0 ||
         tralloc_get_length ( data, &length ) != 0 ||
         length != sizeof ( uint32_t ) * 20
@@ -28,9 +28,8 @@ bool test_destructor ( tralloc_context * ctx )
         return false;
     }
 
-    data = tralloc_realloc ( data, sizeof ( uint32_t ) );
     if (
-        data == NULL ||
+        tralloc_realloc ( ( tralloc_context ** ) &data, sizeof ( uint32_t ) ) != 0 ||
         tralloc_get_length ( data, &length ) != 0 ||
         length != sizeof ( uint32_t )
     ) {

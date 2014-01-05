@@ -9,13 +9,13 @@
 #include "../common.h"
 
 
-tralloc_context * tralloc      ( tralloc_context * parent_context, size_t length );
-tralloc_context * tralloc_zero ( tralloc_context * parent_context, size_t length );
+tralloc_error tralloc      ( tralloc_context * parent_context, tralloc_context ** child_context, size_t length );
+tralloc_error tralloc_zero ( tralloc_context * parent_context, tralloc_context ** child_context, size_t length );
 
 inline
-tralloc_context * tralloc_new ( tralloc_context * parent_context )
+tralloc_error tralloc_new ( tralloc_context * parent_context, tralloc_context ** child_context )
 {
-    return tralloc ( parent_context, 0 );
+    return tralloc ( parent_context, child_context, 0 );
 }
 
 

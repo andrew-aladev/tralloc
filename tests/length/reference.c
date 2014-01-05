@@ -12,38 +12,36 @@
 bool test_reference ( tralloc_context * ctx )
 {
     size_t length;
-    void * empty   = tralloc_new ( ctx );
-    uint8_t * data = tralloc_with_extensions ( ctx, TRALLOC_HAVE_REFERENCES | TRALLOC_HAVE_LENGTH, sizeof ( uint8_t ) * 4 );
+    void * empty;
+    uint8_t * data;
     if (
-        empty == NULL ||
-        data  == NULL ||
+        tralloc_new ( ctx, &empty ) != 0 ||
+        tralloc_with_extensions ( ctx, ( tralloc_context ** ) &data, TRALLOC_HAVE_REFERENCES | TRALLOC_HAVE_LENGTH, sizeof ( uint8_t ) * 4 ) != 0 ||
         tralloc_get_length ( data, &length ) != 0 ||
         length != sizeof ( uint8_t ) * 4
     ) {
         return false;
     }
 
-    uint16_t * reference_1 = tralloc_reference_with_extensions ( data, empty, TRALLOC_HAVE_LENGTH, sizeof ( uint16_t ) * 25 );
+    uint16_t * reference_1;
     if (
-        reference_1 == NULL ||
+        tralloc_reference_with_extensions ( data, empty, ( tralloc_context ** ) &reference_1, TRALLOC_HAVE_LENGTH, sizeof ( uint16_t ) * 25 ) != 0 ||
         tralloc_get_length ( reference_1, &length ) != 0 ||
         length != sizeof ( uint16_t ) * 25
     ) {
         return false;
     }
 
-    reference_1 = tralloc_realloc ( reference_1, sizeof ( uint16_t ) * 2 );
     if (
-        reference_1 == NULL ||
+        tralloc_realloc ( ( tralloc_context ** ) &reference_1, sizeof ( uint16_t ) * 2 ) != 0 ||
         tralloc_get_length ( reference_1, &length ) != 0 ||
         length != sizeof ( uint16_t ) * 2
     ) {
         return false;
     }
 
-    data = tralloc_realloc ( data, sizeof ( uint8_t ) * 40 );
     if (
-        data == NULL ||
+        tralloc_realloc ( ( tralloc_context ** ) &data, sizeof ( uint8_t ) * 40 ) != 0 ||
         tralloc_get_length ( data, &length ) != 0 ||
         length != sizeof ( uint8_t ) * 40
     ) {

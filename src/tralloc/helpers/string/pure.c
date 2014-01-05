@@ -6,7 +6,7 @@
 #include "pure.h"
 
 
-extern inline char * tralloc_strndup   ( tralloc_context * parent_context, const char * str, size_t length );
-extern inline char * tralloc_strdup    ( tralloc_context * parent_context, const char * str );
-extern inline char * tralloc_vasprintf ( tralloc_context * parent_context, const char * format, va_list arguments );
-extern inline char * tralloc_asprintf  ( tralloc_context * parent_context, const char * format, ... );
+extern inline tralloc_error tralloc_strndup   ( tralloc_context * parent_context, char ** child_context, const char * str, size_t length );
+extern inline tralloc_error tralloc_strdup    ( tralloc_context * parent_context, char ** child_context, const char * str );
+extern inline tralloc_error tralloc_vasprintf ( tralloc_context * parent_context, char ** child_context, const char * format, va_list arguments );
+extern inline tralloc_error tralloc_asprintf  ( tralloc_context * parent_context, char ** child_context, const char * format, ... );

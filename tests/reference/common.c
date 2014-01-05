@@ -26,43 +26,49 @@ uint8_t empty_destructor ( tralloc_context * UNUSED ( chunk_context ), void * UN
 
 bool test_common ( tralloc_context * ctx )
 {
-    int *    a = tralloc ( ctx, sizeof ( int ) * 2 );
-    char *   b = tralloc ( a,   sizeof ( char ) * 3 );
-    size_t * c = tralloc ( b,   sizeof ( size_t ) * 4 );
-    if ( a == NULL || b == NULL || c == NULL ) {
+    int * a;
+    char * b;
+    size_t * c;
+    char * common;
+    if (
+        tralloc ( ctx, ( tralloc_context ** ) &a, sizeof ( int ) * 2 )    != 0 ||
+        tralloc ( a,   ( tralloc_context ** ) &b, sizeof ( char ) * 3 )   != 0 ||
+        tralloc ( b,   ( tralloc_context ** ) &c, sizeof ( size_t ) * 4 ) != 0 ||
+        tralloc_with_extensions ( NULL, ( tralloc_context ** ) &common, TRALLOC_HAVE_REFERENCES, sizeof ( char ) * 7 ) != 0
+    ) {
         return false;
     }
 
-    char * common = tralloc_with_extensions ( NULL, TRALLOC_HAVE_REFERENCES, sizeof ( char ) * 7 );
     strcpy ( common, "common" );
 
-    void * b_common = tralloc_reference_new ( common, c );
-    if ( b_common == NULL ) {
-        tralloc_free ( a );
+    tralloc_context * b_common;
+    if ( tralloc_reference_new ( common, c, &b_common ) != 0 ) {
         return false;
     }
 
 #if defined(TRALLOC_DESTRUCTOR)
 
-    int16_t * c_common = tralloc_reference_with_extensions ( common, b, TRALLOC_HAVE_DESTRUCTORS, sizeof ( int16_t ) * 2 );
-    if ( c_common == NULL || tralloc_append_destructor ( c_common, empty_destructor, NULL ) != 0 ) {
-        tralloc_free ( a );
+    int16_t * c_common;
+    if (
+        tralloc_reference_with_extensions ( common, b, ( tralloc_context ** ) &c_common, TRALLOC_HAVE_DESTRUCTORS, sizeof ( int16_t ) * 2 ) != 0 ||
+        tralloc_append_destructor ( c_common, empty_destructor, NULL ) != 0
+    ) {
         return false;
     }
 
 #else
 
-    void * c_common = tralloc_reference_new ( common, b );
-    if ( c_common == NULL ) {
-        tralloc_free ( a );
+    tralloc_context * c_common;
+    if ( tralloc_reference_new ( common, b, &c_common ) != 0 ) {
         return false;
     }
 
 #endif
 
-    common = tralloc_realloc ( common, sizeof ( char ) * 256 );
-    if ( common == NULL || strncmp ( common, "common", 6 ) != 0 ) {
-        tralloc_free ( a );
+    if (
+        tralloc_realloc ( ( tralloc_context ** ) &common, sizeof ( char ) * 256 ) != 0 ||
+        strncmp ( common, "common", 6 ) != 0
+    ) {
         return false;
     }
 
@@ -71,19 +77,15 @@ bool test_common ( tralloc_context * ctx )
         tralloc_move ( b_common, b )    != 0 ||
         tralloc_move ( c_common, c )    != 0
     ) {
-        tralloc_free ( a );
         return false;
     }
 
-    c_common = tralloc_realloc ( c_common, sizeof ( uint8_t ) * 50 );
-    if ( c_common == NULL ) {
-        tralloc_free ( a );
+    if ( tralloc_realloc ( ( tralloc_context ** ) &c_common, sizeof ( uint8_t ) * 50 ) != 0 ) {
         return false;
     }
 
     _tralloc_chunk * common_chunk = _tralloc_chunk_from_context ( common );
     if ( common_chunk->extensions != TRALLOC_HAVE_REFERENCES ) {
-        tralloc_free ( a );
         return false;
     }
 
@@ -100,7 +102,6 @@ bool test_common ( tralloc_context * ctx )
         reference->prev != c_chunk || reference->references != common_chunk ||
         reference->next != NULL
     ) {
-        tralloc_free ( a );
         return false;
     }
 

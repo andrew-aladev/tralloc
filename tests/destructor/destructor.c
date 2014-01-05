@@ -57,13 +57,22 @@ bool test_destructor ( tralloc_context * ctx )
         return false;
     }
 
-    void * strings = tralloc_new ( ctx );
-    char * text_01 = tralloc_strdup_with_extensions ( strings, TRALLOC_HAVE_DESTRUCTORS, "test text 01" );
-    char * text_02 = tralloc_strdup_with_extensions ( strings, TRALLOC_HAVE_DESTRUCTORS, "test text 02" );
-    char * text_03 = tralloc_strdup_with_extensions ( strings, TRALLOC_HAVE_DESTRUCTORS, "test text 03" );
-    char * text_04 = tralloc_strdup_with_extensions ( strings, TRALLOC_HAVE_DESTRUCTORS, "test text 04" );
-    if ( strings == NULL || text_01 == NULL || text_02 == NULL || text_03 == NULL || text_04 == NULL ) {
-        tralloc_free ( strings );
+    tralloc_context * strings;
+    if ( tralloc_new ( ctx, &strings ) != 0 ) {
+        free_history ( tralloc_history );
+        return false;
+    }
+
+    char * text_01;
+    char * text_02;
+    char * text_03;
+    char * text_04;
+    if (
+        tralloc_strdup_with_extensions ( strings, &text_01, TRALLOC_HAVE_DESTRUCTORS, "test text 01" ) != 0 ||
+        tralloc_strdup_with_extensions ( strings, &text_02, TRALLOC_HAVE_DESTRUCTORS, "test text 02" ) != 0 ||
+        tralloc_strdup_with_extensions ( strings, &text_03, TRALLOC_HAVE_DESTRUCTORS, "test text 03" ) != 0 ||
+        tralloc_strdup_with_extensions ( strings, &text_04, TRALLOC_HAVE_DESTRUCTORS, "test text 04" ) != 0
+    ) {
         free_history ( tralloc_history );
         return false;
     }
@@ -78,7 +87,6 @@ bool test_destructor ( tralloc_context * ctx )
         tralloc_append_destructor  ( text_04, normal_destructor, tralloc_history ) != 0 ||
         tralloc_prepend_destructor ( text_04, normal_destructor, tralloc_history ) != 0
     ) {
-        tralloc_free ( strings );
         free_history ( tralloc_history );
         return false;
     }
@@ -111,7 +119,6 @@ bool test_destructor ( tralloc_context * ctx )
         destructor->function != normal_destructor || destructor->user_data != tralloc_history || destructor->next                  != NULL ||
         destructors->last_destructor != destructor
     ) {
-        tralloc_free ( strings );
         free_history ( tralloc_history );
         return false;
     }
@@ -121,7 +128,6 @@ bool test_destructor ( tralloc_context * ctx )
         ( destructors = _tralloc_destructors_from_chunk ( chunk_03 ) ) == NULL ||
         destructors->first_destructor != NULL || destructors->last_destructor != NULL
     ) {
-        tralloc_free ( strings );
         free_history ( tralloc_history );
         return false;
     }
@@ -135,7 +141,6 @@ bool test_destructor ( tralloc_context * ctx )
         tralloc_prepend_destructor ( text_03, empty_destructor_1, tralloc_history ) != 0 ||
         tralloc_prepend_destructor ( text_03, empty_destructor_1, NULL )            != 0
     ) {
-        tralloc_free ( strings );
         free_history ( tralloc_history );
         return false;
     }
@@ -150,7 +155,6 @@ bool test_destructor ( tralloc_context * ctx )
         destructor->function != empty_destructor_2 || destructor->user_data != tralloc_history || destructor->next                  != NULL ||
         destructors->last_destructor != destructor
     ) {
-        tralloc_free ( strings );
         free_history ( tralloc_history );
         return false;
     }
@@ -165,7 +169,6 @@ bool test_destructor ( tralloc_context * ctx )
         destructor->function != empty_destructor_2 || destructor->user_data != tralloc_history || destructor->next                  != NULL ||
         destructors->last_destructor != destructor
     ) {
-        tralloc_free ( strings );
         free_history ( tralloc_history );
         return false;
     }
@@ -177,7 +180,6 @@ bool test_destructor ( tralloc_context * ctx )
         destructor->function != empty_destructor_1 || destructor->user_data != tralloc_history || destructor->next != NULL ||
         destructors->last_destructor != destructor
     ) {
-        tralloc_free ( strings );
         free_history ( tralloc_history );
         return false;
     }
@@ -193,7 +195,6 @@ bool test_destructor ( tralloc_context * ctx )
         ( destructors = _tralloc_destructors_from_chunk ( chunk_03 ) ) == NULL ||
         destructors->first_destructor != NULL || destructors->last_destructor != NULL
     ) {
-        tralloc_free ( strings );
         free_history ( tralloc_history );
         return false;
     }
@@ -204,7 +205,6 @@ bool test_destructor ( tralloc_context * ctx )
         tralloc_free ( text_03 ) != 0 ||
         tralloc_free ( text_04 ) != 0
     ) {
-        tralloc_free ( strings );
         free_history ( tralloc_history );
         return false;
     }
@@ -215,7 +215,6 @@ bool test_destructor ( tralloc_context * ctx )
         strcmp ( malloc_dynarr_get ( tralloc_history, 1 ), "test text 04" ) != 0 ||
         strcmp ( malloc_dynarr_get ( tralloc_history, 2 ), "test text 04" ) != 0
     ) {
-        tralloc_free ( strings );
         free_history ( tralloc_history );
         return false;
     }

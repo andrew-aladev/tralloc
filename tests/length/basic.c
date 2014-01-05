@@ -11,9 +11,9 @@
 bool test_basic ( tralloc_context * ctx )
 {
     size_t length;
-    void * empty = tralloc_new ( ctx );
+    void * empty;
     if (
-        empty == NULL ||
+        tralloc_new ( ctx, &empty ) != 0 ||
         tralloc_get_length ( NULL,  &length ) != TRALLOC_ERROR_CONTEXT_IS_NULL   ||
         tralloc_get_length ( empty, &length ) != TRALLOC_ERROR_NO_SUCH_EXTENSION ||
         tralloc_free ( empty ) != 0
@@ -21,9 +21,8 @@ bool test_basic ( tralloc_context * ctx )
         return false;
     }
 
-    empty = tralloc_with_extensions_new ( ctx, TRALLOC_HAVE_LENGTH );
     if (
-        empty == NULL ||
+        tralloc_with_extensions_new ( ctx, &empty, TRALLOC_HAVE_LENGTH ) != 0 ||
         tralloc_get_length ( empty, &length ) != 0 ||
         length != 0 ||
         tralloc_free ( empty ) != 0
@@ -31,18 +30,17 @@ bool test_basic ( tralloc_context * ctx )
         return false;
     }
 
-    uint16_t * data = tralloc_with_extensions ( ctx, TRALLOC_HAVE_LENGTH, sizeof ( uint16_t ) * 2 );
+    uint16_t * data;
     if (
-        data == NULL ||
+        tralloc_with_extensions ( ctx, ( tralloc_context ** ) &data, TRALLOC_HAVE_LENGTH, sizeof ( uint16_t ) * 2 ) != 0 ||
         tralloc_get_length ( data, &length ) != 0 ||
         length != sizeof ( uint16_t ) * 2
     ) {
         return false;
     }
 
-    data = tralloc_realloc ( data, sizeof ( uint16_t ) * 20 );
     if (
-        data == NULL ||
+        tralloc_realloc ( ( tralloc_context ** ) &data, sizeof ( uint16_t ) * 20 ) != 0 ||
         tralloc_get_length ( data, &length ) != 0 ||
         length != sizeof ( uint16_t ) * 20
     ) {

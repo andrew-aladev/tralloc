@@ -12,20 +12,23 @@
 
 int main ()
 {
-    char * common = tralloc_strdup_with_extensions (
-                        NULL,
-                        TRALLOC_HAVE_REFERENCES,
-                        "This is big data, that you dont want to duplicate."
-                        "Different code needs it."
-                        "You want it to be fried automaticaly when all code have finished it's processing."
-                    );
-    if ( common == NULL ) {
+    char * common;
+    if ( tralloc_strdup_with_extensions (
+                NULL,
+                &common,
+                TRALLOC_HAVE_REFERENCES,
+                "This is big data, that you dont want to duplicate."
+                "Different code needs it."
+                "You want it to be fried automaticaly when all code have finished it's processing."
+            ) != 0 ) {
         return 1;
     }
-    void * common_reference_1 = tralloc_reference_new ( common, NULL );
-    void * common_reference_2 = tralloc_reference_new ( common, NULL );
 
+    tralloc_context * common_reference_1;
+    tralloc_context * common_reference_2;
     if (
+        tralloc_reference_new ( common, NULL, &common_reference_1 ) != 0 ||
+        tralloc_reference_new ( common, NULL, &common_reference_2 ) != 0 ||
         tralloc_free ( common_reference_1 ) != 0 ||
         tralloc_free ( common_reference_2 ) != 0
     ) {

@@ -6,8 +6,6 @@
 #include "common.h"
 
 
-extern inline tralloc_context * tralloc_realloc ( tralloc_context * chunk_context, size_t length );
-
 uint8_t tralloc_move ( tralloc_context * child_context, tralloc_context * parent_context )
 {
     if ( child_context == NULL || child_context == parent_context ) {

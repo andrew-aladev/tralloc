@@ -25,7 +25,7 @@ Debug build
     ::
 
      $ mkdir build && cd build
-     $ cmake .. -DTRALLOC_EXAMPLES=ON
+     $ cmake ..
      $ make && make test
 
 

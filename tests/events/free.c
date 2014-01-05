@@ -48,31 +48,36 @@ bool test_free ( tralloc_context * ctx )
     }
     _tralloc_set_callback ( NULL, NULL, NULL, on_free );
 
-    int * a  = tralloc ( ctx, sizeof ( int ) * 2 );
-    char * b = tralloc ( ctx, sizeof ( char ) * 3 );
-
-#if defined(TRALLOC_REFERENCE)
-    float * c = tralloc_with_extensions ( a, TRALLOC_HAVE_REFERENCES, sizeof ( float ) * 4 );
-#else
-    float * c = tralloc ( a, sizeof ( float ) * 4 );
-#endif
-
-    if ( a == NULL || b == NULL || c == NULL ) {
-        tralloc_free ( a );
-        tralloc_free ( b );
+    int * a;
+    char * b;
+    if (
+        tralloc ( ctx, ( tralloc_context ** ) &a, sizeof ( int ) * 2 )  != 0 ||
+        tralloc ( ctx, ( tralloc_context ** ) &b, sizeof ( char ) * 3 ) != 0
+    ) {
         free_history ( tralloc_history );
         return false;
     }
+
+    float * c;
+#if defined(TRALLOC_REFERENCE)
+    if ( tralloc_with_extensions ( a, ( tralloc_context ** ) &c, TRALLOC_HAVE_REFERENCES, sizeof ( float ) * 4 ) != 0 ) {
+        free_history ( tralloc_history );
+        return false;
+    }
+#else
+    if ( tralloc ( a, ( tralloc_context ** ) &c, sizeof ( float ) * 4 ) != 0 ) {
+        free_history ( tralloc_history );
+        return false;
+    }
+#endif
 
     _tralloc_chunk * a_chunk = _tralloc_chunk_from_context ( a );
     _tralloc_chunk * b_chunk = _tralloc_chunk_from_context ( b );
     _tralloc_chunk * c_chunk = _tralloc_chunk_from_context ( c );
 
 #if defined(TRALLOC_REFERENCE)
-    void * c_reference = tralloc_reference_new ( c, b );
-    if ( c_reference == NULL ) {
-        tralloc_free ( a );
-        tralloc_free ( b );
+    void * c_reference;
+    if ( tralloc_reference_new ( c, b, &c_reference ) != 0 ) {
         free_history ( tralloc_history );
         return false;
     }

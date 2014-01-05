@@ -9,16 +9,7 @@
 #include "../common.h"
 
 
-uint8_t _tralloc_get_length ( _tralloc_chunk * chunk, size_t * length );
-
-inline
-uint8_t tralloc_get_length ( tralloc_context * context, size_t * length )
-{
-    if ( context == NULL ) {
-        return TRALLOC_ERROR_CONTEXT_IS_NULL;
-    }
-    return _tralloc_get_length ( _tralloc_chunk_from_context ( context ), length );
-}
+tralloc_error tralloc_get_length ( tralloc_context * context, size_t * length );
 
 
 #endif

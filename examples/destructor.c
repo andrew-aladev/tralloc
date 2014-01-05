@@ -38,19 +38,23 @@ uint8_t file_destructor ( tralloc_context * context, void * user_data )
 
 int main ()
 {
-    tralloc_context * root = tralloc_new ( NULL );
-    if ( root == NULL ) {
+    tralloc_context * ctx;
+    if ( tralloc_new ( NULL, &ctx ) != 0 ) {
         return 1;
     }
-    int * file_descriptor = tralloc_with_extensions ( root, TRALLOC_HAVE_DESTRUCTORS, sizeof ( int ) );
-    if ( file_descriptor == NULL ) {
-        tralloc_free ( root );
+    int * file_descriptor;
+    if ( tralloc_with_extensions ( ctx, ( tralloc_context ** ) & file_descriptor, TRALLOC_HAVE_DESTRUCTORS, sizeof ( int ) ) != 0 ) {
+        tralloc_free ( ctx );
         return 2;
     }
-    char * filename = tralloc_strdup ( file_descriptor, "/etc/hosts" );
+    char * filename;
+    if ( tralloc_strdup ( file_descriptor, &filename, "/etc/hosts" ) != 0 ) {
+        tralloc_free ( ctx );
+        return 3;
+    }
     * file_descriptor = open ( filename, O_RDONLY );
     if ( * file_descriptor == -1 ) {
-        tralloc_free ( root );
+        tralloc_free ( ctx );
         return 3;
     }
     if (
@@ -59,7 +63,7 @@ int main ()
         tralloc_append_destructor  ( file_descriptor, bad_destructor,   filename ) != 0 ||
         tralloc_prepend_destructor ( file_descriptor, empty_destructor, NULL )     != 0
     ) {
-        tralloc_free ( root );
+        tralloc_free ( ctx );
         return 4;
     }
     if (
@@ -67,10 +71,10 @@ int main ()
         tralloc_delete_destructors_by_function ( file_descriptor, bad_destructor )             != 0 ||
         tralloc_delete_destructors_by_data     ( file_descriptor, NULL )                       != 0
     ) {
-        tralloc_free ( root );
+        tralloc_free ( ctx );
         return 5;
     }
-    if ( tralloc_free ( root ) != 0 ) {
+    if ( tralloc_free ( ctx ) != 0 ) {
         return 6;
     }
 

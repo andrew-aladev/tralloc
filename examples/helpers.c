@@ -27,53 +27,62 @@ uint8_t destructor_unlink_file ( tralloc_context * UNUSED ( chunk_context ), voi
 
 int main ()
 {
-    tralloc_context * root = tralloc_new ( NULL );
-    if ( root == NULL ) {
+    tralloc_context * ctx;
+    if ( tralloc_new ( NULL, &ctx ) != 0 ) {
         return 1;
     }
-    char * string = tralloc_strdup ( root, "Some test text." );
-    if ( string == NULL ) {
-        tralloc_free ( root );
+    char * string;
+    if ( tralloc_strdup ( ctx, &string, "Some test text." ) != 0 ) {
+        tralloc_free ( ctx );
         return 2;
     }
-    char * text = tralloc_strndup ( string, string + 10, 4 );
-    if ( text == NULL || strcmp ( text, "text" ) != 0 ) {
-        tralloc_free ( root );
+    char * text;
+    if (
+        tralloc_strndup ( string, &text, string + 10, 4 ) != 0 ||
+        strcmp ( text, "text" ) != 0
+    ) {
+        tralloc_free ( ctx );
         return 3;
     }
-    char * formatted_text = tralloc_asprintf ( root, "%s %s %s.", "Some", "test", "text" );
-    if ( formatted_text == NULL || strcmp ( formatted_text, "Some test text." ) != 0 ) {
-        tralloc_free ( root );
+    char * formatted_text;
+    if (
+        tralloc_asprintf ( ctx, &formatted_text, "%s %s %s.", "Some", "test", "text" ) != 0 ||
+        strcmp ( formatted_text, "Some test text." ) != 0
+    ) {
+        tralloc_free ( ctx );
         return 4;
     }
-    if ( tralloc_free ( root ) != 0 ) {
+    if ( tralloc_free ( ctx ) != 0 ) {
         return 5;
     }
 
 #if defined(TRALLOC_DESTRUCTOR)
-    char * file_name = tralloc_strdup ( NULL, "/tmp/tralloc_test_file" );
-    int * test_file  = tralloc_open_mode ( NULL, file_name, O_CREAT | O_WRONLY, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH ); // 0644
-    if ( test_file == NULL ) {
-        tralloc_free ( file_name );
+    char * file_name;
+    if ( tralloc_strdup ( NULL, &file_name, "/tmp/tralloc_test_file" ) != 0 ) {
         return 6;
+    }
+    int * test_file;
+    if ( tralloc_open_mode ( NULL, &test_file, file_name, O_CREAT | O_WRONLY, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH ) != 0 ) { // 0644
+        tralloc_free ( file_name );
+        return 7;
     }
     if ( tralloc_move ( file_name, test_file ) != 0 ) {
         tralloc_free ( test_file );
         tralloc_free ( file_name );
-        return 7;
+        return 8;
     }
     if ( tralloc_append_destructor ( test_file, destructor_unlink_file, file_name ) != 0 ) {
         tralloc_free ( test_file );
-        return 8;
+        return 9;
     }
     if ( tralloc_free ( test_file ) != 0 ) {
-        return 9;
+        return 10;
     }
 #endif
 
 #if defined(TRALLOC_DEBUG)
     if ( tralloc_get_chunks_count() != 0 ) {
-        return 10;
+        return 11;
     }
 #endif
 

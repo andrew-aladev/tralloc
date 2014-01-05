@@ -29,7 +29,7 @@ static size_t _chunks_count           = 0;
 static size_t _chunks_overhead_length = 0;
 static size_t _chunks_length          = 0;
 
-uint8_t _tralloc_on_add ( _tralloc_chunk * chunk )
+tralloc_error _tralloc_on_add ( _tralloc_chunk * chunk )
 {
     _chunks_count++;
     _chunks_overhead_length += chunk->chunk_length;
@@ -42,7 +42,7 @@ uint8_t _tralloc_on_add ( _tralloc_chunk * chunk )
     return 0;
 }
 
-uint8_t _tralloc_on_resize ( _tralloc_chunk * chunk, size_t old_length )
+tralloc_error _tralloc_on_resize ( _tralloc_chunk * chunk, size_t old_length )
 {
     _chunks_length += chunk->length - old_length;
 
@@ -53,7 +53,7 @@ uint8_t _tralloc_on_resize ( _tralloc_chunk * chunk, size_t old_length )
     return 0;
 }
 
-uint8_t _tralloc_on_move ( _tralloc_chunk * chunk, _tralloc_chunk * old_parent_chunk )
+tralloc_error _tralloc_on_move ( _tralloc_chunk * chunk, _tralloc_chunk * old_parent_chunk )
 {
     if ( _debug_on_move != NULL ) {
         return _debug_on_move ( _user_data, chunk, old_parent_chunk );
@@ -62,7 +62,7 @@ uint8_t _tralloc_on_move ( _tralloc_chunk * chunk, _tralloc_chunk * old_parent_c
     return 0;
 }
 
-uint8_t _tralloc_on_free ( _tralloc_chunk * chunk )
+tralloc_error _tralloc_on_free ( _tralloc_chunk * chunk )
 {
     _chunks_count--;
     _chunks_overhead_length -= chunk->chunk_length;

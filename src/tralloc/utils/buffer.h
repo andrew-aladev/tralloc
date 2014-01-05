@@ -21,8 +21,8 @@ typedef struct tralloc_buffer_t {
 inline
 tralloc_buffer * tralloc_buffer_with_extensions_new ( tralloc_context * ctx, uint8_t extensions )
 {
-    tralloc_buffer * buffer = tralloc_with_extensions ( ctx, extensions, sizeof ( tralloc_buffer ) );
-    if ( buffer == NULL ) {
+    tralloc_buffer * buffer;
+    if ( tralloc_with_extensions ( ctx, ( tralloc_context ** ) &buffer, extensions, sizeof ( tralloc_buffer ) ) != 0 ) {
         return NULL;
     }
     buffer->buf         = NULL;
@@ -43,8 +43,8 @@ tralloc_buffer * tralloc_buffer_new ( tralloc_context * ctx )
 inline
 tralloc_buffer * tralloc_buffer_new ( tralloc_context * ctx )
 {
-    tralloc_buffer * buffer = tralloc ( ctx, sizeof ( tralloc_buffer ) );
-    if ( buffer == NULL ) {
+    tralloc_buffer * buffer;
+    if ( tralloc ( ctx, ( tralloc_context ** ) &buffer, sizeof ( tralloc_buffer ) ) != 0 ) {
         return NULL;
     }
     buffer->buf         = NULL;

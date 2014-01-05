@@ -9,54 +9,33 @@
 #include "../common.h"
 
 
-_tralloc_chunk *  _tralloc_with_extensions ( tralloc_context * parent_context, uint8_t extensions, size_t length );
+tralloc_error tralloc_with_extensions ( tralloc_context * parent_context, tralloc_context ** child_context, uint8_t extensions, size_t length );
 
 inline
-tralloc_context * tralloc_with_extensions ( tralloc_context * parent_context, uint8_t extensions, size_t length )
+tralloc_error tralloc ( tralloc_context * parent_context, tralloc_context ** child_context, size_t length )
 {
-    _tralloc_chunk * chunk = _tralloc_with_extensions ( parent_context, extensions, length );
-    if ( chunk == NULL ) {
-        return NULL;
-    }
-    return _tralloc_context_from_chunk ( chunk );
+    return tralloc_with_extensions ( parent_context, child_context, 0, length );
 }
 
-inline
-tralloc_context * tralloc ( tralloc_context * parent_context, size_t length )
-{
-    return tralloc_with_extensions ( parent_context, 0, length );
-}
-
-
-_tralloc_chunk *  _tralloc_zero_with_extensions ( tralloc_context * parent_context, uint8_t extensions, size_t length );
+tralloc_error tralloc_zero_with_extensions ( tralloc_context * parent_context, tralloc_context ** child_context, uint8_t extensions, size_t length );
 
 inline
-tralloc_context * tralloc_zero_with_extensions ( tralloc_context * parent_context, uint8_t extensions, size_t length )
+tralloc_error tralloc_zero ( tralloc_context * parent_context, tralloc_context ** child_context, size_t length )
 {
-    _tralloc_chunk * chunk = _tralloc_zero_with_extensions ( parent_context, extensions, length );
-    if ( chunk == NULL ) {
-        return NULL;
-    }
-    return _tralloc_context_from_chunk ( chunk );
-}
-
-inline
-tralloc_context * tralloc_zero ( tralloc_context * parent_context, size_t length )
-{
-    return tralloc_zero_with_extensions ( parent_context, 0, length );
+    return tralloc_zero_with_extensions ( parent_context, child_context, 0, length );
 }
 
 
 inline
-tralloc_context * tralloc_new ( tralloc_context * parent_context )
+tralloc_error tralloc_new ( tralloc_context * parent_context, tralloc_context ** child_context )
 {
-    return tralloc ( parent_context, 0 );
+    return tralloc ( parent_context, child_context, 0 );
 }
 
 inline
-tralloc_context * tralloc_with_extensions_new ( tralloc_context * parent_context, uint8_t extensions )
+tralloc_error tralloc_with_extensions_new ( tralloc_context * parent_context, tralloc_context ** child_context, uint8_t extensions )
 {
-    return tralloc_with_extensions ( parent_context, extensions, 0 );
+    return tralloc_with_extensions ( parent_context, child_context, extensions, 0 );
 }
 
 
