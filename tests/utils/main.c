@@ -12,19 +12,19 @@
 
 int main ()
 {
-    tralloc_context * root = tralloc_new ( NULL );
-    if ( root == NULL ) {
+    tralloc_context * ctx = tralloc_new ( NULL );
+    if ( ctx == NULL ) {
         return 1;
     }
 
 #if defined(TRALLOC_UTILS_BUFFER)
-    if ( !test_buffer ( root ) ) {
-        tralloc_free ( root );
+    if ( !test_buffer ( ctx ) ) {
+        tralloc_free ( ctx );
         return 2;
     }
 #endif
 
-    if ( tralloc_free ( root ) != 0 ) {
+    if ( tralloc_free ( ctx ) != 0 ) {
         return 3;
     }
 

@@ -11,7 +11,7 @@
 
 
 #if defined(TRALLOC_UTILS_BUFFER)
-bool test_buffer ( tralloc_context * root );
+bool test_buffer ( tralloc_context * ctx );
 #endif
 
 

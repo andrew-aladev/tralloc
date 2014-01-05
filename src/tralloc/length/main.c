@@ -9,9 +9,11 @@
 uint8_t _tralloc_get_length ( _tralloc_chunk * chunk, size_t * length )
 {
     if ( ( chunk->extensions & TRALLOC_HAVE_LENGTH ) == 0 ) {
-        return 2;
+        return TRALLOC_ERROR_NO_SUCH_EXTENSION;
     }
     _tralloc_length * length_ext = _tralloc_length_from_chunk ( chunk );
     * length                     = length_ext->length;
     return 0;
 }
+
+extern inline uint8_t tralloc_get_length ( tralloc_context * context, size_t * length );

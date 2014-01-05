@@ -49,7 +49,7 @@ uint8_t on_resize ( void * user_data, _tralloc_chunk * chunk, size_t old_length 
     return 0;
 }
 
-bool test_resize ( tralloc_context * root )
+bool test_resize ( tralloc_context * ctx )
 {
     malloc_dynarr * tralloc_history = malloc_history();
     if ( tralloc_history == NULL ) {
@@ -57,9 +57,9 @@ bool test_resize ( tralloc_context * root )
     }
     _tralloc_set_callback ( NULL, on_resize, NULL, NULL );
 
-    int * a   = tralloc ( root, sizeof ( int ) * 2 );
-    char * b  = tralloc ( root, sizeof ( char ) * 3 );
-    float * c = tralloc ( a,    sizeof ( float ) * 4 );
+    int * a   = tralloc ( ctx, sizeof ( int ) * 2 );
+    char * b  = tralloc ( ctx, sizeof ( char ) * 3 );
+    float * c = tralloc ( a,   sizeof ( float ) * 4 );
 
     if ( a == NULL || b == NULL || c == NULL ) {
         tralloc_free ( a );

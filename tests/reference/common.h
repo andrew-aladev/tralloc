@@ -10,8 +10,8 @@
 #include <stdbool.h>
 
 
-bool test_common ( tralloc_context * root );
-bool test_shared ( tralloc_context * root );
+bool test_common ( tralloc_context * ctx );
+bool test_shared ( tralloc_context * ctx );
 
 
 #endif

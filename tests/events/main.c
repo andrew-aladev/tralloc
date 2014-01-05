@@ -11,32 +11,32 @@
 
 int main ()
 {
-    tralloc_context * root = tralloc_new ( NULL );
-    if ( root == NULL ) {
+    tralloc_context * ctx = tralloc_new ( NULL );
+    if ( ctx == NULL ) {
         return 1;
     }
 
-    if ( !test_add ( root ) ) {
-        tralloc_free ( root );
+    if ( !test_add ( ctx ) ) {
+        tralloc_free ( ctx );
         return 2;
     }
 
-    if ( !test_resize ( root ) ) {
-        tralloc_free ( root );
+    if ( !test_resize ( ctx ) ) {
+        tralloc_free ( ctx );
         return 3;
     }
 
-    if ( !test_move ( root ) ) {
-        tralloc_free ( root );
+    if ( !test_move ( ctx ) ) {
+        tralloc_free ( ctx );
         return 4;
     }
 
-    if ( !test_free ( root ) ) {
-        tralloc_free ( root );
+    if ( !test_free ( ctx ) ) {
+        tralloc_free ( ctx );
         return 5;
     }
 
-    if ( tralloc_free ( root ) != 0 ) {
+    if ( tralloc_free ( ctx ) != 0 ) {
         return 6;
     }
 

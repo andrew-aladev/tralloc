@@ -50,14 +50,14 @@ void free_history ( malloc_dynarr * tralloc_history )
     malloc_dynarr_free ( tralloc_history );
 }
 
-bool test_destructor ( tralloc_context * root )
+bool test_destructor ( tralloc_context * ctx )
 {
     malloc_dynarr * tralloc_history = malloc_history();
     if ( tralloc_history == NULL ) {
         return false;
     }
 
-    void * strings = tralloc_new ( root );
+    void * strings = tralloc_new ( ctx );
     char * text_01 = tralloc_strdup_with_extensions ( strings, TRALLOC_HAVE_DESTRUCTORS, "test text 01" );
     char * text_02 = tralloc_strdup_with_extensions ( strings, TRALLOC_HAVE_DESTRUCTORS, "test text 02" );
     char * text_03 = tralloc_strdup_with_extensions ( strings, TRALLOC_HAVE_DESTRUCTORS, "test text 03" );

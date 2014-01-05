@@ -3,17 +3,22 @@
 // tralloc is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TRALLOC_TESTS_EVENTS_COMMON
-#define TRALLOC_TESTS_EVENTS_COMMON
+#ifndef TRALLOC_TESTS_LENGTH_COMMON
+#define TRALLOC_TESTS_LENGTH_COMMON
 
 #include <tralloc/types.h>
 #include <stdbool.h>
 
 
-bool test_add    ( tralloc_context * ctx );
-bool test_resize ( tralloc_context * ctx );
-bool test_move   ( tralloc_context * ctx );
-bool test_free   ( tralloc_context * ctx );
+bool test_basic ( tralloc_context * ctx );
+
+#if defined(TRALLOC_DESTRUCTOR)
+bool test_destructor ( tralloc_context * ctx );
+#endif
+
+#if defined(TRALLOC_REFERENCE)
+bool test_reference ( tralloc_context * ctx );
+#endif
 
 
 #endif

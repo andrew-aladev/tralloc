@@ -68,6 +68,15 @@ enum {
 };
 #endif
 
+enum {
+    TRALLOC_ERROR_CONTEXT_IS_NULL = 1,
+
+#if defined(TRALLOC_EXTENSIONS)
+    TRALLOC_ERROR_NO_SUCH_EXTENSION,
+#endif
+
+};
+
 typedef struct _tralloc_chunk_t {
     struct _tralloc_chunk_t * parent;
     struct _tralloc_chunk_t * prev;

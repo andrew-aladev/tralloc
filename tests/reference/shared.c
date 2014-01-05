@@ -11,16 +11,16 @@
 #include <string.h>
 
 
-bool test_shared ( tralloc_context * root )
+bool test_shared ( tralloc_context * ctx )
 {
-    int *    a = tralloc ( root, sizeof ( int ) * 2 );
-    char *   b = tralloc ( root, sizeof ( char ) * 3 );
-    size_t * c = tralloc ( root, sizeof ( size_t ) * 4 );
+    int *    a = tralloc ( ctx, sizeof ( int ) * 2 );
+    char *   b = tralloc ( ctx, sizeof ( char ) * 3 );
+    size_t * c = tralloc ( ctx, sizeof ( size_t ) * 4 );
     if ( a == NULL || b == NULL || c == NULL ) {
         return false;
     }
 
-    char * shared = tralloc_with_extensions ( root, TRALLOC_HAVE_REFERENCES, sizeof ( char ) * 7 );
+    char * shared = tralloc_with_extensions ( ctx, TRALLOC_HAVE_REFERENCES, sizeof ( char ) * 7 );
     strcpy ( shared, "shared" );
 
     if (
@@ -28,7 +28,7 @@ bool test_shared ( tralloc_context * root )
         tralloc_reference_new ( NULL, shared )   != NULL ||
         tralloc_reference_new ( NULL, NULL )     != NULL ||
         tralloc_reference_new ( shared, shared ) != NULL ||
-        tralloc_reference_new ( shared, root )   != NULL
+        tralloc_reference_new ( shared, ctx )    != NULL
     ) {
         tralloc_free ( a );
         tralloc_free ( b );

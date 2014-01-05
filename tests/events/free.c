@@ -40,7 +40,7 @@ uint8_t on_free ( void * user_data, _tralloc_chunk * chunk )
     return 0;
 }
 
-bool test_free ( tralloc_context * root )
+bool test_free ( tralloc_context * ctx )
 {
     malloc_dynarr * tralloc_history = malloc_history();
     if ( tralloc_history == NULL ) {
@@ -48,8 +48,8 @@ bool test_free ( tralloc_context * root )
     }
     _tralloc_set_callback ( NULL, NULL, NULL, on_free );
 
-    int * a  = tralloc ( root, sizeof ( int ) * 2 );
-    char * b = tralloc ( root, sizeof ( char ) * 3 );
+    int * a  = tralloc ( ctx, sizeof ( int ) * 2 );
+    char * b = tralloc ( ctx, sizeof ( char ) * 3 );
 
 #if defined(TRALLOC_REFERENCE)
     float * c = tralloc_with_extensions ( a, TRALLOC_HAVE_REFERENCES, sizeof ( float ) * 4 );

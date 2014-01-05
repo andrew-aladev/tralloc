@@ -9,9 +9,9 @@
 #include <string.h>
 
 
-bool test_buffer ( tralloc_context * root )
+bool test_buffer ( tralloc_context * ctx )
 {
-    tralloc_buffer * buffer = tralloc_buffer_new ( root );
+    tralloc_buffer * buffer = tralloc_buffer_new ( ctx );
     if ( buffer == NULL ) {
         return false;
     }

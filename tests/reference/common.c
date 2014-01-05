@@ -24,11 +24,11 @@ uint8_t empty_destructor ( tralloc_context * UNUSED ( chunk_context ), void * UN
 
 #endif
 
-bool test_common ( tralloc_context * root )
+bool test_common ( tralloc_context * ctx )
 {
-    int *    a = tralloc ( root, sizeof ( int ) * 2 );
-    char *   b = tralloc ( a, sizeof ( char ) * 3 );
-    size_t * c = tralloc ( b, sizeof ( size_t ) * 4 );
+    int *    a = tralloc ( ctx, sizeof ( int ) * 2 );
+    char *   b = tralloc ( a,   sizeof ( char ) * 3 );
+    size_t * c = tralloc ( b,   sizeof ( size_t ) * 4 );
     if ( a == NULL || b == NULL || c == NULL ) {
         return false;
     }
