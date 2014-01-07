@@ -14,6 +14,10 @@ tralloc_error tralloc_clear_destructors ( tralloc_context * chunk_context )
     }
     _tralloc_chunk * chunk = _tralloc_chunk_from_context ( chunk_context );
 
+    if ( ( chunk->extensions & TRALLOC_HAVE_DESTRUCTORS ) == 0 ) {
+        return TRALLOC_ERROR_NO_SUCH_EXTENSION;
+    }
+
     _tralloc_destructors * destructors = _tralloc_destructors_from_chunk ( chunk );
     _tralloc_destructor * destructor   = destructors->first_destructor;
     if ( destructor == NULL ) {
@@ -103,6 +107,10 @@ tralloc_error _tralloc_delete_destructors_by_comparator ( tralloc_context * chun
         return TRALLOC_ERROR_CONTEXT_IS_NULL;
     }
     _tralloc_chunk * chunk = _tralloc_chunk_from_context ( chunk_context );
+
+    if ( ( chunk->extensions & TRALLOC_HAVE_DESTRUCTORS ) == 0 ) {
+        return TRALLOC_ERROR_NO_SUCH_EXTENSION;
+    }
 
     _tralloc_destructors * destructors     = _tralloc_destructors_from_chunk ( chunk );
     _tralloc_destructor * first_destructor = destructors->first_destructor;

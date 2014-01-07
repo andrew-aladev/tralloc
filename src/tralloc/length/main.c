@@ -4,6 +4,7 @@
 // You should have received a copy of the GNU General Lesser Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
 #include "main.h"
+#include "../common.h"
 
 
 tralloc_error tralloc_get_length ( tralloc_context * context, size_t * length )

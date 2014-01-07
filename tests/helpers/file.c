@@ -4,8 +4,10 @@
 // You should have received a copy of the GNU General Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
 #include "common.h"
+#include <tralloc/tree.h>
 #include <tralloc/helpers/string.h>
 #include <tralloc/helpers/file.h>
+#include <tralloc/destructor/main.h>
 #include <sys/types.h>
 #include <unistd.h>
 
@@ -23,6 +25,15 @@ tralloc_error destructor_unlink_file ( tralloc_context * UNUSED ( chunk_context 
 
 bool test_file ( tralloc_context * ctx )
 {
+    if (
+        tralloc_open                      ( NULL, NULL, NULL, 0 )       != TRALLOC_ERROR_CONTEXT_IS_NULL ||
+        tralloc_open_with_extensions      ( NULL, NULL, 0, NULL, 0 )    != TRALLOC_ERROR_CONTEXT_IS_NULL ||
+        tralloc_open_mode                 ( NULL, NULL, NULL, 0, 0 )    != TRALLOC_ERROR_CONTEXT_IS_NULL ||
+        tralloc_open_mode_with_extensions ( NULL, NULL, 0, NULL, 0, 0 ) != TRALLOC_ERROR_CONTEXT_IS_NULL
+    ) {
+        return false;
+    }
+
     int * hosts;
     if ( tralloc_open ( ctx, &hosts, "/etc/hosts", O_RDONLY ) != 0 ) {
         return false;
@@ -30,7 +41,12 @@ bool test_file ( tralloc_context * ctx )
     if ( tralloc_free ( hosts ) != 0 ) {
         return false;
     }
-    if ( tralloc_open ( ctx, &hosts, "/etc/hosts", O_RDONLY | O_DIRECTORY ) == 0 ) {
+    if (
+        tralloc_open                      ( ctx, &hosts, "/etc/hosts", O_RDONLY | O_DIRECTORY )       != TRALLOC_ERROR_OPEN_DESCRIPTOR_FAILED ||
+        tralloc_open_with_extensions      ( ctx, &hosts, 0, "/etc/hosts", O_RDONLY | O_DIRECTORY )    != TRALLOC_ERROR_OPEN_DESCRIPTOR_FAILED ||
+        tralloc_open_mode                 ( ctx, &hosts, "/etc/hosts", O_RDONLY | O_DIRECTORY, 0 )    != TRALLOC_ERROR_OPEN_DESCRIPTOR_FAILED ||
+        tralloc_open_mode_with_extensions ( ctx, &hosts, 0, "/etc/hosts", O_RDONLY | O_DIRECTORY, 0 ) != TRALLOC_ERROR_OPEN_DESCRIPTOR_FAILED
+    ) {
         tralloc_free ( hosts );
         return false;
     }

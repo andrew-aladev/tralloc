@@ -29,6 +29,14 @@ trivium trivium_1 trivium_3 trivium_2
 
 bool test_add ( tree * tr )
 {
+    if (
+        tralloc_new  ( NULL, NULL )    != TRALLOC_ERROR_CONTEXT_IS_NULL ||
+        tralloc      ( NULL, NULL, 0 ) != TRALLOC_ERROR_CONTEXT_IS_NULL ||
+        tralloc_zero ( NULL, NULL, 0 ) != TRALLOC_ERROR_CONTEXT_IS_NULL
+    ) {
+        return false;
+    }
+
     if ( tralloc ( tr, ( tralloc_context ** ) &tr->data_1, sizeof ( uint8_t ) ) != 0 ) {
         return false;
     }
@@ -84,6 +92,14 @@ bool test_add ( tree * tr )
 
 #if defined(TRALLOC_REFERENCE)
 
+    if (
+        tralloc_with_extensions_new  ( NULL, NULL, 0 )    != TRALLOC_ERROR_CONTEXT_IS_NULL ||
+        tralloc_with_extensions      ( NULL, NULL, 0, 0 ) != TRALLOC_ERROR_CONTEXT_IS_NULL ||
+        tralloc_zero_with_extensions ( NULL, NULL, 0, 0 ) != TRALLOC_ERROR_CONTEXT_IS_NULL
+    ) {
+        return false;
+    }
+
     if ( tralloc_with_extensions_new ( tr->data_7, ( tralloc_context ** ) &tr->trivium, TRALLOC_HAVE_REFERENCES ) != 0 ) {
         return false;
     }
@@ -106,7 +122,7 @@ bool test_add ( tree * tr )
     }
     * tr->trivium_reference_3 = 500000;
 
-    if ( tralloc ( tr->trivium_reference_1, ( tralloc_context ** ) &tr->data_8, sizeof ( int8_t ) * 2 ) != 0 ) {
+    if ( tralloc_with_extensions ( tr->trivium_reference_1, ( tralloc_context ** ) &tr->data_8, 0, sizeof ( int8_t ) * 2 ) != 0 ) {
         return false;
     }
     tr->data_8[0] = - 1;
@@ -120,7 +136,7 @@ bool test_add ( tree * tr )
     tr->data_9[2] = 6000;
 
     if (
-        tralloc_zero ( tr->data_8, ( tralloc_context ** ) &tr->data_10, sizeof ( int32_t ) * 2 ) != 0 ||
+        tralloc_zero_with_extensions ( tr->data_8, ( tralloc_context ** ) &tr->data_10, sizeof ( int32_t ) * 2, 0 ) != 0 ||
         tr->data_10[0] != 0 || tr->data_10[1] != 0
     ) {
         return false;

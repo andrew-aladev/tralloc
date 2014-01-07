@@ -5,6 +5,7 @@
 
 #include "common.h"
 #include "../lib/malloc_dynarr.h"
+#include <tralloc/tree.h>
 #include <tralloc/helpers/string.h>
 #include <tralloc/destructor/main.h>
 
@@ -57,8 +58,32 @@ bool test_destructor ( tralloc_context * ctx )
         return false;
     }
 
+    if (
+        tralloc_append_destructor              ( NULL, NULL, NULL ) != TRALLOC_ERROR_CONTEXT_IS_NULL ||
+        tralloc_prepend_destructor             ( NULL, NULL, NULL ) != TRALLOC_ERROR_CONTEXT_IS_NULL ||
+        tralloc_clear_destructors              ( NULL )             != TRALLOC_ERROR_CONTEXT_IS_NULL ||
+        tralloc_delete_destructors             ( NULL, NULL, NULL ) != TRALLOC_ERROR_CONTEXT_IS_NULL ||
+        tralloc_delete_destructors_by_function ( NULL, NULL )       != TRALLOC_ERROR_CONTEXT_IS_NULL ||
+        tralloc_delete_destructors_by_data     ( NULL, NULL )       != TRALLOC_ERROR_CONTEXT_IS_NULL
+    ) {
+        free_history ( tralloc_history );
+        return false;
+    }
+
     tralloc_context * strings;
     if ( tralloc_new ( ctx, &strings ) != 0 ) {
+        free_history ( tralloc_history );
+        return false;
+    }
+
+    if (
+        tralloc_append_destructor              ( strings, NULL, NULL ) != TRALLOC_ERROR_NO_SUCH_EXTENSION ||
+        tralloc_prepend_destructor             ( strings, NULL, NULL ) != TRALLOC_ERROR_NO_SUCH_EXTENSION ||
+        tralloc_clear_destructors              ( strings )             != TRALLOC_ERROR_NO_SUCH_EXTENSION ||
+        tralloc_delete_destructors             ( strings, NULL, NULL ) != TRALLOC_ERROR_NO_SUCH_EXTENSION ||
+        tralloc_delete_destructors_by_function ( strings, NULL )       != TRALLOC_ERROR_NO_SUCH_EXTENSION ||
+        tralloc_delete_destructors_by_data     ( strings, NULL )       != TRALLOC_ERROR_NO_SUCH_EXTENSION
+    ) {
         free_history ( tralloc_history );
         return false;
     }

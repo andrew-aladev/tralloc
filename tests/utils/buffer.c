@@ -12,12 +12,35 @@
 bool test_buffer ( tralloc_context * ctx )
 {
     tralloc_buffer * buffer;
+
+#if defined(TRALLOC_EXTENSIONS)
+
+    if (
+        tralloc_buffer_new                 ( NULL, NULL )    != TRALLOC_ERROR_CONTEXT_IS_NULL ||
+        tralloc_buffer_with_extensions_new ( NULL, NULL, 0 ) != TRALLOC_ERROR_CONTEXT_IS_NULL
+    ) {
+        return false;
+    }
+
+    if ( tralloc_buffer_with_extensions_new ( ctx, &buffer, 0 ) != 0 ) {
+        return false;
+    }
+
+#else
+
+    if (
+        tralloc_buffer_new ( NULL, NULL ) != TRALLOC_ERROR_CONTEXT_IS_NULL
+    ) {
+        return false;
+    }
+
     if ( tralloc_buffer_new ( ctx, &buffer ) != 0 ) {
         return false;
     }
 
+#endif
+
     if ( tralloc_buffer_prepare ( buffer, 9 ) != 0 ) {
-        tralloc_free ( buffer );
         return false;
     }
     uint8_t * buf = tralloc_buffer_get_write_point ( buffer );
@@ -27,7 +50,6 @@ bool test_buffer ( tralloc_context * ctx )
     tralloc_buffer_written ( buffer, 3 );
 
     if ( tralloc_buffer_prepare ( buffer, 3 ) != 0 ) {
-        tralloc_free ( buffer );
         return false;
     }
     buf    = tralloc_buffer_get_write_point ( buffer );
@@ -36,7 +58,6 @@ bool test_buffer ( tralloc_context * ctx )
     tralloc_buffer_written ( buffer, 2 );
 
     if ( tralloc_buffer_prepare ( buffer, 5 ) != 0 ) {
-        tralloc_free ( buffer );
         return false;
     }
     buf    = tralloc_buffer_get_write_point ( buffer );
@@ -47,12 +68,10 @@ bool test_buffer ( tralloc_context * ctx )
         tralloc_buffer_get_length ( buffer ) != 6 ||
         buffer->length != 10
     ) {
-        tralloc_free ( buffer );
         return false;
     }
 
     if ( tralloc_buffer_prepare ( buffer, 4 ) != 0 ) {
-        tralloc_free ( buffer );
         return false;
     }
     buf    = tralloc_buffer_get_write_point ( buffer );
@@ -63,7 +82,6 @@ bool test_buffer ( tralloc_context * ctx )
     tralloc_buffer_written ( buffer, 4 );
 
     if ( tralloc_buffer_trim ( buffer ) != 0 ) {
-        tralloc_free ( buffer );
         return false;
     }
 
@@ -73,12 +91,14 @@ bool test_buffer ( tralloc_context * ctx )
         tralloc_buffer_get_length ( buffer ) != 10 ||
         strncmp ( ( char * ) tralloc_buffer_get_read_point ( buffer ), "0123456789", 10 ) != 0
     ) {
-        tralloc_free ( buffer );
+        return false;
+    }
+
+    if ( tralloc_buffer_readed ( buffer, 20 ) != TRALLOC_ERROR_UTILS_BUFFER_OVERFLOW ) {
         return false;
     }
 
     if ( tralloc_buffer_readed ( buffer, 4 ) != 0 ) {
-        tralloc_free ( buffer );
         return false;
     }
 
@@ -88,7 +108,6 @@ bool test_buffer ( tralloc_context * ctx )
         tralloc_buffer_get_length ( buffer ) != 6 ||
         strncmp ( ( char * ) tralloc_buffer_get_read_point ( buffer ), "456789", 6 ) != 0
     ) {
-        tralloc_free ( buffer );
         return false;
     }
 
@@ -96,7 +115,6 @@ bool test_buffer ( tralloc_context * ctx )
         tralloc_buffer_readed ( buffer, 1 ) != 0 ||
         tralloc_buffer_trim ( buffer )      != 0
     ) {
-        tralloc_free ( buffer );
         return false;
     }
 
@@ -106,7 +124,6 @@ bool test_buffer ( tralloc_context * ctx )
         tralloc_buffer_get_length ( buffer ) != 5 ||
         strncmp ( ( char * ) tralloc_buffer_get_read_point ( buffer ), "56789", 5 ) != 0
     ) {
-        tralloc_free ( buffer );
         return false;
     }
 
@@ -118,9 +135,14 @@ bool test_buffer ( tralloc_context * ctx )
         buffer->length      != 0 ||
         buffer->buf         != NULL
     ) {
-        tralloc_free ( buffer );
+        return false;
+    }
+
+    if ( tralloc_free ( buffer ) != 0 ) {
         return false;
     }
 
     return true;
 }
+
+

@@ -1,4 +1,4 @@
-set (SRC main.c shared.c common.c)
+set (SRC main.c specs.c shared.c common.c)
 
 if (${TRALLOC_SHARED})
     set (NAME ${TRALLOC_TARGET}-test-reference)

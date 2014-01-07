@@ -13,7 +13,7 @@ typedef tralloc_error ( * _reference_allocator ) ( tralloc_context * parent_cont
 static inline
 tralloc_error _add_reference ( tralloc_context * child_context, tralloc_context * parent_context, tralloc_context ** chunk_context, tralloc_extensions extensions, size_t length, _reference_allocator allocator )
 {
-    if ( child_context == NULL ) {
+    if ( chunk_context == NULL || child_context == NULL ) {
         return TRALLOC_ERROR_CONTEXT_IS_NULL;
     }
     if ( child_context == parent_context ) {

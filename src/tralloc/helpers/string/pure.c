@@ -4,9 +4,53 @@
 // You should have received a copy of the GNU General Lesser Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
 #include "pure.h"
+#include "../../tree.h"
+#include <stdio.h>
 
 
-extern inline tralloc_error tralloc_strndup   ( tralloc_context * parent_context, char ** child_context, const char * str, size_t length );
-extern inline tralloc_error tralloc_strdup    ( tralloc_context * parent_context, char ** child_context, const char * str );
-extern inline tralloc_error tralloc_vasprintf ( tralloc_context * parent_context, char ** child_context, const char * format, va_list arguments );
-extern inline tralloc_error tralloc_asprintf  ( tralloc_context * parent_context, char ** child_context, const char * format, ... );
+tralloc_error _tralloc_strndup ( tralloc_context * parent_context, char ** child_context, const char * str, size_t length )
+{
+    tralloc_error result = tralloc ( parent_context, ( tralloc_context ** ) child_context, sizeof ( char ) * ( length + 1 ) );
+    if ( result != 0 ) {
+        return result;
+    }
+    memmove ( * child_context, str, length );
+    ( * child_context ) [length] = '\0';
+    return 0;
+}
+
+extern inline tralloc_error tralloc_strndup ( tralloc_context * parent_context, char ** child_context, const char * str, size_t length );
+extern inline tralloc_error tralloc_strdup  ( tralloc_context * parent_context, char ** child_context, const char * str );
+
+
+tralloc_error tralloc_vasprintf ( tralloc_context * parent_context, char ** child_context, const char * format, va_list arguments )
+{
+    if ( child_context == NULL ) {
+        return TRALLOC_ERROR_CONTEXT_IS_NULL;
+    }
+
+    va_list arguments_copy;
+
+    va_copy ( arguments_copy, arguments );
+    int predicted_length = vsnprintf ( NULL, 0, format, arguments_copy );
+    va_end ( arguments_copy );
+    if ( predicted_length <= 0 ) {
+        return TRALLOC_ERROR_PRINTF_FAILED;
+    }
+    predicted_length++;
+
+    tralloc_error result = tralloc ( parent_context, ( tralloc_context ** ) child_context, sizeof ( char ) * predicted_length );
+    if ( result != 0 ) {
+        return result;
+    }
+    va_copy ( arguments_copy, arguments );
+    int length = vsnprintf ( * child_context, predicted_length, format, arguments_copy );
+    va_end ( arguments_copy );
+    if ( length + 1 != predicted_length ) {
+        tralloc_free ( * child_context );
+        return TRALLOC_ERROR_PRINTF_FAILED;
+    }
+    return 0;
+}
+
+extern inline tralloc_error tralloc_asprintf ( tralloc_context * parent_context, char ** child_context, const char * format, ... );

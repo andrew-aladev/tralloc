@@ -90,6 +90,10 @@ bool test_chunks ( tree * tr )
 
 bool test_free_subtree ( tree * tr )
 {
+    if ( tralloc_free ( NULL ) != TRALLOC_ERROR_CONTEXT_IS_NULL ) {
+        return false;
+    }
+
     if (
         tralloc_free ( tr->data_7 ) != 0 ||
         tralloc_free ( tr->data_6 ) != 0

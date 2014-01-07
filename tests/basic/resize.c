@@ -20,6 +20,14 @@ bool compare_double ( double a, double b )
 
 bool test_resize ( tree * tr )
 {
+    tralloc_context * empty = NULL;
+    if (
+        tralloc_realloc ( NULL, 0 )   != TRALLOC_ERROR_CONTEXT_IS_NULL ||
+        tralloc_realloc ( &empty, 0 ) != TRALLOC_ERROR_CONTEXT_IS_NULL
+    ) {
+        return false;
+    }
+
     if (
         tralloc_realloc ( ( tralloc_context ** ) &tr->data_1, sizeof ( uint8_t ) * 15 ) != 0 ||
         tr->data_1[0] != 123

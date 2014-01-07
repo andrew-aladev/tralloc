@@ -28,16 +28,6 @@ bool test_shared ( tralloc_context * ctx )
 
     strcpy ( shared, "shared" );
 
-    tralloc_context * empty;
-    if (
-        tralloc_reference_new ( NULL, shared, &empty )   == 0 ||
-        tralloc_reference_new ( NULL, NULL, &empty )     == 0 ||
-        tralloc_reference_new ( shared, shared, &empty ) == 0 ||
-        tralloc_reference_new ( shared, ctx, &empty )    == 0
-    ) {
-        return false;
-    }
-
     tralloc_context * b_shared;
     tralloc_context * c_shared;
     if (

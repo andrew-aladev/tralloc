@@ -4,13 +4,62 @@
 // You should have received a copy of the GNU General Lesser Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
 #include "file.h"
+#include "../tree.h"
+#include "../destructor/main.h"
+#include <unistd.h>
 
-extern inline tralloc_error _tralloc_close ( tralloc_context * chunk_context, void * UNUSED ( user_data ) );
 
-extern inline tralloc_error _tralloc_process_descriptor ( tralloc_context * parent_context, int ** descriptor_ptr, int descriptor, tralloc_extensions extensions );
+static
+tralloc_error _tralloc_close ( tralloc_context * chunk_context, void * UNUSED ( user_data ) )
+{
+    int * descriptor_ptr = chunk_context;
+    if ( close ( * descriptor_ptr ) != 0 ) {
+        return TRALLOC_ERROR_CLOSE_DESCRIPTOR_FAILED;
+    }
+    return 0;
+}
 
-extern inline tralloc_error tralloc_open_with_extensions      ( tralloc_context * parent_context, int ** descriptor_ptr, tralloc_extensions extensions, const char * path_name, int flags );
-extern inline tralloc_error tralloc_open_mode_with_extensions ( tralloc_context * parent_context, int ** descriptor_ptr, tralloc_extensions extensions, const char * path_name, int flags, mode_t mode );
+static inline
+tralloc_error _tralloc_process_descriptor ( tralloc_context * parent_context, int ** descriptor_ptr, int descriptor, tralloc_extensions extensions )
+{
+    tralloc_error result = tralloc_with_extensions ( parent_context, ( tralloc_context ** ) descriptor_ptr, extensions | TRALLOC_HAVE_DESTRUCTORS, sizeof ( int ) );
+    if ( result != 0 ) {
+        close ( descriptor );
+        return result;
+    }
+    ** descriptor_ptr = descriptor;
+    result = tralloc_append_destructor ( * descriptor_ptr, _tralloc_close, NULL );
+    if ( result != 0 ) {
+        tralloc_free ( * descriptor_ptr );
+        close ( descriptor );
+        return result;
+    }
+    return 0;
+}
+
+tralloc_error tralloc_open_with_extensions ( tralloc_context * parent_context, int ** descriptor_ptr, tralloc_extensions extensions, const char * path_name, int flags )
+{
+    if ( descriptor_ptr == NULL ) {
+        return TRALLOC_ERROR_CONTEXT_IS_NULL;
+    }
+    int descriptor = open ( path_name, flags );
+    if ( descriptor == -1 ) {
+        return TRALLOC_ERROR_OPEN_DESCRIPTOR_FAILED;
+    }
+    return _tralloc_process_descriptor ( parent_context, descriptor_ptr, descriptor, extensions );
+}
+
+tralloc_error tralloc_open_mode_with_extensions ( tralloc_context * parent_context, int ** descriptor_ptr, tralloc_extensions extensions, const char * path_name, int flags, mode_t mode )
+{
+    if ( descriptor_ptr == NULL ) {
+        return TRALLOC_ERROR_CONTEXT_IS_NULL;
+    }
+    int descriptor = open ( path_name, flags, mode );
+    if ( descriptor == -1 ) {
+        return TRALLOC_ERROR_OPEN_DESCRIPTOR_FAILED;
+    }
+    return _tralloc_process_descriptor ( parent_context, descriptor_ptr, descriptor, extensions );
+}
 
 extern inline tralloc_error tralloc_open      ( tralloc_context * parent_context, int ** descriptor_ptr, const char * path_name, int flags );
 extern inline tralloc_error tralloc_open_mode ( tralloc_context * parent_context, int ** descriptor_ptr, const char * path_name, int flags, mode_t mode );

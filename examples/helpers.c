@@ -3,10 +3,14 @@
 // tralloc is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Lesser Public License for more details.
 // You should have received a copy of the GNU General Lesser Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
+#include <tralloc/tree.h>
 #include <tralloc/helpers/string.h>
 
 #if defined(TRALLOC_DESTRUCTOR)
 #include <tralloc/helpers/file.h>
+#include <tralloc/destructor/main.h>
+
+#include <unistd.h>
 
 
 tralloc_error destructor_unlink_file ( tralloc_context * UNUSED ( chunk_context ), void * user_data )

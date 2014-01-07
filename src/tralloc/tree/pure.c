@@ -40,6 +40,10 @@ tralloc_error _calloc ( void ** data, size_t length )
 static inline
 tralloc_error _tralloc_with_allocator ( tralloc_context * parent_context, tralloc_context ** child_context, size_t length, _allocator allocator )
 {
+    if ( child_context == NULL ) {
+        return TRALLOC_ERROR_CONTEXT_IS_NULL;
+    }
+
     _tralloc_chunk * chunk;
     tralloc_error result = allocator ( ( void ** ) &chunk, sizeof ( _tralloc_chunk ) + length );
     if ( result != 0 ) {
@@ -51,7 +55,10 @@ tralloc_error _tralloc_with_allocator ( tralloc_context * parent_context, trallo
     chunk->length       = length;
 #endif
 
-    _tralloc_add_chunk ( parent_context, chunk );
+    result = _tralloc_add_chunk ( parent_context, chunk );
+    if ( result != 0 ) {
+        return result;
+    }
     * child_context = _tralloc_context_from_chunk ( chunk );
     return 0;
 }

@@ -6,7 +6,7 @@
 #ifndef TRALLOC_LENGTH_MAIN_H
 #define TRALLOC_LENGTH_MAIN_H
 
-#include "../common.h"
+#include "../types.h"
 
 
 tralloc_error tralloc_get_length ( tralloc_context * context, size_t * length );

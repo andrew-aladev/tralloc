@@ -120,7 +120,10 @@ tralloc_error _tralloc_with_extensions_with_allocator ( tralloc_context * parent
     }
 #endif
 
-    _tralloc_add_chunk ( parent_context, chunk );
+    result = _tralloc_add_chunk ( parent_context, chunk );
+    if ( result != 0 ) {
+        return result;
+    }
     * child_context = _tralloc_context_from_chunk ( chunk );
     return 0;
 }
