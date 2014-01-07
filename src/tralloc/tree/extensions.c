@@ -294,3 +294,4 @@ tralloc_error _tralloc_free_chunk ( _tralloc_chunk * chunk )
     free ( memory );
     return error;
 }
+

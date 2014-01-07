@@ -33,16 +33,7 @@ tralloc_error tralloc_strdup ( tralloc_context * parent_context, char ** child_c
 
 
 tralloc_error tralloc_vasprintf ( tralloc_context * parent_context, char ** child_context, const char * format, va_list arguments );
-
-inline
-tralloc_error tralloc_asprintf ( tralloc_context * parent_context, char ** child_context, const char * format, ... )
-{
-    va_list arguments;
-    va_start ( arguments, format );
-    tralloc_error result = tralloc_vasprintf ( parent_context, child_context, format, arguments );
-    va_end ( arguments );
-    return result;
-}
+tralloc_error tralloc_asprintf  ( tralloc_context * parent_context, char ** child_context, const char * format, ... );
 
 
 #endif

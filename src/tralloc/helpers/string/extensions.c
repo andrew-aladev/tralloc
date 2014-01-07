@@ -51,6 +51,23 @@ tralloc_error tralloc_vasprintf_with_extensions ( tralloc_context * parent_conte
     return 0;
 }
 
-extern inline tralloc_error tralloc_vasprintf                ( tralloc_context * parent_context, char ** child_context, const char * format, va_list arguments );
-extern inline tralloc_error tralloc_asprintf_with_extensions ( tralloc_context * parent_context, char ** child_context, tralloc_extensions extensions, const char * format, ... );
-extern inline tralloc_error tralloc_asprintf                 ( tralloc_context * parent_context, char ** child_context, const char * format, ... );
+extern inline tralloc_error tralloc_vasprintf ( tralloc_context * parent_context, char ** child_context, const char * format, va_list arguments );
+
+
+tralloc_error tralloc_asprintf_with_extensions ( tralloc_context * parent_context, char ** child_context, tralloc_extensions extensions, const char * format, ... )
+{
+    va_list arguments;
+    va_start ( arguments, format );
+    tralloc_error result = tralloc_vasprintf_with_extensions ( parent_context, child_context, extensions, format, arguments );
+    va_end ( arguments );
+    return result;
+}
+
+tralloc_error tralloc_asprintf ( tralloc_context * parent_context, char ** child_context, const char * format, ... )
+{
+    va_list arguments;
+    va_start ( arguments, format );
+    tralloc_error result = tralloc_vasprintf ( parent_context, child_context, format, arguments );
+    va_end ( arguments );
+    return result;
+}
