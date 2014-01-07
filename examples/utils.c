@@ -19,8 +19,8 @@ int main ()
 {
 
 #if defined(TRALLOC_UTILS_BUFFER)
-    tralloc_buffer * buffer = tralloc_buffer_new ( NULL );
-    if ( buffer == NULL ) {
+    tralloc_buffer * buffer;
+    if ( tralloc_buffer_new ( NULL, &buffer ) != 0 ) {
         return 1;
     }
     if ( tralloc_buffer_prepare ( buffer, 7 ) != 0 ) {

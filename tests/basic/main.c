@@ -10,7 +10,7 @@
 int main ()
 {
     tree * tr;
-    uint8_t result = tralloc ( NULL, ( tralloc_context ** ) &tr, sizeof ( tree ) );
+    tralloc_error result = tralloc ( NULL, ( tralloc_context ** ) &tr, sizeof ( tree ) );
     if ( result != 0 ) {
         return 1;
     }

@@ -24,7 +24,7 @@ tralloc_error _tralloc_close ( tralloc_context * chunk_context, void * UNUSED ( 
 }
 
 inline
-tralloc_error _tralloc_process_descriptor ( tralloc_context * parent_context, int ** descriptor_ptr, int descriptor, uint8_t extensions )
+tralloc_error _tralloc_process_descriptor ( tralloc_context * parent_context, int ** descriptor_ptr, int descriptor, tralloc_extensions extensions )
 {
     tralloc_error result = tralloc_with_extensions ( parent_context, ( tralloc_context ** ) descriptor_ptr, extensions | TRALLOC_HAVE_DESTRUCTORS, sizeof ( int ) );
     if ( result != 0 ) {
@@ -42,7 +42,7 @@ tralloc_error _tralloc_process_descriptor ( tralloc_context * parent_context, in
 }
 
 inline
-tralloc_error tralloc_open_with_extensions ( tralloc_context * parent_context, int ** descriptor_ptr, uint8_t extensions, const char * path_name, int flags )
+tralloc_error tralloc_open_with_extensions ( tralloc_context * parent_context, int ** descriptor_ptr, tralloc_extensions extensions, const char * path_name, int flags )
 {
     int descriptor = open ( path_name, flags );
     if ( descriptor == -1 ) {
@@ -52,7 +52,7 @@ tralloc_error tralloc_open_with_extensions ( tralloc_context * parent_context, i
 }
 
 inline
-tralloc_error tralloc_open_mode_with_extensions ( tralloc_context * parent_context, int ** descriptor_ptr, uint8_t extensions, const char * path_name, int flags, mode_t mode )
+tralloc_error tralloc_open_mode_with_extensions ( tralloc_context * parent_context, int ** descriptor_ptr, tralloc_extensions extensions, const char * path_name, int flags, mode_t mode )
 {
     int descriptor = open ( path_name, flags, mode );
     if ( descriptor == -1 ) {

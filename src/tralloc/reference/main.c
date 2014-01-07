@@ -8,16 +8,16 @@
 #include "../tree/extensions.h"
 
 
-typedef tralloc_error ( * _reference_allocator ) ( tralloc_context * parent_context, tralloc_context ** chunk_context, uint8_t extensions, size_t length );
+typedef tralloc_error ( * _reference_allocator ) ( tralloc_context * parent_context, tralloc_context ** chunk_context, tralloc_extensions extensions, size_t length );
 
 static inline
-tralloc_error _add_reference ( tralloc_context * child_context, tralloc_context * parent_context, tralloc_context ** chunk_context, uint8_t extensions, size_t length, _reference_allocator allocator )
+tralloc_error _add_reference ( tralloc_context * child_context, tralloc_context * parent_context, tralloc_context ** chunk_context, tralloc_extensions extensions, size_t length, _reference_allocator allocator )
 {
     if ( child_context == NULL ) {
         return TRALLOC_ERROR_CONTEXT_IS_NULL;
     }
     if ( child_context == parent_context ) {
-        return TRALLOC_ERROR_REFERENCE_CHILD_EQUALS_PARENT;
+        return TRALLOC_ERROR_CHILD_EQUALS_PARENT;
     }
 
     _tralloc_chunk * child_chunk = _tralloc_chunk_from_context ( child_context );
@@ -33,7 +33,7 @@ tralloc_error _add_reference ( tralloc_context * child_context, tralloc_context 
         }
 
         if ( child_chunk->parent == parent_chunk ) {
-            return TRALLOC_ERROR_REFERENCE_CHILD_HAS_SAME_PARENT;
+            return TRALLOC_ERROR_CHILD_HAS_SAME_PARENT;
         }
     }
 
@@ -63,7 +63,7 @@ tralloc_error _add_reference ( tralloc_context * child_context, tralloc_context 
 }
 
 
-tralloc_error tralloc_reference_with_extensions ( tralloc_context * child_context, tralloc_context * parent_context, tralloc_context ** chunk_context, uint8_t extensions, size_t length )
+tralloc_error tralloc_reference_with_extensions ( tralloc_context * child_context, tralloc_context * parent_context, tralloc_context ** chunk_context, tralloc_extensions extensions, size_t length )
 {
     return _add_reference ( child_context, parent_context, chunk_context, extensions, length, tralloc_with_extensions );
 }
@@ -71,7 +71,7 @@ tralloc_error tralloc_reference_with_extensions ( tralloc_context * child_contex
 extern inline tralloc_error tralloc_reference ( tralloc_context * child_context, tralloc_context * parent_context, tralloc_context ** chunk_context, size_t length );
 
 
-tralloc_error tralloc_reference_zero_with_extensions ( tralloc_context * child_context, tralloc_context * parent_context, tralloc_context ** chunk_context, uint8_t extensions, size_t length )
+tralloc_error tralloc_reference_zero_with_extensions ( tralloc_context * child_context, tralloc_context * parent_context, tralloc_context ** chunk_context, tralloc_extensions extensions, size_t length )
 {
     return _add_reference ( child_context, parent_context, chunk_context, extensions, length, tralloc_zero_with_extensions );
 }

@@ -7,10 +7,10 @@
 
 extern inline tralloc_error _tralloc_close ( tralloc_context * chunk_context, void * UNUSED ( user_data ) );
 
-extern inline tralloc_error _tralloc_process_descriptor ( tralloc_context * parent_context, int ** descriptor_ptr, int descriptor, uint8_t extensions );
+extern inline tralloc_error _tralloc_process_descriptor ( tralloc_context * parent_context, int ** descriptor_ptr, int descriptor, tralloc_extensions extensions );
 
-extern inline tralloc_error tralloc_open_with_extensions      ( tralloc_context * parent_context, int ** descriptor_ptr, uint8_t extensions, const char * path_name, int flags );
-extern inline tralloc_error tralloc_open_mode_with_extensions ( tralloc_context * parent_context, int ** descriptor_ptr, uint8_t extensions, const char * path_name, int flags, mode_t mode );
+extern inline tralloc_error tralloc_open_with_extensions      ( tralloc_context * parent_context, int ** descriptor_ptr, tralloc_extensions extensions, const char * path_name, int flags );
+extern inline tralloc_error tralloc_open_mode_with_extensions ( tralloc_context * parent_context, int ** descriptor_ptr, tralloc_extensions extensions, const char * path_name, int flags, mode_t mode );
 
 extern inline tralloc_error tralloc_open      ( tralloc_context * parent_context, int ** descriptor_ptr, const char * path_name, int flags );
 extern inline tralloc_error tralloc_open_mode ( tralloc_context * parent_context, int ** descriptor_ptr, const char * path_name, int flags, mode_t mode );

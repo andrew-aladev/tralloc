@@ -37,18 +37,18 @@ void free_history ( malloc_dynarr * tralloc_history )
 }
 
 static
-uint8_t on_move ( void * user_data, _tralloc_chunk * chunk, _tralloc_chunk * old_parent )
+tralloc_error on_move ( void * user_data, _tralloc_chunk * chunk, _tralloc_chunk * old_parent )
 {
     malloc_dynarr * tralloc_history = ( malloc_dynarr * ) user_data;
     move_info * info = malloc ( sizeof ( move_info ) );
     if ( info == NULL ) {
-        return 1;
+        return TRALLOC_ERROR_MALLOC_FAILED;
     }
     info->chunk      = chunk;
     info->old_parent = old_parent;
     if ( malloc_dynarr_append ( tralloc_history, info ) != 0 ) {
         free ( info );
-        return 2;
+        return TRALLOC_ERROR_MALLOC_FAILED;
     }
     return 0;
 }

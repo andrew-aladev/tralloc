@@ -9,21 +9,21 @@
 
 #if defined(TRALLOC_EXTENSIONS)
 
-extern inline tralloc_buffer * tralloc_buffer_with_extensions_new ( tralloc_context * ctx, uint8_t extensions );
-extern inline tralloc_buffer * tralloc_buffer_new                 ( tralloc_context * ctx );
+extern inline tralloc_error tralloc_buffer_with_extensions_new ( tralloc_context * ctx, tralloc_buffer ** buffer_ptr, tralloc_extensions extensions );
+extern inline tralloc_error tralloc_buffer_new                 ( tralloc_context * ctx, tralloc_buffer ** buffer_ptr );
 
 #else
 
-extern inline tralloc_buffer * tralloc_buffer_new ( tralloc_context * ctx );
+extern inline tralloc_error tralloc_buffer_new ( tralloc_context * ctx, tralloc_buffer ** buffer_ptr );
 
 #endif
 
 
-uint8_t tralloc_buffer_prepare ( tralloc_buffer * buffer, size_t length )
+tralloc_error tralloc_buffer_prepare ( tralloc_buffer * buffer, size_t length )
 {
     uint8_t * buf = buffer->buf;
     uint8_t * new_buf;
-    uint8_t result;
+    tralloc_error result;
 
     if ( buf == NULL ) {
         result = tralloc ( buffer, ( tralloc_context ** ) &new_buf, sizeof ( uint8_t ) * length );
@@ -54,7 +54,7 @@ uint8_t tralloc_buffer_prepare ( tralloc_buffer * buffer, size_t length )
     return 0;
 }
 
-uint8_t tralloc_buffer_trim ( tralloc_buffer * buffer )
+tralloc_error tralloc_buffer_trim ( tralloc_buffer * buffer )
 {
     uint8_t * buf = buffer->buf;
     if ( buf == NULL ) {
@@ -69,8 +69,9 @@ uint8_t tralloc_buffer_trim ( tralloc_buffer * buffer )
     size_t length = buffer->length;
     length        -= data_offset;
     if ( length == 0 ) {
-        if ( tralloc_free ( buf ) != 0 ) {
-            return 1;
+        tralloc_error result = tralloc_free ( buf );
+        if ( result != 0 ) {
+            return result;
         }
         buffer->buf         = NULL;
         buffer->data_offset = 0;
@@ -86,8 +87,8 @@ uint8_t tralloc_buffer_trim ( tralloc_buffer * buffer )
     return 0;
 }
 
-extern inline void             tralloc_buffer_written         ( tralloc_buffer * buffer, size_t length );
-extern inline uint8_t          tralloc_buffer_readed          ( tralloc_buffer * buffer, size_t length );
-extern inline uint8_t *        tralloc_buffer_get_read_point  ( const tralloc_buffer * buffer );
-extern inline uint8_t *        tralloc_buffer_get_write_point ( const tralloc_buffer * buffer );
-extern inline size_t           tralloc_buffer_get_length      ( const tralloc_buffer * buffer );
+extern inline void          tralloc_buffer_written         ( tralloc_buffer * buffer, size_t length );
+extern inline tralloc_error tralloc_buffer_readed          ( tralloc_buffer * buffer, size_t length );
+extern inline uint8_t *     tralloc_buffer_get_read_point  ( const tralloc_buffer * buffer );
+extern inline uint8_t *     tralloc_buffer_get_write_point ( const tralloc_buffer * buffer );
+extern inline size_t        tralloc_buffer_get_length      ( const tralloc_buffer * buffer );

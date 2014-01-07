@@ -51,7 +51,7 @@ tralloc_error tralloc_vasprintf ( tralloc_context * parent_context, char ** chil
     }
     predicted_length++;
 
-    uint8_t result = tralloc ( parent_context, ( tralloc_context ** ) child_context, sizeof ( char ) * predicted_length );
+    tralloc_error result = tralloc ( parent_context, ( tralloc_context ** ) child_context, sizeof ( char ) * predicted_length );
     if ( result != 0 ) {
         return result;
     }
@@ -70,7 +70,7 @@ tralloc_error tralloc_asprintf ( tralloc_context * parent_context, char ** child
 {
     va_list arguments;
     va_start ( arguments, format );
-    uint8_t result = tralloc_vasprintf ( parent_context, child_context, format, arguments );
+    tralloc_error result = tralloc_vasprintf ( parent_context, child_context, format, arguments );
     va_end ( arguments );
     return result;
 }

@@ -16,21 +16,25 @@ typedef tralloc_error ( * _allocator ) ( void ** data, size_t length );
 static inline
 tralloc_error _malloc ( void ** data, size_t length )
 {
-    * data = malloc ( length );
-    if ( * data == NULL ) {
+    void * _data = malloc ( length );
+    if ( _data == NULL ) {
         return TRALLOC_ERROR_MALLOC_FAILED;
+    } else {
+        * data = _data;
+        return 0;
     }
-    return 0;
 }
 
 static inline
 tralloc_error _calloc ( void ** data, size_t length )
 {
-    * data = calloc ( 1, length );
-    if ( * data == NULL ) {
+    void * _data = calloc ( 1, length );
+    if ( _data == NULL ) {
         return TRALLOC_ERROR_CALLOC_FAILED;
+    } else {
+        * data = _data;
+        return 0;
     }
-    return 0;
 }
 
 static inline

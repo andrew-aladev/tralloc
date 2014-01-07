@@ -156,15 +156,16 @@ bool test_move ( tree * tr )
     _tralloc_chunk * data_4_chunk = _tralloc_chunk_from_context ( tr->data_4 );
 
     if (
+        tralloc_move ( NULL, NULL )     != TRALLOC_ERROR_CONTEXT_IS_NULL     ||
+        tralloc_move ( data_3, data_3 ) != TRALLOC_ERROR_CHILD_EQUALS_PARENT ||
+
         tralloc_move ( data_3, data_4 ) != 0            ||
         data_3_chunk->parent            != data_4_chunk ||
 
-        tralloc_move ( data_3, data_4 ) != 0 ||
+        tralloc_move ( data_3, data_4 ) != TRALLOC_ERROR_CHILD_HAS_SAME_PARENT ||
 
         tralloc_move ( data_3, NULL ) != 0    ||
         data_3_chunk->parent          != NULL ||
-
-        tralloc_move ( data_3, NULL ) != 0 ||
 
         tralloc_move ( data_3, data_1 ) != 0 ||
         data_3_chunk->parent            != data_1_chunk

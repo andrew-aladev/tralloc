@@ -6,10 +6,13 @@
 #include "common.h"
 
 
-uint8_t tralloc_move ( tralloc_context * child_context, tralloc_context * parent_context )
+tralloc_error tralloc_move ( tralloc_context * child_context, tralloc_context * parent_context )
 {
-    if ( child_context == NULL || child_context == parent_context ) {
-        return 1;
+    if ( child_context == NULL ) {
+        return TRALLOC_ERROR_CONTEXT_IS_NULL;
+    }
+    if ( child_context == parent_context ) {
+        return TRALLOC_ERROR_CHILD_EQUALS_PARENT;
     }
     _tralloc_chunk * child_chunk = _tralloc_chunk_from_context ( child_context );
 
@@ -19,7 +22,7 @@ uint8_t tralloc_move ( tralloc_context * child_context, tralloc_context * parent
 
     if ( parent_context == NULL ) {
         if ( child_chunk->parent == NULL ) {
-            return 0;
+            return TRALLOC_ERROR_CHILD_HAS_SAME_PARENT;
         }
 
 #if defined(TRALLOC_DEBUG)
@@ -30,7 +33,7 @@ uint8_t tralloc_move ( tralloc_context * child_context, tralloc_context * parent
     } else {
         _tralloc_chunk * new_parent_chunk = _tralloc_chunk_from_context ( parent_context );
         if ( child_chunk->parent == new_parent_chunk ) {
-            return 0;
+            return TRALLOC_ERROR_CHILD_HAS_SAME_PARENT;
         }
 
 #if defined(TRALLOC_DEBUG)
@@ -49,11 +52,9 @@ uint8_t tralloc_move ( tralloc_context * child_context, tralloc_context * parent
 
 }
 
-uint8_t tralloc_move ( tralloc_context * child_context, tralloc_context * parent_context );
+extern inline void          _tralloc_set_child_chunk ( _tralloc_chunk * parent, _tralloc_chunk * child );
+extern inline tralloc_error _tralloc_add_chunk       ( tralloc_context * parent_context, _tralloc_chunk * child );
+extern inline void          _tralloc_detach_chunk    ( _tralloc_chunk * chunk );
 
-extern inline void    _tralloc_set_child_chunk ( _tralloc_chunk * parent, _tralloc_chunk * child );
-extern inline uint8_t _tralloc_add_chunk       ( tralloc_context * parent_context, _tralloc_chunk * child );
-extern inline void    _tralloc_detach_chunk    ( _tralloc_chunk * chunk );
-
-extern inline uint8_t _tralloc_free_chunk_children ( _tralloc_chunk * chunk );
-extern inline uint8_t tralloc_free                 ( tralloc_context * chunk_context );
+extern inline tralloc_error _tralloc_free_chunk_children ( _tralloc_chunk * chunk );
+extern inline tralloc_error tralloc_free                 ( tralloc_context * chunk_context );

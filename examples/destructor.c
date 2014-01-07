@@ -14,17 +14,17 @@
 #include <unistd.h>
 #include <stdio.h>
 
-uint8_t empty_destructor ( tralloc_context * UNUSED ( context ), void * UNUSED ( user_data ) )
+tralloc_error empty_destructor ( tralloc_context * UNUSED ( context ), void * UNUSED ( user_data ) )
 {
     return 0;
 }
 
-uint8_t bad_destructor ( tralloc_context * UNUSED ( context ), void * UNUSED ( user_data ) )
+tralloc_error bad_destructor ( tralloc_context * UNUSED ( context ), void * UNUSED ( user_data ) )
 {
     return 1;
 }
 
-uint8_t file_destructor ( tralloc_context * context, void * user_data )
+tralloc_error file_destructor ( tralloc_context * context, void * user_data )
 {
     int file_descriptor = * ( ( int * ) context );
     char * filename     = user_data;

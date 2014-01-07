@@ -9,7 +9,7 @@
 #include "../tree.h"
 
 
-typedef struct tralloc_buffer_t {
+typedef struct _tralloc_buffer_type {
     uint8_t * buf;
     size_t    data_offset;
     size_t    data_length;
@@ -19,39 +19,47 @@ typedef struct tralloc_buffer_t {
 #if defined(TRALLOC_EXTENSIONS)
 
 inline
-tralloc_buffer * tralloc_buffer_with_extensions_new ( tralloc_context * ctx, uint8_t extensions )
+tralloc_error tralloc_buffer_with_extensions_new ( tralloc_context * ctx, tralloc_buffer ** buffer_ptr, tralloc_extensions extensions )
 {
-    tralloc_buffer * buffer;
-    if ( tralloc_with_extensions ( ctx, ( tralloc_context ** ) &buffer, extensions, sizeof ( tralloc_buffer ) ) != 0 ) {
-        return NULL;
+    if ( buffer_ptr == NULL ) {
+        return TRALLOC_ERROR_CONTEXT_IS_NULL;
     }
+    tralloc_error result = tralloc_with_extensions ( ctx, ( tralloc_context ** ) buffer_ptr, extensions, sizeof ( tralloc_buffer ) );
+    if ( result != 0 ) {
+        return result;
+    }
+    tralloc_buffer * buffer = * buffer_ptr;
     buffer->buf         = NULL;
     buffer->data_offset = 0;
     buffer->data_length = 0;
     buffer->length      = 0;
-    return buffer;
+    return 0;
 }
 
 inline
-tralloc_buffer * tralloc_buffer_new ( tralloc_context * ctx )
+tralloc_error tralloc_buffer_new ( tralloc_context * ctx, tralloc_buffer ** buffer_ptr )
 {
-    return tralloc_buffer_with_extensions_new ( ctx, 0 );
+    return tralloc_buffer_with_extensions_new ( ctx, buffer_ptr, 0 );
 }
 
 #else
 
 inline
-tralloc_buffer * tralloc_buffer_new ( tralloc_context * ctx )
+tralloc_error tralloc_buffer_new ( tralloc_context * ctx, tralloc_buffer ** buffer_ptr )
 {
-    tralloc_buffer * buffer;
-    if ( tralloc ( ctx, ( tralloc_context ** ) &buffer, sizeof ( tralloc_buffer ) ) != 0 ) {
-        return NULL;
+    if ( buffer_ptr == NULL ) {
+        return TRALLOC_ERROR_CONTEXT_IS_NULL;
     }
+    tralloc_error result = tralloc ( ctx, ( tralloc_context ** ) buffer_ptr, sizeof ( tralloc_buffer ) );
+    if ( result != 0 ) {
+        return result;
+    }
+    tralloc_buffer * buffer = * buffer_ptr;
     buffer->buf         = NULL;
     buffer->data_offset = 0;
     buffer->data_length = 0;
     buffer->length      = 0;
-    return buffer;
+    return 0;
 }
 
 #endif
@@ -63,10 +71,10 @@ void tralloc_buffer_written ( tralloc_buffer * buffer, size_t length )
 }
 
 inline
-uint8_t tralloc_buffer_readed ( tralloc_buffer * buffer, size_t length )
+tralloc_error tralloc_buffer_readed ( tralloc_buffer * buffer, size_t length )
 {
     if ( buffer->data_length < length ) {
-        return 1;
+        return TRALLOC_ERROR_UTILS_BUFFER_OVERFLOW;
     }
     buffer->data_offset += length;
     buffer->data_length -= length;
@@ -91,9 +99,9 @@ size_t tralloc_buffer_get_length ( const tralloc_buffer * buffer )
     return buffer->data_length;
 }
 
-uint8_t tralloc_buffer_prepare ( tralloc_buffer * buffer, size_t length );
-
-uint8_t tralloc_buffer_trim ( tralloc_buffer * buffer );
+tralloc_error tralloc_buffer_prepare ( tralloc_buffer * buffer, size_t length );
+tralloc_error tralloc_buffer_trim    ( tralloc_buffer * buffer );
 
 
 #endif
+

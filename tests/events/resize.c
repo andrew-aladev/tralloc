@@ -33,18 +33,18 @@ void free_history ( malloc_dynarr * tralloc_history )
 }
 
 static
-uint8_t on_resize ( void * user_data, _tralloc_chunk * chunk, size_t old_length )
+tralloc_error on_resize ( void * user_data, _tralloc_chunk * chunk, size_t old_length )
 {
     malloc_dynarr * tralloc_history = ( malloc_dynarr * ) user_data;
     resize_info * info = malloc ( sizeof ( resize_info ) );
     if ( info == NULL ) {
-        return 1;
+        return TRALLOC_ERROR_MALLOC_FAILED;
     }
     info->chunk      = chunk;
     info->old_length = old_length;
     if ( malloc_dynarr_append ( tralloc_history, info ) != 0 ) {
         free ( info );
-        return 2;
+        return TRALLOC_ERROR_MALLOC_FAILED;
     }
     return 0;
 }

@@ -33,7 +33,7 @@ _tralloc_length * _tralloc_length_from_chunk ( _tralloc_chunk * chunk )
 inline
 _tralloc_destructors * _tralloc_destructors_from_chunk ( _tralloc_chunk * chunk )
 {
-    uint8_t offset = sizeof ( _tralloc_destructors );
+    size_t offset = sizeof ( _tralloc_destructors );
 
 #if defined(TRALLOC_LENGTH)
     if ( ( chunk->extensions & TRALLOC_HAVE_LENGTH ) != 0 ) {
@@ -49,7 +49,7 @@ _tralloc_destructors * _tralloc_destructors_from_chunk ( _tralloc_chunk * chunk 
 inline
 _tralloc_references * _tralloc_references_from_chunk ( _tralloc_chunk * chunk )
 {
-    uint8_t offset = sizeof ( _tralloc_references );
+    size_t offset = sizeof ( _tralloc_references );
 
 #if defined(TRALLOC_LENGTH)
     if ( ( chunk->extensions & TRALLOC_HAVE_LENGTH ) != 0 ) {
@@ -69,7 +69,7 @@ _tralloc_references * _tralloc_references_from_chunk ( _tralloc_chunk * chunk )
 inline
 _tralloc_reference * _tralloc_reference_from_chunk ( _tralloc_chunk * chunk )
 {
-    uint8_t offset = sizeof ( _tralloc_reference );
+    size_t offset = sizeof ( _tralloc_reference );
 
 #if defined(TRALLOC_LENGTH)
     if ( ( chunk->extensions & TRALLOC_HAVE_LENGTH ) != 0 ) {

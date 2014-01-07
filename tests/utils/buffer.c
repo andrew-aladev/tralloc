@@ -11,8 +11,8 @@
 
 bool test_buffer ( tralloc_context * ctx )
 {
-    tralloc_buffer * buffer = tralloc_buffer_new ( ctx );
-    if ( buffer == NULL ) {
+    tralloc_buffer * buffer;
+    if ( tralloc_buffer_new ( ctx, &buffer ) != 0 ) {
         return false;
     }
 

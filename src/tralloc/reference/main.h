@@ -9,7 +9,7 @@
 #include "../common.h"
 
 
-tralloc_error tralloc_reference_with_extensions ( tralloc_context * child_context, tralloc_context * parent_context, tralloc_context ** chunk_context, uint8_t extensions, size_t length );
+tralloc_error tralloc_reference_with_extensions ( tralloc_context * child_context, tralloc_context * parent_context, tralloc_context ** chunk_context, tralloc_extensions extensions, size_t length );
 
 inline
 tralloc_error tralloc_reference ( tralloc_context * child_context, tralloc_context * parent_context, tralloc_context ** chunk_context, size_t length )
@@ -17,7 +17,7 @@ tralloc_error tralloc_reference ( tralloc_context * child_context, tralloc_conte
     return tralloc_reference_with_extensions ( child_context, parent_context, chunk_context, 0, length );
 }
 
-tralloc_error tralloc_reference_zero_with_extensions ( tralloc_context * child_context, tralloc_context * parent_context, tralloc_context ** chunk_context, uint8_t extensions, size_t length );
+tralloc_error tralloc_reference_zero_with_extensions ( tralloc_context * child_context, tralloc_context * parent_context, tralloc_context ** chunk_context, tralloc_extensions extensions, size_t length );
 
 inline
 tralloc_error tralloc_reference_zero ( tralloc_context * child_context, tralloc_context * parent_context, tralloc_context ** chunk_context, size_t length )

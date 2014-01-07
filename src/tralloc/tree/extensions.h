@@ -9,7 +9,7 @@
 #include "../common.h"
 
 
-tralloc_error tralloc_with_extensions ( tralloc_context * parent_context, tralloc_context ** child_context, uint8_t extensions, size_t length );
+tralloc_error tralloc_with_extensions ( tralloc_context * parent_context, tralloc_context ** child_context, tralloc_extensions extensions, size_t length );
 
 inline
 tralloc_error tralloc ( tralloc_context * parent_context, tralloc_context ** child_context, size_t length )
@@ -17,7 +17,7 @@ tralloc_error tralloc ( tralloc_context * parent_context, tralloc_context ** chi
     return tralloc_with_extensions ( parent_context, child_context, 0, length );
 }
 
-tralloc_error tralloc_zero_with_extensions ( tralloc_context * parent_context, tralloc_context ** child_context, uint8_t extensions, size_t length );
+tralloc_error tralloc_zero_with_extensions ( tralloc_context * parent_context, tralloc_context ** child_context, tralloc_extensions extensions, size_t length );
 
 inline
 tralloc_error tralloc_zero ( tralloc_context * parent_context, tralloc_context ** child_context, size_t length )
@@ -33,7 +33,7 @@ tralloc_error tralloc_new ( tralloc_context * parent_context, tralloc_context **
 }
 
 inline
-tralloc_error tralloc_with_extensions_new ( tralloc_context * parent_context, tralloc_context ** child_context, uint8_t extensions )
+tralloc_error tralloc_with_extensions_new ( tralloc_context * parent_context, tralloc_context ** child_context, tralloc_extensions extensions )
 {
     return tralloc_with_extensions ( parent_context, child_context, extensions, 0 );
 }

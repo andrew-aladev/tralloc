@@ -31,11 +31,11 @@ void free_history ( malloc_dynarr * tralloc_history )
 }
 
 static
-uint8_t on_free ( void * user_data, _tralloc_chunk * chunk )
+tralloc_error on_free ( void * user_data, _tralloc_chunk * chunk )
 {
     malloc_dynarr * tralloc_history = ( malloc_dynarr * ) user_data;
     if ( malloc_dynarr_append ( tralloc_history, chunk ) != 0 ) {
-        return 1;
+        return TRALLOC_ERROR_MALLOC_FAILED;
     }
     return 0;
 }

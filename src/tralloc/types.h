@@ -14,8 +14,6 @@
 
 typedef void tralloc_context;
 
-typedef uint8_t tralloc_error;
-
 enum {
     TRALLOC_ERROR_CONTEXT_IS_NULL         = 1,
     TRALLOC_ERROR_MALLOC_FAILED           = 2,
@@ -25,19 +23,23 @@ enum {
     TRALLOC_ERROR_CLOSE_DESCRIPTOR_FAILED = 6,
     TRALLOC_ERROR_PRINTF_FAILED           = 7,
 
+    TRALLOC_ERROR_CHILD_EQUALS_PARENT   = 8,
+    TRALLOC_ERROR_CHILD_HAS_SAME_PARENT = 9,
+
 #if defined(TRALLOC_EXTENSIONS)
-    TRALLOC_ERROR_NO_SUCH_EXTENSION = 8,
+    TRALLOC_ERROR_NO_SUCH_EXTENSION = 10,
 #endif
 
-#if defined(TRALLOC_REFERENCE)
-    TRALLOC_ERROR_REFERENCE_CHILD_EQUALS_PARENT   = 9,
-    TRALLOC_ERROR_REFERENCE_CHILD_HAS_SAME_PARENT = 10,
+#if defined(TRALLOC_UTILS_BUFFER)
+    TRALLOC_ERROR_UTILS_BUFFER_OVERFLOW = 11,
 #endif
 
 };
 
+typedef uint8_t tralloc_error;
+
 #if defined(TRALLOC_LENGTH)
-typedef struct _tralloc_length_t {
+typedef struct _tralloc_length_type {
     size_t length;
 } _tralloc_length;
 #endif
@@ -45,33 +47,34 @@ typedef struct _tralloc_length_t {
 #if defined(TRALLOC_DESTRUCTOR)
 typedef tralloc_error ( * tralloc_destructor_function ) ( tralloc_context * chunk_context, void * user_data );
 
-typedef struct _tralloc_destructor_t {
-    struct _tralloc_destructor_t * next;
+typedef struct _tralloc_destructor_type {
+    struct _tralloc_destructor_type * next;
     tralloc_destructor_function function;
     void * user_data;
 } _tralloc_destructor;
 
-typedef struct _tralloc_destructors_t {
+typedef struct _tralloc_destructors_type {
     _tralloc_destructor * first_destructor;
     _tralloc_destructor * last_destructor;
 } _tralloc_destructors;
 #endif
 
 #if defined(TRALLOC_REFERENCE)
-typedef struct _tralloc_reference_t {
-    struct _tralloc_chunk_t * references;
-    struct _tralloc_chunk_t * prev;
-    struct _tralloc_chunk_t * next;
+typedef struct _tralloc_reference_type {
+    struct _tralloc_chunk_type * references;
+    struct _tralloc_chunk_type * prev;
+    struct _tralloc_chunk_type * next;
 } _tralloc_reference;
 #endif
 
 #if defined(TRALLOC_REFERENCE)
-typedef struct _tralloc_references_t {
-    struct _tralloc_chunk_t * first_reference;
+typedef struct _tralloc_references_type {
+    struct _tralloc_chunk_type * first_reference;
 } _tralloc_references;
 #endif
 
 #if defined(TRALLOC_EXTENSIONS)
+
 enum {
 
 #if defined(TRALLOC_LENGTH)
@@ -88,20 +91,23 @@ enum {
 #endif
 
 };
+
+typedef uint8_t tralloc_extensions;
+
 #endif
 
-typedef struct _tralloc_chunk_t {
-    struct _tralloc_chunk_t * parent;
-    struct _tralloc_chunk_t * prev;
-    struct _tralloc_chunk_t * next;
-    struct _tralloc_chunk_t * first_child;
+typedef struct _tralloc_chunk_type {
+    struct _tralloc_chunk_type * parent;
+    struct _tralloc_chunk_type * prev;
+    struct _tralloc_chunk_type * next;
+    struct _tralloc_chunk_type * first_child;
 
 #if defined(TRALLOC_EXTENSIONS)
-    uint8_t extensions;
+    tralloc_extensions extensions;
 #endif
 
 #if defined(TRALLOC_DEBUG)
-    uint8_t chunk_length;
+    size_t chunk_length;
     size_t length;
 #endif
 

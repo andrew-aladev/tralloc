@@ -10,7 +10,7 @@
 
 
 static
-uint8_t normal_destructor ( tralloc_context * chunk_context, void * user_data )
+tralloc_error normal_destructor ( tralloc_context * chunk_context, void * user_data )
 {
     malloc_dynarr * tralloc_history = user_data;
     if ( tralloc_history == NULL ) {
@@ -23,13 +23,13 @@ uint8_t normal_destructor ( tralloc_context * chunk_context, void * user_data )
 }
 
 static
-uint8_t empty_destructor_1 ( tralloc_context * UNUSED ( chunk_context ), void * UNUSED ( user_data ) )
+tralloc_error empty_destructor_1 ( tralloc_context * UNUSED ( chunk_context ), void * UNUSED ( user_data ) )
 {
     return 0;
 }
 
 static
-uint8_t empty_destructor_2 ( tralloc_context * UNUSED ( chunk_context ), void * UNUSED ( user_data ) )
+tralloc_error empty_destructor_2 ( tralloc_context * UNUSED ( chunk_context ), void * UNUSED ( user_data ) )
 {
     return 0;
 }

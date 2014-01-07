@@ -6,13 +6,13 @@
 #include "extensions.h"
 
 
-extern inline tralloc_error tralloc_strndup_with_extensions ( tralloc_context * parent_context, char ** child_context, uint8_t extensions, const char * str, size_t length );
+extern inline tralloc_error tralloc_strndup_with_extensions ( tralloc_context * parent_context, char ** child_context, tralloc_extensions extensions, const char * str, size_t length );
 extern inline tralloc_error tralloc_strndup                 ( tralloc_context * parent_context, char ** child_context, const char * str, size_t length );
 
-extern inline tralloc_error tralloc_strdup_with_extensions ( tralloc_context * parent_context, char ** child_context, uint8_t extensions, const char * str );
+extern inline tralloc_error tralloc_strdup_with_extensions ( tralloc_context * parent_context, char ** child_context, tralloc_extensions extensions, const char * str );
 extern inline tralloc_error tralloc_strdup                 ( tralloc_context * parent_context, char ** child_context, const char * str );
 
-extern inline tralloc_error tralloc_vasprintf_with_extensions ( tralloc_context * parent_context, char ** child_context, uint8_t extensions, const char * format, va_list arguments );
+extern inline tralloc_error tralloc_vasprintf_with_extensions ( tralloc_context * parent_context, char ** child_context, tralloc_extensions extensions, const char * format, va_list arguments );
 extern inline tralloc_error tralloc_vasprintf                 ( tralloc_context * parent_context, char ** child_context, const char * format, va_list arguments );
-extern inline tralloc_error tralloc_asprintf_with_extensions  ( tralloc_context * parent_context, char ** child_context, uint8_t extensions, const char * format, ... );
+extern inline tralloc_error tralloc_asprintf_with_extensions  ( tralloc_context * parent_context, char ** child_context, tralloc_extensions extensions, const char * format, ... );
 extern inline tralloc_error tralloc_asprintf                  ( tralloc_context * parent_context, char ** child_context, const char * format, ... );
