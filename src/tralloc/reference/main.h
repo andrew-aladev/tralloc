@@ -6,33 +6,10 @@
 #ifndef TRALLOC_REFERENCE_MAIN_H
 #define TRALLOC_REFERENCE_MAIN_H
 
-#include "../common.h"
+#include "../tree.h"
 
 
-tralloc_error tralloc_reference_with_extensions ( tralloc_context * child_context, tralloc_context * parent_context, tralloc_context ** chunk_context, tralloc_extensions extensions, size_t length );
-
-inline
-tralloc_error tralloc_reference ( tralloc_context * child_context, tralloc_context * parent_context, tralloc_context ** chunk_context, size_t length )
-{
-    return tralloc_reference_with_extensions ( child_context, parent_context, chunk_context, 0, length );
-}
-
-tralloc_error tralloc_reference_zero_with_extensions ( tralloc_context * child_context, tralloc_context * parent_context, tralloc_context ** chunk_context, tralloc_extensions extensions, size_t length );
-
-inline
-tralloc_error tralloc_reference_zero ( tralloc_context * child_context, tralloc_context * parent_context, tralloc_context ** chunk_context, size_t length )
-{
-    return tralloc_reference_zero_with_extensions ( child_context, parent_context, chunk_context, 0, length );
-}
-
-
-inline
-tralloc_error tralloc_reference_new ( tralloc_context * child_context, tralloc_context * parent_context, tralloc_context ** chunk_context )
-{
-    return tralloc_reference ( child_context, parent_context, chunk_context, 0 );
-}
-
-
+tralloc_error tralloc_move_reference   ( tralloc_context * child_context, tralloc_context * parent_context );
 tralloc_error tralloc_clear_references ( tralloc_context * chunk_context );
 
 

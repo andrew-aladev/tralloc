@@ -117,6 +117,8 @@ tralloc_error _tralloc_with_extensions_with_allocator ( tralloc_context * parent
 #if defined(TRALLOC_REFERENCE)
     if ( have_references ) {
         _tralloc_references_new_chunk ( chunk );
+    } else if ( have_reference ) {
+        _tralloc_reference_new_chunk ( chunk );
     }
 #endif
 

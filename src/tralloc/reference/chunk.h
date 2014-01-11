@@ -10,14 +10,26 @@
 
 
 inline
+void _tralloc_reference_new_chunk ( _tralloc_chunk * reference_chunk )
+{
+    _tralloc_reference * reference = _tralloc_reference_from_chunk ( reference_chunk );
+    reference->next                = NULL;
+    reference->prev                = NULL;
+    reference->references          = NULL;
+}
+
+inline
 void _tralloc_reference_update_chunk ( _tralloc_chunk * reference_chunk )
 {
     _tralloc_reference * reference  = _tralloc_reference_from_chunk ( reference_chunk );
     _tralloc_chunk     * prev_chunk = reference->prev;
     _tralloc_chunk     * next_chunk = reference->next;
     if ( prev_chunk == NULL ) {
-        _tralloc_references * references = _tralloc_references_from_chunk ( reference->references );
-        references->first_reference      = reference_chunk;
+        _tralloc_chunk * references_chunk = reference->references;
+        if ( references_chunk != NULL ) {
+            _tralloc_references * references = _tralloc_references_from_chunk ( references_chunk );
+            references->first_reference      = reference_chunk;
+        }
     } else {
         reference = _tralloc_reference_from_chunk ( prev_chunk );
         reference->next = reference_chunk;
@@ -37,14 +49,16 @@ tralloc_error _tralloc_reference_free_chunk ( _tralloc_chunk * chunk )
 
     if ( prev_chunk == NULL ) {
         _tralloc_chunk * references_chunk = reference->references;
+        if ( references_chunk == NULL ) {
+            return 0;
+        }
         _tralloc_references * references  = _tralloc_references_from_chunk ( references_chunk );
         references->first_reference       = next_chunk;
 
-        if ( next_chunk == NULL ) {
-            if ( references_chunk->parent == NULL ) {
-                return _tralloc_free_chunk ( references_chunk );
-            }
+        if ( next_chunk != NULL || references_chunk->parent != NULL ) {
+            return 0;
         }
+        return _tralloc_free_chunk ( references_chunk );
     } else {
         reference = _tralloc_reference_from_chunk ( prev_chunk );
         reference->next = next_chunk;

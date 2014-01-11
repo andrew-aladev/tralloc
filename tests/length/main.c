@@ -17,27 +17,16 @@ int main ()
     if ( tralloc_new ( NULL, &ctx ) != 0 ) {
         return 1;
     }
-    if ( !test_basic ( ctx ) ) {
+    if ( !test_errors ( ctx ) ) {
         tralloc_free ( ctx );
         return 2;
     }
-
-#if defined(TRALLOC_DESTRUCTOR)
-    if ( !test_destructor ( ctx ) ) {
+    if ( !test_length ( ctx ) ) {
         tralloc_free ( ctx );
         return 3;
     }
-#endif
-
-#if defined(TRALLOC_REFERENCE)
-    if ( !test_reference ( ctx ) ) {
-        tralloc_free ( ctx );
-        return 4;
-    }
-#endif
-
     if ( tralloc_free ( ctx ) != 0 ) {
-        return 5;
+        return 4;
     }
 
 #if defined(TRALLOC_DEBUG)
@@ -46,7 +35,7 @@ int main ()
         tralloc_get_chunks_overhead_length() != 0 ||
         tralloc_get_chunks_length()          != 0
     ) {
-        return 6;
+        return 5;
     }
 #endif
 

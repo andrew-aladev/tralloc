@@ -4,40 +4,46 @@
 // You should have received a copy of the GNU General Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
 #include "common.h"
+#include <tralloc/tree.h>
 #include <tralloc/utils/buffer.h>
-
 #include <string.h>
 
 
-bool test_buffer ( tralloc_context * ctx )
+bool test_errors ()
 {
-    tralloc_buffer * buffer;
 
 #if defined(TRALLOC_EXTENSIONS)
-
     if (
         tralloc_buffer_new                 ( NULL, NULL )    != TRALLOC_ERROR_CONTEXT_IS_NULL ||
         tralloc_buffer_with_extensions_new ( NULL, NULL, 0 ) != TRALLOC_ERROR_CONTEXT_IS_NULL
     ) {
         return false;
     }
+#else
+    if ( tralloc_buffer_new ( NULL, NULL ) != TRALLOC_ERROR_CONTEXT_IS_NULL ) {
+        return false;
+    }
+#endif
 
+    return true;
+}
+
+bool test_buffer ( tralloc_context * ctx )
+{
+    if ( !test_errors () ) {
+        return false;
+    }
+
+    tralloc_buffer * buffer;
+
+#if defined(TRALLOC_EXTENSIONS)
     if ( tralloc_buffer_with_extensions_new ( ctx, &buffer, 0 ) != 0 ) {
         return false;
     }
-
 #else
-
-    if (
-        tralloc_buffer_new ( NULL, NULL ) != TRALLOC_ERROR_CONTEXT_IS_NULL
-    ) {
-        return false;
-    }
-
     if ( tralloc_buffer_new ( ctx, &buffer ) != 0 ) {
         return false;
     }
-
 #endif
 
     if ( tralloc_buffer_prepare ( buffer, 9 ) != 0 ) {
@@ -144,5 +150,3 @@ bool test_buffer ( tralloc_context * ctx )
 
     return true;
 }
-
-

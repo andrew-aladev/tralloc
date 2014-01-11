@@ -40,8 +40,7 @@ tralloc_error tralloc_move ( tralloc_context * child_context, tralloc_context * 
         old_parent_chunk = child_chunk->parent;
 #endif
 
-        _tralloc_detach_chunk ( child_chunk );
-        _tralloc_set_child_chunk ( new_parent_chunk, child_chunk );
+        _tralloc_attach_chunk ( child_chunk, new_parent_chunk );
     }
 
 #if defined(TRALLOC_DEBUG)
@@ -52,9 +51,9 @@ tralloc_error tralloc_move ( tralloc_context * child_context, tralloc_context * 
 
 }
 
-extern inline void          _tralloc_set_child_chunk ( _tralloc_chunk * parent, _tralloc_chunk * child );
-extern inline tralloc_error _tralloc_add_chunk       ( tralloc_context * parent_context, _tralloc_chunk * child );
-extern inline void          _tralloc_detach_chunk    ( _tralloc_chunk * chunk );
+extern inline tralloc_error _tralloc_add_chunk    ( tralloc_context * parent_context, _tralloc_chunk * child );
+extern inline void          _tralloc_attach_chunk ( _tralloc_chunk * child, _tralloc_chunk * new_parent );
+extern inline void          _tralloc_detach_chunk ( _tralloc_chunk * chunk );
 
 extern inline tralloc_error _tralloc_free_chunk_children ( _tralloc_chunk * chunk );
 extern inline tralloc_error tralloc_free                 ( tralloc_context * chunk_context );

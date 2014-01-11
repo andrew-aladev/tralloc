@@ -19,14 +19,14 @@ void _tralloc_references_new_chunk ( _tralloc_chunk * chunk )
 }
 
 inline
-void _tralloc_references_update_chunk ( _tralloc_chunk * references_chunk )
+void _tralloc_references_update_chunk ( _tralloc_chunk * chunk )
 {
-    _tralloc_references * references = _tralloc_references_from_chunk ( references_chunk );
+    _tralloc_references * references = _tralloc_references_from_chunk ( chunk );
     _tralloc_chunk * reference_chunk = references->first_reference;
     _tralloc_reference * reference;
     while ( reference_chunk != NULL ) {
         reference             = _tralloc_reference_from_chunk ( reference_chunk );
-        reference->references = references_chunk;
+        reference->references = chunk;
         reference_chunk       = reference->next;
     }
 }

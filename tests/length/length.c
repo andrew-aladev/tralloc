@@ -5,45 +5,34 @@
 
 #include "common.h"
 #include <tralloc/tree.h>
-#include <tralloc/reference/main.h>
 #include <tralloc/length/main.h>
 
 
-bool test_reference ( tralloc_context * ctx )
+bool test_length ( tralloc_context * ctx )
 {
     size_t length;
-    void * empty;
-    uint8_t * data;
+    tralloc_context * empty;
     if (
-        tralloc_new ( ctx, &empty ) != 0 ||
-        tralloc_with_extensions ( ctx, ( tralloc_context ** ) &data, TRALLOC_HAVE_REFERENCES | TRALLOC_HAVE_LENGTH, sizeof ( uint8_t ) * 4 ) != 0 ||
+        tralloc_with_extensions_new ( ctx, &empty, TRALLOC_HAVE_LENGTH ) != 0 ||
+        tralloc_get_length ( empty, &length ) != 0 ||
+        length != 0
+    ) {
+        return false;
+    }
+
+    uint16_t * data;
+    if (
+        tralloc_with_extensions ( ctx, ( tralloc_context ** ) &data, TRALLOC_HAVE_LENGTH, sizeof ( uint16_t ) * 2 ) != 0 ||
         tralloc_get_length ( data, &length ) != 0 ||
-        length != sizeof ( uint8_t ) * 4
-    ) {
-        return false;
-    }
-
-    uint16_t * reference_1;
-    if (
-        tralloc_reference_with_extensions ( data, empty, ( tralloc_context ** ) &reference_1, TRALLOC_HAVE_LENGTH, sizeof ( uint16_t ) * 25 ) != 0 ||
-        tralloc_get_length ( reference_1, &length ) != 0 ||
-        length != sizeof ( uint16_t ) * 25
-    ) {
-        return false;
-    }
-
-    if (
-        tralloc_realloc ( ( tralloc_context ** ) &reference_1, sizeof ( uint16_t ) * 2 ) != 0 ||
-        tralloc_get_length ( reference_1, &length ) != 0 ||
         length != sizeof ( uint16_t ) * 2
     ) {
         return false;
     }
 
     if (
-        tralloc_realloc ( ( tralloc_context ** ) &data, sizeof ( uint8_t ) * 40 ) != 0 ||
+        tralloc_realloc ( ( tralloc_context ** ) &data, sizeof ( uint16_t ) * 20 ) != 0 ||
         tralloc_get_length ( data, &length ) != 0 ||
-        length != sizeof ( uint8_t ) * 40
+        length != sizeof ( uint16_t ) * 20
     ) {
         return false;
     }

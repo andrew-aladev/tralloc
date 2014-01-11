@@ -6,6 +6,10 @@
 #include <tralloc/tree.h>
 #include <tralloc/helpers/string.h>
 
+#if defined(TRALLOC_DEBUG)
+#include <tralloc/events.h>
+#endif
+
 #if defined(TRALLOC_DESTRUCTOR)
 #include <tralloc/helpers/file.h>
 #include <tralloc/destructor/main.h>
@@ -23,10 +27,6 @@ tralloc_error destructor_unlink_file ( tralloc_context * UNUSED ( chunk_context 
     }
 }
 
-#endif
-
-#if defined(TRALLOC_DEBUG)
-#include <tralloc/events.h>
 #endif
 
 int main ()

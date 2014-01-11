@@ -7,5 +7,5 @@
 
 
 extern inline void _tralloc_references_new_chunk      ( _tralloc_chunk * chunk );
-extern inline void _tralloc_references_update_chunk   ( _tralloc_chunk * references_chunk );
+extern inline void _tralloc_references_update_chunk   ( _tralloc_chunk * chunk );
 extern inline bool _tralloc_references_try_free_chunk ( _tralloc_chunk * chunk );

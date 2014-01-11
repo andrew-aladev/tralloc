@@ -6,7 +6,7 @@
 #ifndef TRALLOC_UTILS_BUFFER_H
 #define TRALLOC_UTILS_BUFFER_H
 
-#include "../tree.h"
+#include "../types.h"
 
 
 typedef struct _tralloc_buffer_type {
@@ -18,23 +18,7 @@ typedef struct _tralloc_buffer_type {
 
 #if defined(TRALLOC_EXTENSIONS)
 
-inline
-tralloc_error tralloc_buffer_with_extensions_new ( tralloc_context * ctx, tralloc_buffer ** buffer_ptr, tralloc_extensions extensions )
-{
-    if ( buffer_ptr == NULL ) {
-        return TRALLOC_ERROR_CONTEXT_IS_NULL;
-    }
-    tralloc_error result = tralloc_with_extensions ( ctx, ( tralloc_context ** ) buffer_ptr, extensions, sizeof ( tralloc_buffer ) );
-    if ( result != 0 ) {
-        return result;
-    }
-    tralloc_buffer * buffer = * buffer_ptr;
-    buffer->buf         = NULL;
-    buffer->data_offset = 0;
-    buffer->data_length = 0;
-    buffer->length      = 0;
-    return 0;
-}
+tralloc_error tralloc_buffer_with_extensions_new ( tralloc_context * ctx, tralloc_buffer ** buffer_ptr, tralloc_extensions extensions );
 
 inline
 tralloc_error tralloc_buffer_new ( tralloc_context * ctx, tralloc_buffer ** buffer_ptr )
@@ -44,23 +28,7 @@ tralloc_error tralloc_buffer_new ( tralloc_context * ctx, tralloc_buffer ** buff
 
 #else
 
-inline
-tralloc_error tralloc_buffer_new ( tralloc_context * ctx, tralloc_buffer ** buffer_ptr )
-{
-    if ( buffer_ptr == NULL ) {
-        return TRALLOC_ERROR_CONTEXT_IS_NULL;
-    }
-    tralloc_error result = tralloc ( ctx, ( tralloc_context ** ) buffer_ptr, sizeof ( tralloc_buffer ) );
-    if ( result != 0 ) {
-        return result;
-    }
-    tralloc_buffer * buffer = * buffer_ptr;
-    buffer->buf         = NULL;
-    buffer->data_offset = 0;
-    buffer->data_length = 0;
-    buffer->length      = 0;
-    return 0;
-}
+tralloc_error tralloc_buffer_new ( tralloc_context * ctx, tralloc_buffer ** buffer_ptr );
 
 #endif
 

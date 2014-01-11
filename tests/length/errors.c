@@ -5,33 +5,15 @@
 
 #include "common.h"
 #include <tralloc/tree.h>
-#include <tralloc/destructor/main.h>
 #include <tralloc/length/main.h>
 
 
-static
-tralloc_error empty_destructor ( tralloc_context * UNUSED ( chunk_context ), void * UNUSED ( user_data ) )
-{
-    return 0;
-}
-
-bool test_destructor ( tralloc_context * ctx )
+bool test_errors ( tralloc_context * ctx )
 {
     size_t length;
-    uint32_t * data;
     if (
-        tralloc_with_extensions ( ctx, ( tralloc_context ** ) &data, TRALLOC_HAVE_DESTRUCTORS | TRALLOC_HAVE_LENGTH, sizeof ( uint32_t ) * 20 ) != 0 ||
-        tralloc_append_destructor ( data, empty_destructor, NULL ) != 0 ||
-        tralloc_get_length ( data, &length ) != 0 ||
-        length != sizeof ( uint32_t ) * 20
-    ) {
-        return false;
-    }
-
-    if (
-        tralloc_realloc ( ( tralloc_context ** ) &data, sizeof ( uint32_t ) ) != 0 ||
-        tralloc_get_length ( data, &length ) != 0 ||
-        length != sizeof ( uint32_t )
+        tralloc_get_length ( NULL, &length ) != TRALLOC_ERROR_CONTEXT_IS_NULL ||
+        tralloc_get_length ( ctx,  &length ) != TRALLOC_ERROR_NO_SUCH_EXTENSION
     ) {
         return false;
     }

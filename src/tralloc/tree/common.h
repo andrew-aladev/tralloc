@@ -18,30 +18,23 @@ tralloc_error tralloc_move    ( tralloc_context * child_context, tralloc_context
 
 
 inline
-void _tralloc_set_child_chunk ( _tralloc_chunk * parent, _tralloc_chunk * child )
-{
-    _tralloc_chunk * parent_first_child = parent->first_child;
-
-    child->parent = parent;
-    if ( parent_first_child != NULL ) {
-        parent_first_child->prev = child;
-        child->next = parent_first_child;
-        child->prev = NULL;
-    } else {
-        child->next = NULL;
-        child->prev = NULL;
-    }
-    parent->first_child = child;
-}
-
-inline
 tralloc_error _tralloc_add_chunk ( tralloc_context * parent_context, _tralloc_chunk * child )
 {
     child->first_child = NULL;
 
     if ( parent_context != NULL ) {
-        _tralloc_chunk * parent = _tralloc_chunk_from_context ( parent_context );
-        _tralloc_set_child_chunk ( parent, child );
+        _tralloc_chunk * parent             = _tralloc_chunk_from_context ( parent_context );
+        _tralloc_chunk * parent_first_child = parent->first_child;
+
+        if ( parent_first_child != NULL ) {
+            parent_first_child->prev = child;
+            child->next              = parent_first_child;
+        } else {
+            child->next = NULL;
+        }
+        child->prev         = NULL;
+        child->parent       = parent;
+        parent->first_child = child;
     } else {
         child->parent = NULL;
         child->prev   = NULL;
@@ -57,29 +50,53 @@ tralloc_error _tralloc_add_chunk ( tralloc_context * parent_context, _tralloc_ch
 }
 
 inline
+void _tralloc_attach_chunk ( _tralloc_chunk * child, _tralloc_chunk * new_parent )
+{
+    _tralloc_chunk * parent = child->parent;
+    _tralloc_chunk * prev   = child->prev;
+    _tralloc_chunk * next   = child->next;
+
+    child->parent = new_parent;
+    child->prev   = NULL;
+
+    if ( prev != NULL ) {
+        prev->next = next;
+    } else if ( parent != NULL ) {
+        parent->first_child = next;
+    }
+    if ( next != NULL ) {
+        next->prev = prev;
+    }
+
+    _tralloc_chunk * first_child = new_parent->first_child;
+    if ( first_child != NULL ) {
+        first_child->prev = child;
+        child->next = first_child;
+    } else {
+        child->next = NULL;
+    }
+    new_parent->first_child = child;
+}
+
+inline
 void _tralloc_detach_chunk ( _tralloc_chunk * chunk )
 {
     _tralloc_chunk * prev   = chunk->prev;
     _tralloc_chunk * next   = chunk->next;
     _tralloc_chunk * parent = chunk->parent;
 
-    if ( prev != NULL ) {
-        if ( next != NULL ) {
-            prev->next = next;
-            next->prev = prev;
-        } else {
-            prev->next = NULL;
-        }
-    } else {
-        if ( next != NULL ) {
-            next->prev = NULL;
-        }
-        if ( parent != NULL ) {
-            parent->first_child = next;
-        }
-    }
-
     chunk->parent = NULL;
+    chunk->prev   = NULL;
+    chunk->next   = NULL;
+
+    if ( prev != NULL ) {
+        prev->next = next;
+    } else if ( parent != NULL ) {
+        parent->first_child = next;
+    }
+    if ( next != NULL ) {
+        next->prev = prev;
+    }
 }
 
 

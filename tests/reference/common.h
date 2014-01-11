@@ -9,10 +9,23 @@
 #include <tralloc/types.h>
 #include <stdbool.h>
 
+typedef struct tree_type {
+    uint32_t *        common;
+    float *           shared;
+    uint8_t *         data_1;
+    uint16_t *        data_2;
+    char *            data_3;
+    int *             common_1;
+    tralloc_context * common_2;
+    uint8_t *         common_3;
+    tralloc_context * shared_1;
+    double *          shared_2;
+} tree;
 
-bool test_specs  ( tralloc_context * ctx );
-bool test_common ( tralloc_context * ctx );
-bool test_shared ( tralloc_context * ctx );
+bool test_errors          ( tralloc_context * ctx );
+bool test_add             ( tree * tr );
+bool test_move_and_resize ( tree * tr );
+bool test_free_subtree    ( tree * tr );
 
 
 #endif

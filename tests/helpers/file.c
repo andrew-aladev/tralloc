@@ -12,6 +12,30 @@
 #include <unistd.h>
 
 
+bool test_file_errors ( tralloc_context * ctx )
+{
+    if (
+        tralloc_open                      ( NULL, NULL, NULL, 0 )       != TRALLOC_ERROR_CONTEXT_IS_NULL ||
+        tralloc_open_with_extensions      ( NULL, NULL, 0, NULL, 0 )    != TRALLOC_ERROR_CONTEXT_IS_NULL ||
+        tralloc_open_mode                 ( NULL, NULL, NULL, 0, 0 )    != TRALLOC_ERROR_CONTEXT_IS_NULL ||
+        tralloc_open_mode_with_extensions ( NULL, NULL, 0, NULL, 0, 0 ) != TRALLOC_ERROR_CONTEXT_IS_NULL
+    ) {
+        return false;
+    }
+
+    int * hosts;
+    if (
+        tralloc_open                      ( ctx, &hosts, "/etc/hosts", O_RDONLY | O_DIRECTORY )       != TRALLOC_ERROR_OPEN_DESCRIPTOR_FAILED ||
+        tralloc_open_with_extensions      ( ctx, &hosts, 0, "/etc/hosts", O_RDONLY | O_DIRECTORY )    != TRALLOC_ERROR_OPEN_DESCRIPTOR_FAILED ||
+        tralloc_open_mode                 ( ctx, &hosts, "/etc/hosts", O_RDONLY | O_DIRECTORY, 0 )    != TRALLOC_ERROR_OPEN_DESCRIPTOR_FAILED ||
+        tralloc_open_mode_with_extensions ( ctx, &hosts, 0, "/etc/hosts", O_RDONLY | O_DIRECTORY, 0 ) != TRALLOC_ERROR_OPEN_DESCRIPTOR_FAILED
+    ) {
+        return false;
+    }
+
+    return true;
+}
+
 static
 tralloc_error destructor_unlink_file ( tralloc_context * UNUSED ( chunk_context ), void * user_data )
 {
@@ -25,12 +49,7 @@ tralloc_error destructor_unlink_file ( tralloc_context * UNUSED ( chunk_context 
 
 bool test_file ( tralloc_context * ctx )
 {
-    if (
-        tralloc_open                      ( NULL, NULL, NULL, 0 )       != TRALLOC_ERROR_CONTEXT_IS_NULL ||
-        tralloc_open_with_extensions      ( NULL, NULL, 0, NULL, 0 )    != TRALLOC_ERROR_CONTEXT_IS_NULL ||
-        tralloc_open_mode                 ( NULL, NULL, NULL, 0, 0 )    != TRALLOC_ERROR_CONTEXT_IS_NULL ||
-        tralloc_open_mode_with_extensions ( NULL, NULL, 0, NULL, 0, 0 ) != TRALLOC_ERROR_CONTEXT_IS_NULL
-    ) {
+    if ( !test_file_errors ( ctx ) ) {
         return false;
     }
 
@@ -39,15 +58,6 @@ bool test_file ( tralloc_context * ctx )
         return false;
     }
     if ( tralloc_free ( hosts ) != 0 ) {
-        return false;
-    }
-    if (
-        tralloc_open                      ( ctx, &hosts, "/etc/hosts", O_RDONLY | O_DIRECTORY )       != TRALLOC_ERROR_OPEN_DESCRIPTOR_FAILED ||
-        tralloc_open_with_extensions      ( ctx, &hosts, 0, "/etc/hosts", O_RDONLY | O_DIRECTORY )    != TRALLOC_ERROR_OPEN_DESCRIPTOR_FAILED ||
-        tralloc_open_mode                 ( ctx, &hosts, "/etc/hosts", O_RDONLY | O_DIRECTORY, 0 )    != TRALLOC_ERROR_OPEN_DESCRIPTOR_FAILED ||
-        tralloc_open_mode_with_extensions ( ctx, &hosts, 0, "/etc/hosts", O_RDONLY | O_DIRECTORY, 0 ) != TRALLOC_ERROR_OPEN_DESCRIPTOR_FAILED
-    ) {
-        tralloc_free ( hosts );
         return false;
     }
 

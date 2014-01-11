@@ -10,28 +10,27 @@
 int main ()
 {
     tree * tr;
-    tralloc_error result = tralloc ( NULL, ( tralloc_context ** ) &tr, sizeof ( tree ) );
-    if ( result != 0 ) {
+    if ( tralloc ( NULL, ( tralloc_context ** ) &tr, sizeof ( tree ) ) != 0 ) {
         return 1;
     }
-    if ( !test_add ( tr ) ) {
+    if ( !test_errors ( tr ) ) {
         tralloc_free ( tr );
         return 2;
     }
-    if ( !test_resize ( tr ) ) {
+    if ( !test_add ( tr ) ) {
         tralloc_free ( tr );
         return 3;
     }
-    if ( !test_move ( tr ) ) {
-        tralloc_free ( tr );
-        return 4;
-    }
-    if ( !test_free_subtree ( tr ) ) {
+    if ( !test_move_and_resize ( tr ) ) {
         tralloc_free ( tr );
         return 5;
     }
-    if ( tralloc_free ( tr ) != 0 ) {
+    if ( !test_free_subtree ( tr ) ) {
+        tralloc_free ( tr );
         return 6;
+    }
+    if ( tralloc_free ( tr ) != 0 ) {
+        return 7;
     }
 
 #if defined(TRALLOC_DEBUG)

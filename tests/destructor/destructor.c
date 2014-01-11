@@ -23,6 +23,21 @@ tralloc_error normal_destructor ( tralloc_context * chunk_context, void * user_d
     return 0;
 }
 
+static const tralloc_error BAD_DESTRUCTOR_ERROR_1 = 1;
+static const tralloc_error BAD_DESTRUCTOR_ERROR_2 = 2;
+
+static
+tralloc_error bad_destructor_1 ( tralloc_context * UNUSED ( chunk_context ), void * UNUSED ( user_data ) )
+{
+    return BAD_DESTRUCTOR_ERROR_1;
+}
+
+static
+tralloc_error bad_destructor_2 ( tralloc_context * UNUSED ( chunk_context ), void * UNUSED ( user_data ) )
+{
+    return BAD_DESTRUCTOR_ERROR_2;
+}
+
 static
 tralloc_error empty_destructor_1 ( tralloc_context * UNUSED ( chunk_context ), void * UNUSED ( user_data ) )
 {
@@ -58,41 +73,13 @@ bool test_destructor ( tralloc_context * ctx )
         return false;
     }
 
-    if (
-        tralloc_append_destructor              ( NULL, NULL, NULL ) != TRALLOC_ERROR_CONTEXT_IS_NULL ||
-        tralloc_prepend_destructor             ( NULL, NULL, NULL ) != TRALLOC_ERROR_CONTEXT_IS_NULL ||
-        tralloc_clear_destructors              ( NULL )             != TRALLOC_ERROR_CONTEXT_IS_NULL ||
-        tralloc_delete_destructors             ( NULL, NULL, NULL ) != TRALLOC_ERROR_CONTEXT_IS_NULL ||
-        tralloc_delete_destructors_by_function ( NULL, NULL )       != TRALLOC_ERROR_CONTEXT_IS_NULL ||
-        tralloc_delete_destructors_by_data     ( NULL, NULL )       != TRALLOC_ERROR_CONTEXT_IS_NULL
-    ) {
-        free_history ( tralloc_history );
-        return false;
-    }
-
     tralloc_context * strings;
-    if ( tralloc_new ( ctx, &strings ) != 0 ) {
-        free_history ( tralloc_history );
-        return false;
-    }
-
-    if (
-        tralloc_append_destructor              ( strings, NULL, NULL ) != TRALLOC_ERROR_NO_SUCH_EXTENSION ||
-        tralloc_prepend_destructor             ( strings, NULL, NULL ) != TRALLOC_ERROR_NO_SUCH_EXTENSION ||
-        tralloc_clear_destructors              ( strings )             != TRALLOC_ERROR_NO_SUCH_EXTENSION ||
-        tralloc_delete_destructors             ( strings, NULL, NULL ) != TRALLOC_ERROR_NO_SUCH_EXTENSION ||
-        tralloc_delete_destructors_by_function ( strings, NULL )       != TRALLOC_ERROR_NO_SUCH_EXTENSION ||
-        tralloc_delete_destructors_by_data     ( strings, NULL )       != TRALLOC_ERROR_NO_SUCH_EXTENSION
-    ) {
-        free_history ( tralloc_history );
-        return false;
-    }
-
     char * text_01;
     char * text_02;
     char * text_03;
     char * text_04;
     if (
+        tralloc_with_extensions_new    ( ctx,     &strings, TRALLOC_HAVE_DESTRUCTORS )                 != 0 ||
         tralloc_strdup_with_extensions ( strings, &text_01, TRALLOC_HAVE_DESTRUCTORS, "test text 01" ) != 0 ||
         tralloc_strdup_with_extensions ( strings, &text_02, TRALLOC_HAVE_DESTRUCTORS, "test text 02" ) != 0 ||
         tralloc_strdup_with_extensions ( strings, &text_03, TRALLOC_HAVE_DESTRUCTORS, "test text 03" ) != 0 ||
@@ -244,9 +231,17 @@ bool test_destructor ( tralloc_context * ctx )
         return false;
     }
 
-    if ( tralloc_free ( strings ) != 0 ) {
+    if (
+        tralloc_append_destructor  ( strings, bad_destructor_2, NULL ) != 0 ||
+        tralloc_prepend_destructor ( strings, bad_destructor_1, NULL ) != 0
+    ) {
+        free_history ( tralloc_history );
         return false;
     }
+    if ( tralloc_free ( strings ) != BAD_DESTRUCTOR_ERROR_2 ) {
+        return false;
+    }
+
     free_history ( tralloc_history );
     return true;
 }

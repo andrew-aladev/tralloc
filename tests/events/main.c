@@ -15,27 +15,22 @@ int main ()
     if ( tralloc_new ( NULL, &ctx ) != 0 ) {
         return 1;
     }
-
     if ( !test_add ( ctx ) ) {
         tralloc_free ( ctx );
         return 2;
     }
-
     if ( !test_resize ( ctx ) ) {
         tralloc_free ( ctx );
         return 3;
     }
-
     if ( !test_move ( ctx ) ) {
         tralloc_free ( ctx );
         return 4;
     }
-
     if ( !test_free ( ctx ) ) {
         tralloc_free ( ctx );
         return 5;
     }
-
     if ( tralloc_free ( ctx ) != 0 ) {
         return 6;
     }

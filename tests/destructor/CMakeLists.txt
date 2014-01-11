@@ -1,4 +1,4 @@
-set (SRC main.c destructor.c ../lib/malloc_dynarr.c)
+set (SRC main.c errors.c destructor.c ../lib/malloc_dynarr.c)
 
 if (${TRALLOC_SHARED})
     set (NAME ${TRALLOC_TARGET}-test-destructor)

@@ -17,7 +17,6 @@ int main ()
     if ( tralloc_new ( NULL, &ctx ) != 0 ) {
         return 1;
     }
-
     if ( !test_str ( ctx ) ) {
         tralloc_free ( ctx );
         return 2;

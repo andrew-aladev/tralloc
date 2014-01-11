@@ -8,10 +8,6 @@
 #include <tralloc/tree.h>
 #include <tralloc/events.h>
 
-#if defined(TRALLOC_REFERENCE)
-#include <tralloc/reference/main.h>
-#endif
-
 
 typedef struct move_info_t {
     _tralloc_chunk * chunk;
@@ -63,34 +59,15 @@ bool test_move ( tralloc_context * ctx )
 
     int * a;
     char * b;
+    float * c;
     if (
-        tralloc ( ctx, ( tralloc_context ** ) &a, sizeof ( int ) * 2 )  != 0 ||
-        tralloc ( ctx, ( tralloc_context ** ) &b, sizeof ( char ) * 3 ) != 0
+        tralloc ( ctx, ( tralloc_context ** ) &a, sizeof ( int ) * 2 )   != 0 ||
+        tralloc ( ctx, ( tralloc_context ** ) &b, sizeof ( char ) * 3 )  != 0 ||
+        tralloc ( a,   ( tralloc_context ** ) &c, sizeof ( float ) * 4 ) != 0
     ) {
         free_history ( tralloc_history );
         return false;
     }
-
-    float * c;
-#if defined(TRALLOC_REFERENCE)
-    if ( tralloc_with_extensions ( a, ( tralloc_context ** ) &c, TRALLOC_HAVE_REFERENCES, sizeof ( float ) * 4 ) != 0 ) {
-        free_history ( tralloc_history );
-        return false;
-    }
-#else
-    if ( tralloc ( a, ( tralloc_context ** ) &c, sizeof ( float ) * 4 ) != 0 ) {
-        free_history ( tralloc_history );
-        return false;
-    }
-#endif
-
-#if defined(TRALLOC_REFERENCE)
-    tralloc_context * c_reference;
-    if ( tralloc_reference_new ( c, b, &c_reference ) != 0 ) {
-        free_history ( tralloc_history );
-        return false;
-    }
-#endif
 
     if (
         tralloc_move ( c, b )   != 0 ||
@@ -109,34 +86,8 @@ bool test_move ( tralloc_context * ctx )
     _tralloc_chunk * b_chunk    = _tralloc_chunk_from_context ( b );
     _tralloc_chunk * c_chunk    = _tralloc_chunk_from_context ( c );
 
-#if defined(TRALLOC_REFERENCE)
-    if ( tralloc_move ( c_reference, a ) != 0 ) {
-        free_history ( tralloc_history );
-        return false;
-    }
-    _tralloc_chunk * c_reference_chunk = _tralloc_chunk_from_context ( c_reference );
-#endif
-
     move_info * info;
 
-#if defined(TRALLOC_REFERENCE)
-    if (
-        malloc_dynarr_get_length ( tralloc_history ) != 5 ||
-        ( info = malloc_dynarr_get ( tralloc_history, 0 ) ) == NULL ||
-        info->chunk != c_chunk || info->old_parent != a_chunk || info->chunk->parent != a_chunk ||
-        ( info = malloc_dynarr_get ( tralloc_history, 1 ) ) == NULL ||
-        info->chunk != c_chunk || info->old_parent != b_chunk || info->chunk->parent != a_chunk ||
-        ( info = malloc_dynarr_get ( tralloc_history, 2 ) ) == NULL ||
-        info->chunk != b_chunk || info->old_parent != root_chunk || info->chunk->parent != c_chunk ||
-        ( info = malloc_dynarr_get ( tralloc_history, 3 ) ) == NULL ||
-        info->chunk != c_chunk || info->old_parent != root_chunk || info->chunk->parent != a_chunk ||
-        ( info = malloc_dynarr_get ( tralloc_history, 4 ) ) == NULL ||
-        info->chunk != c_reference_chunk || info->old_parent != b_chunk || info->chunk->parent != a_chunk
-    ) {
-        free_history ( tralloc_history );
-        return false;
-    }
-#else
     if (
         malloc_dynarr_get_length ( tralloc_history ) != 4 ||
         ( info = malloc_dynarr_get ( tralloc_history, 0 ) ) == NULL ||
@@ -151,15 +102,11 @@ bool test_move ( tralloc_context * ctx )
         free_history ( tralloc_history );
         return false;
     }
-#endif
 
-    if (
-        tralloc_free ( a ) != 0
-    ) {
+    if ( tralloc_free ( a ) != 0 ) {
         free_history ( tralloc_history );
         return false;
     }
-
     free_history ( tralloc_history );
     return true;
 }

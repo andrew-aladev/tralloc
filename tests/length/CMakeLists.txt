@@ -1,10 +1,4 @@
-set (SRC main.c basic.c)
-if (${TRALLOC_DESTRUCTOR})
-    set (SRC ${SRC} destructor.c)
-endif ()
-if (${TRALLOC_REFERENCE})
-    set (SRC ${SRC} reference.c)
-endif ()
+set (SRC main.c errors.c length.c)
 
 if (${TRALLOC_SHARED})
     set (NAME ${TRALLOC_TARGET}-test-length)

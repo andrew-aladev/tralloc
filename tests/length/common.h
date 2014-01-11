@@ -10,15 +10,8 @@
 #include <stdbool.h>
 
 
-bool test_basic ( tralloc_context * ctx );
-
-#if defined(TRALLOC_DESTRUCTOR)
-bool test_destructor ( tralloc_context * ctx );
-#endif
-
-#if defined(TRALLOC_REFERENCE)
-bool test_reference ( tralloc_context * ctx );
-#endif
+bool test_errors ( tralloc_context * ctx );
+bool test_length ( tralloc_context * ctx );
 
 
 #endif

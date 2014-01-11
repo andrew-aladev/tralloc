@@ -10,33 +10,21 @@
 #include <stdbool.h>
 
 
-typedef struct tree_t {
-    uint8_t *  data_1;
-    uint16_t * data_2;
-    char *     data_3;
-    uint32_t * data_4;
-    size_t *   data_5;
-    double *   data_6;
-    float  *   data_7;
-
-    void * trivium;
-
-#if defined(TRALLOC_REFERENCE)
-    void *     trivium_reference_1;
-    uint16_t * trivium_reference_2;
-    uint32_t * trivium_reference_3;
-
-    int8_t *  data_8;
-    int16_t * data_9;
-    int32_t * data_10;
-#endif
-
+typedef struct tree_type {
+    uint8_t *         data_1;
+    uint16_t *        data_2;
+    char *            data_3;
+    uint32_t *        data_4;
+    size_t *          data_5;
+    double *          data_6;
+    float  *          data_7;
+    tralloc_context * trivium;
 } tree;
 
-bool test_add          ( tree * tr );
-bool test_resize       ( tree * tr );
-bool test_move         ( tree * tr );
-bool test_free_subtree ( tree * tr );
+bool test_errors          ( tralloc_context * ctx );
+bool test_add             ( tree * tr );
+bool test_move_and_resize ( tree * tr );
+bool test_free_subtree    ( tree * tr );
 
 
 #endif

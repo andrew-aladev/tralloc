@@ -10,6 +10,7 @@
 #include <stdbool.h>
 
 
+bool test_errors     ( tralloc_context * ctx );
 bool test_destructor ( tralloc_context * ctx );
 
 

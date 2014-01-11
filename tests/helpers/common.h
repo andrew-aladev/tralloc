@@ -10,10 +10,12 @@
 #include <stdbool.h>
 
 
-bool test_str ( tralloc_context * ctx );
+bool test_str_errors ( tralloc_context * ctx );
+bool test_str        ( tralloc_context * ctx );
 
 #if defined(TRALLOC_DESTRUCTOR)
-bool test_file ( tralloc_context * ctx );
+bool test_file_errors ( tralloc_context * ctx );
+bool test_file        ( tralloc_context * ctx );
 #endif
 
 

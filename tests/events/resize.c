@@ -103,7 +103,6 @@ bool test_resize ( tralloc_context * ctx )
         free_history ( tralloc_history );
         return false;
     }
-
     free_history ( tralloc_history );
     return true;
 }

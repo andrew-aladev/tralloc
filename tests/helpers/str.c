@@ -8,7 +8,7 @@
 #include <tralloc/helpers/string.h>
 
 
-bool test_str ( tralloc_context * ctx )
+bool test_str_errors ( tralloc_context * ctx )
 {
     if (
         tralloc_strdup   ( NULL, NULL, NULL )    != TRALLOC_ERROR_CONTEXT_IS_NULL ||
@@ -19,7 +19,6 @@ bool test_str ( tralloc_context * ctx )
     }
 
 #if defined(TRALLOC_EXTENSIONS)
-
     if (
         tralloc_strdup_with_extensions   ( NULL, NULL, 0, NULL )    != TRALLOC_ERROR_CONTEXT_IS_NULL ||
         tralloc_strndup_with_extensions  ( NULL, NULL, 0, NULL, 0 ) != TRALLOC_ERROR_CONTEXT_IS_NULL ||
@@ -27,12 +26,9 @@ bool test_str ( tralloc_context * ctx )
     ) {
         return false;
     }
-
 #endif
 
-    char * str = "Viktor Tsoi Star Called Sun";
     char * empty;
-
     if (
         tralloc_strdup  ( ctx, &empty, NULL )    != TRALLOC_ERROR_CONTEXT_IS_NULL ||
         tralloc_strndup ( ctx, &empty, NULL, 0 ) != TRALLOC_ERROR_CONTEXT_IS_NULL
@@ -41,14 +37,12 @@ bool test_str ( tralloc_context * ctx )
     }
 
 #if defined(TRALLOC_EXTENSIONS)
-
     if (
         tralloc_strdup_with_extensions  ( ctx, &empty, 0, NULL )    != TRALLOC_ERROR_CONTEXT_IS_NULL ||
         tralloc_strndup_with_extensions ( ctx, &empty, 0, NULL, 0 ) != TRALLOC_ERROR_CONTEXT_IS_NULL
     ) {
         return false;
     }
-
 #endif
 
     if ( tralloc_asprintf ( ctx, &empty, NULL ) != TRALLOC_ERROR_PRINTF_FAILED ) {
@@ -56,13 +50,21 @@ bool test_str ( tralloc_context * ctx )
     }
 
 #if defined(TRALLOC_EXTENSIONS)
-
     if ( tralloc_asprintf_with_extensions ( ctx, &empty, 0, NULL ) != TRALLOC_ERROR_PRINTF_FAILED ) {
         return false;
     }
-
 #endif
 
+    return true;
+}
+
+bool test_str ( tralloc_context * ctx )
+{
+    if ( !test_str_errors ( ctx ) ) {
+        return false;
+    }
+
+    char * str = "Viktor Tsoi Star Called Sun";
     char * full;
     if (
         tralloc_strdup ( ctx, &full, str ) != 0 ||

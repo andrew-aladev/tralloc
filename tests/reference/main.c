@@ -13,23 +13,28 @@
 
 int main ()
 {
-    tralloc_context * ctx;
-    if ( tralloc_new ( NULL, &ctx ) != 0 ) {
+    tree * tr;
+    if ( tralloc ( NULL, ( tralloc_context ** ) &tr, sizeof ( tree ) ) != 0 ) {
         return 1;
     }
-    if ( !test_specs ( ctx ) ) {
+    if ( !test_errors ( tr ) ) {
+        tralloc_free ( tr );
         return 2;
     }
-    if ( !test_shared ( ctx ) ) {
-        tralloc_free ( ctx );
+    if ( !test_add ( tr ) ) {
+        tralloc_free ( tr );
         return 3;
     }
-    if ( !test_common ( ctx ) ) {
-        tralloc_free ( ctx );
+    if ( !test_move_and_resize ( tr ) ) {
+        tralloc_free ( tr );
         return 4;
     }
-    if ( tralloc_free ( ctx ) != 0 ) {
+    if ( !test_free_subtree ( tr ) ) {
+        tralloc_free ( tr );
         return 5;
+    }
+    if ( tralloc_free ( tr ) != 0 ) {
+        return 6;
     }
 
 #if defined(TRALLOC_DEBUG)
@@ -38,7 +43,7 @@ int main ()
         tralloc_get_chunks_overhead_length() != 0 ||
         tralloc_get_chunks_length()          != 0
     ) {
-        return 6;
+        return 7;
     }
 #endif
 
