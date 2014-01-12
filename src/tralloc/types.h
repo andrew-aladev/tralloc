@@ -38,6 +38,29 @@ enum {
 
 typedef uint8_t tralloc_error;
 
+#if defined(TRALLOC_EXTENSIONS)
+
+enum {
+
+#if defined(TRALLOC_LENGTH)
+    TRALLOC_HAVE_LENGTH = 1,
+#endif
+
+#if defined(TRALLOC_DESTRUCTOR)
+    TRALLOC_HAVE_DESTRUCTORS = 1 << 1,
+#endif
+
+#if defined(TRALLOC_REFERENCE)
+    TRALLOC_HAVE_REFERENCE  = 1 << 2,
+    TRALLOC_HAVE_REFERENCES = 1 << 3,
+#endif
+
+};
+
+typedef uint8_t tralloc_extensions;
+
+#endif
+
 #if defined(TRALLOC_LENGTH)
 typedef struct _tralloc_length_type {
     size_t length;
@@ -61,39 +84,17 @@ typedef struct _tralloc_destructors_type {
 
 #if defined(TRALLOC_REFERENCE)
 typedef struct _tralloc_reference_type {
-    struct _tralloc_chunk_type * references;
-    struct _tralloc_chunk_type * prev;
-    struct _tralloc_chunk_type * next;
+    struct _tralloc_references_type * references;
+    struct _tralloc_reference_type * prev;
+    struct _tralloc_reference_type * next;
 } _tralloc_reference;
 #endif
 
 #if defined(TRALLOC_REFERENCE)
 typedef struct _tralloc_references_type {
-    struct _tralloc_chunk_type * first_reference;
+    _tralloc_reference * first_reference;
+    tralloc_extensions extensions;
 } _tralloc_references;
-#endif
-
-#if defined(TRALLOC_EXTENSIONS)
-
-enum {
-
-#if defined(TRALLOC_LENGTH)
-    TRALLOC_HAVE_LENGTH = 1,
-#endif
-
-#if defined(TRALLOC_DESTRUCTOR)
-    TRALLOC_HAVE_DESTRUCTORS = 1 << 1,
-#endif
-
-#if defined(TRALLOC_REFERENCE)
-    TRALLOC_HAVE_REFERENCE  = 1 << 2,
-    TRALLOC_HAVE_REFERENCES = 1 << 3,
-#endif
-
-};
-
-typedef uint8_t tralloc_extensions;
-
 #endif
 
 typedef struct _tralloc_chunk_type {

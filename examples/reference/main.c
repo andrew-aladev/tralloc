@@ -28,8 +28,10 @@ int main ()
     tralloc_context * common_reference_1;
     tralloc_context * common_reference_2;
     if (
-        tralloc_reference_new ( common, NULL, &common_reference_1 ) != 0 ||
-        tralloc_reference_new ( common, NULL, &common_reference_2 ) != 0 ||
+        tralloc_with_extensions_new ( NULL, &common_reference_1, TRALLOC_HAVE_REFERENCE ) != 0 ||
+        tralloc_with_extensions_new ( NULL, &common_reference_2, TRALLOC_HAVE_REFERENCE ) != 0 ||
+        tralloc_move_reference ( common_reference_1, common ) != 0 ||
+        tralloc_move_reference ( common_reference_2, common ) != 0 ||
         tralloc_free ( common_reference_1 ) != 0 ||
         tralloc_free ( common_reference_2 ) != 0
     ) {

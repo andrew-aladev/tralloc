@@ -13,3 +13,7 @@ endif ()
 if (${TRALLOC_UTILS})
     add_subdirectory ("utils")
 endif ()
+
+if (${TRALLOC_REFERENCE})
+    add_subdirectory ("reference")
+endif ()

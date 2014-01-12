@@ -26,20 +26,21 @@ tralloc_error _tralloc_add_chunk ( tralloc_context * parent_context, _tralloc_ch
         _tralloc_chunk * parent             = _tralloc_chunk_from_context ( parent_context );
         _tralloc_chunk * parent_first_child = parent->first_child;
 
+        child->parent = parent;
+
         if ( parent_first_child != NULL ) {
             parent_first_child->prev = child;
             child->next              = parent_first_child;
         } else {
             child->next = NULL;
         }
-        child->prev         = NULL;
-        child->parent       = parent;
         parent->first_child = child;
     } else {
         child->parent = NULL;
-        child->prev   = NULL;
         child->next   = NULL;
     }
+
+    child->prev = NULL;
 
 #if defined(TRALLOC_DEBUG)
     return _tralloc_on_add ( child );

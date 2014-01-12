@@ -16,18 +16,17 @@ void _tralloc_references_new_chunk ( _tralloc_chunk * chunk )
 {
     _tralloc_references * references = _tralloc_references_from_chunk ( chunk );
     references->first_reference      = NULL;
+    references->extensions           = chunk->extensions;
 }
 
 inline
 void _tralloc_references_update_chunk ( _tralloc_chunk * chunk )
 {
     _tralloc_references * references = _tralloc_references_from_chunk ( chunk );
-    _tralloc_chunk * reference_chunk = references->first_reference;
-    _tralloc_reference * reference;
-    while ( reference_chunk != NULL ) {
-        reference             = _tralloc_reference_from_chunk ( reference_chunk );
-        reference->references = chunk;
-        reference_chunk       = reference->next;
+    _tralloc_reference  * reference  = references->first_reference;
+    while ( reference != NULL ) {
+        reference->references = references;
+        reference = reference->next;
     }
 }
 

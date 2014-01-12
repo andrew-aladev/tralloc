@@ -8,61 +8,53 @@
 
 
 static inline
-void _tralloc_reference_detach ( _tralloc_reference * reference )
+void _tralloc_detach_reference ( _tralloc_reference * reference )
 {
-    _tralloc_chunk * old_references_chunk = reference->references;
-    _tralloc_chunk * prev_chunk = reference->prev;
-    _tralloc_chunk * next_chunk = reference->next;
+    _tralloc_references * old_references = reference->references;
+    _tralloc_reference * prev = reference->prev;
+    _tralloc_reference * next = reference->next;
 
     reference->references = NULL;
     reference->prev       = NULL;
     reference->next       = NULL;
 
-    if ( prev_chunk != NULL ) {
-        reference = _tralloc_reference_from_chunk ( prev_chunk );
-        reference->next = next_chunk;
-    } else if ( old_references_chunk != NULL ) {
-        _tralloc_references * old_references = _tralloc_references_from_chunk ( old_references_chunk );
-        old_references->first_reference      = next_chunk;
+    if ( prev != NULL ) {
+        prev->next = next;
+    } else if ( old_references != NULL ) {
+        old_references->first_reference = next;
     }
-    if ( next_chunk != NULL ) {
-        reference = _tralloc_reference_from_chunk ( next_chunk );
-        reference->prev = prev_chunk;
+    if ( next != NULL ) {
+        next->prev = prev;
     }
 }
 
 static inline
-void _tralloc_reference_attach ( _tralloc_chunk * reference_chunk, _tralloc_reference * reference, _tralloc_chunk * references_chunk )
+void _tralloc_attach_reference ( _tralloc_reference * reference, _tralloc_references * new_references )
 {
-    _tralloc_chunk * old_references_chunk = reference->references;
-    _tralloc_chunk * prev_chunk = reference->prev;
-    _tralloc_chunk * next_chunk = reference->next;
+    _tralloc_references * old_references = reference->references;
+    _tralloc_reference * prev = reference->prev;
+    _tralloc_reference * next = reference->next;
 
-    reference->references = references_chunk;
+    reference->references = new_references;
     reference->prev       = NULL;
 
-    if ( prev_chunk != NULL ) {
-        _tralloc_reference * prev_reference = _tralloc_reference_from_chunk ( prev_chunk );
-        prev_reference->next = next_chunk;
-    } else if ( old_references_chunk != NULL ) {
-        _tralloc_references * old_references = _tralloc_references_from_chunk ( old_references_chunk );
-        old_references->first_reference      = next_chunk;
+    if ( prev != NULL ) {
+        prev->next = next;
+    } else if ( old_references != NULL ) {
+        old_references->first_reference = next;
     }
-    if ( next_chunk != NULL ) {
-        _tralloc_reference * next_reference = _tralloc_reference_from_chunk ( next_chunk );
-        next_reference->prev = prev_chunk;
+    if ( next != NULL ) {
+        next->prev = prev;
     }
 
-    _tralloc_references * references       = _tralloc_references_from_chunk ( references_chunk );
-    _tralloc_chunk * first_reference_chunk = references->first_reference;
-    if ( first_reference_chunk != NULL ) {
-        _tralloc_reference * first_reference = _tralloc_reference_from_chunk ( first_reference_chunk );
-        first_reference->prev = reference_chunk;
-        reference->next = first_reference_chunk;
+    _tralloc_reference * first_reference = new_references->first_reference;
+    if ( first_reference != NULL ) {
+        first_reference->prev = reference;
+        reference->next = first_reference;
     } else {
         reference->next = NULL;
     }
-    references->first_reference = reference_chunk;
+    new_references->first_reference = reference;
 }
 
 tralloc_error tralloc_move_reference ( tralloc_context * child_context, tralloc_context * parent_context )
@@ -80,23 +72,23 @@ tralloc_error tralloc_move_reference ( tralloc_context * child_context, tralloc_
     }
 
     if ( parent_context == NULL ) {
-        _tralloc_reference * reference    = _tralloc_reference_from_chunk ( child_chunk );
-        _tralloc_chunk * references_chunk = reference->references;
-        if ( references_chunk == NULL ) {
+        _tralloc_reference * reference   = _tralloc_reference_from_chunk ( child_chunk );
+        if ( reference->references == NULL ) {
             return TRALLOC_ERROR_CHILD_HAS_SAME_PARENT;
         }
-        _tralloc_reference_detach ( reference );
+        _tralloc_detach_reference ( reference );
     } else {
         _tralloc_reference * reference        = _tralloc_reference_from_chunk ( child_chunk );
-        _tralloc_chunk * references_chunk     = reference->references;
+        _tralloc_references * old_references  = reference->references;
         _tralloc_chunk * new_references_chunk = _tralloc_chunk_from_context ( parent_context );
         if ( ( new_references_chunk->extensions & TRALLOC_HAVE_REFERENCES ) == 0 ) {
             return TRALLOC_ERROR_NO_SUCH_EXTENSION;
         }
-        if ( references_chunk == new_references_chunk ) {
+        _tralloc_references * new_references = _tralloc_references_from_chunk ( new_references_chunk );
+        if ( old_references == new_references ) {
             return TRALLOC_ERROR_CHILD_HAS_SAME_PARENT;
         }
-        _tralloc_reference_attach ( child_chunk, reference, new_references_chunk );
+        _tralloc_attach_reference ( reference, new_references );
     }
 
     return 0;
@@ -115,20 +107,19 @@ tralloc_error tralloc_clear_references ( tralloc_context * chunk_context )
     }
 
     _tralloc_references * references = _tralloc_references_from_chunk ( chunk );
-    _tralloc_chunk * reference_chunk = references->first_reference;
-    _tralloc_chunk * next_reference_chunk;
+    _tralloc_reference * reference   = references->first_reference;
+    _tralloc_reference * next_reference;
 
-    tralloc_error result, error = 0;
+    while ( reference != NULL ) {
+        next_reference = reference->next;
 
-    while ( reference_chunk != NULL ) {
-        next_reference_chunk = reference_chunk->next;
-        _tralloc_detach_chunk ( chunk );
-        if ( ( result = _tralloc_free_chunk ( chunk ) ) != 0 ) {
-            error = result;
-        }
-        reference_chunk = next_reference_chunk;
+        reference->references = NULL;
+        reference->prev       = NULL;
+        reference->next       = NULL;
+
+        reference = next_reference;
     }
     references->first_reference = NULL;
 
-    return error;
+    return 0;
 }
