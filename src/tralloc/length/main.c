@@ -10,7 +10,7 @@
 tralloc_error tralloc_get_length ( tralloc_context * context, size_t * length )
 {
     if ( context == NULL ) {
-        return TRALLOC_ERROR_CONTEXT_IS_NULL;
+        return TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL;
     }
     _tralloc_chunk * chunk = _tralloc_chunk_from_context ( context );
     if ( ( chunk->extensions & TRALLOC_HAVE_LENGTH ) == 0 ) {

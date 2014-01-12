@@ -13,7 +13,7 @@
 tralloc_error tralloc_buffer_with_extensions_new ( tralloc_context * ctx, tralloc_buffer ** buffer_ptr, tralloc_extensions extensions )
 {
     if ( buffer_ptr == NULL ) {
-        return TRALLOC_ERROR_CONTEXT_IS_NULL;
+        return TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL;
     }
     tralloc_error result = tralloc_with_extensions ( ctx, ( tralloc_context ** ) buffer_ptr, extensions, sizeof ( tralloc_buffer ) );
     if ( result != 0 ) {
@@ -35,7 +35,7 @@ extern inline tralloc_error tralloc_buffer_new ( tralloc_context * ctx, tralloc_
 tralloc_error tralloc_buffer_new ( tralloc_context * ctx, tralloc_buffer ** buffer_ptr )
 {
     if ( buffer_ptr == NULL ) {
-        return TRALLOC_ERROR_CONTEXT_IS_NULL;
+        return TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL;
     }
     tralloc_error result = tralloc ( ctx, ( tralloc_context ** ) buffer_ptr, sizeof ( tralloc_buffer ) );
     if ( result != 0 ) {

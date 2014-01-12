@@ -1,10 +1,10 @@
 Hierarchical memory allocator Tralloc
 =====================================
 
-Tralloc (tree alloc) is a hierarchical memory allocator with some extensions. It is an alternative implementation of simplified `talloc`_ api.
+Tralloc (tree alloc) is a hierarchical memory allocator with extensions. It is an alternative implementation of simplified `talloc`_ api.
 
 The main goal of the project is to minimize memory overhead.
-Size of usual chunk is 32-49 bytes, size of reference chunk is 57-65 bytes on 64 bit system (depends on compiled features).
+Size of chunk is 32-88 bytes on x86_64 system (depends on compiled and runtime features).
 Debug features will increase size of each chunk by 16 bytes.
 
 

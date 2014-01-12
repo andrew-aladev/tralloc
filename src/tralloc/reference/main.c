@@ -60,7 +60,7 @@ void _tralloc_attach_reference ( _tralloc_reference * reference, _tralloc_refere
 tralloc_error tralloc_move_reference ( tralloc_context * child_context, tralloc_context * parent_context )
 {
     if ( child_context == NULL ) {
-        return TRALLOC_ERROR_CONTEXT_IS_NULL;
+        return TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL;
     }
     if ( child_context == parent_context ) {
         return TRALLOC_ERROR_CHILD_EQUALS_PARENT;
@@ -98,7 +98,7 @@ tralloc_error tralloc_move_reference ( tralloc_context * child_context, tralloc_
 tralloc_error tralloc_clear_references ( tralloc_context * chunk_context )
 {
     if ( chunk_context == NULL ) {
-        return TRALLOC_ERROR_CONTEXT_IS_NULL;
+        return TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL;
     }
     _tralloc_chunk * chunk = _tralloc_chunk_from_context ( chunk_context );
 

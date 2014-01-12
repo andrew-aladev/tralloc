@@ -26,7 +26,7 @@ extern inline tralloc_error tralloc_strdup  ( tralloc_context * parent_context, 
 tralloc_error tralloc_vasprintf ( tralloc_context * parent_context, char ** child_context, const char * format, va_list arguments )
 {
     if ( child_context == NULL ) {
-        return TRALLOC_ERROR_CONTEXT_IS_NULL;
+        return TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL;
     }
 
     va_list arguments_copy;

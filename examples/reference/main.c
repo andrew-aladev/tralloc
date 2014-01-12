@@ -14,14 +14,7 @@
 int main ()
 {
     char * common;
-    if ( tralloc_strdup_with_extensions (
-                NULL,
-                &common,
-                TRALLOC_HAVE_REFERENCES,
-                "This is big data, that you dont want to duplicate."
-                "Different code needs it."
-                "You want it to be fried automaticaly when all code have finished it's processing."
-            ) != 0 ) {
+    if ( tralloc_strdup_with_extensions ( NULL, &common, TRALLOC_HAVE_REFERENCES, "big data" ) != 0 ) {
         return 1;
     }
 

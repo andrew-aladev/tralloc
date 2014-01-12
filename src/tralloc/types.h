@@ -15,13 +15,13 @@
 typedef void tralloc_context;
 
 enum {
-    TRALLOC_ERROR_CONTEXT_IS_NULL         = 1,
-    TRALLOC_ERROR_MALLOC_FAILED           = 2,
-    TRALLOC_ERROR_CALLOC_FAILED           = 3,
-    TRALLOC_ERROR_REALLOC_FAILED          = 4,
-    TRALLOC_ERROR_OPEN_DESCRIPTOR_FAILED  = 5,
-    TRALLOC_ERROR_CLOSE_DESCRIPTOR_FAILED = 6,
-    TRALLOC_ERROR_PRINTF_FAILED           = 7,
+    TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL = 1,
+    TRALLOC_ERROR_MALLOC_FAILED             = 2,
+    TRALLOC_ERROR_CALLOC_FAILED             = 3,
+    TRALLOC_ERROR_REALLOC_FAILED            = 4,
+    TRALLOC_ERROR_OPEN_DESCRIPTOR_FAILED    = 5,
+    TRALLOC_ERROR_CLOSE_DESCRIPTOR_FAILED   = 6,
+    TRALLOC_ERROR_PRINTF_FAILED             = 7,
 
     TRALLOC_ERROR_CHILD_EQUALS_PARENT   = 8,
     TRALLOC_ERROR_CHILD_HAS_SAME_PARENT = 9,
@@ -88,9 +88,7 @@ typedef struct _tralloc_reference_type {
     struct _tralloc_reference_type * prev;
     struct _tralloc_reference_type * next;
 } _tralloc_reference;
-#endif
 
-#if defined(TRALLOC_REFERENCE)
 typedef struct _tralloc_references_type {
     _tralloc_reference * first_reference;
     tralloc_extensions extensions;

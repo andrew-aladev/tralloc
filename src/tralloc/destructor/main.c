@@ -11,7 +11,7 @@
 tralloc_error tralloc_clear_destructors ( tralloc_context * chunk_context )
 {
     if ( chunk_context == NULL ) {
-        return TRALLOC_ERROR_CONTEXT_IS_NULL;
+        return TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL;
     }
     _tralloc_chunk * chunk = _tralloc_chunk_from_context ( chunk_context );
 
@@ -40,7 +40,7 @@ tralloc_error tralloc_clear_destructors ( tralloc_context * chunk_context )
 tralloc_error tralloc_append_destructor ( tralloc_context * chunk_context, tralloc_destructor_function function, void * user_data )
 {
     if ( chunk_context == NULL ) {
-        return TRALLOC_ERROR_CONTEXT_IS_NULL;
+        return TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL;
     }
     _tralloc_chunk * chunk = _tralloc_chunk_from_context ( chunk_context );
 
@@ -72,7 +72,7 @@ tralloc_error tralloc_append_destructor ( tralloc_context * chunk_context, trall
 tralloc_error tralloc_prepend_destructor ( tralloc_context * chunk_context, tralloc_destructor_function function, void * user_data )
 {
     if ( chunk_context == NULL ) {
-        return TRALLOC_ERROR_CONTEXT_IS_NULL;
+        return TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL;
     }
     _tralloc_chunk * chunk = _tralloc_chunk_from_context ( chunk_context );
 
@@ -105,7 +105,7 @@ tralloc_error tralloc_prepend_destructor ( tralloc_context * chunk_context, tral
 tralloc_error _tralloc_delete_destructors_by_comparator ( tralloc_context * chunk_context, _tralloc_destructor_comparator comparator, tralloc_destructor_function function, void * user_data )
 {
     if ( chunk_context == NULL ) {
-        return TRALLOC_ERROR_CONTEXT_IS_NULL;
+        return TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL;
     }
     _tralloc_chunk * chunk = _tralloc_chunk_from_context ( chunk_context );
 

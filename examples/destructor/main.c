@@ -24,7 +24,7 @@ tralloc_error bad_destructor ( tralloc_context * UNUSED ( context ), void * UNUS
 tralloc_error file_destructor ( tralloc_context * context, void * UNUSED ( user_data ) )
 {
     if ( context == NULL ) {
-        return TRALLOC_ERROR_CONTEXT_IS_NULL;
+        return TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL;
     }
     int * UNUSED ( number ) = context;
     return 0;

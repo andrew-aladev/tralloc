@@ -15,10 +15,10 @@
 bool test_file_errors ( tralloc_context * ctx )
 {
     if (
-        tralloc_open                      ( NULL, NULL, NULL, 0 )       != TRALLOC_ERROR_CONTEXT_IS_NULL ||
-        tralloc_open_with_extensions      ( NULL, NULL, 0, NULL, 0 )    != TRALLOC_ERROR_CONTEXT_IS_NULL ||
-        tralloc_open_mode                 ( NULL, NULL, NULL, 0, 0 )    != TRALLOC_ERROR_CONTEXT_IS_NULL ||
-        tralloc_open_mode_with_extensions ( NULL, NULL, 0, NULL, 0, 0 ) != TRALLOC_ERROR_CONTEXT_IS_NULL
+        tralloc_open                      ( NULL, NULL, NULL, 0 )       != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL ||
+        tralloc_open_with_extensions      ( NULL, NULL, 0, NULL, 0 )    != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL ||
+        tralloc_open_mode                 ( NULL, NULL, NULL, 0, 0 )    != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL ||
+        tralloc_open_mode_with_extensions ( NULL, NULL, 0, NULL, 0, 0 ) != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL
     ) {
         return false;
     }

@@ -12,7 +12,7 @@ bool test_errors ( tralloc_context * ctx )
 {
     size_t length;
     if (
-        tralloc_get_length ( NULL, &length ) != TRALLOC_ERROR_CONTEXT_IS_NULL ||
+        tralloc_get_length ( NULL, &length ) != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL ||
         tralloc_get_length ( ctx,  &length ) != TRALLOC_ERROR_NO_SUCH_EXTENSION
     ) {
         return false;

@@ -125,7 +125,7 @@ inline
 tralloc_error tralloc_free ( tralloc_context * chunk_context )
 {
     if ( chunk_context == NULL ) {
-        return TRALLOC_ERROR_CONTEXT_IS_NULL;
+        return TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL;
     }
     _tralloc_chunk * chunk = _tralloc_chunk_from_context ( chunk_context );
     _tralloc_detach_chunk ( chunk );

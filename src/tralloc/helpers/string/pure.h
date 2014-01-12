@@ -17,7 +17,7 @@ inline
 tralloc_error tralloc_strndup ( tralloc_context * parent_context, char ** child_context, const char * str, size_t length )
 {
     if ( str == NULL ) {
-        return TRALLOC_ERROR_CONTEXT_IS_NULL;
+        return TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL;
     }
     return _tralloc_strndup ( parent_context, child_context, str, length );
 }
@@ -26,7 +26,7 @@ inline
 tralloc_error tralloc_strdup ( tralloc_context * parent_context, char ** child_context, const char * str )
 {
     if ( str == NULL ) {
-        return TRALLOC_ERROR_CONTEXT_IS_NULL;
+        return TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL;
     }
     return _tralloc_strndup ( parent_context, child_context, str, strlen ( str ) );
 }

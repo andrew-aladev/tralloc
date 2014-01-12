@@ -14,13 +14,13 @@ bool test_errors ()
 
 #if defined(TRALLOC_EXTENSIONS)
     if (
-        tralloc_buffer_new                 ( NULL, NULL )    != TRALLOC_ERROR_CONTEXT_IS_NULL ||
-        tralloc_buffer_with_extensions_new ( NULL, NULL, 0 ) != TRALLOC_ERROR_CONTEXT_IS_NULL
+        tralloc_buffer_new                 ( NULL, NULL )    != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL ||
+        tralloc_buffer_with_extensions_new ( NULL, NULL, 0 ) != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL
     ) {
         return false;
     }
 #else
-    if ( tralloc_buffer_new ( NULL, NULL ) != TRALLOC_ERROR_CONTEXT_IS_NULL ) {
+    if ( tralloc_buffer_new ( NULL, NULL ) != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL ) {
         return false;
     }
 #endif

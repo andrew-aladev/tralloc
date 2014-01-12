@@ -55,7 +55,7 @@ static inline
 tralloc_error _tralloc_with_extensions_with_allocator ( tralloc_context * parent_context, tralloc_context ** child_context, tralloc_extensions extensions, size_t length, _allocator allocator )
 {
     if ( child_context == NULL ) {
-        return TRALLOC_ERROR_CONTEXT_IS_NULL;
+        return TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL;
     }
 
     size_t extensions_length = 0;
@@ -154,11 +154,11 @@ extern inline tralloc_error tralloc_with_extensions_new ( tralloc_context * pare
 tralloc_error tralloc_realloc ( tralloc_context ** chunk_context, size_t length )
 {
     if ( chunk_context == NULL ) {
-        return TRALLOC_ERROR_CONTEXT_IS_NULL;
+        return TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL;
     }
     tralloc_context * context = * chunk_context;
     if ( context == NULL ) {
-        return TRALLOC_ERROR_CONTEXT_IS_NULL;
+        return TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL;
     }
     _tralloc_chunk * old_chunk = _tralloc_chunk_from_context ( context );
 

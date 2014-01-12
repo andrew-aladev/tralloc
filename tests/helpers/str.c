@@ -11,18 +11,18 @@
 bool test_str_errors ( tralloc_context * ctx )
 {
     if (
-        tralloc_strdup   ( NULL, NULL, NULL )    != TRALLOC_ERROR_CONTEXT_IS_NULL ||
-        tralloc_strndup  ( NULL, NULL, NULL, 0 ) != TRALLOC_ERROR_CONTEXT_IS_NULL ||
-        tralloc_asprintf ( NULL, NULL, "\n" )    != TRALLOC_ERROR_CONTEXT_IS_NULL
+        tralloc_strdup   ( NULL, NULL, NULL )    != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL ||
+        tralloc_strndup  ( NULL, NULL, NULL, 0 ) != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL ||
+        tralloc_asprintf ( NULL, NULL, "\n" )    != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL
     ) {
         return false;
     }
 
 #if defined(TRALLOC_EXTENSIONS)
     if (
-        tralloc_strdup_with_extensions   ( NULL, NULL, 0, NULL )    != TRALLOC_ERROR_CONTEXT_IS_NULL ||
-        tralloc_strndup_with_extensions  ( NULL, NULL, 0, NULL, 0 ) != TRALLOC_ERROR_CONTEXT_IS_NULL ||
-        tralloc_asprintf_with_extensions ( NULL, NULL, 0, "\n" )    != TRALLOC_ERROR_CONTEXT_IS_NULL
+        tralloc_strdup_with_extensions   ( NULL, NULL, 0, NULL )    != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL ||
+        tralloc_strndup_with_extensions  ( NULL, NULL, 0, NULL, 0 ) != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL ||
+        tralloc_asprintf_with_extensions ( NULL, NULL, 0, "\n" )    != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL
     ) {
         return false;
     }
@@ -30,16 +30,16 @@ bool test_str_errors ( tralloc_context * ctx )
 
     char * empty;
     if (
-        tralloc_strdup  ( ctx, &empty, NULL )    != TRALLOC_ERROR_CONTEXT_IS_NULL ||
-        tralloc_strndup ( ctx, &empty, NULL, 0 ) != TRALLOC_ERROR_CONTEXT_IS_NULL
+        tralloc_strdup  ( ctx, &empty, NULL )    != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL ||
+        tralloc_strndup ( ctx, &empty, NULL, 0 ) != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL
     ) {
         return false;
     }
 
 #if defined(TRALLOC_EXTENSIONS)
     if (
-        tralloc_strdup_with_extensions  ( ctx, &empty, 0, NULL )    != TRALLOC_ERROR_CONTEXT_IS_NULL ||
-        tralloc_strndup_with_extensions ( ctx, &empty, 0, NULL, 0 ) != TRALLOC_ERROR_CONTEXT_IS_NULL
+        tralloc_strdup_with_extensions  ( ctx, &empty, 0, NULL )    != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL ||
+        tralloc_strndup_with_extensions ( ctx, &empty, 0, NULL, 0 ) != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL
     ) {
         return false;
     }

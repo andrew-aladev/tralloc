@@ -11,12 +11,12 @@
 bool test_errors ( tralloc_context * ctx )
 {
     if (
-        tralloc_append_destructor              ( NULL, NULL, NULL ) != TRALLOC_ERROR_CONTEXT_IS_NULL ||
-        tralloc_prepend_destructor             ( NULL, NULL, NULL ) != TRALLOC_ERROR_CONTEXT_IS_NULL ||
-        tralloc_clear_destructors              ( NULL )             != TRALLOC_ERROR_CONTEXT_IS_NULL ||
-        tralloc_delete_destructors             ( NULL, NULL, NULL ) != TRALLOC_ERROR_CONTEXT_IS_NULL ||
-        tralloc_delete_destructors_by_function ( NULL, NULL )       != TRALLOC_ERROR_CONTEXT_IS_NULL ||
-        tralloc_delete_destructors_by_data     ( NULL, NULL )       != TRALLOC_ERROR_CONTEXT_IS_NULL
+        tralloc_append_destructor              ( NULL, NULL, NULL ) != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL ||
+        tralloc_prepend_destructor             ( NULL, NULL, NULL ) != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL ||
+        tralloc_clear_destructors              ( NULL )             != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL ||
+        tralloc_delete_destructors             ( NULL, NULL, NULL ) != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL ||
+        tralloc_delete_destructors_by_function ( NULL, NULL )       != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL ||
+        tralloc_delete_destructors_by_data     ( NULL, NULL )       != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL
     ) {
         return false;
     }

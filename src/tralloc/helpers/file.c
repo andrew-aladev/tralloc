@@ -40,7 +40,7 @@ tralloc_error _tralloc_process_descriptor ( tralloc_context * parent_context, in
 tralloc_error tralloc_open_with_extensions ( tralloc_context * parent_context, int ** descriptor_ptr, tralloc_extensions extensions, const char * path_name, int flags )
 {
     if ( descriptor_ptr == NULL ) {
-        return TRALLOC_ERROR_CONTEXT_IS_NULL;
+        return TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL;
     }
     int descriptor = open ( path_name, flags );
     if ( descriptor == -1 ) {
@@ -52,7 +52,7 @@ tralloc_error tralloc_open_with_extensions ( tralloc_context * parent_context, i
 tralloc_error tralloc_open_mode_with_extensions ( tralloc_context * parent_context, int ** descriptor_ptr, tralloc_extensions extensions, const char * path_name, int flags, mode_t mode )
 {
     if ( descriptor_ptr == NULL ) {
-        return TRALLOC_ERROR_CONTEXT_IS_NULL;
+        return TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL;
     }
     int descriptor = open ( path_name, flags, mode );
     if ( descriptor == -1 ) {
