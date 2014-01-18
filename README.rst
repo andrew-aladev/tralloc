@@ -50,6 +50,14 @@ DEB and RPM
      $ make && make test && make package
 
 
+Other compilers
+---------
+    
+    ::
+    
+     $ CC="clang" cmake .. -DCMAKE_C_FLAGS="-O2"
+
+
 LICENSE
 -------
 LGPL v3+
