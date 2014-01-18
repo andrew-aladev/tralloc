@@ -54,6 +54,10 @@ enum {
     TRALLOC_EXTENSION_REFERENCE  = 1 << 2,
     TRALLOC_EXTENSION_REFERENCES = 1 << 3,
 #endif
+    
+#if defined(TRALLOC_POOL)
+    TRALLOC_POOL_CHILD = 1 << 4,
+#endif
 
 };
 

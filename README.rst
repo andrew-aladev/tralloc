@@ -29,42 +29,48 @@ Debug build
      $ make && make test
 
 
+Documentation
+-------------
+Please read `man`_.
+     
+     
 Extensions and features enable/disable
 -------------------------
     
     ::
     
      $ cmake .. \
-        -DTRALLOC_DEBUG=OFF        \
-        -DTRALLOC_LENGTH=OFF       \
-        -DTRALLOC_DESTRUCTOR=OFF   \
-        -DTRALLOC_REFERENCE=OFF    \
-        -DTRALLOC_POOL=OFF         \
-        -DTRALLOC_UTILS_BUFFER=OFF \
-        -DTRALLOC_SHARED=OFF       \
-        -DTRALLOC_STATIC=OFF       \
-        -DTRALLOC_MAN=OFF          \
-        -DTRALLOC_TEST=OFF         \
-        -DTRALLOC_EXAMPLES=OFF
+        -DTRALLOC_DEBUG=0        \
+        -DTRALLOC_LENGTH=0       \
+        -DTRALLOC_DESTRUCTOR=0   \
+        -DTRALLOC_REFERENCE=0    \
+        -DTRALLOC_POOL=0         \
+        -DTRALLOC_UTILS_BUFFER=0 \
+        -DTRALLOC_SHARED=0       \
+        -DTRALLOC_STATIC=0       \
+        -DTRALLOC_MAN=0          \
+        -DTRALLOC_TEST=0         \
+        -DTRALLOC_EXAMPLES=0
+
+You can test all possible combinations of extensions and features [debug, length, destructor, reference, pool, utils_buffer]
+
+    ::
+    
+     $ ../combinations.sh
 
 
-Documentation
--------------
-Please read `man`_.
-
-
-Other compilers
+Other supported compilers
 ---------
     
     ::
     
-     $ CC="clang" cmake .. -DCMAKE_C_FLAGS="-O2"
+     $ CC="clang" ../combinations.sh
 
 
 Gentoo
 ------
 
-Copy ebuilds from provided "gentoo" folder or add `overlay`_.
+Copy ebuilds from provided `gentoo`_ folder or add `overlay`_.
 
 
 DEB and RPM
@@ -84,3 +90,4 @@ LGPL v3+
 .. _talloc:  http://talloc.samba.org/talloc/doc/html/group__talloc.html
 .. _man:     https://github.com/andrew-aladev/tralloc/blob/master/man/tralloc.txt
 .. _overlay: https://github.com/andrew-aladev/puchuu-overlay
+.. _gentoo:  https://github.com/andrew-aladev/tralloc/tree/master/gentoo
