@@ -35,17 +35,17 @@ Extensions enable/disable
     ::
     
      $ cmake .. \
-     $   -DTRALLOC_DEBUG=OFF        \
-     $   -DTRALLOC_LENGTH=OFF       \
-     $   -DTRALLOC_DESTRUCTOR=OFF   \
-     $   -DTRALLOC_REFERENCE=OFF    \
-     $   -DTRALLOC_POOL=OFF         \
-     $   -DTRALLOC_UTILS_BUFFER=OFF \
-     $   -DTRALLOC_SHARED=OFF       \
-     $   -DTRALLOC_STATIC=OFF       \
-     $   -DTRALLOC_MAN=OFF          \
-     $   -DTRALLOC_TEST=OFF         \
-     $   -DTRALLOC_EXAMPLES=OFF
+        -DTRALLOC_DEBUG=OFF        \
+        -DTRALLOC_LENGTH=OFF       \
+        -DTRALLOC_DESTRUCTOR=OFF   \
+        -DTRALLOC_REFERENCE=OFF    \
+        -DTRALLOC_POOL=OFF         \
+        -DTRALLOC_UTILS_BUFFER=OFF \
+        -DTRALLOC_SHARED=OFF       \
+        -DTRALLOC_STATIC=OFF       \
+        -DTRALLOC_MAN=OFF          \
+        -DTRALLOC_TEST=OFF         \
+        -DTRALLOC_EXAMPLES=OFF
 
 
 Documentation
