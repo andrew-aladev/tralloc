@@ -26,7 +26,7 @@ Debug build
 
      $ mkdir build && cd build
      $ cmake ..
-     $ make && make test
+     $ make VERBOSE=1 && make test
 
 
 Documentation
@@ -59,6 +59,14 @@ You can test all possible combinations of extensions and features : debug, lengt
      $ ../combinations.sh
 
 
+Multilib
+--------
+
+    ::
+    
+     $ CFLAGS="-m32" ../combinations.sh
+     
+     
 Other supported compilers
 ---------
     
