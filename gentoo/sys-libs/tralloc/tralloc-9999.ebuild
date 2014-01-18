@@ -15,9 +15,9 @@ KEYWORDS=""
 
 IUSE="debug shared-libs static-libs man test"
 
-IUSE_FEATURES="destructor reference"
-for feature in ${IUSE_FEATURES}; do
-    IUSE="${IUSE} tralloc_features_${feature}"
+IUSE_EXTENSIONS="destructor reference pool"
+for extension in ${IUSE_EXTENSIONS}; do
+    IUSE="${IUSE} tralloc_extensions_${extension}"
 done
 
 IUSE_UTILS="buffer"
@@ -43,10 +43,10 @@ src_configure() {
         $(cmake-utils_use man         TRALLOC_MAN)
         $(cmake-utils_use test        TRALLOC_TEST)
         
-        $(cmake-utils_use tralloc_features_destructor TRALLOC_DESTRUCTOR)
-        $(cmake-utils_use tralloc_features_reference  TRALLOC_REFERENCE)
-        
-        $(cmake-utils_use tralloc_utils_buffer TRALLOC_UTILS_BUFFER)
+        $(cmake-utils_use tralloc_extensions_destructor TRALLOC_DESTRUCTOR)
+        $(cmake-utils_use tralloc_extensions_reference  TRALLOC_REFERENCE)
+        $(cmake-utils_use tralloc_extensions_pool       TRALLOC_POOL)
+        $(cmake-utils_use tralloc_utils_buffer          TRALLOC_UTILS_BUFFER)
     )
     cmake-multilib_src_configure
 }

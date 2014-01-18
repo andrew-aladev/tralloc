@@ -16,8 +16,8 @@
     <flag name="man">Create man page</flag>
     <flag name="test">Build and run tests</flag>
 
-    <flag name="tralloc_features_destructor">Enable destructor feature</flag>
-    <flag name="tralloc_features_reference">Enable reference feature</flag>
+    <flag name="tralloc_extensions_destructor">Enable destructor extension</flag>
+    <flag name="tralloc_extensions_reference">Enable reference extension</flag>
     <flag name="tralloc_utils_buffer">Enable buffer utility</flag>
   </use>
 </pkgmetadata>

@@ -29,7 +29,7 @@ Debug build
      $ make && make test
 
 
-Extensions enable/disable
+Extensions and features enable/disable
 -------------------------
     
     ::
@@ -72,7 +72,6 @@ DEB and RPM
 
     ::
     
-     $ mkdir build && cd build
      $ cmake .. -DCMAKE_BUILD_TYPE=RELEASE
      $ make && make test && make package
 
