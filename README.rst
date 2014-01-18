@@ -52,7 +52,7 @@ Extensions and features enable/disable
         -DTRALLOC_TEST=0         \
         -DTRALLOC_EXAMPLES=0
 
-You can test all possible combinations of extensions and features [debug, length, destructor, reference, pool, utils_buffer]
+You can test all possible combinations of extensions and features : debug, length, destructor, reference, pool, utils_buffer
 
     ::
     
