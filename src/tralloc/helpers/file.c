@@ -63,3 +63,4 @@ tralloc_error tralloc_open_mode_with_extensions ( tralloc_context * parent_conte
 
 extern inline tralloc_error tralloc_open      ( tralloc_context * parent_context, int ** descriptor_ptr, const char * path_name, int flags );
 extern inline tralloc_error tralloc_open_mode ( tralloc_context * parent_context, int ** descriptor_ptr, const char * path_name, int flags, mode_t mode );
+

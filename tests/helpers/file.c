@@ -25,10 +25,10 @@ bool test_file_errors ( tralloc_context * ctx )
 
     int * hosts;
     if (
-        tralloc_open                      ( ctx, &hosts, "/etc/hosts", O_RDONLY | O_DIRECTORY )       != TRALLOC_ERROR_OPEN_DESCRIPTOR_FAILED ||
-        tralloc_open_with_extensions      ( ctx, &hosts, 0, "/etc/hosts", O_RDONLY | O_DIRECTORY )    != TRALLOC_ERROR_OPEN_DESCRIPTOR_FAILED ||
-        tralloc_open_mode                 ( ctx, &hosts, "/etc/hosts", O_RDONLY | O_DIRECTORY, 0 )    != TRALLOC_ERROR_OPEN_DESCRIPTOR_FAILED ||
-        tralloc_open_mode_with_extensions ( ctx, &hosts, 0, "/etc/hosts", O_RDONLY | O_DIRECTORY, 0 ) != TRALLOC_ERROR_OPEN_DESCRIPTOR_FAILED
+        tralloc_open                      ( ctx, &hosts, "/tmp/tralloc_file_not_exists", O_RDONLY )       != TRALLOC_ERROR_OPEN_DESCRIPTOR_FAILED ||
+        tralloc_open_with_extensions      ( ctx, &hosts, 0, "/tmp/tralloc_file_not_exists", O_RDONLY )    != TRALLOC_ERROR_OPEN_DESCRIPTOR_FAILED ||
+        tralloc_open_mode                 ( ctx, &hosts, "/tmp/tralloc_file_not_exists", O_RDONLY, 0 )    != TRALLOC_ERROR_OPEN_DESCRIPTOR_FAILED ||
+        tralloc_open_mode_with_extensions ( ctx, &hosts, 0, "/tmp/tralloc_file_not_exists", O_RDONLY, 0 ) != TRALLOC_ERROR_OPEN_DESCRIPTOR_FAILED
     ) {
         return false;
     }

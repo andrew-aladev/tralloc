@@ -14,6 +14,7 @@
 #include <tralloc/helpers/file.h>
 #include <tralloc/destructor/main.h>
 
+#include <sys/stat.h>
 #include <unistd.h>
 
 

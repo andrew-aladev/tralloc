@@ -122,12 +122,14 @@ tralloc_error _tralloc_free_chunk ( _tralloc_chunk * chunk )
     tralloc_error result, error = 0;
 
 #if defined(TRALLOC_DEBUG)
-    if ( ( result = _tralloc_on_free ( chunk ) ) != 0 ) {
+    result = _tralloc_on_free ( chunk );
+    if ( result != 0 ) {
         error = result;
     }
 #endif
 
-    if ( ( result = _tralloc_free_chunk_children ( chunk ) ) != 0 ) {
+    result = _tralloc_free_chunk_children ( chunk );
+    if ( result != 0 ) {
         error = result;
     }
 

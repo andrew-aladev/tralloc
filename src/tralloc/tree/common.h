@@ -112,7 +112,8 @@ tralloc_error _tralloc_free_chunk_children ( _tralloc_chunk * chunk )
     _tralloc_chunk * next_child;
     while ( child != NULL ) {
         next_child = child->next;
-        if ( ( result = _tralloc_free_chunk ( child ) ) != 0 ) {
+        result     = _tralloc_free_chunk ( child );
+        if ( result != 0 ) {
             error = result;
         }
         child = next_child;

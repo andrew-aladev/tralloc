@@ -1,8 +1,6 @@
 cmake_minimum_required (VERSION 2.8)
 project (tralloc)
 
-set (CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
-
 set (TRALLOC_VERSION "0.7.0")
 
 set (TRALLOC_DEBUG        true  CACHE BOOL "debug features")
@@ -45,14 +43,12 @@ if (NOT DEFINED CMAKE_BUILD_TYPE OR CMAKE_BUILD_TYPE STREQUAL "")
     set (CMAKE_BUILD_TYPE DEBUG)
 endif ()
 
-set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -Winline")
 
-if (${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
-    set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=gnu99")
-else ()
-    set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99")
-endif ()
+set (CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
+include (CheckC99)
+check_c99 ()
 
+set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -Winline ${C99_CFLAGS}")
 set (CMAKE_C_FLAGS_DEBUG    "-pipe -O0 -g")
 set (CMAKE_C_FLAGS_RELEASE  "-pipe -O2 -flto")
 set (CMAKE_LD_FLAGS_RELEASE "-flto")

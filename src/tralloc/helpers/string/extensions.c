@@ -10,7 +10,7 @@
 
 tralloc_error _tralloc_strndup_with_extensions ( tralloc_context * parent_context, char ** child_context, tralloc_extensions extensions, const char * str, size_t length )
 {
-    tralloc_error result = tralloc_with_extensions ( parent_context, ( tralloc_context ** ) child_context, extensions, sizeof ( char ) * ( length + 1 ) ) != 0;
+    tralloc_error result = tralloc_with_extensions ( parent_context, ( tralloc_context ** ) child_context, extensions, sizeof ( char ) * ( length + 1 ) );
     if ( result != 0 ) {
         return result;
     }

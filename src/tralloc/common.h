@@ -36,7 +36,7 @@ _tralloc_destructors * _tralloc_destructors_from_chunk ( _tralloc_chunk * chunk 
     size_t offset = sizeof ( _tralloc_destructors );
 
 #if defined(TRALLOC_LENGTH)
-    if ( ( chunk->extensions & TRALLOC_EXTENSION_LENGTH ) != 0 ) {
+    if ( chunk->extensions & TRALLOC_EXTENSION_LENGTH ) {
         offset += sizeof ( _tralloc_length );
     }
 #endif
@@ -52,13 +52,13 @@ _tralloc_references * _tralloc_references_from_chunk ( _tralloc_chunk * chunk )
     size_t offset = sizeof ( _tralloc_references );
 
 #if defined(TRALLOC_LENGTH)
-    if ( ( chunk->extensions & TRALLOC_EXTENSION_LENGTH ) != 0 ) {
+    if ( chunk->extensions & TRALLOC_EXTENSION_LENGTH ) {
         offset += sizeof ( _tralloc_length );
     }
 #endif
 
 #if defined(TRALLOC_DESTRUCTOR)
-    if ( ( chunk->extensions & TRALLOC_EXTENSION_DESTRUCTORS ) != 0 ) {
+    if ( chunk->extensions & TRALLOC_EXTENSION_DESTRUCTORS ) {
         offset += sizeof ( _tralloc_destructors );
     }
 #endif
@@ -72,13 +72,13 @@ _tralloc_chunk * _tralloc_chunk_from_references ( _tralloc_references * referenc
     size_t offset = sizeof ( _tralloc_references );
 
 #if defined(TRALLOC_LENGTH)
-    if ( ( references->extensions & TRALLOC_EXTENSION_LENGTH ) != 0 ) {
+    if ( references->extensions & TRALLOC_EXTENSION_LENGTH ) {
         offset += sizeof ( _tralloc_length );
     }
 #endif
 
 #if defined(TRALLOC_DESTRUCTOR)
-    if ( ( references->extensions & TRALLOC_EXTENSION_DESTRUCTORS ) != 0 ) {
+    if ( references->extensions & TRALLOC_EXTENSION_DESTRUCTORS ) {
         offset += sizeof ( _tralloc_destructors );
     }
 #endif
@@ -92,13 +92,13 @@ _tralloc_reference * _tralloc_reference_from_chunk ( _tralloc_chunk * chunk )
     size_t offset = sizeof ( _tralloc_reference );
 
 #if defined(TRALLOC_LENGTH)
-    if ( ( chunk->extensions & TRALLOC_EXTENSION_LENGTH ) != 0 ) {
+    if ( chunk->extensions & TRALLOC_EXTENSION_LENGTH ) {
         offset += sizeof ( _tralloc_length );
     }
 #endif
 
 #if defined(TRALLOC_DESTRUCTOR)
-    if ( ( chunk->extensions & TRALLOC_EXTENSION_DESTRUCTORS ) != 0 ) {
+    if ( chunk->extensions & TRALLOC_EXTENSION_DESTRUCTORS ) {
         offset += sizeof ( _tralloc_destructors );
     }
 #endif
@@ -109,4 +109,3 @@ _tralloc_reference * _tralloc_reference_from_chunk ( _tralloc_chunk * chunk )
 
 
 #endif
-
