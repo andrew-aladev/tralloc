@@ -29,9 +29,36 @@ Debug build
      $ make && make test
 
 
+Extensions enable/disable
+-------------------------
+    
+    ::
+    
+     $ cmake .. \
+     $   -DTRALLOC_DEBUG=OFF        \
+     $   -DTRALLOC_LENGTH=OFF       \
+     $   -DTRALLOC_DESTRUCTOR=OFF   \
+     $   -DTRALLOC_REFERENCE=OFF    \
+     $   -DTRALLOC_POOL=OFF         \
+     $   -DTRALLOC_UTILS_BUFFER=OFF \
+     $   -DTRALLOC_SHARED=OFF       \
+     $   -DTRALLOC_STATIC=OFF       \
+     $   -DTRALLOC_MAN=OFF          \
+     $   -DTRALLOC_TEST=OFF         \
+     $   -DTRALLOC_EXAMPLES=OFF
+
+
 Documentation
 -------------
 Please read `man`_.
+
+
+Other compilers
+---------
+    
+    ::
+    
+     $ CC="clang" cmake .. -DCMAKE_C_FLAGS="-O2"
 
 
 Gentoo
@@ -48,14 +75,6 @@ DEB and RPM
      $ mkdir build && cd build
      $ cmake .. -DCMAKE_BUILD_TYPE=RELEASE
      $ make && make test && make package
-
-
-Other compilers
----------
-    
-    ::
-    
-     $ CC="clang" cmake .. -DCMAKE_C_FLAGS="-O2"
 
 
 LICENSE
