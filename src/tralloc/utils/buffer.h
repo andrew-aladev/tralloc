@@ -72,4 +72,3 @@ tralloc_error tralloc_buffer_trim    ( tralloc_buffer * buffer );
 
 
 #endif
-
