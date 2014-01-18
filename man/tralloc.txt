@@ -350,6 +350,8 @@ Example
 
 helpers/file.h
 --------------
+File helpers append close destructor to descriptor chunk.
+
     tralloc_error tralloc_open ( tralloc_context * parent_context, int ** descriptor_ptr, const char * path_name, int flags );
 
 Function uses malloc to allocate new chunk with size = sizeof ( chunk ) + sizeof( int ).
