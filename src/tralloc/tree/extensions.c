@@ -61,26 +61,26 @@ tralloc_error _tralloc_with_extensions_with_allocator ( tralloc_context * parent
     size_t extensions_length = 0;
 
 #if defined(TRALLOC_LENGTH)
-    bool have_length = ( extensions & TRALLOC_HAVE_LENGTH ) != 0;
+    bool have_length = ( extensions & TRALLOC_EXTENSION_LENGTH ) != 0;
     if ( have_length ) {
         extensions_length += sizeof ( _tralloc_length );
     }
 #endif
 
 #if defined(TRALLOC_DESTRUCTOR)
-    bool have_destructors = ( extensions & TRALLOC_HAVE_DESTRUCTORS ) != 0;
+    bool have_destructors = ( extensions & TRALLOC_EXTENSION_DESTRUCTORS ) != 0;
     if ( have_destructors ) {
         extensions_length += sizeof ( _tralloc_destructors );
     }
 #endif
 
 #if defined(TRALLOC_REFERENCE)
-    bool have_references = ( extensions & TRALLOC_HAVE_REFERENCES ) != 0;
-    bool have_reference  = ( extensions & TRALLOC_HAVE_REFERENCE )  != 0;
+    bool have_references = ( extensions & TRALLOC_EXTENSION_REFERENCES ) != 0;
+    bool have_reference  = ( extensions & TRALLOC_EXTENSION_REFERENCE )  != 0;
     if ( have_references ) {
         extensions_length += sizeof ( _tralloc_references );
         if ( have_reference ) {
-            extensions &= ~ ( TRALLOC_HAVE_REFERENCE );
+            extensions &= ~ ( TRALLOC_EXTENSION_REFERENCE );
         }
     } else if ( have_reference ) {
         extensions_length += sizeof ( _tralloc_reference );
@@ -169,21 +169,21 @@ tralloc_error tralloc_realloc ( tralloc_context ** chunk_context, size_t length 
     size_t extensions_length = 0;
 
 #if defined(TRALLOC_LENGTH)
-    bool have_length = ( old_chunk->extensions & TRALLOC_HAVE_LENGTH ) != 0;
+    bool have_length = ( old_chunk->extensions & TRALLOC_EXTENSION_LENGTH ) != 0;
     if ( have_length ) {
         extensions_length += sizeof ( _tralloc_length );
     }
 #endif
 
 #if defined(TRALLOC_DESTRUCTOR)
-    if ( ( old_chunk->extensions & TRALLOC_HAVE_DESTRUCTORS ) != 0 ) {
+    if ( ( old_chunk->extensions & TRALLOC_EXTENSION_DESTRUCTORS ) != 0 ) {
         extensions_length += sizeof ( _tralloc_destructors );
     }
 #endif
 
 #if defined(TRALLOC_REFERENCE)
-    bool have_references = ( old_chunk->extensions & TRALLOC_HAVE_REFERENCES ) != 0;
-    bool have_reference  = ( old_chunk->extensions & TRALLOC_HAVE_REFERENCE )  != 0;
+    bool have_references = ( old_chunk->extensions & TRALLOC_EXTENSION_REFERENCES ) != 0;
+    bool have_reference  = ( old_chunk->extensions & TRALLOC_EXTENSION_REFERENCE )  != 0;
     if ( have_references ) {
         extensions_length += sizeof ( _tralloc_references );
     } else if ( have_reference ) {
@@ -244,7 +244,7 @@ tralloc_error _tralloc_free_chunk ( _tralloc_chunk * chunk )
 {
 
 #if defined(TRALLOC_REFERENCE)
-    bool have_references = ( chunk->extensions & TRALLOC_HAVE_REFERENCES ) != 0;
+    bool have_references = ( chunk->extensions & TRALLOC_EXTENSION_REFERENCES ) != 0;
     if ( have_references ) {
         if ( !_tralloc_references_try_free_chunk ( chunk ) ) {
             return 0;
@@ -263,7 +263,7 @@ tralloc_error _tralloc_free_chunk ( _tralloc_chunk * chunk )
     size_t extensions_length = 0;
 
 #if defined(TRALLOC_LENGTH)
-    if ( ( chunk->extensions & TRALLOC_HAVE_LENGTH ) != 0 ) {
+    if ( ( chunk->extensions & TRALLOC_EXTENSION_LENGTH ) != 0 ) {
         extensions_length += sizeof ( _tralloc_length );
     }
 #endif
@@ -271,7 +271,7 @@ tralloc_error _tralloc_free_chunk ( _tralloc_chunk * chunk )
 #if defined(TRALLOC_REFERENCE)
     if ( have_references ) {
         extensions_length += sizeof ( _tralloc_references );
-    } else if ( ( chunk->extensions & TRALLOC_HAVE_REFERENCE ) != 0 ) {
+    } else if ( ( chunk->extensions & TRALLOC_EXTENSION_REFERENCE ) != 0 ) {
         if ( ( result = _tralloc_reference_free_chunk ( chunk ) ) != 0 ) {
             error = result;
         }
@@ -280,7 +280,7 @@ tralloc_error _tralloc_free_chunk ( _tralloc_chunk * chunk )
 #endif
 
 #if defined(TRALLOC_DESTRUCTOR)
-    if ( ( chunk->extensions & TRALLOC_HAVE_DESTRUCTORS ) != 0 ) {
+    if ( ( chunk->extensions & TRALLOC_EXTENSION_DESTRUCTORS ) != 0 ) {
         if ( ( result = _tralloc_destructor_free_chunk ( chunk ) ) != 0 ) {
             error = result;
         }

@@ -45,10 +45,16 @@ if (NOT DEFINED CMAKE_BUILD_TYPE OR CMAKE_BUILD_TYPE STREQUAL "")
     set (CMAKE_BUILD_TYPE DEBUG)
 endif ()
 
-set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -Winline -std=gnu99")
+set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -Winline")
 
-set (CMAKE_C_FLAGS_DEBUG    "-O0 -g")
-set (CMAKE_C_FLAGS_RELEASE  "-O2 -flto")
+if (${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
+    set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=gnu99")
+else ()
+    set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99")
+endif ()
+
+set (CMAKE_C_FLAGS_DEBUG    "-pipe -O0 -g")
+set (CMAKE_C_FLAGS_RELEASE  "-pipe -O2 -flto")
 set (CMAKE_LD_FLAGS_RELEASE "-flto")
 
 add_subdirectory ("src")

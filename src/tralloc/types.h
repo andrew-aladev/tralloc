@@ -43,16 +43,16 @@ typedef uint8_t tralloc_error;
 enum {
 
 #if defined(TRALLOC_LENGTH)
-    TRALLOC_HAVE_LENGTH = 1,
+    TRALLOC_EXTENSION_LENGTH = 1,
 #endif
 
 #if defined(TRALLOC_DESTRUCTOR)
-    TRALLOC_HAVE_DESTRUCTORS = 1 << 1,
+    TRALLOC_EXTENSION_DESTRUCTORS = 1 << 1,
 #endif
 
 #if defined(TRALLOC_REFERENCE)
-    TRALLOC_HAVE_REFERENCE  = 1 << 2,
-    TRALLOC_HAVE_REFERENCES = 1 << 3,
+    TRALLOC_EXTENSION_REFERENCE  = 1 << 2,
+    TRALLOC_EXTENSION_REFERENCES = 1 << 3,
 #endif
 
 };

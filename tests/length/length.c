@@ -13,7 +13,7 @@ bool test_length ( tralloc_context * ctx )
     size_t length;
     tralloc_context * empty;
     if (
-        tralloc_with_extensions_new ( ctx, &empty, TRALLOC_HAVE_LENGTH ) != 0 ||
+        tralloc_with_extensions_new ( ctx, &empty, TRALLOC_EXTENSION_LENGTH ) != 0 ||
         tralloc_get_length ( empty, &length ) != 0 ||
         length != 0
     ) {
@@ -22,7 +22,7 @@ bool test_length ( tralloc_context * ctx )
 
     uint16_t * data;
     if (
-        tralloc_with_extensions ( ctx, ( tralloc_context ** ) &data, TRALLOC_HAVE_LENGTH, sizeof ( uint16_t ) * 2 ) != 0 ||
+        tralloc_with_extensions ( ctx, ( tralloc_context ** ) &data, TRALLOC_EXTENSION_LENGTH, sizeof ( uint16_t ) * 2 ) != 0 ||
         tralloc_get_length ( data, &length ) != 0 ||
         length != sizeof ( uint16_t ) * 2
     ) {

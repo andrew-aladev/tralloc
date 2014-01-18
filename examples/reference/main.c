@@ -14,15 +14,15 @@
 int main ()
 {
     char * common;
-    if ( tralloc_strdup_with_extensions ( NULL, &common, TRALLOC_HAVE_REFERENCES, "big data" ) != 0 ) {
+    if ( tralloc_strdup_with_extensions ( NULL, &common, TRALLOC_EXTENSION_REFERENCES, "big data" ) != 0 ) {
         return 1;
     }
 
     tralloc_context * common_reference_1;
     tralloc_context * common_reference_2;
     if (
-        tralloc_with_extensions_new ( NULL, &common_reference_1, TRALLOC_HAVE_REFERENCE ) != 0 ||
-        tralloc_with_extensions_new ( NULL, &common_reference_2, TRALLOC_HAVE_REFERENCE ) != 0 ||
+        tralloc_with_extensions_new ( NULL, &common_reference_1, TRALLOC_EXTENSION_REFERENCE ) != 0 ||
+        tralloc_with_extensions_new ( NULL, &common_reference_2, TRALLOC_EXTENSION_REFERENCE ) != 0 ||
         tralloc_move_reference ( common_reference_1, common ) != 0 ||
         tralloc_move_reference ( common_reference_2, common ) != 0 ||
         tralloc_free ( common_reference_1 ) != 0 ||

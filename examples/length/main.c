@@ -19,7 +19,7 @@ int main ()
     uint16_t * data;
     size_t length;
     if (
-        tralloc_with_extensions ( ctx, ( tralloc_context ** ) &data, TRALLOC_HAVE_LENGTH, sizeof ( uint16_t ) * 10 ) != 0 ||
+        tralloc_with_extensions ( ctx, ( tralloc_context ** ) &data, TRALLOC_EXTENSION_LENGTH, sizeof ( uint16_t ) * 10 ) != 0 ||
         tralloc_get_length ( data, &length ) != 0 ||
         length != sizeof ( uint16_t ) * 10
     ) {

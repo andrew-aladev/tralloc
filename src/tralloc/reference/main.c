@@ -67,7 +67,7 @@ tralloc_error tralloc_move_reference ( tralloc_context * child_context, tralloc_
     }
     _tralloc_chunk * child_chunk = _tralloc_chunk_from_context ( child_context );
 
-    if ( ( child_chunk->extensions & TRALLOC_HAVE_REFERENCE ) == 0 ) {
+    if ( ( child_chunk->extensions & TRALLOC_EXTENSION_REFERENCE ) == 0 ) {
         return TRALLOC_ERROR_NO_SUCH_EXTENSION;
     }
 
@@ -81,7 +81,7 @@ tralloc_error tralloc_move_reference ( tralloc_context * child_context, tralloc_
         _tralloc_reference * reference        = _tralloc_reference_from_chunk ( child_chunk );
         _tralloc_references * old_references  = reference->references;
         _tralloc_chunk * new_references_chunk = _tralloc_chunk_from_context ( parent_context );
-        if ( ( new_references_chunk->extensions & TRALLOC_HAVE_REFERENCES ) == 0 ) {
+        if ( ( new_references_chunk->extensions & TRALLOC_EXTENSION_REFERENCES ) == 0 ) {
             return TRALLOC_ERROR_NO_SUCH_EXTENSION;
         }
         _tralloc_references * new_references = _tralloc_references_from_chunk ( new_references_chunk );
@@ -102,7 +102,7 @@ tralloc_error tralloc_clear_references ( tralloc_context * chunk_context )
     }
     _tralloc_chunk * chunk = _tralloc_chunk_from_context ( chunk_context );
 
-    if ( ( chunk->extensions & TRALLOC_HAVE_REFERENCES ) == 0 ) {
+    if ( ( chunk->extensions & TRALLOC_EXTENSION_REFERENCES ) == 0 ) {
         return TRALLOC_ERROR_NO_SUCH_EXTENSION;
     }
 

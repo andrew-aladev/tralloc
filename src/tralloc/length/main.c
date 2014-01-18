@@ -13,7 +13,7 @@ tralloc_error tralloc_get_length ( tralloc_context * context, size_t * length )
         return TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL;
     }
     _tralloc_chunk * chunk = _tralloc_chunk_from_context ( context );
-    if ( ( chunk->extensions & TRALLOC_HAVE_LENGTH ) == 0 ) {
+    if ( ( chunk->extensions & TRALLOC_EXTENSION_LENGTH ) == 0 ) {
         return TRALLOC_ERROR_NO_SUCH_EXTENSION;
     }
     _tralloc_length * length_ext = _tralloc_length_from_chunk ( chunk );

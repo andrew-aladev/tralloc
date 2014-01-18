@@ -79,11 +79,11 @@ bool test_destructor ( tralloc_context * ctx )
     char * text_03;
     char * text_04;
     if (
-        tralloc_with_extensions_new    ( ctx,     &strings, TRALLOC_HAVE_DESTRUCTORS )                 != 0 ||
-        tralloc_strdup_with_extensions ( strings, &text_01, TRALLOC_HAVE_DESTRUCTORS, "test text 01" ) != 0 ||
-        tralloc_strdup_with_extensions ( strings, &text_02, TRALLOC_HAVE_DESTRUCTORS, "test text 02" ) != 0 ||
-        tralloc_strdup_with_extensions ( strings, &text_03, TRALLOC_HAVE_DESTRUCTORS, "test text 03" ) != 0 ||
-        tralloc_strdup_with_extensions ( strings, &text_04, TRALLOC_HAVE_DESTRUCTORS, "test text 04" ) != 0
+        tralloc_with_extensions_new    ( ctx,     &strings, TRALLOC_EXTENSION_DESTRUCTORS )                 != 0 ||
+        tralloc_strdup_with_extensions ( strings, &text_01, TRALLOC_EXTENSION_DESTRUCTORS, "test text 01" ) != 0 ||
+        tralloc_strdup_with_extensions ( strings, &text_02, TRALLOC_EXTENSION_DESTRUCTORS, "test text 02" ) != 0 ||
+        tralloc_strdup_with_extensions ( strings, &text_03, TRALLOC_EXTENSION_DESTRUCTORS, "test text 03" ) != 0 ||
+        tralloc_strdup_with_extensions ( strings, &text_04, TRALLOC_EXTENSION_DESTRUCTORS, "test text 04" ) != 0
     ) {
         free_history ( tralloc_history );
         return false;

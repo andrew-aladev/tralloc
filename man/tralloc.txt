@@ -13,10 +13,10 @@ SYNOPSIS
 #include <tralloc/types.h>
 
     enum {
-        TRALLOC_HAVE_LENGTH,
-        TRALLOC_HAVE_DESTRUCTORS,
-        TRALLOC_HAVE_REFERENCE,
-        TRALLOC_HAVE_REFERENCES
+        TRALLOC_EXTENSION_LENGTH,
+        TRALLOC_EXTENSION_DESTRUCTORS,
+        TRALLOC_EXTENSION_REFERENCE,
+        TRALLOC_EXTENSION_REFERENCES
     };
     enum {
         TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL,
@@ -138,8 +138,8 @@ Do not set reference to the subtree of it's references chunk.
 You will obtain a memory leak.
 
     tralloc_context * b, * b_ref;
-    tralloc_with_extensions_new ( NULL, &b,     TRALLOC_HAVE_REFERENCES );
-    tralloc_with_extensions_new ( b,    &b_ref, TRALLOC_HAVE_REFERENCE );
+    tralloc_with_extensions_new ( NULL, &b,     TRALLOC_EXTENSION_REFERENCES );
+    tralloc_with_extensions_new ( b,    &b_ref, TRALLOC_EXTENSION_REFERENCE );
     tralloc_move_reference ( b_ref, b );
     tralloc_free ( b ); // can't delete b, because it's references list is not empty
     // b and b_ref still exists
@@ -151,7 +151,7 @@ It runs formating two times, because there is no ability to pass custom allocato
 
 types.h
 -------
-    TRALLOC_HAVE_*
+    TRALLOC_EXTENSION_*
     typedef uint8_t tralloc_extensions;
 
 Use these constants with bitwise operator "|" to enable extensions.
@@ -517,7 +517,7 @@ Example
             return 1;
         }
         int * number;
-        if ( tralloc_with_extensions ( ctx, ( tralloc_context ** ) &number, TRALLOC_HAVE_DESTRUCTORS, sizeof ( int ) ) != 0 ) {
+        if ( tralloc_with_extensions ( ctx, ( tralloc_context ** ) &number, TRALLOC_EXTENSION_DESTRUCTORS, sizeof ( int ) ) != 0 ) {
             tralloc_free ( ctx );
             return 2;
         }
@@ -571,15 +571,15 @@ Example
     int main ()
     {
         char * common;
-        if ( tralloc_strdup_with_extensions ( NULL, &common, TRALLOC_HAVE_REFERENCES, "big data" ) != 0 ) {
+        if ( tralloc_strdup_with_extensions ( NULL, &common, TRALLOC_EXTENSION_REFERENCES, "big data" ) != 0 ) {
             return 1;
         }
 
         tralloc_context * common_reference_1;
         tralloc_context * common_reference_2;
         if (
-            tralloc_with_extensions_new ( NULL, &common_reference_1, TRALLOC_HAVE_REFERENCE ) != 0 ||
-            tralloc_with_extensions_new ( NULL, &common_reference_2, TRALLOC_HAVE_REFERENCE ) != 0 ||
+            tralloc_with_extensions_new ( NULL, &common_reference_1, TRALLOC_EXTENSION_REFERENCE ) != 0 ||
+            tralloc_with_extensions_new ( NULL, &common_reference_2, TRALLOC_EXTENSION_REFERENCE ) != 0 ||
             tralloc_move_reference ( common_reference_1, common ) != 0 ||
             tralloc_move_reference ( common_reference_2, common ) != 0 ||
             tralloc_free ( common_reference_1 ) != 0 ||
