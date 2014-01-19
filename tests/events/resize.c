@@ -78,9 +78,9 @@ bool test_resize ( tralloc_context * ctx )
         return false;
     }
 
-    _tralloc_chunk * a_chunk = _tralloc_chunk_from_context ( a );
-    _tralloc_chunk * b_chunk = _tralloc_chunk_from_context ( b );
-    _tralloc_chunk * c_chunk = _tralloc_chunk_from_context ( c );
+    _tralloc_chunk * a_chunk = _tralloc_get_chunk_from_context ( a );
+    _tralloc_chunk * b_chunk = _tralloc_get_chunk_from_context ( b );
+    _tralloc_chunk * c_chunk = _tralloc_get_chunk_from_context ( c );
     resize_info * info;
 
     if (

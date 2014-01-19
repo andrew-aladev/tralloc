@@ -13,13 +13,13 @@ tralloc_error tralloc_clear_destructors ( tralloc_context * chunk_context )
     if ( chunk_context == NULL ) {
         return TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL;
     }
-    _tralloc_chunk * chunk = _tralloc_chunk_from_context ( chunk_context );
+    _tralloc_chunk * chunk = _tralloc_get_chunk_from_context ( chunk_context );
 
     if ( ! ( chunk->extensions & TRALLOC_EXTENSION_DESTRUCTORS ) ) {
         return TRALLOC_ERROR_NO_SUCH_EXTENSION;
     }
 
-    _tralloc_destructors * destructors = _tralloc_destructors_from_chunk ( chunk );
+    _tralloc_destructors * destructors = _tralloc_get_destructors_from_chunk ( chunk );
     _tralloc_destructor * destructor   = destructors->first_destructor;
     if ( destructor == NULL ) {
         return 0;
@@ -42,7 +42,7 @@ tralloc_error tralloc_append_destructor ( tralloc_context * chunk_context, trall
     if ( chunk_context == NULL ) {
         return TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL;
     }
-    _tralloc_chunk * chunk = _tralloc_chunk_from_context ( chunk_context );
+    _tralloc_chunk * chunk = _tralloc_get_chunk_from_context ( chunk_context );
 
     if ( ! ( chunk->extensions & TRALLOC_EXTENSION_DESTRUCTORS ) ) {
         return TRALLOC_ERROR_NO_SUCH_EXTENSION;
@@ -56,7 +56,7 @@ tralloc_error tralloc_append_destructor ( tralloc_context * chunk_context, trall
     destructor->user_data = user_data;
     destructor->next      = NULL;
 
-    _tralloc_destructors * destructors    = _tralloc_destructors_from_chunk ( chunk );
+    _tralloc_destructors * destructors    = _tralloc_get_destructors_from_chunk ( chunk );
     _tralloc_destructor * last_destructor = destructors->last_destructor;
     if ( last_destructor == NULL ) {
         destructors->first_destructor = destructor;
@@ -74,7 +74,7 @@ tralloc_error tralloc_prepend_destructor ( tralloc_context * chunk_context, tral
     if ( chunk_context == NULL ) {
         return TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL;
     }
-    _tralloc_chunk * chunk = _tralloc_chunk_from_context ( chunk_context );
+    _tralloc_chunk * chunk = _tralloc_get_chunk_from_context ( chunk_context );
 
     if ( ! ( chunk->extensions & TRALLOC_EXTENSION_DESTRUCTORS ) ) {
         return TRALLOC_ERROR_NO_SUCH_EXTENSION;
@@ -87,7 +87,7 @@ tralloc_error tralloc_prepend_destructor ( tralloc_context * chunk_context, tral
     destructor->function  = function;
     destructor->user_data = user_data;
 
-    _tralloc_destructors * destructors     = _tralloc_destructors_from_chunk ( chunk );
+    _tralloc_destructors * destructors     = _tralloc_get_destructors_from_chunk ( chunk );
     _tralloc_destructor * first_destructor = destructors->first_destructor;
     if ( first_destructor == NULL ) {
         destructors->first_destructor = destructor;
@@ -107,13 +107,13 @@ tralloc_error _tralloc_delete_destructors_by_comparator ( tralloc_context * chun
     if ( chunk_context == NULL ) {
         return TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL;
     }
-    _tralloc_chunk * chunk = _tralloc_chunk_from_context ( chunk_context );
+    _tralloc_chunk * chunk = _tralloc_get_chunk_from_context ( chunk_context );
 
     if ( ! ( chunk->extensions & TRALLOC_EXTENSION_DESTRUCTORS ) ) {
         return TRALLOC_ERROR_NO_SUCH_EXTENSION;
     }
 
-    _tralloc_destructors * destructors     = _tralloc_destructors_from_chunk ( chunk );
+    _tralloc_destructors * destructors     = _tralloc_get_destructors_from_chunk ( chunk );
     _tralloc_destructor * first_destructor = destructors->first_destructor;
     if ( first_destructor == NULL ) {
         return 0;

@@ -18,32 +18,32 @@ tralloc_error tralloc_move    ( tralloc_context * child_context, tralloc_context
 
 
 inline
-tralloc_error _tralloc_add_chunk ( tralloc_context * parent_context, _tralloc_chunk * child )
+tralloc_error _tralloc_add_chunk ( tralloc_context * parent_context, _tralloc_chunk * child_chunk )
 {
-    child->first_child = NULL;
+    child_chunk->first_child = NULL;
 
     if ( parent_context != NULL ) {
-        _tralloc_chunk * parent             = _tralloc_chunk_from_context ( parent_context );
-        _tralloc_chunk * parent_first_child = parent->first_child;
+        _tralloc_chunk * parent_chunk       = _tralloc_get_chunk_from_context ( parent_context );
+        _tralloc_chunk * parent_first_child = parent_chunk->first_child;
 
-        child->parent = parent;
+        child_chunk->parent = parent_chunk;
 
         if ( parent_first_child != NULL ) {
-            parent_first_child->prev = child;
-            child->next              = parent_first_child;
+            parent_first_child->prev = child_chunk;
+            child_chunk->next              = parent_first_child;
         } else {
-            child->next = NULL;
+            child_chunk->next = NULL;
         }
-        parent->first_child = child;
+        parent_chunk->first_child = child_chunk;
     } else {
-        child->parent = NULL;
-        child->next   = NULL;
+        child_chunk->parent = NULL;
+        child_chunk->next   = NULL;
     }
 
-    child->prev = NULL;
+    child_chunk->prev = NULL;
 
 #if defined(TRALLOC_DEBUG)
-    return _tralloc_on_add ( child );
+    return _tralloc_on_add ( child_chunk );
 #else
     return 0;
 #endif
@@ -128,7 +128,7 @@ tralloc_error tralloc_free ( tralloc_context * chunk_context )
     if ( chunk_context == NULL ) {
         return TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL;
     }
-    _tralloc_chunk * chunk = _tralloc_chunk_from_context ( chunk_context );
+    _tralloc_chunk * chunk = _tralloc_get_chunk_from_context ( chunk_context );
     _tralloc_detach_chunk ( chunk );
     return _tralloc_free_chunk ( chunk );
 }

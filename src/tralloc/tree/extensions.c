@@ -21,6 +21,10 @@
 #include "../reference/chunk.h"
 #endif
 
+#if defined(TRALLOC_POOL)
+#include "../pool/head_chunk.h"
+#endif
+
 #include <stdlib.h>
 #include <stdbool.h>
 
@@ -58,6 +62,7 @@ tralloc_error _tralloc_with_extensions_with_allocator ( tralloc_context * parent
         return TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL;
     }
 
+    tralloc_error result;
     size_t extensions_length = 0;
 
 #if defined(TRALLOC_LENGTH)
@@ -87,12 +92,52 @@ tralloc_error _tralloc_with_extensions_with_allocator ( tralloc_context * parent
     }
 #endif
 
-    size_t chunk_length = sizeof ( _tralloc_chunk ) + extensions_length;
+#if defined(TRALLOC_POOL)
+    bool have_pool;
+    bool have_pool_child;
+    if ( parent_context != NULL ) {
+        _tralloc_chunk * parent_chunk = _tralloc_get_chunk_from_context ( parent_context );
+        if (
+            parent_chunk->extensions & TRALLOC_EXTENSION_POOL ||
+            parent_chunk->extensions & TRALLOC_EXTENSION_POOL_CHILD
+        ) {
+            have_pool       = false;
+            have_pool_child = true;
+            extensions      |= TRALLOC_EXTENSION_POOL_CHILD;
+            extensions      &= ~ ( TRALLOC_EXTENSION_POOL );
+        } else {
+            have_pool_child = false;
+            extensions      &= ~ ( TRALLOC_EXTENSION_POOL_CHILD );
+            have_pool       = extensions & TRALLOC_EXTENSION_POOL;
+        }
+    } else {
+        have_pool_child = false;
+        extensions      &= ~ ( TRALLOC_EXTENSION_POOL_CHILD );
+        have_pool       = extensions & TRALLOC_EXTENSION_POOL;
+    }
+    if ( have_pool ) {
+        extensions_length += sizeof ( _tralloc_pool );
+    } else if ( have_pool_child ) {
+        extensions_length += sizeof ( _tralloc_pool_child );
+    }
+#endif
+
     void * memory;
-    tralloc_error result = allocator ( &memory, chunk_length + length );
+    size_t chunk_length;
+
+#if defined(TRALLOC_POOL)
+    chunk_length = sizeof ( _tralloc_chunk ) + extensions_length;
+    result       = allocator ( &memory, chunk_length + length );
     if ( result != 0 ) {
         return result;
     }
+#else
+    chunk_length = sizeof ( _tralloc_chunk ) + extensions_length;
+    result       = allocator ( &memory, chunk_length + length );
+    if ( result != 0 ) {
+        return result;
+    }
+#endif
 
     _tralloc_chunk * chunk = ( _tralloc_chunk * ) ( ( uintptr_t ) memory + extensions_length );
     chunk->extensions      = extensions;
@@ -122,11 +167,25 @@ tralloc_error _tralloc_with_extensions_with_allocator ( tralloc_context * parent
     }
 #endif
 
+#if defined(TRALLOC_POOL)
+    if ( have_pool ) {
+        result = _tralloc_pool_new_chunk ( chunk, length );
+        if ( result != 0 ) {
+            free ( memory );
+            return result;
+        }
+    }
+#endif
+
+#if defined(TRALLOC_DEBUG)
     result = _tralloc_add_chunk ( parent_context, chunk );
     if ( result != 0 ) {
+        free ( memory );
         return result;
     }
-    * child_context = _tralloc_context_from_chunk ( chunk );
+#endif
+
+    * child_context = _tralloc_get_context_from_chunk ( chunk );
     return 0;
 }
 
@@ -160,35 +219,40 @@ tralloc_error tralloc_realloc ( tralloc_context ** chunk_context, size_t length 
     if ( context == NULL ) {
         return TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL;
     }
-    _tralloc_chunk * old_chunk = _tralloc_chunk_from_context ( context );
+    _tralloc_chunk * old_chunk = _tralloc_get_chunk_from_context ( context );
 
 #if defined(TRALLOC_DEBUG)
     size_t old_length = old_chunk->length;
 #endif
 
     size_t extensions_length = 0;
+    tralloc_extensions extensions = old_chunk->extensions;
 
 #if defined(TRALLOC_LENGTH)
-    bool have_length = old_chunk->extensions & TRALLOC_EXTENSION_LENGTH;
+    bool have_length = extensions & TRALLOC_EXTENSION_LENGTH;
     if ( have_length ) {
         extensions_length += sizeof ( _tralloc_length );
     }
 #endif
 
 #if defined(TRALLOC_DESTRUCTOR)
-    if ( old_chunk->extensions & TRALLOC_EXTENSION_DESTRUCTORS ) {
+    if ( extensions & TRALLOC_EXTENSION_DESTRUCTORS ) {
         extensions_length += sizeof ( _tralloc_destructors );
     }
 #endif
 
 #if defined(TRALLOC_REFERENCE)
-    bool have_references = old_chunk->extensions & TRALLOC_EXTENSION_REFERENCES;
-    bool have_reference  = old_chunk->extensions & TRALLOC_EXTENSION_REFERENCE;
+    bool have_references = extensions & TRALLOC_EXTENSION_REFERENCES;
+    bool have_reference  = extensions & TRALLOC_EXTENSION_REFERENCE;
     if ( have_references ) {
         extensions_length += sizeof ( _tralloc_references );
     } else if ( have_reference ) {
         extensions_length += sizeof ( _tralloc_reference );
     }
+#endif
+
+#if defined(TRALLOC_POOL)
+    ;
 #endif
 
     void * old_memory = ( void * ) ( ( uintptr_t ) old_chunk - extensions_length );
@@ -228,7 +292,7 @@ tralloc_error tralloc_realloc ( tralloc_context ** chunk_context, size_t length 
         }
 #endif
 
-        * chunk_context = _tralloc_context_from_chunk ( new_chunk );
+        * chunk_context = _tralloc_get_context_from_chunk ( new_chunk );
 
 #if defined(TRALLOC_DEBUG)
         new_chunk->length = length;
@@ -262,27 +326,16 @@ tralloc_error _tralloc_free_chunk ( _tralloc_chunk * chunk )
 #endif
 
     size_t extensions_length = 0;
+    tralloc_extensions extensions = chunk->extensions;
 
 #if defined(TRALLOC_LENGTH)
-    if ( chunk->extensions & TRALLOC_EXTENSION_LENGTH ) {
+    if ( extensions & TRALLOC_EXTENSION_LENGTH ) {
         extensions_length += sizeof ( _tralloc_length );
     }
 #endif
 
-#if defined(TRALLOC_REFERENCE)
-    if ( have_references ) {
-        extensions_length += sizeof ( _tralloc_references );
-    } else if ( chunk->extensions & TRALLOC_EXTENSION_REFERENCE ) {
-        result = _tralloc_reference_free_chunk ( chunk );
-        if ( result != 0 ) {
-            error = result;
-        }
-        extensions_length += sizeof ( _tralloc_reference );
-    }
-#endif
-
 #if defined(TRALLOC_DESTRUCTOR)
-    if ( chunk->extensions & TRALLOC_EXTENSION_DESTRUCTORS ) {
+    if ( extensions & TRALLOC_EXTENSION_DESTRUCTORS ) {
         result = _tralloc_destructor_free_chunk ( chunk );
         if ( result != 0 ) {
             error = result;
@@ -291,10 +344,26 @@ tralloc_error _tralloc_free_chunk ( _tralloc_chunk * chunk )
     }
 #endif
 
+#if defined(TRALLOC_REFERENCE)
+    if ( have_references ) {
+        extensions_length += sizeof ( _tralloc_references );
+    } else if ( extensions & TRALLOC_EXTENSION_REFERENCE ) {
+        result = _tralloc_reference_free_chunk ( chunk );
+        if ( result != 0 ) {
+            error = result;
+        }
+        extensions_length += sizeof ( _tralloc_reference );
+    }
+#endif
+
     result = _tralloc_free_chunk_children ( chunk );
     if ( result != 0 ) {
         error = result;
     }
+
+#if defined(TRALLOC_POOL)
+    ;
+#endif
 
     void * memory = ( void * ) ( ( uintptr_t ) chunk - extensions_length );
     free ( memory );

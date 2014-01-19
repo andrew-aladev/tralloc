@@ -14,7 +14,7 @@ tralloc_error tralloc_move ( tralloc_context * child_context, tralloc_context * 
     if ( child_context == parent_context ) {
         return TRALLOC_ERROR_CHILD_EQUALS_PARENT;
     }
-    _tralloc_chunk * child_chunk = _tralloc_chunk_from_context ( child_context );
+    _tralloc_chunk * child_chunk = _tralloc_get_chunk_from_context ( child_context );
 
 #if defined(TRALLOC_DEBUG)
     _tralloc_chunk * old_parent_chunk;
@@ -31,7 +31,7 @@ tralloc_error tralloc_move ( tralloc_context * child_context, tralloc_context * 
 
         _tralloc_detach_chunk ( child_chunk );
     } else {
-        _tralloc_chunk * new_parent_chunk = _tralloc_chunk_from_context ( parent_context );
+        _tralloc_chunk * new_parent_chunk = _tralloc_get_chunk_from_context ( parent_context );
         if ( child_chunk->parent == new_parent_chunk ) {
             return TRALLOC_ERROR_CHILD_HAS_SAME_PARENT;
         }

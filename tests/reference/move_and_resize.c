@@ -22,13 +22,13 @@ shared_1 shared_2
 static
 bool test_empty_references ( tree * tr )
 {
-    _tralloc_references * common_references  = _tralloc_references_from_chunk ( _tralloc_chunk_from_context ( tr->common ) );
-    _tralloc_references * shared_references  = _tralloc_references_from_chunk ( _tralloc_chunk_from_context ( tr->shared ) );
-    _tralloc_reference  * common_1_reference = _tralloc_reference_from_chunk  ( _tralloc_chunk_from_context ( tr->common_1 ) );
-    _tralloc_reference  * common_2_reference = _tralloc_reference_from_chunk  ( _tralloc_chunk_from_context ( tr->common_2 ) );
-    _tralloc_reference  * common_3_reference = _tralloc_reference_from_chunk  ( _tralloc_chunk_from_context ( tr->common_3 ) );
-    _tralloc_reference  * shared_1_reference = _tralloc_reference_from_chunk  ( _tralloc_chunk_from_context ( tr->shared_1 ) );
-    _tralloc_reference  * shared_2_reference = _tralloc_reference_from_chunk  ( _tralloc_chunk_from_context ( tr->shared_2 ) );
+    _tralloc_references * common_references  = _tralloc_get_references_from_chunk ( _tralloc_get_chunk_from_context ( tr->common ) );
+    _tralloc_references * shared_references  = _tralloc_get_references_from_chunk ( _tralloc_get_chunk_from_context ( tr->shared ) );
+    _tralloc_reference  * common_1_reference = _tralloc_get_reference_from_chunk  ( _tralloc_get_chunk_from_context ( tr->common_1 ) );
+    _tralloc_reference  * common_2_reference = _tralloc_get_reference_from_chunk  ( _tralloc_get_chunk_from_context ( tr->common_2 ) );
+    _tralloc_reference  * common_3_reference = _tralloc_get_reference_from_chunk  ( _tralloc_get_chunk_from_context ( tr->common_3 ) );
+    _tralloc_reference  * shared_1_reference = _tralloc_get_reference_from_chunk  ( _tralloc_get_chunk_from_context ( tr->shared_1 ) );
+    _tralloc_reference  * shared_2_reference = _tralloc_get_reference_from_chunk  ( _tralloc_get_chunk_from_context ( tr->shared_2 ) );
 
     if (
         common_references->first_reference != NULL ||
@@ -63,13 +63,13 @@ bool test_empty_references ( tree * tr )
 static
 bool test_references ( tree * tr )
 {
-    _tralloc_references * common_references  = _tralloc_references_from_chunk ( _tralloc_chunk_from_context ( tr->common ) );
-    _tralloc_references * shared_references  = _tralloc_references_from_chunk ( _tralloc_chunk_from_context ( tr->shared ) );
-    _tralloc_reference  * common_1_reference = _tralloc_reference_from_chunk  ( _tralloc_chunk_from_context ( tr->common_1 ) );
-    _tralloc_reference  * common_2_reference = _tralloc_reference_from_chunk  ( _tralloc_chunk_from_context ( tr->common_2 ) );
-    _tralloc_reference  * common_3_reference = _tralloc_reference_from_chunk  ( _tralloc_chunk_from_context ( tr->common_3 ) );
-    _tralloc_reference  * shared_1_reference = _tralloc_reference_from_chunk  ( _tralloc_chunk_from_context ( tr->shared_1 ) );
-    _tralloc_reference  * shared_2_reference = _tralloc_reference_from_chunk  ( _tralloc_chunk_from_context ( tr->shared_2 ) );
+    _tralloc_references * common_references  = _tralloc_get_references_from_chunk ( _tralloc_get_chunk_from_context ( tr->common ) );
+    _tralloc_references * shared_references  = _tralloc_get_references_from_chunk ( _tralloc_get_chunk_from_context ( tr->shared ) );
+    _tralloc_reference  * common_1_reference = _tralloc_get_reference_from_chunk  ( _tralloc_get_chunk_from_context ( tr->common_1 ) );
+    _tralloc_reference  * common_2_reference = _tralloc_get_reference_from_chunk  ( _tralloc_get_chunk_from_context ( tr->common_2 ) );
+    _tralloc_reference  * common_3_reference = _tralloc_get_reference_from_chunk  ( _tralloc_get_chunk_from_context ( tr->common_3 ) );
+    _tralloc_reference  * shared_1_reference = _tralloc_get_reference_from_chunk  ( _tralloc_get_chunk_from_context ( tr->shared_1 ) );
+    _tralloc_reference  * shared_2_reference = _tralloc_get_reference_from_chunk  ( _tralloc_get_chunk_from_context ( tr->shared_2 ) );
 
     if (
         common_references->first_reference != common_3_reference ||
@@ -104,17 +104,17 @@ bool test_references ( tree * tr )
 static
 bool test_chunks ( tree * tr )
 {
-    _tralloc_chunk * root_chunk     = _tralloc_chunk_from_context ( tr );
-    _tralloc_chunk * common_chunk   = _tralloc_chunk_from_context ( tr->common );
-    _tralloc_chunk * shared_chunk   = _tralloc_chunk_from_context ( tr->shared );
-    _tralloc_chunk * data_1_chunk   = _tralloc_chunk_from_context ( tr->data_1 );
-    _tralloc_chunk * data_2_chunk   = _tralloc_chunk_from_context ( tr->data_2 );
-    _tralloc_chunk * data_3_chunk   = _tralloc_chunk_from_context ( tr->data_3 );
-    _tralloc_chunk * common_1_chunk = _tralloc_chunk_from_context ( tr->common_1 );
-    _tralloc_chunk * common_2_chunk = _tralloc_chunk_from_context ( tr->common_2 );
-    _tralloc_chunk * common_3_chunk = _tralloc_chunk_from_context ( tr->common_3 );
-    _tralloc_chunk * shared_1_chunk = _tralloc_chunk_from_context ( tr->shared_1 );
-    _tralloc_chunk * shared_2_chunk = _tralloc_chunk_from_context ( tr->shared_2 );
+    _tralloc_chunk * root_chunk     = _tralloc_get_chunk_from_context ( tr );
+    _tralloc_chunk * common_chunk   = _tralloc_get_chunk_from_context ( tr->common );
+    _tralloc_chunk * shared_chunk   = _tralloc_get_chunk_from_context ( tr->shared );
+    _tralloc_chunk * data_1_chunk   = _tralloc_get_chunk_from_context ( tr->data_1 );
+    _tralloc_chunk * data_2_chunk   = _tralloc_get_chunk_from_context ( tr->data_2 );
+    _tralloc_chunk * data_3_chunk   = _tralloc_get_chunk_from_context ( tr->data_3 );
+    _tralloc_chunk * common_1_chunk = _tralloc_get_chunk_from_context ( tr->common_1 );
+    _tralloc_chunk * common_2_chunk = _tralloc_get_chunk_from_context ( tr->common_2 );
+    _tralloc_chunk * common_3_chunk = _tralloc_get_chunk_from_context ( tr->common_3 );
+    _tralloc_chunk * shared_1_chunk = _tralloc_get_chunk_from_context ( tr->shared_1 );
+    _tralloc_chunk * shared_2_chunk = _tralloc_get_chunk_from_context ( tr->shared_2 );
 
     if (
         common_chunk->parent      != NULL ||

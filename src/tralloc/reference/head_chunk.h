@@ -14,7 +14,7 @@
 inline
 void _tralloc_references_new_chunk ( _tralloc_chunk * chunk )
 {
-    _tralloc_references * references = _tralloc_references_from_chunk ( chunk );
+    _tralloc_references * references = _tralloc_get_references_from_chunk ( chunk );
     references->first_reference      = NULL;
     references->extensions           = chunk->extensions;
 }
@@ -22,7 +22,7 @@ void _tralloc_references_new_chunk ( _tralloc_chunk * chunk )
 inline
 void _tralloc_references_update_chunk ( _tralloc_chunk * chunk )
 {
-    _tralloc_references * references = _tralloc_references_from_chunk ( chunk );
+    _tralloc_references * references = _tralloc_get_references_from_chunk ( chunk );
     _tralloc_reference  * reference  = references->first_reference;
     while ( reference != NULL ) {
         reference->references = references;
@@ -33,7 +33,7 @@ void _tralloc_references_update_chunk ( _tralloc_chunk * chunk )
 inline
 bool _tralloc_references_try_free_chunk ( _tralloc_chunk * chunk )
 {
-    _tralloc_references * references = _tralloc_references_from_chunk ( chunk );
+    _tralloc_references * references = _tralloc_get_references_from_chunk ( chunk );
     if ( references->first_reference != NULL ) {
         _tralloc_detach_chunk ( chunk );
         return false;

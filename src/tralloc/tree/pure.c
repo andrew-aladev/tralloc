@@ -59,7 +59,7 @@ tralloc_error _tralloc_with_allocator ( tralloc_context * parent_context, trallo
     if ( result != 0 ) {
         return result;
     }
-    * child_context = _tralloc_context_from_chunk ( chunk );
+    * child_context = _tralloc_get_context_from_chunk ( chunk );
     return 0;
 }
 
@@ -85,7 +85,7 @@ tralloc_error tralloc_realloc ( tralloc_context ** chunk_context, size_t length 
     if ( context == NULL ) {
         return TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL;
     }
-    _tralloc_chunk * old_chunk = _tralloc_chunk_from_context ( context );
+    _tralloc_chunk * old_chunk = _tralloc_get_chunk_from_context ( context );
 
 #if defined(TRALLOC_DEBUG)
     size_t old_length = old_chunk->length;
@@ -105,7 +105,7 @@ tralloc_error tralloc_realloc ( tralloc_context ** chunk_context, size_t length 
 
     } else {
         _tralloc_usual_update_chunk ( new_chunk );
-        * chunk_context = _tralloc_context_from_chunk ( new_chunk );
+        * chunk_context = _tralloc_get_context_from_chunk ( new_chunk );
 
 #if defined(TRALLOC_DEBUG)
         new_chunk->length = length;

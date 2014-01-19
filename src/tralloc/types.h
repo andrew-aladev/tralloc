@@ -35,11 +35,9 @@ enum {
 #endif
 
 };
-
 typedef uint8_t tralloc_error;
 
 #if defined(TRALLOC_EXTENSIONS)
-
 enum {
 
 #if defined(TRALLOC_LENGTH)
@@ -54,15 +52,14 @@ enum {
     TRALLOC_EXTENSION_REFERENCE  = 1 << 2,
     TRALLOC_EXTENSION_REFERENCES = 1 << 3,
 #endif
-    
+
 #if defined(TRALLOC_POOL)
-    TRALLOC_POOL_CHILD = 1 << 4,
+    TRALLOC_EXTENSION_POOL_CHILD = 1 << 4,
+    TRALLOC_EXTENSION_POOL       = 1 << 5,
 #endif
 
 };
-
 typedef uint8_t tralloc_extensions;
-
 #endif
 
 #if defined(TRALLOC_LENGTH)
@@ -97,6 +94,22 @@ typedef struct _tralloc_references_type {
     _tralloc_reference * first_reference;
     tralloc_extensions extensions;
 } _tralloc_references;
+#endif
+
+#if defined(TRALLOC_POOL)
+typedef struct _tralloc_pool_fragment_type {
+    size_t offset;
+    size_t length;
+    struct _tralloc_pool_fragment_type * next;
+} _tralloc_pool_fragment;
+
+typedef struct _tralloc_pool_type {
+    _tralloc_pool_fragment * first_fragment;
+} _tralloc_pool;
+
+typedef struct _tralloc_pool_child_type {
+    _tralloc_pool * pool_chunk;
+} _tralloc_pool_child;
 #endif
 
 typedef struct _tralloc_chunk_type {

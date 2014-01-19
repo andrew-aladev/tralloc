@@ -19,10 +19,10 @@
 static
 bool test_chunks ( tree * tr )
 {
-    _tralloc_chunk * root_chunk    = _tralloc_chunk_from_context ( tr );
-    _tralloc_chunk * data_1_chunk  = _tralloc_chunk_from_context ( tr->data_1 );
-    _tralloc_chunk * data_2_chunk  = _tralloc_chunk_from_context ( tr->data_2 );
-    _tralloc_chunk * data_6_chunk  = _tralloc_chunk_from_context ( tr->data_6 );
+    _tralloc_chunk * root_chunk    = _tralloc_get_chunk_from_context ( tr );
+    _tralloc_chunk * data_1_chunk  = _tralloc_get_chunk_from_context ( tr->data_1 );
+    _tralloc_chunk * data_2_chunk  = _tralloc_get_chunk_from_context ( tr->data_2 );
+    _tralloc_chunk * data_6_chunk  = _tralloc_get_chunk_from_context ( tr->data_6 );
 
     if (
         root_chunk->parent      != NULL         ||

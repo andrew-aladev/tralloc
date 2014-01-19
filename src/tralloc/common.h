@@ -10,20 +10,20 @@
 
 
 inline
-tralloc_context * _tralloc_context_from_chunk ( _tralloc_chunk * chunk )
+tralloc_context * _tralloc_get_context_from_chunk ( _tralloc_chunk * chunk )
 {
     return ( tralloc_context * ) ( ( uintptr_t ) chunk + sizeof ( _tralloc_chunk ) );
 }
 
 inline
-_tralloc_chunk * _tralloc_chunk_from_context ( tralloc_context * context )
+_tralloc_chunk * _tralloc_get_chunk_from_context ( tralloc_context * context )
 {
     return ( _tralloc_chunk * ) ( ( uintptr_t ) context - sizeof ( _tralloc_chunk ) );
 }
 
 #if defined(TRALLOC_LENGTH)
 inline
-_tralloc_length * _tralloc_length_from_chunk ( _tralloc_chunk * chunk )
+_tralloc_length * _tralloc_get_length_from_chunk ( _tralloc_chunk * chunk )
 {
     return ( _tralloc_length * ) ( ( uintptr_t ) chunk - sizeof ( _tralloc_length ) );
 }
@@ -31,7 +31,7 @@ _tralloc_length * _tralloc_length_from_chunk ( _tralloc_chunk * chunk )
 
 #if defined(TRALLOC_DESTRUCTOR)
 inline
-_tralloc_destructors * _tralloc_destructors_from_chunk ( _tralloc_chunk * chunk )
+_tralloc_destructors * _tralloc_get_destructors_from_chunk ( _tralloc_chunk * chunk )
 {
     size_t offset = sizeof ( _tralloc_destructors );
 
@@ -47,9 +47,9 @@ _tralloc_destructors * _tralloc_destructors_from_chunk ( _tralloc_chunk * chunk 
 
 #if defined(TRALLOC_REFERENCE)
 inline
-_tralloc_references * _tralloc_references_from_chunk ( _tralloc_chunk * chunk )
+size_t _tralloc_get_reference_offset ( _tralloc_chunk * chunk )
 {
-    size_t offset = sizeof ( _tralloc_references );
+    size_t offset = 0;
 
 #if defined(TRALLOC_LENGTH)
     if ( chunk->extensions & TRALLOC_EXTENSION_LENGTH ) {
@@ -63,11 +63,23 @@ _tralloc_references * _tralloc_references_from_chunk ( _tralloc_chunk * chunk )
     }
 #endif
 
-    return ( _tralloc_references * ) ( ( uintptr_t ) chunk - offset );
+    return offset;
 }
 
 inline
-_tralloc_chunk * _tralloc_chunk_from_references ( _tralloc_references * references )
+_tralloc_references * _tralloc_get_references_from_chunk ( _tralloc_chunk * chunk )
+{
+    return ( _tralloc_references * ) ( ( uintptr_t ) chunk - _tralloc_get_reference_offset ( chunk ) - sizeof ( _tralloc_references ) );
+}
+
+inline
+_tralloc_reference * _tralloc_get_reference_from_chunk ( _tralloc_chunk * chunk )
+{
+    return ( _tralloc_reference * ) ( ( uintptr_t ) chunk - _tralloc_get_reference_offset ( chunk ) - sizeof ( _tralloc_reference ) );
+}
+
+inline
+_tralloc_chunk * _tralloc_get_chunk_from_references ( _tralloc_references * references )
 {
     size_t offset = sizeof ( _tralloc_references );
 
@@ -86,10 +98,13 @@ _tralloc_chunk * _tralloc_chunk_from_references ( _tralloc_references * referenc
     return ( _tralloc_chunk * ) ( ( uintptr_t ) references + offset );
 }
 
+#endif
+
+#if defined(TRALLOC_POOL)
 inline
-_tralloc_reference * _tralloc_reference_from_chunk ( _tralloc_chunk * chunk )
+size_t _tralloc_get_pool_offset ( _tralloc_chunk * chunk )
 {
-    size_t offset = sizeof ( _tralloc_reference );
+    size_t offset = 0;
 
 #if defined(TRALLOC_LENGTH)
     if ( chunk->extensions & TRALLOC_EXTENSION_LENGTH ) {
@@ -103,7 +118,27 @@ _tralloc_reference * _tralloc_reference_from_chunk ( _tralloc_chunk * chunk )
     }
 #endif
 
-    return ( _tralloc_reference * ) ( ( uintptr_t ) chunk - offset );
+#if defined(TRALLOC_REFERENCE)
+    if ( chunk->extensions & TRALLOC_EXTENSION_REFERENCES ) {
+        offset += sizeof ( _tralloc_references );
+    } else if ( chunk->extensions & TRALLOC_EXTENSION_REFERENCE ) {
+        offset += sizeof ( _tralloc_reference );
+    }
+#endif
+
+    return offset;
+}
+
+inline
+_tralloc_pool_child * _tralloc_get_pool_child_from_chunk ( _tralloc_chunk * chunk )
+{
+    return ( _tralloc_pool_child * ) ( ( uintptr_t ) chunk - _tralloc_get_pool_offset ( chunk ) - sizeof ( _tralloc_pool_child ) );
+}
+
+inline
+_tralloc_pool * _tralloc_get_pool_from_chunk ( _tralloc_chunk * chunk )
+{
+    return ( _tralloc_pool * ) ( ( uintptr_t ) chunk - _tralloc_get_pool_offset ( chunk ) - sizeof ( _tralloc_pool ) );
 }
 #endif
 

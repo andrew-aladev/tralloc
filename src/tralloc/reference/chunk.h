@@ -12,7 +12,7 @@
 inline
 void _tralloc_reference_new_chunk ( _tralloc_chunk * reference_chunk )
 {
-    _tralloc_reference * reference = _tralloc_reference_from_chunk ( reference_chunk );
+    _tralloc_reference * reference = _tralloc_get_reference_from_chunk ( reference_chunk );
     reference->references = NULL;
     reference->next       = NULL;
     reference->prev       = NULL;
@@ -21,7 +21,7 @@ void _tralloc_reference_new_chunk ( _tralloc_chunk * reference_chunk )
 inline
 void _tralloc_reference_update_chunk ( _tralloc_chunk * reference_chunk )
 {
-    _tralloc_reference * reference = _tralloc_reference_from_chunk ( reference_chunk );
+    _tralloc_reference * reference = _tralloc_get_reference_from_chunk ( reference_chunk );
     _tralloc_reference * prev      = reference->prev;
     _tralloc_reference * next      = reference->next;
 
@@ -41,7 +41,7 @@ void _tralloc_reference_update_chunk ( _tralloc_chunk * reference_chunk )
 inline
 tralloc_error _tralloc_reference_free_chunk ( _tralloc_chunk * chunk )
 {
-    _tralloc_reference * reference = _tralloc_reference_from_chunk ( chunk );
+    _tralloc_reference * reference = _tralloc_get_reference_from_chunk ( chunk );
     _tralloc_reference * prev      = reference->prev;
     _tralloc_reference * next      = reference->next;
 
@@ -50,7 +50,7 @@ tralloc_error _tralloc_reference_free_chunk ( _tralloc_chunk * chunk )
         if ( references != NULL ) {
             references->first_reference = next;
             if ( next == NULL ) {
-                _tralloc_chunk * references_chunk = _tralloc_chunk_from_references ( references );
+                _tralloc_chunk * references_chunk = _tralloc_get_chunk_from_references ( references );
                 if ( references_chunk->parent == NULL ) {
                     return _tralloc_free_chunk ( references_chunk );
                 }
