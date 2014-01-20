@@ -177,13 +177,11 @@ tralloc_error _tralloc_with_extensions_with_allocator ( tralloc_context * parent
     }
 #endif
 
-#if defined(TRALLOC_DEBUG)
     result = _tralloc_add_chunk ( parent_context, chunk );
     if ( result != 0 ) {
         free ( memory );
         return result;
     }
-#endif
 
     * child_context = _tralloc_get_context_from_chunk ( chunk );
     return 0;

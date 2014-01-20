@@ -1,5 +1,5 @@
 cmake_minimum_required (VERSION 2.8)
-project (tralloc)
+project (tralloc C)
 
 set (TRALLOC_VERSION "0.7.0")
 
@@ -48,6 +48,8 @@ endif ()
 set (CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
 include (CheckC99)
 check_c99 ()
+include (CheckC99_inline)
+check_c99_inline ()
 include (CheckLTO)
 check_lto ()
 

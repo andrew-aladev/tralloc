@@ -3,13 +3,13 @@ function (check_lto)
         return ()
     endif ()
     
-    try_compile (
-        CHECK_LTO_RESULT
+    try_run (
+        CHECK_LTO_RUN_RESULT CHECK_LTO_COMPILE_RESULT
         ${PROJECT_BINARY_DIR}
         SOURCES "${PROJECT_SOURCE_DIR}/cmake/test_files/empty.c"
         COMPILE_DEFINITIONS "-flto"
     )
-    if (CHECK_LTO_RESULT)
+    if (${CHECK_LTO_COMPILE_RESULT} AND CHECK_LTO_RUN_RESULT EQUAL 0)
         set (HAVE_LTO true CACHE STRING "Status of LTO support")
         set (LTO_CFLAGS "-flto" CACHE STRING "LTO cflags")
         set (LTO_LDLAGS "-flto" CACHE STRING "LTO ldflags")
