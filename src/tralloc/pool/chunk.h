@@ -13,7 +13,7 @@ inline
 void _tralloc_pool_child_new_chunk ( _tralloc_chunk * chunk, _tralloc_pool * pool )
 {
     _tralloc_pool_child * pool_child = _tralloc_get_pool_child_from_chunk ( chunk );
-    pool_child->pool_chunk           = pool;
+    pool_child->pool = pool;
 }
 
 

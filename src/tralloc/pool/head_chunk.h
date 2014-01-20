@@ -9,6 +9,7 @@
 #include "../tree/common.h"
 #include <stdlib.h>
 #include <stdbool.h>
+#include <string.h>
 
 
 inline
@@ -28,15 +29,55 @@ tralloc_error _tralloc_pool_new_chunk ( _tralloc_chunk * chunk, size_t length )
 }
 
 inline
+tralloc_error _tralloc_pool_alloc ( _tralloc_chunk * parent_chunk, void ** memory, size_t length, bool zero )
+{
+    _tralloc_pool * pool;
+    if ( parent_chunk->extensions & TRALLOC_EXTENSION_POOL ) {
+        pool = _tralloc_get_pool_from_chunk ( parent_chunk );
+    } else {
+        _tralloc_pool_child * pool_child = _tralloc_get_pool_child_from_chunk ( parent_chunk );
+        pool = pool_child->pool;
+    }
+
+    _tralloc_pool_fragment * fragment = pool->first_fragment;
+    if ( length > fragment->length ) {
+        void * _memory;
+        if ( zero ) {
+            _memory = calloc ( 1, length );
+            if ( _memory == NULL ) {
+                return TRALLOC_ERROR_CALLOC_FAILED;
+            } else {
+                * memory = _memory;
+            }
+        } else {
+            _memory = malloc ( length );
+            if ( _memory == NULL ) {
+                return TRALLOC_ERROR_MALLOC_FAILED;
+            } else {
+                * memory = _memory;
+            }
+        }
+        return 0;
+    }
+
+    size_t length_diff = fragment->length - length;
+
+//     if ( zero ) {
+//         memset ( *memory, 0, length );
+//     }
+    return 0;
+}
+
+inline
 bool _tralloc_pool_try_free_chunk ( _tralloc_chunk * chunk )
 {
     _tralloc_pool * pool = _tralloc_get_pool_from_chunk ( chunk );
-    if ( pool->first_fragment->next != NULL ) {
-        _tralloc_detach_chunk ( chunk );
-        pool->autofree = true;
-        return false;
+    if ( pool->first_fragment != NULL && pool->first_fragment->next == NULL ) {
+        return true;
     }
-    return true;
+    _tralloc_detach_chunk ( chunk );
+    pool->autofree = true;
+    return false;
 }
 
 

@@ -34,12 +34,12 @@ inline
 bool _tralloc_references_try_free_chunk ( _tralloc_chunk * chunk )
 {
     _tralloc_references * references = _tralloc_get_references_from_chunk ( chunk );
-    if ( references->first_reference != NULL ) {
-        _tralloc_detach_chunk ( chunk );
-        references->autofree = true;
-        return false;
+    if ( references->first_reference == NULL ) {
+        return true;
     }
-    return true;
+    _tralloc_detach_chunk ( chunk );
+    references->autofree = true;
+    return false;
 }
 
 

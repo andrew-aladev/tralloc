@@ -111,7 +111,7 @@ typedef struct _tralloc_pool_type {
 } _tralloc_pool;
 
 typedef struct _tralloc_pool_child_type {
-    _tralloc_pool * pool_chunk;
+    _tralloc_pool * pool;
 } _tralloc_pool_child;
 #endif
 

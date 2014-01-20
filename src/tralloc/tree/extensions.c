@@ -95,25 +95,26 @@ tralloc_error _tralloc_with_extensions_with_allocator ( tralloc_context * parent
 #if defined(TRALLOC_POOL)
     bool have_pool;
     bool have_pool_child;
-    if ( parent_context != NULL ) {
-        _tralloc_chunk * parent_chunk = _tralloc_get_chunk_from_context ( parent_context );
+    _tralloc_chunk * parent_chunk;
+    if ( parent_context == NULL ) {
+        have_pool       = extensions & TRALLOC_EXTENSION_POOL;
+        have_pool_child = false;
+        extensions      &= ~ ( TRALLOC_EXTENSION_POOL_CHILD );
+    } else {
+        parent_chunk = _tralloc_get_chunk_from_context ( parent_context );
         if (
             parent_chunk->extensions & TRALLOC_EXTENSION_POOL ||
             parent_chunk->extensions & TRALLOC_EXTENSION_POOL_CHILD
         ) {
             have_pool       = false;
+            extensions      &= ~ ( TRALLOC_EXTENSION_POOL );
             have_pool_child = true;
             extensions      |= TRALLOC_EXTENSION_POOL_CHILD;
-            extensions      &= ~ ( TRALLOC_EXTENSION_POOL );
         } else {
+            have_pool       = extensions & TRALLOC_EXTENSION_POOL;
             have_pool_child = false;
             extensions      &= ~ ( TRALLOC_EXTENSION_POOL_CHILD );
-            have_pool       = extensions & TRALLOC_EXTENSION_POOL;
         }
-    } else {
-        have_pool_child = false;
-        extensions      &= ~ ( TRALLOC_EXTENSION_POOL_CHILD );
-        have_pool       = extensions & TRALLOC_EXTENSION_POOL;
     }
     if ( have_pool ) {
         extensions_length += sizeof ( _tralloc_pool );
@@ -123,17 +124,19 @@ tralloc_error _tralloc_with_extensions_with_allocator ( tralloc_context * parent
 #endif
 
     void * memory;
-    size_t chunk_length;
+    size_t chunk_length = sizeof ( _tralloc_chunk ) + extensions_length;
 
 #if defined(TRALLOC_POOL)
-    chunk_length = sizeof ( _tralloc_chunk ) + extensions_length;
-    result       = allocator ( &memory, chunk_length + length );
+    if ( have_pool_child ) {
+        result = _tralloc_pool_alloc ( parent_chunk, &memory, chunk_length + length, allocator == _calloc );
+    } else {
+        result = allocator ( &memory, chunk_length + length );
+    }
     if ( result != 0 ) {
         return result;
     }
 #else
-    chunk_length = sizeof ( _tralloc_chunk ) + extensions_length;
-    result       = allocator ( &memory, chunk_length + length );
+    result = allocator ( &memory, chunk_length + length );
     if ( result != 0 ) {
         return result;
     }

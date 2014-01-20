@@ -7,4 +7,5 @@
 
 
 extern inline tralloc_error _tralloc_pool_new_chunk      ( _tralloc_chunk * chunk, size_t length );
+extern inline tralloc_error _tralloc_pool_alloc          ( _tralloc_chunk * parent_chunk, void ** memory, size_t length, bool zero );
 extern inline bool          _tralloc_pool_try_free_chunk ( _tralloc_chunk * chunk );
