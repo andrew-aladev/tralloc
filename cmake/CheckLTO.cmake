@@ -13,7 +13,7 @@ function (check_lto)
         set (HAVE_LTO true CACHE STRING "Status of LTO support")
         set (LTO_CFLAGS "-flto" CACHE STRING "LTO cflags")
         set (LTO_LDLAGS "-flto" CACHE STRING "LTO ldflags")
-        message (STATUS "Check for C compiler LTO support - ok")
+        message (STATUS "Check for C compiler LTO support - yes")
         return ()
     endif ()
     

@@ -6,8 +6,9 @@
 #ifndef TRALLOC_POOL_HEAD_CHUNK_H
 #define TRALLOC_POOL_HEAD_CHUNK_H
 
-#include "../common.h"
+#include "../tree/common.h"
 #include <stdlib.h>
+#include <stdbool.h>
 
 
 inline
@@ -22,7 +23,20 @@ tralloc_error _tralloc_pool_new_chunk ( _tralloc_chunk * chunk, size_t length )
     fragment->next       = NULL;
     fragment->length     = length;
     pool->first_fragment = fragment;
+    pool->autofree       = false;
     return 0;
+}
+
+inline
+bool _tralloc_pool_try_free_chunk ( _tralloc_chunk * chunk )
+{
+    _tralloc_pool * pool = _tralloc_get_pool_from_chunk ( chunk );
+    if ( pool->first_fragment->next != NULL ) {
+        _tralloc_detach_chunk ( chunk );
+        pool->autofree = true;
+        return false;
+    }
+    return true;
 }
 
 

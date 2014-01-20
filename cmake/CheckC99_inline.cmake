@@ -16,7 +16,7 @@ function (check_c99_inline)
     )
     if (${CHECK_C99_INLINE_COMPILE_RESULT} AND CHECK_C99_INLINE_RUN_RESULT EQUAL 0)
         set (HAVE_C99_INLINE true CACHE STRING "Status of C99 inline support")
-        message (STATUS "Check for C compiler C99 inline support - ok")
+        message (STATUS "Check for C compiler C99 inline support - yes")
         return ()
     endif ()
     

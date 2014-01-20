@@ -50,9 +50,8 @@ tralloc_error _tralloc_reference_free_chunk ( _tralloc_chunk * chunk )
         if ( references != NULL ) {
             references->first_reference = next;
             if ( next == NULL ) {
-                _tralloc_chunk * references_chunk = _tralloc_get_chunk_from_references ( references );
-                if ( references_chunk->parent == NULL ) {
-                    return _tralloc_free_chunk ( references_chunk );
+                if ( references->autofree ) {
+                    return _tralloc_free_chunk ( _tralloc_get_chunk_from_references ( references ) );
                 }
                 return 0;
             }

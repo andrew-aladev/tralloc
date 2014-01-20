@@ -1,5 +1,6 @@
 #!/bin/bash
 
+make_jobs=$(($(nproc) + 1))
 feature_combinations=$(echo {0..1}{0..1}{0..1}{0..1}{0..1}{0..1})
 for feature in $feature_combinations; do
     arguments="-DTRALLOC_MAN=0 "
@@ -34,7 +35,7 @@ for feature in $feature_combinations; do
         arguments+="-DTRALLOC_UTILS_BUFFER=0 "
     fi
     
-    command="cmake .. -DCMAKE_BUILD_TYPE=\"RELEASE\" $arguments && make clean && make && make test"
+    command="cmake .. -DCMAKE_BUILD_TYPE=\"RELEASE\" $arguments && make clean && make -j $make_jobs && make test"
     echo $command
     eval $command
     if [ ! $? -eq 0 ]; then

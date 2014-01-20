@@ -8,6 +8,7 @@
 
 #include <stdint.h>
 #include <stddef.h>
+#include <stdbool.h>
 
 #include "config.h"
 
@@ -93,6 +94,7 @@ typedef struct _tralloc_reference_type {
 typedef struct _tralloc_references_type {
     _tralloc_reference * first_reference;
     tralloc_extensions extensions;
+    bool autofree;
 } _tralloc_references;
 #endif
 
@@ -105,6 +107,7 @@ typedef struct _tralloc_pool_fragment_type {
 
 typedef struct _tralloc_pool_type {
     _tralloc_pool_fragment * first_fragment;
+    bool autofree;
 } _tralloc_pool;
 
 typedef struct _tralloc_pool_child_type {

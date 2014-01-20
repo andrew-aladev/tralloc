@@ -39,7 +39,7 @@ bool test_empty_references ( tree * tr )
 
         common_2_reference->prev       != NULL ||
         common_2_reference->next       != NULL ||
-        common_2_reference->references != NULL  ||
+        common_2_reference->references != NULL ||
 
         common_1_reference->prev       != NULL ||
         common_1_reference->next       != NULL ||
@@ -232,6 +232,7 @@ bool test_move_and_resize ( tree * tr )
         tralloc_move_reference ( tr->common_1, tr->common ) != 0 ||
         tralloc_move_reference ( tr->common_2, tr->common ) != 0 ||
         tralloc_move_reference ( tr->common_3, tr->common ) != 0 ||
+        tralloc_free           ( tr->common )               != 0 ||
         tralloc_move_reference ( tr->shared_1, tr->shared ) != 0 ||
         tralloc_move_reference ( tr->shared_2, tr->shared ) != 0
     ) {

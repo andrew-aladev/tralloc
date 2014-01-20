@@ -117,13 +117,6 @@ You can store any data after chunk.
 
 You can create, move, realloc and free any chunk.
 
-Deletion of chunk works as follows.
-If chunk has references list and it is not empty - chunk with it's subtree will be detached from tree and delete operation will not proceed to it's children.
-Otherwise it will be deleted.
-If chunk has reference it will be deleted from related references list.
-If related references list is empty and its chunk that has no parent - it will be deleted.
-All destructors will be invoked on delete.
-
 
 
 WARNING
@@ -220,9 +213,10 @@ Function returns error code if error occurred.
 
 Function obtains chunk from chunk_context, detaches it from the tree and start delete operation on subtree.
 If chunk has references list and it is not empty - chunk with it's subtree will be detached from tree and delete operation will not proceed to it's children.
-Otherwise it will be deleted.
+Such references chunk will be marked as "ready to be deleted".
+Otherwise chunk will be deleted.
 If chunk has reference it will be deleted from related references list.
-If related references list is empty and its chunk that has no parent - it will be deleted.
+Reference chunk will delete related references chunk if it is the last reference and references chunk is marked as "ready to be deleted".
 All destructors will be invoked on delete.
 Function returns error code if error occurred.
 Non-zero value meaning is "error code of the last failed operation".
@@ -551,11 +545,6 @@ reference/main.h
 ----------------
 References is usefull to work with shared data from different places of code and avoid duplicates.
 
-When reference will be deleted it will disappear from references list too.
-If reference is last in the references list - it will try to delete references list chunk.
-References list chunk will be deleted only if it has NULL parent.
-Otherwise it will be detached from tree.
-
     tralloc_error tralloc_move_reference ( tralloc_context * child_context, tralloc_context * parent_context );
     
 Function moves reference (obtained from child_context) to references list (obtained from parent_context).
@@ -574,18 +563,38 @@ Example
         if ( tralloc_strdup_with_extensions ( NULL, &common, TRALLOC_EXTENSION_REFERENCES, "big data" ) != 0 ) {
             return 1;
         }
-
         tralloc_context * common_reference_1;
-        tralloc_context * common_reference_2;
-        if (
-            tralloc_with_extensions_new ( NULL, &common_reference_1, TRALLOC_EXTENSION_REFERENCE ) != 0 ||
-            tralloc_with_extensions_new ( NULL, &common_reference_2, TRALLOC_EXTENSION_REFERENCE ) != 0 ||
-            tralloc_move_reference ( common_reference_1, common ) != 0 ||
-            tralloc_move_reference ( common_reference_2, common ) != 0 ||
-            tralloc_free ( common_reference_1 ) != 0 ||
-            tralloc_free ( common_reference_2 ) != 0
-        ) {
+        if ( tralloc_with_extensions_new ( NULL, &common_reference_1, TRALLOC_EXTENSION_REFERENCE ) != 0 ) {
+            tralloc_free ( common );
             return 2;
+        }
+        tralloc_context * common_reference_2;
+        if ( tralloc_with_extensions_new ( NULL, &common_reference_2, TRALLOC_EXTENSION_REFERENCE ) != 0 ) {
+            tralloc_free ( common_reference_1 );
+            tralloc_free ( common );
+            return 3;
+        }
+        if (
+            tralloc_move_reference ( common_reference_1, common ) != 0 ||
+            tralloc_move_reference ( common_reference_2, common ) != 0
+        ) {
+            tralloc_free ( common_reference_1 );
+            tralloc_free ( common_reference_2 );
+            tralloc_free ( common );
+            return 3;
+        }
+        if ( tralloc_free ( common ) != 0 ) {
+            tralloc_free ( common_reference_1 );
+            tralloc_free ( common_reference_2 );
+            return 4;
+        }
+        if (
+            strcmp ( common, "big data" ) != 0       ||
+            tralloc_free ( common_reference_1 ) != 0 ||
+            strcmp ( common, "big data" ) != 0       ||
+            tralloc_free ( common_reference_2 ) != 0 // common will be freed here
+        ) {
+            return 5;
         }
         return 0;
     }

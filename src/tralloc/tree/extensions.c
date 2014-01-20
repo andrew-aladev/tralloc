@@ -314,6 +314,15 @@ tralloc_error _tralloc_free_chunk ( _tralloc_chunk * chunk )
     }
 #endif
 
+#if defined(TRALLOC_POOL)
+    bool have_pool = chunk->extensions & TRALLOC_EXTENSION_POOL;
+    if ( have_pool ) {
+        if ( !_tralloc_pool_try_free_chunk ( chunk ) ) {
+            return 0;
+        }
+    }
+#endif
+
     tralloc_error result, error = 0;
 
 #if defined(TRALLOC_DEBUG)

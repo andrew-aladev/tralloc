@@ -6,7 +6,6 @@
 #ifndef TRALLOC_REFERENCE_HEAD_CHUNK_H
 #define TRALLOC_REFERENCE_HEAD_CHUNK_H
 
-#include "../chunk.h"
 #include "../tree/common.h"
 #include <stdbool.h>
 
@@ -15,8 +14,9 @@ inline
 void _tralloc_references_new_chunk ( _tralloc_chunk * chunk )
 {
     _tralloc_references * references = _tralloc_get_references_from_chunk ( chunk );
-    references->first_reference      = NULL;
-    references->extensions           = chunk->extensions;
+    references->first_reference = NULL;
+    references->extensions      = chunk->extensions;
+    references->autofree        = false;
 }
 
 inline
@@ -36,6 +36,7 @@ bool _tralloc_references_try_free_chunk ( _tralloc_chunk * chunk )
     _tralloc_references * references = _tralloc_get_references_from_chunk ( chunk );
     if ( references->first_reference != NULL ) {
         _tralloc_detach_chunk ( chunk );
+        references->autofree = true;
         return false;
     }
     return true;

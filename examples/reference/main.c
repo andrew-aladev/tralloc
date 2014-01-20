@@ -17,23 +17,43 @@ int main ()
     if ( tralloc_strdup_with_extensions ( NULL, &common, TRALLOC_EXTENSION_REFERENCES, "big data" ) != 0 ) {
         return 1;
     }
-
     tralloc_context * common_reference_1;
-    tralloc_context * common_reference_2;
-    if (
-        tralloc_with_extensions_new ( NULL, &common_reference_1, TRALLOC_EXTENSION_REFERENCE ) != 0 ||
-        tralloc_with_extensions_new ( NULL, &common_reference_2, TRALLOC_EXTENSION_REFERENCE ) != 0 ||
-        tralloc_move_reference ( common_reference_1, common ) != 0 ||
-        tralloc_move_reference ( common_reference_2, common ) != 0 ||
-        tralloc_free ( common_reference_1 ) != 0 ||
-        tralloc_free ( common_reference_2 ) != 0
-    ) {
+    if ( tralloc_with_extensions_new ( NULL, &common_reference_1, TRALLOC_EXTENSION_REFERENCE ) != 0 ) {
+        tralloc_free ( common );
         return 2;
+    }
+    tralloc_context * common_reference_2;
+    if ( tralloc_with_extensions_new ( NULL, &common_reference_2, TRALLOC_EXTENSION_REFERENCE ) != 0 ) {
+        tralloc_free ( common_reference_1 );
+        tralloc_free ( common );
+        return 3;
+    }
+    if (
+        tralloc_move_reference ( common_reference_1, common ) != 0 ||
+        tralloc_move_reference ( common_reference_2, common ) != 0
+    ) {
+        tralloc_free ( common_reference_1 );
+        tralloc_free ( common_reference_2 );
+        tralloc_free ( common );
+        return 3;
+    }
+    if ( tralloc_free ( common ) != 0 ) {
+        tralloc_free ( common_reference_1 );
+        tralloc_free ( common_reference_2 );
+        return 4;
+    }
+    if (
+        strcmp ( common, "big data" ) != 0       ||
+        tralloc_free ( common_reference_1 ) != 0 ||
+        strcmp ( common, "big data" ) != 0       ||
+        tralloc_free ( common_reference_2 ) != 0 // common will be freed here
+    ) {
+        return 5;
     }
 
 #if defined(TRALLOC_DEBUG)
     if ( tralloc_get_chunks_count() != 0 ) {
-        return 3;
+        return 6;
     }
 #endif
 
