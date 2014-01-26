@@ -7,72 +7,91 @@
 #define TRALLOC_POOL_HEAD_CHUNK_H
 
 #include "../tree/common.h"
-#include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
 
 
 inline
-tralloc_error _tralloc_pool_new_chunk ( _tralloc_chunk * chunk, size_t length )
+tralloc_error _tralloc_pool_new_chunk ( _tralloc_chunk * chunk, void * memory, size_t length )
 {
-    _tralloc_pool *          pool     = _tralloc_get_pool_from_chunk ( chunk );
-    _tralloc_pool_fragment * fragment = malloc ( sizeof ( _tralloc_pool_fragment ) );
-    if ( fragment == NULL ) {
-        return TRALLOC_ERROR_MALLOC_FAILED;
+    _tralloc_pool * pool = _tralloc_get_pool_from_chunk ( chunk );
+    pool->first_child = NULL;
+    pool->memory      = memory;
+    pool->autofree    = false;
+
+    if ( length < sizeof ( _tralloc_pool_fragment ) ) {
+        pool->max_fragment = NULL;
+        return 0;
     }
-    fragment->offset     = 0;
+
+    _tralloc_pool_fragment * fragment = memory;
+    fragment->prev       = NULL;
     fragment->next       = NULL;
+    fragment->prev_child = NULL;
     fragment->length     = length;
-    pool->first_fragment = fragment;
-    pool->autofree       = false;
+
+    pool->max_fragment = fragment;
+
     return 0;
 }
 
 inline
-tralloc_error _tralloc_pool_alloc ( _tralloc_chunk * parent_chunk, void ** memory, size_t length, bool zero )
+bool _tralloc_pool_can_alloc ( _tralloc_pool * pool, size_t length )
 {
-    _tralloc_pool * pool;
-    if ( parent_chunk->extensions & TRALLOC_EXTENSION_POOL ) {
-        pool = _tralloc_get_pool_from_chunk ( parent_chunk );
+    _tralloc_pool_fragment * fragment = pool->max_fragment;
+    if ( fragment == NULL || length > fragment->length ) {
+        return false;
+    }
+    return true;
+}
+
+inline
+void _tralloc_pool_new_fragment_insert_after ( _tralloc_pool * pool, _tralloc_pool_fragment * new_fragment, size_t fragment_length, _tralloc_pool_fragment * fragment )
+{
+    new_fragment->length = fragment_length;
+    new_fragment->next   = fragment;
+}
+
+inline
+void _tralloc_pool_detach_fragment ( _tralloc_pool * pool, _tralloc_pool_fragment * fragment )
+{
+    _tralloc_pool_fragment * prev = fragment->prev;
+    _tralloc_pool_fragment * next = fragment->next;
+
+    if ( prev != NULL ) {
+        prev->next = next;
     } else {
-        _tralloc_pool_child * pool_child = _tralloc_get_pool_child_from_chunk ( parent_chunk );
-        pool = pool_child->pool;
+        pool->max_fragment = next;
+    }
+    if ( next != NULL ) {
+        next->prev = prev;
+    }
+}
+
+inline
+void _tralloc_pool_alloc ( _tralloc_pool * pool, void ** memory, size_t length )
+{
+    _tralloc_pool_fragment * fragment = pool->max_fragment;
+    * memory = fragment;
+
+    _tralloc_pool_detach_fragment ( pool, fragment );
+
+    size_t new_fragment_length = fragment->length - length;
+    if ( new_fragment_length < sizeof ( _tralloc_pool_fragment ) ) {
+        return;
     }
 
-    _tralloc_pool_fragment * fragment = pool->first_fragment;
-    if ( length > fragment->length ) {
-        void * _memory;
-        if ( zero ) {
-            _memory = calloc ( 1, length );
-            if ( _memory == NULL ) {
-                return TRALLOC_ERROR_CALLOC_FAILED;
-            } else {
-                * memory = _memory;
-            }
-        } else {
-            _memory = malloc ( length );
-            if ( _memory == NULL ) {
-                return TRALLOC_ERROR_MALLOC_FAILED;
-            } else {
-                * memory = _memory;
-            }
-        }
-        return 0;
-    }
+    _tralloc_pool_fragment * new_fragment = fragment + length;
+    new_fragment->prev_child = ( _tralloc_pool_child * ) fragment;
 
-    size_t length_diff = fragment->length - length;
-
-//     if ( zero ) {
-//         memset ( *memory, 0, length );
-//     }
-    return 0;
+    _tralloc_pool_new_fragment_insert_after ( pool, new_fragment, new_fragment_length, fragment->next );
 }
 
 inline
 bool _tralloc_pool_try_free_chunk ( _tralloc_chunk * chunk )
 {
     _tralloc_pool * pool = _tralloc_get_pool_from_chunk ( chunk );
-    if ( pool->first_fragment != NULL && pool->first_fragment->next == NULL ) {
+    if ( pool->first_child == NULL ) {
         return true;
     }
     _tralloc_detach_chunk ( chunk );

@@ -7,13 +7,34 @@
 #define TRALLOC_POOL_CHUNK_H
 
 #include "../common.h"
+#include <stdlib.h>
 
 
 inline
-void _tralloc_pool_child_new_chunk ( _tralloc_chunk * chunk, _tralloc_pool * pool )
+_tralloc_pool * _tralloc_pool_child_get_pool ( _tralloc_chunk * parent_chunk )
+{
+    if ( parent_chunk->extensions & TRALLOC_EXTENSION_POOL ) {
+        return _tralloc_get_pool_from_chunk ( parent_chunk );
+    } else {
+        _tralloc_pool_child * pool_child = _tralloc_get_pool_child_from_chunk ( parent_chunk );
+        return pool_child->pool;
+    }
+}
+
+inline
+void _tralloc_pool_child_new_chunk ( _tralloc_chunk * chunk, _tralloc_pool * pool, size_t length, _tralloc_pool_child * prev, _tralloc_pool_child * next )
 {
     _tralloc_pool_child * pool_child = _tralloc_get_pool_child_from_chunk ( chunk );
-    pool_child->pool = pool;
+    pool_child->pool   = pool;
+    pool_child->length = length;
+    pool_child->prev   = prev;
+    pool_child->next   = next;
+}
+
+inline
+void _tralloc_pool_child_free_chunk ( _tralloc_chunk * chunk )
+{
+    _tralloc_pool_child * pool_child = _tralloc_get_pool_child_from_chunk ( chunk );
 }
 
 

@@ -22,6 +22,7 @@
 #endif
 
 #if defined(TRALLOC_POOL)
+#include "../pool/chunk.h"
 #include "../pool/head_chunk.h"
 #endif
 
@@ -123,20 +124,37 @@ tralloc_error _tralloc_with_extensions_with_allocator ( tralloc_context * parent
     }
 #endif
 
-    void * memory;
     size_t chunk_length = sizeof ( _tralloc_chunk ) + extensions_length;
+    size_t total_length = chunk_length + length;
+
+#if defined(TRALLOC_POOL)
+    _tralloc_pool * parent_pool;
+    if ( have_pool_child ) {
+        parent_pool = _tralloc_pool_child_get_pool ( parent_chunk );
+        if ( !_tralloc_pool_can_alloc ( parent_pool, total_length ) ) {
+            have_pool_child = false;
+            extensions      &= ~ ( TRALLOC_EXTENSION_POOL_CHILD );
+
+            extensions_length -= sizeof ( _tralloc_pool_child );
+            chunk_length      -= sizeof ( _tralloc_pool_child );
+            total_length      -= sizeof ( _tralloc_pool_child );
+        }
+    }
+#endif
+
+    void * memory;
 
 #if defined(TRALLOC_POOL)
     if ( have_pool_child ) {
-        result = _tralloc_pool_alloc ( parent_chunk, &memory, chunk_length + length, allocator == _calloc );
+        _tralloc_pool_alloc ( parent_pool, &memory, total_length, allocator == _calloc );
     } else {
-        result = allocator ( &memory, chunk_length + length );
-    }
-    if ( result != 0 ) {
-        return result;
+        result = allocator ( &memory, total_length );
+        if ( result != 0 ) {
+            return result;
+        }
     }
 #else
-    result = allocator ( &memory, chunk_length + length );
+    result = allocator ( &memory, total_length );
     if ( result != 0 ) {
         return result;
     }
@@ -172,11 +190,13 @@ tralloc_error _tralloc_with_extensions_with_allocator ( tralloc_context * parent
 
 #if defined(TRALLOC_POOL)
     if ( have_pool ) {
-        result = _tralloc_pool_new_chunk ( chunk, length );
+        result = _tralloc_pool_new_chunk ( chunk, memory, length );
         if ( result != 0 ) {
             free ( memory );
             return result;
         }
+    } else if ( have_pool_child ) {
+        _tralloc_pool_child_new_chunk ( chunk, parent_pool, parent_pool_space_fragment, length );
     }
 #endif
 
@@ -366,16 +386,28 @@ tralloc_error _tralloc_free_chunk ( _tralloc_chunk * chunk )
     }
 #endif
 
+#if defined(TRALLOC_POOL)
+    bool have_pool_child = extensions & TRALLOC_EXTENSION_POOL_CHILD;
+    if ( have_pool_child ) {
+        _tralloc_pool_child_free_chunk ( chunk );
+    }
+#endif
+
     result = _tralloc_free_chunk_children ( chunk );
     if ( result != 0 ) {
         error = result;
     }
 
+    void * memory = ( void * ) ( ( uintptr_t ) chunk - extensions_length );
+
 #if defined(TRALLOC_POOL)
-    ;
+    if ( !have_pool_child ) {
+        free ( memory );
+    }
+#else
+    free ( memory );
 #endif
 
-    void * memory = ( void * ) ( ( uintptr_t ) chunk - extensions_length );
-    free ( memory );
     return error;
+
 }

@@ -6,4 +6,5 @@
 #include "chunk.h"
 
 
-extern inline void _tralloc_pool_child_new_chunk ( _tralloc_chunk * chunk, _tralloc_pool * pool );
+extern inline void            _tralloc_pool_child_new_chunk ( _tralloc_chunk * chunk, _tralloc_pool * pool, _tralloc_pool_space_fragment * fragment, size_t length );
+extern inline _tralloc_pool * _tralloc_pool_child_get_pool  ( _tralloc_chunk * parent_chunk );
