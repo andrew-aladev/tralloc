@@ -46,34 +46,34 @@ bool _tralloc_pool_can_alloc ( _tralloc_pool * pool, size_t length )
 }
 
 inline
-void _tralloc_pool_attach_fragment ( _tralloc_pool * pool, _tralloc_pool_fragment * fragment, _tralloc_pool_fragment * prev_fragment, _tralloc_pool_fragment * next_fragment )
+void _tralloc_pool_attach_fragment ( _tralloc_pool * pool, _tralloc_pool_fragment * fragment, _tralloc_pool_fragment * prev, _tralloc_pool_fragment * next )
 {
-    fragment->prev = prev_fragment;
-    fragment->next = next_fragment;
+    fragment->prev = prev;
+    fragment->next = next;
 
-    if ( prev_fragment != NULL ) {
-        prev_fragment->next = fragment;
+    if ( prev != NULL ) {
+        prev->next = fragment;
     } else {
         pool->max_fragment = fragment;
     }
-    if ( next_fragment != NULL ) {
-        next_fragment->prev = fragment;
+    if ( next != NULL ) {
+        next->prev = fragment;
     }
 }
 
 inline
 void _tralloc_pool_detach_fragment ( _tralloc_pool * pool, _tralloc_pool_fragment * fragment )
 {
-    _tralloc_pool_fragment * prev_fragment = fragment->prev;
-    _tralloc_pool_fragment * next_fragment = fragment->next;
+    _tralloc_pool_fragment * prev = fragment->prev;
+    _tralloc_pool_fragment * next = fragment->next;
 
-    if ( prev_fragment != NULL ) {
-        prev_fragment->next = next_fragment;
+    if ( prev != NULL ) {
+        prev->next = next;
     } else {
-        pool->max_fragment = next_fragment;
+        pool->max_fragment = next;
     }
-    if ( next_fragment != NULL ) {
-        next_fragment->prev = prev_fragment;
+    if ( next != NULL ) {
+        next->prev = prev;
     }
 }
 

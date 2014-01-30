@@ -29,18 +29,15 @@ _tralloc_pool * _tralloc_pool_child_get_pool ( tralloc_context * parent_context 
 }
 
 inline
-void _tralloc_pool_child_new_chunk ( _tralloc_chunk * chunk, _tralloc_pool * pool, size_t length, _tralloc_pool_child * prev, _tralloc_pool_child * next )
+void _tralloc_pool_child_attach ( _tralloc_pool_child * pool_child, _tralloc_pool_child * prev, _tralloc_pool_child * next )
 {
-    _tralloc_pool_child * pool_child = _tralloc_get_pool_child_from_chunk ( chunk );
-    pool_child->pool   = pool;
-    pool_child->length = length;
-    pool_child->prev   = prev;
-    pool_child->next   = next;
+    pool_child->prev = prev;
+    pool_child->next = next;
 
     if ( prev != NULL ) {
         prev->next = pool_child;
     } else {
-        pool->first_child = pool_child;
+        pool_child->pool->first_child = pool_child;
     }
     if ( next != NULL ) {
         next->prev = pool_child;
@@ -48,9 +45,51 @@ void _tralloc_pool_child_new_chunk ( _tralloc_chunk * chunk, _tralloc_pool * poo
 }
 
 inline
+void _tralloc_pool_child_detach ( _tralloc_pool_child * pool_child )
+{
+    _tralloc_pool_child * prev = pool_child->prev;
+    _tralloc_pool_child * next = pool_child->next;
+
+    if ( prev != NULL ) {
+        prev->next = next;
+    } else {
+        pool_child->pool->first_child = next;
+    }
+    if ( next != NULL ) {
+        next->prev = prev;
+    }
+}
+
+inline
+void _tralloc_pool_child_new_chunk ( _tralloc_chunk * chunk, _tralloc_pool * pool, size_t length, _tralloc_pool_child * prev, _tralloc_pool_child * next )
+{
+    _tralloc_pool_child * pool_child = _tralloc_get_pool_child_from_chunk ( chunk );
+    pool_child->pool   = pool;
+    pool_child->length = length;
+    _tralloc_pool_child_attach ( pool_child, prev, next );
+}
+
+inline
 void _tralloc_pool_child_free_chunk ( _tralloc_chunk * chunk )
 {
     _tralloc_pool_child * pool_child = _tralloc_get_pool_child_from_chunk ( chunk );
+    _tralloc_pool_child_detach ( pool_child );
+
+    size_t prev_fragment_length;
+    _tralloc_pool_child * prev = pool_child->prev;
+    if ( prev == NULL ) {
+        prev_fragment_length = 0;
+    } else {
+        prev_fragment_length = prev + prev->length - pool_child;
+    }
+
+    size_t next_fragment_length;
+    _tralloc_pool_child * next = pool_child->next;
+    if ( next == NULL ) {
+        next_fragment_length = 0;
+    } else {
+        next_fragment_length = pool_child + pool_child->length - next;
+    }
 }
 
 

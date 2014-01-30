@@ -8,7 +8,7 @@
 
 extern inline tralloc_error _tralloc_pool_new_chunk                 ( _tralloc_chunk * chunk, void * memory, size_t length );
 extern inline bool          _tralloc_pool_can_alloc                 ( _tralloc_pool * pool, size_t length );
-extern inline void          _tralloc_pool_attach_fragment           ( _tralloc_pool * pool, _tralloc_pool_fragment * fragment, _tralloc_pool_fragment * prev_fragment, _tralloc_pool_fragment * next_fragment );
+extern inline void          _tralloc_pool_attach_fragment           ( _tralloc_pool * pool, _tralloc_pool_fragment * fragment, _tralloc_pool_fragment * prev, _tralloc_pool_fragment * next );
 extern inline void          _tralloc_pool_detach_fragment           ( _tralloc_pool * pool, _tralloc_pool_fragment * fragment );
 extern inline void          _tralloc_pool_new_fragment_insert_after ( _tralloc_pool * pool, _tralloc_pool_fragment * new_fragment, _tralloc_pool_fragment * prev_fragment, _tralloc_pool_fragment * next_fragment );
 extern inline void          _tralloc_pool_alloc                     ( _tralloc_pool * pool, void ** memory, size_t length, bool zero, _tralloc_pool_child ** prev_pool_child, _tralloc_pool_child ** next_pool_child );
