@@ -86,7 +86,8 @@ tralloc_error _tralloc_with_extensions_with_allocator ( tralloc_context * parent
     if ( have_references ) {
         extensions_length += sizeof ( _tralloc_references );
         if ( have_reference ) {
-            extensions &= ~ ( TRALLOC_EXTENSION_REFERENCE );
+            have_reference = false;
+            extensions     &= ~ ( TRALLOC_EXTENSION_REFERENCE );
         }
     } else if ( have_reference ) {
         extensions_length += sizeof ( _tralloc_reference );
@@ -94,31 +95,24 @@ tralloc_error _tralloc_with_extensions_with_allocator ( tralloc_context * parent
 #endif
 
 #if defined(TRALLOC_POOL)
-    bool have_pool;
-    bool have_pool_child;
-    _tralloc_chunk * parent_chunk;
-    if ( parent_context == NULL ) {
-        have_pool       = extensions & TRALLOC_EXTENSION_POOL;
-        have_pool_child = false;
-        extensions      &= ~ ( TRALLOC_EXTENSION_POOL_CHILD );
-    } else {
-        parent_chunk = _tralloc_get_chunk_from_context ( parent_context );
-        if (
-            parent_chunk->extensions & TRALLOC_EXTENSION_POOL ||
-            parent_chunk->extensions & TRALLOC_EXTENSION_POOL_CHILD
-        ) {
-            have_pool       = false;
-            extensions      &= ~ ( TRALLOC_EXTENSION_POOL );
-            have_pool_child = true;
-            extensions      |= TRALLOC_EXTENSION_POOL_CHILD;
-        } else {
-            have_pool       = extensions & TRALLOC_EXTENSION_POOL;
+    bool have_pool       = extensions & TRALLOC_EXTENSION_POOL;
+    bool have_pool_child = extensions & TRALLOC_EXTENSION_POOL_CHILD;
+
+    _tralloc_pool * parent_pool;
+    if ( have_pool_child ) {
+        parent_pool = _tralloc_pool_child_get_pool ( parent_context );
+        if ( parent_pool == NULL ) {
             have_pool_child = false;
             extensions      &= ~ ( TRALLOC_EXTENSION_POOL_CHILD );
         }
     }
+
     if ( have_pool ) {
         extensions_length += sizeof ( _tralloc_pool );
+        if ( have_pool_child ) {
+            have_pool_child = false;
+            extensions      &= ~ ( TRALLOC_EXTENSION_POOL_CHILD );
+        }
     } else if ( have_pool_child ) {
         extensions_length += sizeof ( _tralloc_pool_child );
     }
@@ -128,9 +122,7 @@ tralloc_error _tralloc_with_extensions_with_allocator ( tralloc_context * parent
     size_t total_length = chunk_length + length;
 
 #if defined(TRALLOC_POOL)
-    _tralloc_pool * parent_pool;
     if ( have_pool_child ) {
-        parent_pool = _tralloc_pool_child_get_pool ( parent_chunk );
         if ( !_tralloc_pool_can_alloc ( parent_pool, total_length ) ) {
             have_pool_child = false;
             extensions      &= ~ ( TRALLOC_EXTENSION_POOL_CHILD );
@@ -145,8 +137,9 @@ tralloc_error _tralloc_with_extensions_with_allocator ( tralloc_context * parent
     void * memory;
 
 #if defined(TRALLOC_POOL)
+    _tralloc_pool_child * prev_pool_child, * next_pool_child;
     if ( have_pool_child ) {
-        _tralloc_pool_alloc ( parent_pool, &memory, total_length, allocator == _calloc );
+        _tralloc_pool_alloc ( parent_pool, &memory, total_length, allocator == _calloc, &prev_pool_child, &next_pool_child );
     } else {
         result = allocator ( &memory, total_length );
         if ( result != 0 ) {
@@ -196,7 +189,7 @@ tralloc_error _tralloc_with_extensions_with_allocator ( tralloc_context * parent
             return result;
         }
     } else if ( have_pool_child ) {
-        _tralloc_pool_child_new_chunk ( chunk, parent_pool, parent_pool_space_fragment, length );
+        _tralloc_pool_child_new_chunk ( chunk, parent_pool, length, prev_pool_child, next_pool_child );
     }
 #endif
 
@@ -411,3 +404,4 @@ tralloc_error _tralloc_free_chunk ( _tralloc_chunk * chunk )
     return error;
 
 }
+

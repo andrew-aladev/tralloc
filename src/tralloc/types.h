@@ -111,13 +111,13 @@ typedef struct _tralloc_pool_fragment_type {
     struct _tralloc_pool_fragment_type * prev;
     struct _tralloc_pool_fragment_type * next;
     _tralloc_pool_child * prev_child;
+    _tralloc_pool_child * next_child;
     size_t length;
 } _tralloc_pool_fragment;
 
 typedef struct _tralloc_pool_type {
     _tralloc_pool_child    * first_child;
     _tralloc_pool_fragment * max_fragment;
-    void * memory;
     bool autofree;
 } _tralloc_pool;
 #endif

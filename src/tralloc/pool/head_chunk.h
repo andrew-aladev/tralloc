@@ -15,9 +15,8 @@ inline
 tralloc_error _tralloc_pool_new_chunk ( _tralloc_chunk * chunk, void * memory, size_t length )
 {
     _tralloc_pool * pool = _tralloc_get_pool_from_chunk ( chunk );
-    pool->first_child = NULL;
-    pool->memory      = memory;
-    pool->autofree    = false;
+    pool->first_child    = NULL;
+    pool->autofree       = false;
 
     if ( length < sizeof ( _tralloc_pool_fragment ) ) {
         pool->max_fragment = NULL;
@@ -28,6 +27,7 @@ tralloc_error _tralloc_pool_new_chunk ( _tralloc_chunk * chunk, void * memory, s
     fragment->prev       = NULL;
     fragment->next       = NULL;
     fragment->prev_child = NULL;
+    fragment->next_child = NULL;
     fragment->length     = length;
 
     pool->max_fragment = fragment;
@@ -46,45 +46,74 @@ bool _tralloc_pool_can_alloc ( _tralloc_pool * pool, size_t length )
 }
 
 inline
-void _tralloc_pool_new_fragment_insert_after ( _tralloc_pool * pool, _tralloc_pool_fragment * new_fragment, size_t fragment_length, _tralloc_pool_fragment * fragment )
+void _tralloc_pool_attach_fragment ( _tralloc_pool * pool, _tralloc_pool_fragment * fragment, _tralloc_pool_fragment * prev_fragment, _tralloc_pool_fragment * next_fragment )
 {
-    new_fragment->length = fragment_length;
-    new_fragment->next   = fragment;
+    fragment->prev = prev_fragment;
+    fragment->next = next_fragment;
+
+    if ( prev_fragment != NULL ) {
+        prev_fragment->next = fragment;
+    } else {
+        pool->max_fragment = fragment;
+    }
+    if ( next_fragment != NULL ) {
+        next_fragment->prev = fragment;
+    }
 }
 
 inline
 void _tralloc_pool_detach_fragment ( _tralloc_pool * pool, _tralloc_pool_fragment * fragment )
 {
-    _tralloc_pool_fragment * prev = fragment->prev;
-    _tralloc_pool_fragment * next = fragment->next;
+    _tralloc_pool_fragment * prev_fragment = fragment->prev;
+    _tralloc_pool_fragment * next_fragment = fragment->next;
 
-    if ( prev != NULL ) {
-        prev->next = next;
+    if ( prev_fragment != NULL ) {
+        prev_fragment->next = next_fragment;
     } else {
-        pool->max_fragment = next;
+        pool->max_fragment = next_fragment;
     }
-    if ( next != NULL ) {
-        next->prev = prev;
+    if ( next_fragment != NULL ) {
+        next_fragment->prev = prev_fragment;
     }
 }
 
 inline
-void _tralloc_pool_alloc ( _tralloc_pool * pool, void ** memory, size_t length )
+void _tralloc_pool_new_fragment_insert_after ( _tralloc_pool * pool, _tralloc_pool_fragment * new_fragment, _tralloc_pool_fragment * prev_fragment, _tralloc_pool_fragment * next_fragment )
+{
+    size_t length = new_fragment->length;
+    while ( next_fragment != NULL && length < next_fragment->length ) {
+        prev_fragment = next_fragment;
+        next_fragment = next_fragment->next;
+    }
+
+    _tralloc_pool_attach_fragment ( pool, new_fragment, prev_fragment, next_fragment );
+}
+
+inline
+void _tralloc_pool_alloc ( _tralloc_pool * pool, void ** memory, size_t length, bool zero, _tralloc_pool_child ** prev_pool_child, _tralloc_pool_child ** next_pool_child )
 {
     _tralloc_pool_fragment * fragment = pool->max_fragment;
-    * memory = fragment;
-
     _tralloc_pool_detach_fragment ( pool, fragment );
 
+    _tralloc_pool_fragment * prev_fragment = fragment->prev;
+    _tralloc_pool_fragment * next_fragment = fragment->next;
     size_t new_fragment_length = fragment->length - length;
+
+    * prev_pool_child = fragment->prev_child;
+    * next_pool_child = fragment->next_child;
+    if ( zero ) {
+        memset ( fragment, 0, length );
+    }
+    * memory = fragment;
+
     if ( new_fragment_length < sizeof ( _tralloc_pool_fragment ) ) {
         return;
     }
 
     _tralloc_pool_fragment * new_fragment = fragment + length;
     new_fragment->prev_child = ( _tralloc_pool_child * ) fragment;
-
-    _tralloc_pool_new_fragment_insert_after ( pool, new_fragment, new_fragment_length, fragment->next );
+    new_fragment->length     = new_fragment_length;
+    _tralloc_pool_new_fragment_insert_after ( pool, new_fragment, prev_fragment, next_fragment );
 }
 
 inline

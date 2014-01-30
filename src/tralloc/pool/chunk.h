@@ -11,13 +11,20 @@
 
 
 inline
-_tralloc_pool * _tralloc_pool_child_get_pool ( _tralloc_chunk * parent_chunk )
+_tralloc_pool * _tralloc_pool_child_get_pool ( tralloc_context * parent_context )
 {
-    if ( parent_chunk->extensions & TRALLOC_EXTENSION_POOL ) {
-        return _tralloc_get_pool_from_chunk ( parent_chunk );
+    if ( parent_context == NULL ) {
+        return NULL;
     } else {
-        _tralloc_pool_child * pool_child = _tralloc_get_pool_child_from_chunk ( parent_chunk );
-        return pool_child->pool;
+        _tralloc_chunk * parent_chunk = _tralloc_get_chunk_from_context ( parent_context );
+        if ( parent_chunk->extensions & TRALLOC_EXTENSION_POOL ) {
+            return _tralloc_get_pool_from_chunk ( parent_chunk );
+        } else if ( parent_chunk->extensions & TRALLOC_EXTENSION_POOL_CHILD ) {
+            _tralloc_pool_child * parent_pool_child = _tralloc_get_pool_child_from_chunk ( parent_chunk );
+            return parent_pool_child->pool;
+        } else {
+            return NULL;
+        }
     }
 }
 
@@ -29,6 +36,15 @@ void _tralloc_pool_child_new_chunk ( _tralloc_chunk * chunk, _tralloc_pool * poo
     pool_child->length = length;
     pool_child->prev   = prev;
     pool_child->next   = next;
+
+    if ( prev != NULL ) {
+        prev->next = pool_child;
+    } else {
+        pool->first_child = pool_child;
+    }
+    if ( next != NULL ) {
+        next->prev = pool_child;
+    }
 }
 
 inline
