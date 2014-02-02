@@ -6,8 +6,8 @@
 #ifndef TRALLOC_POOL_HEAD_CHUNK_H
 #define TRALLOC_POOL_HEAD_CHUNK_H
 
+#include "fragment.h"
 #include "../tree/common.h"
-#include <stdbool.h>
 #include <string.h>
 
 
@@ -46,54 +46,10 @@ bool _tralloc_pool_can_alloc ( _tralloc_pool * pool, size_t length )
 }
 
 inline
-void _tralloc_pool_attach_fragment ( _tralloc_pool * pool, _tralloc_pool_fragment * fragment, _tralloc_pool_fragment * prev, _tralloc_pool_fragment * next )
-{
-    fragment->prev = prev;
-    fragment->next = next;
-
-    if ( prev != NULL ) {
-        prev->next = fragment;
-    } else {
-        pool->max_fragment = fragment;
-    }
-    if ( next != NULL ) {
-        next->prev = fragment;
-    }
-}
-
-inline
-void _tralloc_pool_detach_fragment ( _tralloc_pool * pool, _tralloc_pool_fragment * fragment )
-{
-    _tralloc_pool_fragment * prev = fragment->prev;
-    _tralloc_pool_fragment * next = fragment->next;
-
-    if ( prev != NULL ) {
-        prev->next = next;
-    } else {
-        pool->max_fragment = next;
-    }
-    if ( next != NULL ) {
-        next->prev = prev;
-    }
-}
-
-inline
-void _tralloc_pool_new_fragment_insert_after ( _tralloc_pool * pool, _tralloc_pool_fragment * new_fragment, _tralloc_pool_fragment * prev_fragment, _tralloc_pool_fragment * next_fragment )
-{
-    size_t length = new_fragment->length;
-    while ( next_fragment != NULL && length < next_fragment->length ) {
-        prev_fragment = next_fragment;
-        next_fragment = next_fragment->next;
-    }
-
-    _tralloc_pool_attach_fragment ( pool, new_fragment, prev_fragment, next_fragment );
-}
-
-inline
 void _tralloc_pool_alloc ( _tralloc_pool * pool, void ** memory, size_t length, bool zero, _tralloc_pool_child ** prev_pool_child, _tralloc_pool_child ** next_pool_child )
 {
     _tralloc_pool_fragment * fragment = pool->max_fragment;
-    _tralloc_pool_detach_fragment ( pool, fragment );
+    _tralloc_pool_fragment_detach ( pool, fragment );
 
     _tralloc_pool_fragment * prev_fragment = fragment->prev;
     _tralloc_pool_fragment * next_fragment = fragment->next;
@@ -112,8 +68,9 @@ void _tralloc_pool_alloc ( _tralloc_pool * pool, void ** memory, size_t length, 
 
     _tralloc_pool_fragment * new_fragment = fragment + length;
     new_fragment->prev_child = ( _tralloc_pool_child * ) fragment;
+    new_fragment->next_child = * next_pool_child;
     new_fragment->length     = new_fragment_length;
-    _tralloc_pool_new_fragment_insert_after ( pool, new_fragment, prev_fragment, next_fragment );
+    _tralloc_pool_fragment_insert_after ( pool, new_fragment, prev_fragment, next_fragment );
 }
 
 inline

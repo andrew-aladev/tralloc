@@ -29,6 +29,7 @@ bool test_errors ( tralloc_context * ctx )
 
     tralloc_context * references, * reference;
     if (
+        tralloc_with_extensions_new ( ctx, &references, TRALLOC_EXTENSION_REFERENCES | TRALLOC_EXTENSION_REFERENCE ) != TRALLOC_ERROR_BOTH_REFERENCES_AND_REFERENSE ||
         tralloc_with_extensions_new ( ctx, &references, TRALLOC_EXTENSION_REFERENCES ) != 0 ||
         tralloc_with_extensions_new ( ctx, &reference,  TRALLOC_EXTENSION_REFERENCE )  != 0 ||
         tralloc_move_reference      ( reference, NULL )       != TRALLOC_ERROR_CHILD_HAS_SAME_PARENT ||

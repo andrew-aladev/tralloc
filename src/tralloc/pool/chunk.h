@@ -6,8 +6,9 @@
 #ifndef TRALLOC_POOL_CHUNK_H
 #define TRALLOC_POOL_CHUNK_H
 
+#include "fragment.h"
 #include "../common.h"
-#include <stdlib.h>
+#include <string.h>
 
 
 inline
@@ -29,7 +30,7 @@ _tralloc_pool * _tralloc_pool_child_get_pool ( tralloc_context * parent_context 
 }
 
 inline
-void _tralloc_pool_child_attach ( _tralloc_pool_child * pool_child, _tralloc_pool_child * prev, _tralloc_pool_child * next )
+void _tralloc_pool_child_attach ( _tralloc_pool * pool, _tralloc_pool_child * pool_child, _tralloc_pool_child * prev, _tralloc_pool_child * next )
 {
     pool_child->prev = prev;
     pool_child->next = next;
@@ -37,7 +38,7 @@ void _tralloc_pool_child_attach ( _tralloc_pool_child * pool_child, _tralloc_poo
     if ( prev != NULL ) {
         prev->next = pool_child;
     } else {
-        pool_child->pool->first_child = pool_child;
+        pool->first_child = pool_child;
     }
     if ( next != NULL ) {
         next->prev = pool_child;
@@ -45,7 +46,7 @@ void _tralloc_pool_child_attach ( _tralloc_pool_child * pool_child, _tralloc_poo
 }
 
 inline
-void _tralloc_pool_child_detach ( _tralloc_pool_child * pool_child )
+void _tralloc_pool_child_detach ( _tralloc_pool * pool, _tralloc_pool_child * pool_child )
 {
     _tralloc_pool_child * prev = pool_child->prev;
     _tralloc_pool_child * next = pool_child->next;
@@ -53,7 +54,7 @@ void _tralloc_pool_child_detach ( _tralloc_pool_child * pool_child )
     if ( prev != NULL ) {
         prev->next = next;
     } else {
-        pool_child->pool->first_child = next;
+        pool->first_child = next;
     }
     if ( next != NULL ) {
         next->prev = prev;
@@ -66,14 +67,75 @@ void _tralloc_pool_child_new_chunk ( _tralloc_chunk * chunk, _tralloc_pool * poo
     _tralloc_pool_child * pool_child = _tralloc_get_pool_child_from_chunk ( chunk );
     pool_child->pool   = pool;
     pool_child->length = length;
-    _tralloc_pool_child_attach ( pool_child, prev, next );
+    _tralloc_pool_child_attach ( pool, pool_child, prev, next );
+}
+
+inline
+_tralloc_pool_child * _tralloc_pool_child_resize ( _tralloc_pool_child * pool_child, size_t target_length )
+{
+    _tralloc_pool * pool     = pool_child->pool;
+    size_t pool_child_length = pool_child->length;
+
+    size_t next_fragment_length;
+    _tralloc_pool_child * next = pool_child->next;
+    if ( next == NULL ) {
+        next_fragment_length = 0;
+    } else {
+        next_fragment_length = pool_child + pool_child_length - next;
+    }
+
+    size_t length = pool_child_length + next_fragment_length;
+    if ( length >= target_length ) {
+        // src pointer will not be changed.
+        // resize pool child by next fragment.
+
+        if ( next_fragment_length >= sizeof ( _tralloc_pool_fragment ) ) {
+            _tralloc_pool_fragment_resize_to_left ( pool, ( _tralloc_pool_fragment * ) ( pool_child + pool_child_length ), length - target_length );
+        }
+
+        pool_child->length = target_length;
+        return pool_child;
+    }
+
+    size_t prev_fragment_length;
+    _tralloc_pool_child * prev = pool_child->prev;
+    if ( prev == NULL ) {
+        prev_fragment_length = 0;
+    } else {
+        prev_fragment_length = prev + prev->length - pool_child;
+    }
+
+    length += prev_fragment_length;
+    if ( length >= target_length ) {
+        // src pointer will be changed.
+        // prev fragment will be lost.
+        // resize pool child by next fragment.
+
+        _tralloc_pool_fragment * prev_fragment = ( _tralloc_pool_fragment * ) ( pool_child - prev_fragment_length );
+        if ( prev_fragment_length >= sizeof ( _tralloc_pool_fragment ) ) {
+            _tralloc_pool_fragment_detach ( pool, prev_fragment );
+        }
+        if ( next_fragment_length >= sizeof ( _tralloc_pool_fragment ) ) {
+            _tralloc_pool_fragment_resize_to_left ( pool, ( _tralloc_pool_fragment * ) pool_child + pool_child_length, length - target_length );
+        }
+
+        _tralloc_pool_child * new_pool_child = ( _tralloc_pool_child * ) prev_fragment;
+        memmove ( new_pool_child, pool_child, pool_child_length );
+        pool_child->length = target_length;
+        return new_pool_child;
+    }
+
+    return NULL;
 }
 
 inline
 void _tralloc_pool_child_free_chunk ( _tralloc_chunk * chunk )
 {
     _tralloc_pool_child * pool_child = _tralloc_get_pool_child_from_chunk ( chunk );
-    _tralloc_pool_child_detach ( pool_child );
+
+    _tralloc_pool * pool     = pool_child->pool;
+    size_t pool_child_length = pool_child->length;
+    _tralloc_pool_child_detach ( pool, pool_child );
 
     size_t prev_fragment_length;
     _tralloc_pool_child * prev = pool_child->prev;
@@ -88,7 +150,65 @@ void _tralloc_pool_child_free_chunk ( _tralloc_chunk * chunk )
     if ( next == NULL ) {
         next_fragment_length = 0;
     } else {
-        next_fragment_length = pool_child + pool_child->length - next;
+        next_fragment_length = pool_child + pool_child_length - next;
+    }
+
+    size_t length = prev_fragment_length + pool_child_length + next_fragment_length;
+    if ( length < sizeof ( _tralloc_pool_fragment ) ) {
+        return;
+    }
+
+    _tralloc_pool_fragment * prev_fragment = ( _tralloc_pool_fragment * ) ( pool_child - prev_fragment_length );
+    _tralloc_pool_fragment * next_fragment;
+
+    if ( prev_fragment_length < sizeof ( _tralloc_pool_fragment ) ) {
+        if ( next_fragment_length < sizeof ( _tralloc_pool_fragment ) ) {
+            // no registered prev and next fragments.
+            // creating new registered fragment.
+
+            prev_fragment->length     = length;
+            prev_fragment->next_child = next;
+            prev_fragment->prev_child = prev;
+            _tralloc_pool_fragment_insert_after ( pool, prev_fragment, NULL, pool->max_fragment );
+        } else {
+            // no registered prev fragment.
+            // next fragment is registered.
+            // increasing length of next fragment.
+
+            next_fragment = ( _tralloc_pool_fragment * ) ( pool_child + pool_child_length );
+            memmove ( prev_fragment, next_fragment, sizeof ( _tralloc_pool_fragment ) );
+            _tralloc_pool_fragment_detach ( pool, prev_fragment );
+            prev_fragment->length     = length;
+            prev_fragment->prev_child = prev;
+            _tralloc_pool_fragment_insert_before ( pool, prev_fragment, prev_fragment->prev, prev_fragment->next );
+        }
+    } else {
+        if ( next_fragment_length < sizeof ( _tralloc_pool_fragment ) ) {
+            // no registered next fragment.
+            // prev fragment is registered.
+            // increasing length of prev fragment.
+
+            prev_fragment->length     = length;
+            prev_fragment->next_child = next;
+            _tralloc_pool_fragment_insert_before ( pool, prev_fragment, prev_fragment->prev, prev_fragment->next );
+        } else {
+            // both registered prev and next fragments.
+            // increasing length of maximum between prev or next.
+            // detaching minimum between prev and next.
+
+            next_fragment = ( _tralloc_pool_fragment * ) ( pool_child + pool_child_length );
+            _tralloc_pool_fragment_detach ( pool, prev_fragment );
+            _tralloc_pool_fragment_detach ( pool, next_fragment );
+
+            if ( prev_fragment_length < next_fragment_length ) {
+                memmove ( prev_fragment, next_fragment, sizeof ( _tralloc_pool_fragment ) );
+                prev_fragment->prev_child = prev;
+            } else {
+                prev_fragment->next_child = next;
+            }
+            prev_fragment->length = length;
+            _tralloc_pool_fragment_insert_before ( pool, prev_fragment, prev_fragment->prev, prev_fragment->next );
+        }
     }
 }
 
