@@ -6,8 +6,8 @@
 #include "fragment.h"
 
 
-extern inline void _tralloc_pool_fragment_attach         ( _tralloc_pool * pool, _tralloc_pool_fragment * fragment, _tralloc_pool_fragment * prev, _tralloc_pool_fragment * next );
-extern inline void _tralloc_pool_fragment_detach         ( _tralloc_pool * pool, _tralloc_pool_fragment * fragment );
-extern inline void _tralloc_pool_fragment_insert_before  ( _tralloc_pool * pool, _tralloc_pool_fragment * new_fragment, _tralloc_pool_fragment * prev_fragment, _tralloc_pool_fragment * next_fragment );
-extern inline void _tralloc_pool_fragment_insert_after   ( _tralloc_pool * pool, _tralloc_pool_fragment * new_fragment, _tralloc_pool_fragment * prev_fragment, _tralloc_pool_fragment * next_fragment );
-extern inline void _tralloc_pool_fragment_resize_to_left ( _tralloc_pool * pool, _tralloc_pool_fragment * fragment, size_t new_fragment_length );
+extern inline void _tralloc_pool_fragment_attach                  ( _tralloc_pool * pool, _tralloc_pool_fragment * fragment, _tralloc_pool_fragment * prev, _tralloc_pool_fragment * next );
+extern inline void _tralloc_pool_fragment_detach                  ( _tralloc_pool * pool, _tralloc_pool_fragment * fragment );
+extern inline void _tralloc_pool_fragment_increased               ( _tralloc_pool * pool, _tralloc_pool_fragment * fragment );
+extern inline void _tralloc_pool_fragment_decreased               ( _tralloc_pool * pool, _tralloc_pool_fragment * fragment );
+extern inline void _tralloc_pool_fragment_resize_with_right_align ( _tralloc_pool * pool, _tralloc_pool_fragment * fragment, size_t new_fragment_length );

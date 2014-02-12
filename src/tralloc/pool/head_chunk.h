@@ -16,6 +16,8 @@ tralloc_error _tralloc_pool_new_chunk ( _tralloc_chunk * chunk, void * memory, s
 {
     _tralloc_pool * pool = _tralloc_get_pool_from_chunk ( chunk );
     pool->first_child    = NULL;
+    pool->memory         = memory;
+    pool->length         = length;
     pool->autofree       = false;
 
     if ( length < sizeof ( _tralloc_pool_fragment ) ) {
@@ -51,26 +53,24 @@ void _tralloc_pool_alloc ( _tralloc_pool * pool, void ** memory, size_t length, 
     _tralloc_pool_fragment * fragment = pool->max_fragment;
     _tralloc_pool_fragment_detach ( pool, fragment );
 
-    _tralloc_pool_fragment * prev_fragment = fragment->prev;
-    _tralloc_pool_fragment * next_fragment = fragment->next;
     size_t new_fragment_length = fragment->length - length;
-
     * prev_pool_child = fragment->prev_child;
     * next_pool_child = fragment->next_child;
+
+    if ( new_fragment_length >= sizeof ( _tralloc_pool_fragment ) ) {
+        _tralloc_pool_fragment * new_fragment = fragment + length;
+        memmove ( new_fragment, fragment, sizeof ( _tralloc_pool_fragment ) );
+
+        new_fragment->prev_child = ( _tralloc_pool_child * ) fragment;
+        new_fragment->length     = new_fragment_length;
+
+        _tralloc_pool_fragment_decreased ( pool, new_fragment );
+    }
+
     if ( zero ) {
         memset ( fragment, 0, length );
     }
     * memory = fragment;
-
-    if ( new_fragment_length < sizeof ( _tralloc_pool_fragment ) ) {
-        return;
-    }
-
-    _tralloc_pool_fragment * new_fragment = fragment + length;
-    new_fragment->prev_child = ( _tralloc_pool_child * ) fragment;
-    new_fragment->next_child = * next_pool_child;
-    new_fragment->length     = new_fragment_length;
-    _tralloc_pool_fragment_insert_after ( pool, new_fragment, prev_fragment, next_fragment );
 }
 
 inline

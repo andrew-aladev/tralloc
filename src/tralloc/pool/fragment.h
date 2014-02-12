@@ -43,41 +43,53 @@ void _tralloc_pool_fragment_detach ( _tralloc_pool * pool, _tralloc_pool_fragmen
 }
 
 inline
-void _tralloc_pool_fragment_insert_before ( _tralloc_pool * pool, _tralloc_pool_fragment * new_fragment, _tralloc_pool_fragment * prev_fragment, _tralloc_pool_fragment * next_fragment )
+void _tralloc_pool_fragment_increased ( _tralloc_pool * pool, _tralloc_pool_fragment * fragment )
 {
-    while ( prev_fragment != NULL && new_fragment->length > prev_fragment->length ) {
+    _tralloc_pool_fragment * prev_fragment = fragment->prev;
+    _tralloc_pool_fragment * next_fragment = fragment->next;
+
+    while ( prev_fragment != NULL && fragment->length > prev_fragment->length ) {
         prev_fragment = prev_fragment->prev;
         next_fragment = prev_fragment;
     }
 
-    _tralloc_pool_fragment_attach ( pool, new_fragment, prev_fragment, next_fragment );
+    _tralloc_pool_fragment_attach ( pool, fragment, prev_fragment, next_fragment );
 }
 
 inline
-void _tralloc_pool_fragment_insert_after ( _tralloc_pool * pool, _tralloc_pool_fragment * new_fragment, _tralloc_pool_fragment * prev_fragment, _tralloc_pool_fragment * next_fragment )
+void _tralloc_pool_fragment_decreased ( _tralloc_pool * pool, _tralloc_pool_fragment * fragment )
 {
-    while ( next_fragment != NULL && new_fragment->length < next_fragment->length ) {
+    _tralloc_pool_fragment * prev_fragment = fragment->prev;
+    _tralloc_pool_fragment * next_fragment = fragment->next;
+
+    while ( next_fragment != NULL && fragment->length < next_fragment->length ) {
         prev_fragment = next_fragment;
         next_fragment = next_fragment->next;
     }
 
-    _tralloc_pool_fragment_attach ( pool, new_fragment, prev_fragment, next_fragment );
+    _tralloc_pool_fragment_attach ( pool, fragment, prev_fragment, next_fragment );
 }
 
+// before : [ 200 bytes fragment ]
+// after  : [ 100 bytes not used ] [ 100 bytes fragment ]
+// or
+// before : [ 100 bytes not used ] [ 100 bytes fragment ]
+// after  : [ 200 bytes fragment ]
+
 inline
-void _tralloc_pool_fragment_resize_to_left ( _tralloc_pool * pool, _tralloc_pool_fragment * fragment, size_t new_fragment_length )
+void _tralloc_pool_fragment_resize_with_right_align ( _tralloc_pool * pool, _tralloc_pool_fragment * fragment, size_t new_fragment_length )
 {
     _tralloc_pool_fragment_detach ( pool, fragment );
 
     if ( new_fragment_length >= sizeof ( _tralloc_pool_fragment ) ) {
-        _tralloc_pool_fragment * new_fragment = fragment + fragment->length - new_fragment_length;
+        _tralloc_pool_fragment * new_fragment = ( _tralloc_pool_fragment * ) ( ( uintptr_t ) fragment + fragment->length - new_fragment_length );
         memmove ( new_fragment, fragment, sizeof ( _tralloc_pool_fragment ) );
         new_fragment->length = new_fragment_length;
 
         if ( new_fragment_length > fragment->length ) {
-            _tralloc_pool_fragment_insert_before ( pool, new_fragment, new_fragment->prev, new_fragment->next );
+            _tralloc_pool_fragment_increased ( pool, new_fragment );
         } else {
-            _tralloc_pool_fragment_insert_after ( pool, new_fragment, new_fragment->prev, new_fragment->next );
+            _tralloc_pool_fragment_decreased ( pool, new_fragment );
         }
     }
 }
