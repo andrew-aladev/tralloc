@@ -3,30 +3,41 @@
 // tralloc is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TRALLOC_TESTS_REFERENCE_COMMON
-#define TRALLOC_TESTS_REFERENCE_COMMON
+#include "common.h"
+#include <tralloc/tree.h>
 
-#include <tralloc/types.h>
-#include <stdbool.h>
-
-
-typedef struct tree_type {
-    uint32_t *        common;
-    float *           shared;
-    uint8_t *         data_1;
-    uint16_t *        data_2;
-    char *            data_3;
-    int *             common_1;
-    tralloc_context * common_2;
-    uint8_t *         common_3;
-    tralloc_context * shared_1;
-    double *          shared_2;
-} tree;
-
-bool test_errors          ( tralloc_context * ctx );
-bool test_add             ( tree * tr );
-bool test_move_and_resize ( tree * tr );
-bool test_free_subtree    ( tree * tr );
-
-
+#if defined(TRALLOC_DEBUG)
+#include <tralloc/events.h>
 #endif
+
+
+int main ()
+{
+    tralloc_context * ctx;
+    if ( tralloc_new ( NULL, &ctx ) != 0 ) {
+        return 1;
+    }
+    if ( !test_errors ( ctx ) ) {
+        tralloc_free ( ctx );
+        return 2;
+    }
+    if ( !test_add ( ctx ) ) {
+        tralloc_free ( ctx );
+        return 3;
+    }
+    if ( tralloc_free ( ctx ) != 0 ) {
+        return 4;
+    }
+
+#if defined(TRALLOC_DEBUG)
+    if (
+        tralloc_get_chunks_count()           != 0 ||
+        tralloc_get_chunks_overhead_length() != 0 ||
+        tralloc_get_chunks_length()          != 0
+    ) {
+        return 7;
+    }
+#endif
+
+    return 0;
+}

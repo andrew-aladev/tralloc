@@ -162,6 +162,3 @@ bool test_add ( tree * tr )
 
     return test_chunks ( tr );
 }
-
-
-

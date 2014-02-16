@@ -25,13 +25,10 @@ void _tralloc_reference_update_chunk ( _tralloc_chunk * reference_chunk )
     _tralloc_reference * prev      = reference->prev;
     _tralloc_reference * next      = reference->next;
 
-    if ( prev == NULL ) {
-        _tralloc_references * references = reference->references;
-        if ( references != NULL ) {
-            references->first_reference = reference;
-        }
-    } else {
+    if ( prev != NULL ) {
         prev->next = reference;
+    } else {
+        reference->references->first_reference = reference;
     }
     if ( next != NULL ) {
         next->prev = reference;
