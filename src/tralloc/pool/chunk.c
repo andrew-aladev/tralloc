@@ -6,10 +6,12 @@
 #include "chunk.h"
 
 
-extern inline void                  _tralloc_pool_child_attach                   ( _tralloc_pool_child * pool_child, _tralloc_pool_child * prev, _tralloc_pool_child * next );
-extern inline void                  _tralloc_pool_child_detach                   ( _tralloc_pool_child * pool_child );
-extern inline size_t                _tralloc_pool_child_get_prev_fragment_length ( _tralloc_pool_child * pool_child );
-extern inline size_t                _tralloc_pool_child_get_next_fragment_length ( _tralloc_pool_child * pool_child );
+extern inline void _tralloc_pool_child_attach ( _tralloc_pool_child * pool_child, _tralloc_pool_child * prev, _tralloc_pool_child * next );
+extern inline void _tralloc_pool_child_detach ( _tralloc_pool_child * pool_child );
+extern inline void _tralloc_pool_child_update ( _tralloc_pool_child * pool_child );
+
+extern inline size_t _tralloc_pool_child_get_prev_fragment_length ( _tralloc_pool_child * pool_child );
+extern inline size_t _tralloc_pool_child_get_next_fragment_length ( _tralloc_pool_child * pool_child );
 
 extern inline _tralloc_pool *       _tralloc_pool_child_get_pool   ( tralloc_context * parent_context );
 extern inline void                  _tralloc_pool_child_new_chunk  ( _tralloc_chunk * chunk, _tralloc_pool * pool, size_t length, _tralloc_pool_child * prev, _tralloc_pool_child * next );

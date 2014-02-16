@@ -12,65 +12,36 @@
 
 
 inline
-tralloc_error _tralloc_pool_new_chunk ( _tralloc_chunk * chunk, void * memory, size_t length )
+void _tralloc_pool_new_chunk ( _tralloc_chunk * chunk, void * memory, size_t length )
 {
     _tralloc_pool * pool = _tralloc_get_pool_from_chunk ( chunk );
     pool->first_child    = NULL;
     pool->memory         = memory;
     pool->length         = length;
     pool->autofree       = false;
-
-    if ( length < sizeof ( _tralloc_pool_fragment ) ) {
-        pool->max_fragment = NULL;
-        return 0;
-    }
-
-    _tralloc_pool_fragment * fragment = memory;
-    fragment->prev       = NULL;
-    fragment->next       = NULL;
-    fragment->prev_child = NULL;
-    fragment->next_child = NULL;
-    fragment->length     = length;
-
-    pool->max_fragment = fragment;
-
-    return 0;
+    pool->max_fragment   = _tralloc_pool_fragment_new_memory ( memory, length );
 }
 
 inline
 bool _tralloc_pool_can_alloc ( _tralloc_pool * pool, size_t length )
 {
-    _tralloc_pool_fragment * fragment = pool->max_fragment;
-    if ( fragment == NULL || length > fragment->length ) {
-        return false;
-    }
-    return true;
+    return _tralloc_pool_fragment_can_alloc ( pool->max_fragment, length );
 }
 
 inline
 void _tralloc_pool_alloc ( _tralloc_pool * pool, void ** memory, size_t length, bool zero, _tralloc_pool_child ** prev_pool_child, _tralloc_pool_child ** next_pool_child )
 {
     _tralloc_pool_fragment * fragment = pool->max_fragment;
-    _tralloc_pool_fragment_detach ( pool, fragment );
+    _tralloc_pool_fragment_alloc ( pool, fragment, length );
 
     size_t new_fragment_length = fragment->length - length;
     * prev_pool_child = fragment->prev_child;
     * next_pool_child = fragment->next_child;
-
-    if ( new_fragment_length >= sizeof ( _tralloc_pool_fragment ) ) {
-        _tralloc_pool_fragment * new_fragment = fragment + length;
-        memmove ( new_fragment, fragment, sizeof ( _tralloc_pool_fragment ) );
-
-        new_fragment->prev_child = ( _tralloc_pool_child * ) fragment;
-        new_fragment->length     = new_fragment_length;
-
-        _tralloc_pool_fragment_decreased ( pool, new_fragment );
-    }
+    * memory = ( void * ) ( ( uintptr_t ) fragment + new_fragment_length );
 
     if ( zero ) {
-        memset ( fragment, 0, length );
+        memset ( * memory, 0, length );
     }
-    * memory = fragment;
 }
 
 inline

@@ -176,11 +176,7 @@ tralloc_error _tralloc_with_extensions_with_allocator ( tralloc_context * parent
 
 #if defined(TRALLOC_POOL)
     if ( have_pool ) {
-        result = _tralloc_pool_new_chunk ( chunk, memory, length );
-        if ( result != 0 ) {
-            free ( memory );
-            return result;
-        }
+        _tralloc_pool_new_chunk ( chunk, memory, length );
     } else if ( have_pool_child ) {
         _tralloc_pool_child_new_chunk ( chunk, parent_pool, length, prev_pool_child, next_pool_child );
     }
@@ -188,7 +184,16 @@ tralloc_error _tralloc_with_extensions_with_allocator ( tralloc_context * parent
 
     result = _tralloc_add_chunk ( parent_context, chunk );
     if ( result != 0 ) {
+
+#if defined(TRALLOC_POOL)
+        if ( have_pool_child ) {
+            _tralloc_pool_child_free_chunk ( chunk );
+        } else {
+            free ( memory );
+        }
+#else
         free ( memory );
+#endif
         return result;
     }
 
@@ -277,7 +282,22 @@ tralloc_error tralloc_realloc ( tralloc_context ** chunk_context, size_t length 
     if ( have_pool_child ) {
         new_memory = _tralloc_pool_child_resize ( old_memory, total_length );
         if ( new_memory == NULL ) {
-            ;
+            // pool_child should be deleted
+            _tralloc_pool_child * pool_child = _tralloc_get_pool_child_from_chunk ( old_chunk );
+            size_t old_total_length = pool_child->length;
+            _tralloc_pool_child_free_chunk ( old_chunk );
+
+            old_chunk->extensions &= ~ ( TRALLOC_EXTENSION_POOL_CHILD );
+            extensions_length -= sizeof ( _tralloc_pool_child );
+            old_total_length  -= sizeof ( _tralloc_pool_child );
+            total_length      -= sizeof ( _tralloc_pool_child );
+            old_memory        += sizeof ( _tralloc_pool_child );
+
+            new_memory = malloc ( total_length );
+            if ( new_memory == NULL ) {
+                return TRALLOC_ERROR_CALLOC_FAILED;
+            }
+            memmove ( new_memory, old_memory, old_total_length );
         }
     } else {
         new_memory = realloc ( old_memory, total_length );
@@ -421,3 +441,4 @@ tralloc_error _tralloc_free_chunk ( _tralloc_chunk * chunk )
     return error;
 
 }
+
