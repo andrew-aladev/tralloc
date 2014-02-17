@@ -28,4 +28,5 @@ extern inline _tralloc_reference *  _tralloc_get_reference_from_chunk  ( _trallo
 extern inline size_t                _tralloc_get_pool_offset           ( _tralloc_chunk * chunk );
 extern inline _tralloc_pool_child * _tralloc_get_pool_child_from_chunk ( _tralloc_chunk * chunk );
 extern inline _tralloc_pool *       _tralloc_get_pool_from_chunk       ( _tralloc_chunk * chunk );
+extern inline _tralloc_chunk *      _tralloc_get_chunk_from_pool       ( _tralloc_pool  * pool );
 #endif

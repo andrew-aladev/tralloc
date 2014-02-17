@@ -75,6 +75,18 @@ bool test_normal ( tralloc_context * ctx )
     if ( ! ( pool_child_chunk->extensions & TRALLOC_EXTENSION_POOL_CHILD ) ) {
         return false;
     }
+    _tralloc_pool_child * pool_child = _tralloc_get_pool_child_from_chunk ( pool_child_chunk );
+    if (
+        pool_child->length != sizeof ( _tralloc_pool_child ) + sizeof ( _tralloc_chunk ) + sizeof ( uint8_t ) * 5 ||
+        
+        pool->first_child  != pool_child  ||
+        pool->max_fragment != normal_pool ||
+        pool->memory       != normal_pool ||
+        pool->length       != 500         ||
+        pool->autofree     != false
+    ) {
+        return false;
+    }
 
     if ( tralloc_free ( normal_pool ) != 0 ) {
         return false;
@@ -94,3 +106,4 @@ bool test_add ( tralloc_context * ctx )
 
     return true;
 }
+

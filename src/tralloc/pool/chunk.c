@@ -16,4 +16,4 @@ extern inline size_t _tralloc_pool_child_get_next_fragment_length ( _tralloc_poo
 extern inline _tralloc_pool *       _tralloc_pool_child_get_pool   ( tralloc_context * parent_context );
 extern inline void                  _tralloc_pool_child_new_chunk  ( _tralloc_chunk * chunk, _tralloc_pool * pool, size_t length, _tralloc_pool_child * prev, _tralloc_pool_child * next );
 extern inline _tralloc_pool_child * _tralloc_pool_child_resize     ( _tralloc_pool_child * pool_child, size_t target_length );
-extern inline void                  _tralloc_pool_child_free_chunk ( _tralloc_chunk * chunk );
+extern inline tralloc_error         _tralloc_pool_child_free_chunk ( _tralloc_chunk * chunk );

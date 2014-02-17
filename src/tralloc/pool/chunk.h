@@ -7,7 +7,7 @@
 #define TRALLOC_POOL_CHUNK_H
 
 #include "fragment.h"
-#include "../common.h"
+#include "../tree/common.h"
 #include <string.h>
 
 
@@ -153,12 +153,22 @@ _tralloc_pool_child * _tralloc_pool_child_resize ( _tralloc_pool_child * pool_ch
 }
 
 inline
-void _tralloc_pool_child_free_chunk ( _tralloc_chunk * chunk )
+tralloc_error _tralloc_pool_child_free_chunk ( _tralloc_chunk * chunk )
 {
     _tralloc_pool_child * pool_child = _tralloc_get_pool_child_from_chunk ( chunk );
     _tralloc_pool_child_detach ( pool_child );
 
     _tralloc_pool_fragment_free_child ( pool_child, _tralloc_pool_child_get_prev_fragment_length ( pool_child ), _tralloc_pool_child_get_next_fragment_length ( pool_child ) );
+
+    if ( pool_child->prev == NULL ) {
+        _tralloc_pool * pool = pool_child->pool;
+
+        if ( pool->autofree ) {
+            return _tralloc_free_chunk ( _tralloc_get_chunk_from_pool ( pool ) );
+        }
+    }
+
+    return 0;
 }
 
 

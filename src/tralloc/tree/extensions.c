@@ -181,7 +181,7 @@ tralloc_error _tralloc_with_extensions_with_allocator ( tralloc_context * parent
     if ( have_pool ) {
         _tralloc_pool_new_chunk ( chunk, length );
     } else if ( have_pool_child ) {
-        _tralloc_pool_child_new_chunk ( chunk, parent_pool, length, prev_pool_child, next_pool_child );
+        _tralloc_pool_child_new_chunk ( chunk, parent_pool, total_length, prev_pool_child, next_pool_child );
     }
 #endif
 
@@ -374,7 +374,7 @@ tralloc_error _tralloc_free_chunk ( _tralloc_chunk * chunk )
     bool have_pool = chunk->extensions & TRALLOC_EXTENSION_POOL;
     if ( have_pool ) {
         if ( !_tralloc_pool_try_free_chunk ( chunk ) ) {
-            return 0;
+            return _tralloc_free_chunk_children ( chunk );
         }
     }
 #endif
@@ -424,7 +424,10 @@ tralloc_error _tralloc_free_chunk ( _tralloc_chunk * chunk )
     if ( have_pool ) {
         extensions_length += sizeof ( _tralloc_pool );
     } else if ( have_pool_child ) {
-        _tralloc_pool_child_free_chunk ( chunk );
+        result = _tralloc_pool_child_free_chunk ( chunk );
+        if ( result != 0 ) {
+            error = result;
+        }
     }
 #endif
 
@@ -444,5 +447,4 @@ tralloc_error _tralloc_free_chunk ( _tralloc_chunk * chunk )
 #endif
 
     return error;
-
 }

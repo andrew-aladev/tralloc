@@ -126,6 +126,7 @@ typedef struct _tralloc_pool_fragment_type {
 typedef struct _tralloc_pool_type {
     _tralloc_pool_child    * first_child;
     _tralloc_pool_fragment * max_fragment;
+    tralloc_extensions extensions;
     void * memory;
     size_t length;
     bool autofree;

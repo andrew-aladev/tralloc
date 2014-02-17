@@ -15,11 +15,12 @@ inline
 void _tralloc_pool_new_chunk ( _tralloc_chunk * chunk, size_t length )
 {
     _tralloc_pool * pool = _tralloc_get_pool_from_chunk ( chunk );
-    pool->first_child    = NULL;
-    pool->memory         = _tralloc_get_context_from_chunk ( chunk );
-    pool->length         = length;
-    pool->autofree       = false;
-    pool->max_fragment   = _tralloc_pool_fragment_new_memory ( pool->memory, length );
+    pool->first_child  = NULL;
+    pool->extensions   = chunk->extensions;
+    pool->memory       = _tralloc_get_context_from_chunk ( chunk );
+    pool->max_fragment = _tralloc_pool_fragment_new_memory ( pool->memory, length );
+    pool->length       = length;
+    pool->autofree     = false;
 }
 
 inline

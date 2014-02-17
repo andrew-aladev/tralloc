@@ -140,6 +140,35 @@ _tralloc_pool * _tralloc_get_pool_from_chunk ( _tralloc_chunk * chunk )
 {
     return ( _tralloc_pool * ) ( ( uintptr_t ) chunk - _tralloc_get_pool_offset ( chunk ) - sizeof ( _tralloc_pool ) );
 }
+
+inline
+_tralloc_chunk * _tralloc_get_chunk_from_pool ( _tralloc_pool * pool )
+{
+    size_t offset = sizeof ( _tralloc_pool );
+
+#if defined(TRALLOC_LENGTH)
+    if ( pool->extensions & TRALLOC_EXTENSION_LENGTH ) {
+        offset += sizeof ( _tralloc_length );
+    }
+#endif
+
+#if defined(TRALLOC_DESTRUCTOR)
+    if ( pool->extensions & TRALLOC_EXTENSION_DESTRUCTORS ) {
+        offset += sizeof ( _tralloc_destructors );
+    }
+#endif
+
+#if defined(TRALLOC_REFERENCE)
+    if ( pool->extensions & TRALLOC_EXTENSION_REFERENCES ) {
+        offset += sizeof ( _tralloc_references );
+    } else if ( pool->extensions & TRALLOC_EXTENSION_REFERENCE ) {
+        offset += sizeof ( _tralloc_reference );
+    }
+#endif
+
+    return ( _tralloc_chunk * ) ( ( uintptr_t ) pool + offset );
+}
+
 #endif
 
 
