@@ -57,12 +57,19 @@ bool test_normal ( tralloc_context * ctx )
         return false;
     }
     _tralloc_pool * pool = _tralloc_get_pool_from_chunk ( pool_chunk );
+    _tralloc_pool_fragment * fragment = normal_pool;
     if (
         pool->first_child  != NULL        ||
         pool->max_fragment != normal_pool ||
         pool->memory       != normal_pool ||
         pool->length       != 500         ||
-        pool->autofree     != false
+        pool->autofree     != false       ||
+
+        fragment->prev       != NULL ||
+        fragment->next       != NULL ||
+        fragment->prev_child != NULL ||
+        fragment->next_child != NULL ||
+        fragment->length     != 500
     ) {
         return false;
     }
@@ -76,14 +83,24 @@ bool test_normal ( tralloc_context * ctx )
         return false;
     }
     _tralloc_pool_child * pool_child = _tralloc_get_pool_child_from_chunk ( pool_child_chunk );
+    size_t pool_child_length = sizeof ( _tralloc_pool_child ) + sizeof ( _tralloc_chunk ) + sizeof ( uint8_t ) * 5;
     if (
-        pool_child->length != sizeof ( _tralloc_pool_child ) + sizeof ( _tralloc_chunk ) + sizeof ( uint8_t ) * 5 ||
-        
         pool->first_child  != pool_child  ||
         pool->max_fragment != normal_pool ||
         pool->memory       != normal_pool ||
         pool->length       != 500         ||
-        pool->autofree     != false
+        pool->autofree     != false       ||
+
+        pool_child->pool   != pool ||
+        pool_child->prev   != NULL ||
+        pool_child->next   != NULL ||
+        pool_child->length != pool_child_length ||
+
+        fragment->prev       != NULL ||
+        fragment->next       != NULL ||
+        fragment->prev_child != NULL ||
+        fragment->next_child != pool_child ||
+        fragment->length     != 500 - pool_child_length
     ) {
         return false;
     }

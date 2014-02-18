@@ -33,12 +33,12 @@ inline
 void _tralloc_pool_alloc ( _tralloc_pool * pool, void ** memory, size_t length, bool zero, _tralloc_pool_child ** prev_pool_child, _tralloc_pool_child ** next_pool_child )
 {
     _tralloc_pool_fragment * fragment = pool->max_fragment;
-    _tralloc_pool_fragment_alloc ( pool, fragment, length );
-
-    size_t new_fragment_length = fragment->length - length;
     * prev_pool_child = fragment->prev_child;
     * next_pool_child = fragment->next_child;
-    * memory = ( void * ) ( ( uintptr_t ) fragment + new_fragment_length );
+
+    _tralloc_pool_fragment_alloc ( pool, fragment, length );
+
+    * memory = ( void * ) fragment->next_child;
 
     if ( zero ) {
         memset ( * memory, 0, length );
@@ -59,3 +59,4 @@ bool _tralloc_pool_try_free_chunk ( _tralloc_chunk * chunk )
 
 
 #endif
+
