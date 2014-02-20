@@ -358,14 +358,14 @@ tralloc_error tralloc_realloc ( tralloc_context ** chunk_context, size_t length 
 }
 
 
-tralloc_error _tralloc_free_chunk ( _tralloc_chunk * chunk )
+bool _tralloc_free_chunk ( _tralloc_chunk * chunk, tralloc_error * error )
 {
 
 #if defined(TRALLOC_REFERENCE)
     bool have_references = chunk->extensions & TRALLOC_EXTENSION_REFERENCES;
     if ( have_references ) {
         if ( !_tralloc_references_try_free_chunk ( chunk ) ) {
-            return 0;
+            return false;
         }
     }
 #endif
@@ -374,17 +374,17 @@ tralloc_error _tralloc_free_chunk ( _tralloc_chunk * chunk )
     bool have_pool = chunk->extensions & TRALLOC_EXTENSION_POOL;
     if ( have_pool ) {
         if ( !_tralloc_pool_try_free_chunk ( chunk ) ) {
-            return _tralloc_free_chunk_children ( chunk );
+            return true;
         }
     }
 #endif
 
-    tralloc_error result, error = 0;
+    tralloc_error result;
 
 #if defined(TRALLOC_DEBUG)
     result = _tralloc_on_free ( chunk );
     if ( result != 0 ) {
-        error = result;
+        * error = result;
     }
 #endif
 
@@ -401,7 +401,7 @@ tralloc_error _tralloc_free_chunk ( _tralloc_chunk * chunk )
     if ( extensions & TRALLOC_EXTENSION_DESTRUCTORS ) {
         result = _tralloc_destructor_free_chunk ( chunk );
         if ( result != 0 ) {
-            error = result;
+            * error = result;
         }
         extensions_length += sizeof ( _tralloc_destructors );
     }
@@ -413,7 +413,7 @@ tralloc_error _tralloc_free_chunk ( _tralloc_chunk * chunk )
     } else if ( extensions & TRALLOC_EXTENSION_REFERENCE ) {
         result = _tralloc_reference_free_chunk ( chunk );
         if ( result != 0 ) {
-            error = result;
+            * error = result;
         }
         extensions_length += sizeof ( _tralloc_reference );
     }
@@ -426,15 +426,10 @@ tralloc_error _tralloc_free_chunk ( _tralloc_chunk * chunk )
     } else if ( have_pool_child ) {
         result = _tralloc_pool_child_free_chunk ( chunk );
         if ( result != 0 ) {
-            error = result;
+            * error = result;
         }
     }
 #endif
-
-    result = _tralloc_free_chunk_children ( chunk );
-    if ( result != 0 ) {
-        error = result;
-    }
 
     void * memory = ( void * ) ( ( uintptr_t ) chunk - extensions_length );
 
@@ -446,5 +441,5 @@ tralloc_error _tralloc_free_chunk ( _tralloc_chunk * chunk )
     free ( memory );
 #endif
 
-    return error;
+    return true;
 }

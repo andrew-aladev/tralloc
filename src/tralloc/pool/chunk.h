@@ -164,12 +164,9 @@ tralloc_error _tralloc_pool_child_free_chunk ( _tralloc_chunk * chunk )
         _tralloc_pool * pool = pool_child->pool;
 
         if ( pool->autofree ) {
-            _tralloc_chunk * pool_chunk = _tralloc_get_chunk_from_pool ( pool );
-            
-            // pool chunk should be freed without children's, because it will not block delete operation.
-            // if autofree is true - children have been already deleted or delete operation is in progress.
-            pool_chunk->first_child = NULL;
-            return _tralloc_free_chunk ( pool_chunk );
+            tralloc_error error;
+            _tralloc_free_chunk ( _tralloc_get_chunk_from_pool ( pool ), &error );
+            return error;
         }
     }
 

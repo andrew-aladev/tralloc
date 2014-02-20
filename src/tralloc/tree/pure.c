@@ -117,22 +117,17 @@ tralloc_error tralloc_realloc ( tralloc_context ** chunk_context, size_t length 
 }
 
 
-tralloc_error _tralloc_free_chunk ( _tralloc_chunk * chunk )
+bool _tralloc_free_chunk ( _tralloc_chunk * chunk, tralloc_error * error )
 {
-    tralloc_error result, error = 0;
+    tralloc_error result;
 
 #if defined(TRALLOC_DEBUG)
     result = _tralloc_on_free ( chunk );
     if ( result != 0 ) {
-        error = result;
+        * error = result;
     }
 #endif
 
-    result = _tralloc_free_chunk_children ( chunk );
-    if ( result != 0 ) {
-        error = result;
-    }
-
     free ( chunk );
-    return error;
+    return true;
 }

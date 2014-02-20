@@ -51,7 +51,7 @@ tralloc_error _tralloc_reference_free_chunk ( _tralloc_chunk * chunk )
             references->first_reference = next;
             if ( next == NULL ) {
                 if ( references->autofree ) {
-                    return _tralloc_free_chunk ( _tralloc_get_chunk_from_references ( references ) );
+                    return _tralloc_free_subtree ( _tralloc_get_chunk_from_references ( references ) );
                 }
                 return 0;
             }

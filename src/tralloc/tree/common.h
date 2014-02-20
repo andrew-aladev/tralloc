@@ -101,25 +101,29 @@ void _tralloc_detach_chunk ( _tralloc_chunk * chunk )
 }
 
 
-tralloc_error _tralloc_free_chunk ( _tralloc_chunk * chunk );
+bool _tralloc_free_chunk ( _tralloc_chunk * chunk, tralloc_error * error );
 
 inline
-tralloc_error _tralloc_free_chunk_children ( _tralloc_chunk * chunk )
+tralloc_error _tralloc_free_subtree ( _tralloc_chunk * root_chunk )
 {
-    tralloc_error result, error = 0;
-    _tralloc_chunk * child = chunk->first_child;
+    tralloc_error    error = 0;
+    _tralloc_chunk * chunk = root_chunk;
+    bool can_free_children;
 
-    _tralloc_chunk * next_child;
-    while ( child != NULL ) {
-        next_child = child->next;
-        result     = _tralloc_free_chunk ( child );
-        if ( result != 0 ) {
-            error = result;
+    while ( true ) {
+        can_free_children = _tralloc_free_chunk ( chunk, &error );
+        if ( can_free_children && chunk->first_child != NULL ) {
+            chunk = chunk->first_child;
+        } else {
+            while ( chunk->next == NULL ) {
+                if ( chunk == root_chunk ) {
+                    return error;
+                }
+                chunk = chunk->parent;
+            }
+            chunk = chunk->next;
         }
-        child = next_child;
     }
-
-    return error;
 }
 
 inline
@@ -130,13 +134,8 @@ tralloc_error tralloc_free ( tralloc_context * chunk_context )
     }
     _tralloc_chunk * chunk = _tralloc_get_chunk_from_context ( chunk_context );
     _tralloc_detach_chunk ( chunk );
-    return _tralloc_free_chunk ( chunk );
+    return _tralloc_free_subtree ( chunk );
 }
 
 
 #endif
-
-
-
-
-

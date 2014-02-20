@@ -55,5 +55,5 @@ extern inline tralloc_error _tralloc_add_chunk    ( tralloc_context * parent_con
 extern inline void          _tralloc_attach_chunk ( _tralloc_chunk * child, _tralloc_chunk * new_parent );
 extern inline void          _tralloc_detach_chunk ( _tralloc_chunk * chunk );
 
-extern inline tralloc_error _tralloc_free_chunk_children ( _tralloc_chunk * chunk );
-extern inline tralloc_error tralloc_free                 ( tralloc_context * chunk_context );
+extern inline tralloc_error _tralloc_free_subtree ( _tralloc_chunk * root_chunk );
+extern inline tralloc_error tralloc_free          ( tralloc_context * chunk_context );
