@@ -39,15 +39,5 @@ void _tralloc_pool_alloc ( _tralloc_pool * pool, void ** memory, size_t length, 
     }
 }
 
-bool _tralloc_pool_can_free_chunk ( _tralloc_chunk * chunk )
-{
-    _tralloc_pool * pool = _tralloc_get_pool_from_chunk ( chunk );
-    if ( pool->first_child == NULL ) {
-        return true;
-    } else {
-        pool->autofree = true;
-        return false;
-    }
-}
-
+extern inline bool _tralloc_pool_can_free_chunk          ( _tralloc_chunk * chunk );
 extern inline bool _tralloc_pool_can_free_chunk_children ( _tralloc_chunk * UNUSED ( chunk ) );

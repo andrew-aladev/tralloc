@@ -19,7 +19,7 @@ void          _tralloc_detach_chunk ( _tralloc_chunk * chunk );
 
 
 tralloc_error _tralloc_free_single  ( _tralloc_chunk * chunk );
-tralloc_error _tralloc_free_subtree ( _tralloc_chunk * root_chunk );
+tralloc_error _tralloc_free_subtree ( _tralloc_chunk * chunk );
 
 inline
 tralloc_error tralloc_free ( tralloc_context * chunk_context )

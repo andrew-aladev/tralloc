@@ -6,7 +6,7 @@
 #ifndef TRALLOC_POOL_HEAD_CHUNK_H
 #define TRALLOC_POOL_HEAD_CHUNK_H
 
-#include "../types.h"
+#include "../common.h"
 #include "../macro.h"
 
 
@@ -14,7 +14,17 @@ void _tralloc_pool_new_chunk ( _tralloc_chunk * chunk, size_t length );
 bool _tralloc_pool_can_alloc ( _tralloc_pool * pool, size_t length );
 void _tralloc_pool_alloc     ( _tralloc_pool * pool, void ** memory, size_t length, bool zero, _tralloc_pool_child ** prev_pool_child, _tralloc_pool_child ** next_pool_child );
 
-bool _tralloc_pool_can_free_chunk ( _tralloc_chunk * chunk );
+inline
+bool _tralloc_pool_can_free_chunk ( _tralloc_chunk * chunk )
+{
+    _tralloc_pool * pool = _tralloc_get_pool_from_chunk ( chunk );
+    if ( pool->first_child == NULL ) {
+        return true;
+    } else {
+        pool->autofree = true;
+        return false;
+    }
+}
 
 inline
 bool _tralloc_pool_can_free_chunk_children ( _tralloc_chunk * UNUSED ( chunk ) )

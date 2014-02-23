@@ -138,8 +138,17 @@ void _tralloc_detach_chunk ( _tralloc_chunk * chunk )
 
 
 static inline
+void _tralloc_silent_detach_chunk ( _tralloc_chunk * chunk )
+{
+    chunk->parent = NULL;
+    chunk->prev   = NULL;
+    chunk->next   = NULL;
+}
+
+static inline
 _tralloc_chunk * _tralloc_get_vertical_list_root ( _tralloc_chunk * root_chunk )
 {
+    _tralloc_chunk * chunk_to_detach;
     _tralloc_chunk * chunk = root_chunk;
 
     while ( ! _tralloc_can_free_chunk ( chunk ) ) {
@@ -151,12 +160,17 @@ _tralloc_chunk * _tralloc_get_vertical_list_root ( _tralloc_chunk * root_chunk )
             }
 
             while ( chunk->next == NULL ) {
+                chunk_to_detach = chunk;
                 chunk = chunk->parent;
+                _tralloc_silent_detach_chunk ( chunk_to_detach );
+
                 if ( chunk == root_chunk ) {
                     return NULL;
                 }
             }
+            chunk_to_detach = chunk;
             chunk = chunk->next;
+            _tralloc_silent_detach_chunk ( chunk_to_detach );
         }
     }
 
@@ -166,7 +180,7 @@ _tralloc_chunk * _tralloc_get_vertical_list_root ( _tralloc_chunk * root_chunk )
 static inline
 void _tralloc_subtree_to_vertical_list ( _tralloc_chunk * list_root_chunk, _tralloc_chunk * root_chunk )
 {
-    _tralloc_chunk * prev_chunk, * next_chunk;
+    _tralloc_chunk * prev_chunk, * next_chunk, * chunk_to_detach;
     prev_chunk = next_chunk = list_root_chunk;
 
     while ( true ) {
@@ -175,28 +189,35 @@ void _tralloc_subtree_to_vertical_list ( _tralloc_chunk * list_root_chunk, _tral
                 next_chunk = next_chunk->first_child;
             } else {
                 if ( next_chunk == root_chunk ) {
+                    prev_chunk->first_child = NULL;
                     return;
                 }
 
                 while ( next_chunk->next == NULL ) {
+                    chunk_to_detach = next_chunk;
                     next_chunk = next_chunk->parent;
+                    _tralloc_silent_detach_chunk ( chunk_to_detach );
+
                     if ( next_chunk == root_chunk ) {
+                        prev_chunk->first_child = NULL;
                         return;
                     }
                 }
+                chunk_to_detach = next_chunk;
                 next_chunk = next_chunk->next;
+                _tralloc_silent_detach_chunk ( chunk_to_detach );
             }
         } while ( ! _tralloc_can_free_chunk ( next_chunk ) );
 
         prev_chunk->first_child = next_chunk;
         prev_chunk = next_chunk;
     }
-
-    next_chunk->first_child = NULL;
 }
 
 tralloc_error _tralloc_free_subtree ( _tralloc_chunk * root_chunk )
 {
+    _tralloc_detach_chunk ( root_chunk );
+
     _tralloc_chunk * chunk = _tralloc_get_vertical_list_root ( root_chunk );
     if ( chunk == NULL ) {
         return 0;
@@ -208,7 +229,6 @@ tralloc_error _tralloc_free_subtree ( _tralloc_chunk * root_chunk )
     while ( chunk != NULL ) {
         next_chunk = chunk->first_child;
 
-        _tralloc_detach_chunk ( chunk );
         result = _tralloc_free_chunk ( chunk );
         if ( result != 0 ) {
             error = result;

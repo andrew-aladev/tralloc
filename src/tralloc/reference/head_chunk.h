@@ -20,13 +20,38 @@ void _tralloc_references_new_chunk ( _tralloc_chunk * chunk )
     references->autofree        = false;
 }
 
-void _tralloc_references_update_chunk   ( _tralloc_chunk * chunk );
-bool _tralloc_references_can_free_chunk ( _tralloc_chunk * chunk );
+inline
+void _tralloc_references_update_chunk ( _tralloc_chunk * chunk )
+{
+    _tralloc_references * references = _tralloc_get_references_from_chunk ( chunk );
+    _tralloc_reference  * reference  = references->first_reference;
+    while ( reference != NULL ) {
+        reference->references = references;
+        reference = reference->next;
+    }
+}
 
 inline
-bool _tralloc_references_can_free_chunk_children ( _tralloc_chunk * UNUSED ( chunk ) )
+bool _tralloc_references_can_free_chunk ( _tralloc_chunk * chunk )
 {
-    return false;
+    _tralloc_references * references = _tralloc_get_references_from_chunk ( chunk );
+    if ( references->first_reference == NULL ) {
+        return true;
+    } else {
+        references->autofree = true;
+        return false;
+    }
+}
+
+inline
+bool _tralloc_references_can_free_chunk_children ( _tralloc_chunk * chunk )
+{
+    _tralloc_references * references = _tralloc_get_references_from_chunk ( chunk );
+    if ( references->first_reference == NULL ) {
+        return true;
+    } else {
+        return false;
+    }
 }
 
 #endif
