@@ -16,6 +16,7 @@
 typedef void tralloc_context;
 
 enum {
+
     TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL = 1,
     TRALLOC_ERROR_MALLOC_FAILED,
     TRALLOC_ERROR_CALLOC_FAILED,
@@ -68,8 +69,9 @@ enum {
 #endif
 
 };
-typedef uint8_t tralloc_extensions;
 #endif
+
+typedef uint8_t tralloc_extensions;
 
 #if defined(TRALLOC_LENGTH)
 typedef struct _tralloc_length_type {
@@ -152,3 +154,4 @@ typedef struct _tralloc_chunk_type {
 
 
 #endif
+

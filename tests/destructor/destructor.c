@@ -8,6 +8,7 @@
 #include <tralloc/tree.h>
 #include <tralloc/helpers/string.h>
 #include <tralloc/destructor/main.h>
+#include <tralloc/destructor/common.h>
 
 
 static

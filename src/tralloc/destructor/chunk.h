@@ -6,8 +6,7 @@
 #ifndef TRALLOC_DESTRUCTOR_CHUNK_H
 #define TRALLOC_DESTRUCTOR_CHUNK_H
 
-#include "../common.h"
-#include <stdlib.h>
+#include "common.h"
 
 
 inline
@@ -18,34 +17,7 @@ void _tralloc_destructors_new_chunk ( _tralloc_chunk * chunk )
     destructors->last_destructor       = NULL;
 }
 
-inline
-tralloc_error _tralloc_destructor_free_chunk ( _tralloc_chunk * chunk )
-{
-    _tralloc_destructors * destructors = _tralloc_get_destructors_from_chunk ( chunk );
-    if ( destructors == NULL ) {
-        return 0;
-    }
-
-    tralloc_error result, error = 0;
-    tralloc_context * chunk_context  = _tralloc_get_context_from_chunk ( chunk );
-    _tralloc_destructor * destructor = destructors->first_destructor;
-    _tralloc_destructor * next_destructor;
-    tralloc_destructor_function function;
-
-    while ( destructor != NULL ) {
-        function = destructor->function;
-        if ( function != NULL ) {
-            if ( ( result = function ( chunk_context, destructor->user_data ) ) != 0 ) {
-                error = result;
-            }
-        }
-
-        next_destructor = destructor->next;
-        free ( destructor );
-        destructor = next_destructor;
-    }
-    return error;
-}
+tralloc_error _tralloc_destructor_free_chunk ( _tralloc_chunk * chunk );
 
 
 #endif

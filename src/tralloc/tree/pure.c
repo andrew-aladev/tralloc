@@ -131,7 +131,7 @@ tralloc_error _tralloc_free_chunk ( _tralloc_chunk * chunk )
 #if defined(TRALLOC_DEBUG)
     result = _tralloc_on_free ( chunk );
     if ( result != 0 ) {
-        * error = result;
+        error = result;
     }
 #endif
 

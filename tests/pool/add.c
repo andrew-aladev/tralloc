@@ -5,6 +5,7 @@
 
 #include "common.h"
 #include <tralloc/tree.h>
+#include <tralloc/pool/common.h>
 
 
 static

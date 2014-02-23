@@ -6,7 +6,7 @@
 #ifndef TRALLOC_REFERENCE_HEAD_CHUNK_H
 #define TRALLOC_REFERENCE_HEAD_CHUNK_H
 
-#include "../common.h"
+#include "common.h"
 #include "../macro.h"
 #include <stdbool.h>
 

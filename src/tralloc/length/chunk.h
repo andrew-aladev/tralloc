@@ -6,7 +6,7 @@
 #ifndef TRALLOC_LENGTH_CHUNK_H
 #define TRALLOC_LENGTH_CHUNK_H
 
-#include "../common.h"
+#include "common.h"
 
 
 inline

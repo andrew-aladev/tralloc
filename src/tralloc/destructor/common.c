@@ -3,23 +3,7 @@
 // tralloc is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Lesser Public License for more details.
 // You should have received a copy of the GNU General Lesser Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TRALLOC_REFERENCE_CHUNK_H
-#define TRALLOC_REFERENCE_CHUNK_H
-
 #include "common.h"
 
 
-inline
-void _tralloc_reference_new_chunk ( _tralloc_chunk * chunk )
-{
-    _tralloc_reference * reference = _tralloc_get_reference_from_chunk ( chunk );
-    reference->references = NULL;
-    reference->next       = NULL;
-    reference->prev       = NULL;
-}
-
-void          _tralloc_reference_update_chunk ( _tralloc_chunk * reference_chunk );
-tralloc_error _tralloc_reference_free_chunk   ( _tralloc_chunk * chunk );
-
-
-#endif
+extern inline _tralloc_destructors * _tralloc_get_destructors_from_chunk ( _tralloc_chunk * chunk );
