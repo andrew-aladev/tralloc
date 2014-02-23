@@ -25,10 +25,7 @@ bool _tralloc_references_can_free_chunk ( _tralloc_chunk * chunk )
     if ( references->first_reference == NULL ) {
         return true;
     } else {
-        if ( ! references->autofree ) {
-            references->autofree = true;
-            _tralloc_detach_chunk ( chunk );
-        }
+        references->autofree = true;
         return false;
     }
 }

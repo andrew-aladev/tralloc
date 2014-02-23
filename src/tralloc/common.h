@@ -10,6 +10,42 @@
 
 
 inline
+size_t tralloc_predict_chunk_length ( tralloc_extensions extensions )
+{
+    size_t extensions_length = 0;
+
+#if defined(TRALLOC_LENGTH)
+    if ( extensions & TRALLOC_EXTENSION_LENGTH ) {
+        extensions_length += sizeof ( _tralloc_length );
+    }
+#endif
+
+#if defined(TRALLOC_DESTRUCTOR)
+    if ( extensions & TRALLOC_EXTENSION_DESTRUCTORS ) {
+        extensions_length += sizeof ( _tralloc_destructors );
+    }
+#endif
+
+#if defined(TRALLOC_REFERENCE)
+    if ( extensions & TRALLOC_EXTENSION_REFERENCES ) {
+        extensions_length += sizeof ( _tralloc_references );
+    } else if ( extensions & TRALLOC_EXTENSION_REFERENCE ) {
+        extensions_length += sizeof ( _tralloc_reference );
+    }
+#endif
+
+#if defined(TRALLOC_POOL)
+    if ( extensions & TRALLOC_EXTENSION_POOL ) {
+        extensions_length += sizeof ( _tralloc_pool );
+    } else if ( extensions & TRALLOC_EXTENSION_POOL_CHILD ) {
+        extensions_length += sizeof ( _tralloc_pool_child );
+    }
+#endif
+
+    return extensions_length + sizeof ( _tralloc_chunk );
+}
+
+inline
 tralloc_context * _tralloc_get_context_from_chunk ( _tralloc_chunk * chunk )
 {
     return ( tralloc_context * ) ( ( uintptr_t ) chunk + sizeof ( _tralloc_chunk ) );

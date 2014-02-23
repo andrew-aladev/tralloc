@@ -40,7 +40,7 @@ bool _tralloc_pool_fragment_can_alloc ( _tralloc_pool_fragment * fragment, size_
     return true;
 }
 
-void _tralloc_pool_fragment_alloc ( _tralloc_pool * pool, _tralloc_pool_fragment * fragment, size_t length );
+_tralloc_pool_child * _tralloc_pool_fragment_alloc ( _tralloc_pool * pool, _tralloc_pool_fragment * fragment, size_t length );
 
 
 void _tralloc_pool_fragment_resize_next_child ( _tralloc_pool_child * pool_child, size_t target_length, size_t next_length );

@@ -119,14 +119,15 @@ _tralloc_pool_child * _tralloc_pool_child_resize ( _tralloc_pool_child * pool_ch
 
 tralloc_error _tralloc_pool_child_free_chunk ( _tralloc_chunk * chunk )
 {
-    _tralloc_pool_child * pool_child = _tralloc_get_pool_child_from_chunk ( chunk );
+    _tralloc_pool_child * pool_child      = _tralloc_get_pool_child_from_chunk ( chunk );
+    _tralloc_pool       * pool            = pool_child->pool;
+    _tralloc_pool_child * prev_pool_child = pool_child->prev;
+
     _tralloc_pool_child_detach ( pool_child );
 
     _tralloc_pool_fragment_free_child ( pool_child, _tralloc_pool_child_get_prev_fragment_length ( pool_child ), _tralloc_pool_child_get_next_fragment_length ( pool_child ) );
 
-    if ( pool_child->prev == NULL ) {
-        _tralloc_pool * pool = pool_child->pool;
-
+    if ( prev_pool_child == NULL ) {
         if ( pool->autofree ) {
             return _tralloc_free_single ( _tralloc_get_chunk_from_pool ( pool ) );
         }

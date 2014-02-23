@@ -6,6 +6,8 @@
 #include "common.h"
 
 
+extern inline size_t tralloc_predict_chunk_length ( tralloc_extensions extensions );
+
 extern inline tralloc_context * _tralloc_get_context_from_chunk ( _tralloc_chunk * chunk );
 extern inline _tralloc_chunk *  _tralloc_get_chunk_from_context ( tralloc_context * context );
 

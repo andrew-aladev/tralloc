@@ -191,6 +191,8 @@ void _tralloc_subtree_to_vertical_list ( _tralloc_chunk * list_root_chunk, _tral
         prev_chunk->first_child = next_chunk;
         prev_chunk = next_chunk;
     }
+
+    next_chunk->first_child = NULL;
 }
 
 tralloc_error _tralloc_free_subtree ( _tralloc_chunk * root_chunk )

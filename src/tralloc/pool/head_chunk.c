@@ -32,9 +32,7 @@ void _tralloc_pool_alloc ( _tralloc_pool * pool, void ** memory, size_t length, 
     * prev_pool_child = fragment->prev_child;
     * next_pool_child = fragment->next_child;
 
-    _tralloc_pool_fragment_alloc ( pool, fragment, length );
-
-    * memory = ( void * ) fragment->next_child;
+    * memory = ( void * ) _tralloc_pool_fragment_alloc ( pool, fragment, length );
 
     if ( zero ) {
         memset ( * memory, 0, length );
@@ -47,10 +45,7 @@ bool _tralloc_pool_can_free_chunk ( _tralloc_chunk * chunk )
     if ( pool->first_child == NULL ) {
         return true;
     } else {
-        if ( ! pool->autofree ) {
-            pool->autofree = true;
-            _tralloc_detach_chunk ( chunk );
-        }
+        pool->autofree = true;
         return false;
     }
 }
