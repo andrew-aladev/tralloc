@@ -4,9 +4,55 @@
 // You should have received a copy of the GNU General Lesser Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
 #include "head_chunk.h"
+#include "fragment.h"
+#include "../tree/common.h"
+
+#include <string.h>
 
 
-extern inline void _tralloc_pool_new_chunk      ( _tralloc_chunk * chunk, size_t length );
-extern inline bool _tralloc_pool_can_alloc      ( _tralloc_pool * pool, size_t length );
-extern inline void _tralloc_pool_alloc          ( _tralloc_pool * pool, void ** memory, size_t length, bool zero, _tralloc_pool_child ** prev_pool_child, _tralloc_pool_child ** next_pool_child );
-extern inline bool _tralloc_pool_try_free_chunk ( _tralloc_chunk * chunk );
+void _tralloc_pool_new_chunk ( _tralloc_chunk * chunk, size_t length )
+{
+    _tralloc_pool * pool = _tralloc_get_pool_from_chunk ( chunk );
+    pool->first_child  = NULL;
+    pool->extensions   = chunk->extensions;
+    pool->memory       = _tralloc_get_context_from_chunk ( chunk );
+    pool->max_fragment = _tralloc_pool_fragment_new_memory ( pool->memory, length );
+    pool->length       = length;
+    pool->autofree     = false;
+}
+
+bool _tralloc_pool_can_alloc ( _tralloc_pool * pool, size_t length )
+{
+    return _tralloc_pool_fragment_can_alloc ( pool->max_fragment, length );
+}
+
+void _tralloc_pool_alloc ( _tralloc_pool * pool, void ** memory, size_t length, bool zero, _tralloc_pool_child ** prev_pool_child, _tralloc_pool_child ** next_pool_child )
+{
+    _tralloc_pool_fragment * fragment = pool->max_fragment;
+    * prev_pool_child = fragment->prev_child;
+    * next_pool_child = fragment->next_child;
+
+    _tralloc_pool_fragment_alloc ( pool, fragment, length );
+
+    * memory = ( void * ) fragment->next_child;
+
+    if ( zero ) {
+        memset ( * memory, 0, length );
+    }
+}
+
+bool _tralloc_pool_can_free_chunk ( _tralloc_chunk * chunk )
+{
+    _tralloc_pool * pool = _tralloc_get_pool_from_chunk ( chunk );
+    if ( pool->first_child == NULL ) {
+        return true;
+    } else {
+        if ( ! pool->autofree ) {
+            pool->autofree = true;
+            _tralloc_detach_chunk ( chunk );
+        }
+        return false;
+    }
+}
+
+extern inline bool _tralloc_pool_can_free_chunk_children ( _tralloc_chunk * UNUSED ( chunk ) );

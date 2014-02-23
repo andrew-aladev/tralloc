@@ -6,7 +6,8 @@
 #ifndef TRALLOC_TREE_PURE_H
 #define TRALLOC_TREE_PURE_H
 
-#include "../common.h"
+#include "../types.h"
+#include "../macro.h"
 
 
 tralloc_error tralloc      ( tralloc_context * parent_context, tralloc_context ** child_context, size_t length );
@@ -17,6 +18,20 @@ tralloc_error tralloc_new ( tralloc_context * parent_context, tralloc_context **
 {
     return tralloc ( parent_context, child_context, 0 );
 }
+
+inline
+bool _tralloc_can_free_chunk ( _tralloc_chunk * UNUSED ( chunk ) )
+{
+    return true;
+}
+
+inline
+bool _tralloc_can_free_chunk_children ( _tralloc_chunk * UNUSED ( chunk ) )
+{
+    return true;
+}
+
+tralloc_error _tralloc_free_chunk ( _tralloc_chunk * chunk );
 
 
 #endif

@@ -3,10 +3,14 @@
 // tralloc is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Lesser Public License for more details.
 // You should have received a copy of the GNU General Lesser Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
-#include "common.h"
 #include "pure.h"
+#include "common.h"
 
 #include "../chunk.h"
+
+#if defined(TRALLOC_DEBUG)
+#include "../events.h"
+#endif
 
 #include <stdlib.h>
 
@@ -117,9 +121,12 @@ tralloc_error tralloc_realloc ( tralloc_context ** chunk_context, size_t length 
 }
 
 
-bool _tralloc_free_chunk ( _tralloc_chunk * chunk, tralloc_error * error )
+extern inline bool _tralloc_can_free_chunk          ( _tralloc_chunk * UNUSED ( chunk ) );
+extern inline bool _tralloc_can_free_chunk_children ( _tralloc_chunk * UNUSED ( chunk ) );
+
+tralloc_error _tralloc_free_chunk ( _tralloc_chunk * chunk )
 {
-    tralloc_error result;
+    tralloc_error error = 0, result;
 
 #if defined(TRALLOC_DEBUG)
     result = _tralloc_on_free ( chunk );
@@ -129,5 +136,5 @@ bool _tralloc_free_chunk ( _tralloc_chunk * chunk, tralloc_error * error )
 #endif
 
     free ( chunk );
-    return true;
+    return error;
 }

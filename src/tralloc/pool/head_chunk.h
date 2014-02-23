@@ -6,57 +6,21 @@
 #ifndef TRALLOC_POOL_HEAD_CHUNK_H
 #define TRALLOC_POOL_HEAD_CHUNK_H
 
-#include "fragment.h"
-#include "../tree/common.h"
-#include <string.h>
+#include "../types.h"
+#include "../macro.h"
 
 
-inline
-void _tralloc_pool_new_chunk ( _tralloc_chunk * chunk, size_t length )
-{
-    _tralloc_pool * pool = _tralloc_get_pool_from_chunk ( chunk );
-    pool->first_child  = NULL;
-    pool->extensions   = chunk->extensions;
-    pool->memory       = _tralloc_get_context_from_chunk ( chunk );
-    pool->max_fragment = _tralloc_pool_fragment_new_memory ( pool->memory, length );
-    pool->length       = length;
-    pool->autofree     = false;
-}
+void _tralloc_pool_new_chunk ( _tralloc_chunk * chunk, size_t length );
+bool _tralloc_pool_can_alloc ( _tralloc_pool * pool, size_t length );
+void _tralloc_pool_alloc     ( _tralloc_pool * pool, void ** memory, size_t length, bool zero, _tralloc_pool_child ** prev_pool_child, _tralloc_pool_child ** next_pool_child );
+
+bool _tralloc_pool_can_free_chunk ( _tralloc_chunk * chunk );
 
 inline
-bool _tralloc_pool_can_alloc ( _tralloc_pool * pool, size_t length )
+bool _tralloc_pool_can_free_chunk_children ( _tralloc_chunk * UNUSED ( chunk ) )
 {
-    return _tralloc_pool_fragment_can_alloc ( pool->max_fragment, length );
-}
-
-inline
-void _tralloc_pool_alloc ( _tralloc_pool * pool, void ** memory, size_t length, bool zero, _tralloc_pool_child ** prev_pool_child, _tralloc_pool_child ** next_pool_child )
-{
-    _tralloc_pool_fragment * fragment = pool->max_fragment;
-    * prev_pool_child = fragment->prev_child;
-    * next_pool_child = fragment->next_child;
-
-    _tralloc_pool_fragment_alloc ( pool, fragment, length );
-
-    * memory = ( void * ) fragment->next_child;
-
-    if ( zero ) {
-        memset ( * memory, 0, length );
-    }
-}
-
-inline
-bool _tralloc_pool_try_free_chunk ( _tralloc_chunk * chunk )
-{
-    _tralloc_pool * pool = _tralloc_get_pool_from_chunk ( chunk );
-    if ( pool->first_child == NULL ) {
-        return true;
-    }
-    _tralloc_detach_chunk ( chunk );
-    pool->autofree = true;
-    return false;
+    return true;
 }
 
 
 #endif
-

@@ -6,6 +6,9 @@
 #include "common.h"
 #include <tralloc/tree.h>
 
+#if defined(TRALLOC_DEBUG)
+#include <tralloc/events.h>
+#endif
 
 int main ()
 {

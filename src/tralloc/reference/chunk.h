@@ -6,65 +6,20 @@
 #ifndef TRALLOC_REFERENCE_CHUNK_H
 #define TRALLOC_REFERENCE_CHUNK_H
 
-#include "../tree/common.h"
+#include "../common.h"
 
 
 inline
-void _tralloc_reference_new_chunk ( _tralloc_chunk * reference_chunk )
+void _tralloc_reference_new_chunk ( _tralloc_chunk * chunk )
 {
-    _tralloc_reference * reference = _tralloc_get_reference_from_chunk ( reference_chunk );
+    _tralloc_reference * reference = _tralloc_get_reference_from_chunk ( chunk );
     reference->references = NULL;
     reference->next       = NULL;
     reference->prev       = NULL;
 }
 
-inline
-void _tralloc_reference_update_chunk ( _tralloc_chunk * reference_chunk )
-{
-    _tralloc_reference * reference = _tralloc_get_reference_from_chunk ( reference_chunk );
-    _tralloc_reference * prev      = reference->prev;
-    _tralloc_reference * next      = reference->next;
-
-    if ( prev != NULL ) {
-        prev->next = reference;
-    } else {
-        _tralloc_references * references = reference->references;
-        if ( references != NULL ) {
-            references->first_reference = reference;
-        }
-    }
-    if ( next != NULL ) {
-        next->prev = reference;
-    }
-}
-
-inline
-tralloc_error _tralloc_reference_free_chunk ( _tralloc_chunk * chunk )
-{
-    _tralloc_reference * reference = _tralloc_get_reference_from_chunk ( chunk );
-    _tralloc_reference * prev      = reference->prev;
-    _tralloc_reference * next      = reference->next;
-
-    if ( prev == NULL ) {
-        _tralloc_references * references = reference->references;
-        if ( references != NULL ) {
-            references->first_reference = next;
-            if ( next == NULL ) {
-                if ( references->autofree ) {
-                    return _tralloc_free_subtree ( _tralloc_get_chunk_from_references ( references ) );
-                }
-                return 0;
-            }
-        }
-    } else {
-        prev->next = next;
-    }
-    if ( next != NULL ) {
-        next->prev = prev;
-    }
-
-    return 0;
-}
+void          _tralloc_reference_update_chunk ( _tralloc_chunk * reference_chunk );
+tralloc_error _tralloc_reference_free_chunk   ( _tralloc_chunk * chunk );
 
 
 #endif

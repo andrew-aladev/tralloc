@@ -9,29 +9,7 @@
 #include "types.h"
 
 
-inline
-void _tralloc_usual_update_chunk ( _tralloc_chunk * chunk )
-{
-    _tralloc_chunk * prev = chunk->prev;
-    if ( prev == NULL ) {
-        _tralloc_chunk * parent = chunk->parent;
-        if ( parent != NULL ) {
-            parent->first_child = chunk;
-        }
-    } else {
-        prev->next = chunk;
-    }
-    _tralloc_chunk * next = chunk->next;
-    if ( next != NULL ) {
-        next->prev = chunk;
-    }
-
-    _tralloc_chunk * next_child = chunk->first_child;
-    while ( next_child != NULL ) {
-        next_child->parent = chunk;
-        next_child = next_child->next;
-    }
-}
+void _tralloc_usual_update_chunk ( _tralloc_chunk * chunk );
 
 
 #endif
