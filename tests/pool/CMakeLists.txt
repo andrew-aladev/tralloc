@@ -1,4 +1,4 @@
-set (SRC main.c errors.c add.c)
+set (SRC main.c errors.c add.c move.c)
 
 if (${TRALLOC_SHARED})
     set (NAME ${TRALLOC_TARGET}-test-pool)

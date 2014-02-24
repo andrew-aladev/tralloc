@@ -3,16 +3,15 @@
 // tralloc is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TRALLOC_TESTS_POOL_COMMON
-#define TRALLOC_TESTS_POOL_COMMON
-
-#include <tralloc/types.h>
-#include <stdbool.h>
+#include "common.h"
+#include <tralloc/tree.h>
 
 
-bool test_errors ( tralloc_context * ctx );
-bool test_add    ( tralloc_context * ctx );
-bool test_move   ( tralloc_context * ctx );
+bool test_move ( tralloc_context * ctx )
+{
+    size_t pool_data_length = tralloc_predict_chunk_length ( TRALLOC_EXTENSION_POOL_CHILD ) + sizeof ( uint8_t ) * 5;
 
+    ;
 
-#endif
+    return true;
+}

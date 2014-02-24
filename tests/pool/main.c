@@ -25,8 +25,12 @@ int main ()
         tralloc_free ( ctx );
         return 3;
     }
-    if ( tralloc_free ( ctx ) != 0 ) {
+    if ( !test_move ( ctx ) ) {
+        tralloc_free ( ctx );
         return 4;
+    }
+    if ( tralloc_free ( ctx ) != 0 ) {
+        return 5;
     }
 
 #if defined(TRALLOC_DEBUG)

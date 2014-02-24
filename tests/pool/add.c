@@ -50,10 +50,10 @@ static
 bool test_memory_strict ( tralloc_context * ctx )
 {
     size_t pool_child_length = tralloc_predict_chunk_length ( TRALLOC_EXTENSION_POOL_CHILD ) + sizeof ( uint8_t ) * 5;
-    size_t pool_length       = pool_child_length;
+    size_t pool_data_length  = pool_child_length;
 
     tralloc_context * pool_data;
-    if ( tralloc_with_extensions ( ctx, &pool_data, TRALLOC_EXTENSION_POOL, pool_length ) != 0 ) {
+    if ( tralloc_with_extensions ( ctx, &pool_data, TRALLOC_EXTENSION_POOL, pool_data_length ) != 0 ) {
         return false;
     }
     _tralloc_chunk * pool_chunk = _tralloc_get_chunk_from_context ( pool_data );
@@ -63,17 +63,17 @@ bool test_memory_strict ( tralloc_context * ctx )
     _tralloc_pool * pool = _tralloc_get_pool_from_chunk ( pool_chunk );
     _tralloc_pool_fragment * fragment = pool_data;
     if (
-        pool->first_child  != NULL        ||
-        pool->max_fragment != fragment    ||
-        pool->memory       != pool_data   ||
-        pool->length       != pool_length ||
-        pool->autofree     != false       ||
+        pool->first_child  != NULL             ||
+        pool->max_fragment != fragment         ||
+        pool->memory       != pool_data        ||
+        pool->length       != pool_data_length ||
+        pool->autofree     != false            ||
 
         fragment->prev       != NULL ||
         fragment->next       != NULL ||
         fragment->prev_child != NULL ||
         fragment->next_child != NULL ||
-        fragment->length     != pool_length
+        fragment->length     != pool_data_length
     ) {
         return false;
     }
@@ -88,11 +88,11 @@ bool test_memory_strict ( tralloc_context * ctx )
     }
     _tralloc_pool_child * pool_child = _tralloc_get_pool_child_from_chunk ( pool_child_chunk );
     if (
-        pool->first_child  != pool_child  ||
-        pool->max_fragment != NULL        ||
-        pool->memory       != pool_data   ||
-        pool->length       != pool_length ||
-        pool->autofree     != false       ||
+        pool->first_child  != pool_child       ||
+        pool->max_fragment != NULL             ||
+        pool->memory       != pool_data        ||
+        pool->length       != pool_data_length ||
+        pool->autofree     != false            ||
 
         pool_child->pool   != pool ||
         pool_child->prev   != NULL ||
@@ -113,10 +113,10 @@ static
 bool test_memory_much ( tralloc_context * ctx )
 {
     size_t pool_child_length = tralloc_predict_chunk_length ( TRALLOC_EXTENSION_POOL_CHILD ) + sizeof ( uint8_t ) * 5;
-    size_t pool_length       = pool_child_length + sizeof ( _tralloc_pool_fragment );
+    size_t pool_data_length  = pool_child_length + sizeof ( _tralloc_pool_fragment );
 
     tralloc_context * pool_data;
-    if ( tralloc_with_extensions ( ctx, &pool_data, TRALLOC_EXTENSION_POOL, pool_length ) != 0 ) {
+    if ( tralloc_with_extensions ( ctx, &pool_data, TRALLOC_EXTENSION_POOL, pool_data_length ) != 0 ) {
         return false;
     }
     _tralloc_chunk * pool_chunk = _tralloc_get_chunk_from_context ( pool_data );
@@ -126,17 +126,17 @@ bool test_memory_much ( tralloc_context * ctx )
     _tralloc_pool * pool = _tralloc_get_pool_from_chunk ( pool_chunk );
     _tralloc_pool_fragment * fragment = pool_data;
     if (
-        pool->first_child  != NULL        ||
-        pool->max_fragment != fragment    ||
-        pool->memory       != pool_data   ||
-        pool->length       != pool_length ||
-        pool->autofree     != false       ||
+        pool->first_child  != NULL             ||
+        pool->max_fragment != fragment         ||
+        pool->memory       != pool_data        ||
+        pool->length       != pool_data_length ||
+        pool->autofree     != false            ||
 
         fragment->prev       != NULL ||
         fragment->next       != NULL ||
         fragment->prev_child != NULL ||
         fragment->next_child != NULL ||
-        fragment->length     != pool_length
+        fragment->length     != pool_data_length
     ) {
         return false;
     }
@@ -151,11 +151,11 @@ bool test_memory_much ( tralloc_context * ctx )
     }
     _tralloc_pool_child * pool_child = _tralloc_get_pool_child_from_chunk ( pool_child_chunk );
     if (
-        pool->first_child  != pool_child  ||
-        pool->max_fragment != fragment    ||
-        pool->memory       != pool_data   ||
-        pool->length       != pool_length ||
-        pool->autofree     != false       ||
+        pool->first_child  != pool_child       ||
+        pool->max_fragment != fragment         ||
+        pool->memory       != pool_data        ||
+        pool->length       != pool_data_length ||
+        pool->autofree     != false            ||
 
         pool_child->pool   != pool ||
         pool_child->prev   != NULL ||
@@ -166,7 +166,36 @@ bool test_memory_much ( tralloc_context * ctx )
         fragment->next       != NULL ||
         fragment->prev_child != NULL ||
         fragment->next_child != pool_child ||
-        fragment->length     != pool_length - pool_child_length
+        fragment->length     != pool_data_length - pool_child_length
+    ) {
+        return false;
+    }
+
+    if ( tralloc_free ( pool_data ) != 0 ) {
+        return false;
+    }
+
+    return true;
+}
+
+static
+bool test_memory_zero ( tralloc_context * ctx )
+{
+    size_t pool_data_length = tralloc_predict_chunk_length ( TRALLOC_EXTENSION_POOL_CHILD ) + sizeof ( uint8_t ) * 3;
+
+    tralloc_context * pool_data;
+    uint8_t * pool_child_data;
+    if (
+        tralloc_with_extensions ( ctx, &pool_data, TRALLOC_EXTENSION_POOL, pool_data_length ) != 0 ||
+        tralloc_zero ( pool_data, ( tralloc_context ** ) &pool_child_data, sizeof ( uint8_t ) * 3 ) != 0
+    ) {
+        return false;
+    }
+
+    if (
+        pool_child_data[0] != 0 ||
+        pool_child_data[1] != 0 ||
+        pool_child_data[2] != 0
     ) {
         return false;
     }
@@ -183,7 +212,8 @@ bool test_add ( tralloc_context * ctx )
     if (
         ! test_memory_overflow ( ctx ) ||
         ! test_memory_strict   ( ctx ) ||
-        ! test_memory_much     ( ctx )
+        ! test_memory_much     ( ctx ) ||
+        ! test_memory_zero     ( ctx )
     ) {
         return false;
     }
