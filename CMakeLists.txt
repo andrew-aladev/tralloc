@@ -46,8 +46,6 @@ endif ()
 
 
 set (CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
-include (CheckC99)
-check_c99 ()
 include (CheckC99_inline)
 check_c99_inline ()
 include (CheckLTO)

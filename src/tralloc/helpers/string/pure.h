@@ -6,14 +6,22 @@
 #ifndef TRALLOC_HELPERS_STRING_PURE_H
 #define TRALLOC_HELPERS_STRING_PURE_H
 
+#include "../../macro.h"
 #include "../../types.h"
 #include <stdarg.h>
 #include <string.h>
 
+#undef INLINE
+#ifdef TRALLOC_HELPERS_STRING_PURE_INCLUDED_FROM_OBJECT
+#    define INLINE INLINE_IN_OBJECT
+#else
+#    define INLINE INLINE_IN_HEADER
+#endif
+
 
 tralloc_error _tralloc_strndup ( tralloc_context * parent_context, char ** child_context, const char * str, size_t length );
 
-inline
+INLINE
 tralloc_error tralloc_strndup ( tralloc_context * parent_context, char ** child_context, const char * str, size_t length )
 {
     if ( str == NULL ) {
@@ -22,7 +30,7 @@ tralloc_error tralloc_strndup ( tralloc_context * parent_context, char ** child_
     return _tralloc_strndup ( parent_context, child_context, str, length );
 }
 
-inline
+INLINE
 tralloc_error tralloc_strdup ( tralloc_context * parent_context, char ** child_context, const char * str )
 {
     if ( str == NULL ) {

@@ -6,11 +6,19 @@
 #ifndef TRALLOC_UTILS_MALLOC_DYNARR_H
 #define TRALLOC_UTILS_MALLOC_DYNARR_H
 
+#include <tralloc/macro.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
 #include <stddef.h>
 #include <stdbool.h>
+
+#undef INLINE
+#ifdef TRALLOC_UTILS_MALLOC_DYNARR_INCLUDED_FROM_OBJECT
+#    define INLINE INLINE_IN_OBJECT
+#else
+#    define INLINE INLINE_IN_HEADER
+#endif
 
 // this was implemented to store history of tralloc events
 
@@ -24,7 +32,7 @@ typedef struct malloc_dynarr_t {
     free_item free_item;
 } malloc_dynarr;
 
-inline
+INLINE
 malloc_dynarr * malloc_dynarr_new ( size_t capacity )
 {
     if ( capacity == 0 ) {
@@ -49,13 +57,13 @@ malloc_dynarr * malloc_dynarr_new ( size_t capacity )
     return arr;
 }
 
-inline
+INLINE
 void malloc_dynarr_set_free_item ( malloc_dynarr * arr, free_item free_item )
 {
     arr->free_item = free_item;
 }
 
-inline
+INLINE
 uint8_t malloc_dynarr_grow ( malloc_dynarr * arr )
 {
     // linear growth
@@ -68,7 +76,7 @@ uint8_t malloc_dynarr_grow ( malloc_dynarr * arr )
     return 0;
 }
 
-inline
+INLINE
 uint8_t malloc_dynarr_append ( malloc_dynarr * arr, void * pointer )
 {
     size_t index = arr->length;
@@ -82,7 +90,7 @@ uint8_t malloc_dynarr_append ( malloc_dynarr * arr, void * pointer )
     return 0;
 }
 
-inline
+INLINE
 uint8_t malloc_dynarr_clear ( malloc_dynarr * arr )
 {
     if ( arr == NULL ) {
@@ -106,25 +114,25 @@ uint8_t malloc_dynarr_clear ( malloc_dynarr * arr )
     return 0;
 }
 
-inline
+INLINE
 void malloc_dynarr_set ( malloc_dynarr * arr, size_t position, void * pointer )
 {
     arr->data[position] = pointer;
 }
 
-inline
+INLINE
 void * malloc_dynarr_get ( malloc_dynarr * arr, size_t position )
 {
     return arr->data[position];
 }
 
-inline
+INLINE
 size_t malloc_dynarr_get_length ( malloc_dynarr * arr )
 {
     return arr->length;
 }
 
-inline
+INLINE
 void malloc_dynarr_free ( malloc_dynarr * arr )
 {
     if ( arr == NULL ) {
@@ -141,4 +149,3 @@ void malloc_dynarr_free ( malloc_dynarr * arr )
 }
 
 #endif
-

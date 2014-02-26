@@ -3,14 +3,5 @@
 // tralloc is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
+#define TRALLOC_UTILS_MALLOC_DYNARR_INCLUDED_FROM_OBJECT
 #include "malloc_dynarr.h"
-
-extern inline malloc_dynarr * malloc_dynarr_new           ( size_t capacity );
-extern inline void            malloc_dynarr_set_free_item ( malloc_dynarr * arr, free_item free_item );
-extern inline uint8_t         malloc_dynarr_grow          ( malloc_dynarr * arr );
-extern inline uint8_t         malloc_dynarr_append        ( malloc_dynarr * arr, void * pointer );
-extern inline uint8_t         malloc_dynarr_clear         ( malloc_dynarr * arr );
-extern inline void            malloc_dynarr_set           ( malloc_dynarr * arr, size_t position, void * pointer );
-extern inline void *          malloc_dynarr_get           ( malloc_dynarr * arr, size_t position );
-extern inline size_t          malloc_dynarr_get_length    ( malloc_dynarr * arr );
-extern inline void            malloc_dynarr_free          ( malloc_dynarr * arr );

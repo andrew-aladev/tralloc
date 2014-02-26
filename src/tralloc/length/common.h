@@ -6,10 +6,18 @@
 #ifndef TRALLOC_LENGTH_COMMON_H
 #define TRALLOC_LENGTH_COMMON_H
 
+#include "../macro.h"
 #include "../types.h"
 
+#undef INLINE
+#ifdef TRALLOC_LENGTH_COMMON_INCLUDED_FROM_OBJECT
+#    define INLINE INLINE_IN_OBJECT
+#else
+#    define INLINE INLINE_IN_HEADER
+#endif
 
-inline
+
+INLINE
 _tralloc_length * _tralloc_get_length_from_chunk ( _tralloc_chunk * chunk )
 {
     return ( _tralloc_length * ) ( ( uintptr_t ) chunk - sizeof ( _tralloc_length ) );

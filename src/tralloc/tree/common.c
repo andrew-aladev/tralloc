@@ -3,6 +3,7 @@
 // tralloc is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Lesser Public License for more details.
 // You should have received a copy of the GNU General Lesser Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
+#define TRALLOC_TREE_COMMON_INCLUDED_FROM_OBJECT
 #include "../tree.h"
 
 #if defined(TRALLOC_DEBUG)
@@ -245,5 +246,3 @@ tralloc_error _tralloc_free_single ( _tralloc_chunk * chunk )
     _tralloc_detach_chunk ( chunk );
     return _tralloc_free_chunk ( chunk );
 }
-
-extern inline tralloc_error tralloc_free ( tralloc_context * chunk_context );

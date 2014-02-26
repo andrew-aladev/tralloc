@@ -3,14 +3,12 @@
 // tralloc is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Lesser Public License for more details.
 // You should have received a copy of the GNU General Lesser Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
+#define TRALLOC_POOL_CHUNK_INCLUDED_FROM_OBJECT
 #include "chunk.h"
 #include "fragment.h"
 #include "../tree/common.h"
-
 #include <string.h>
 
-
-extern inline _tralloc_pool * _tralloc_pool_child_get_pool ( tralloc_context * parent_context );
 
 static inline
 void _tralloc_pool_child_attach ( _tralloc_pool_child * pool_child, _tralloc_pool_child * prev, _tralloc_pool_child * next )
@@ -59,10 +57,6 @@ void _tralloc_pool_child_update ( _tralloc_pool_child * pool_child )
         next->prev = pool_child;
     }
 }
-
-
-extern inline size_t _tralloc_pool_child_get_prev_fragment_length ( _tralloc_pool_child * pool_child );
-extern inline size_t _tralloc_pool_child_get_next_fragment_length ( _tralloc_pool_child * pool_child );
 
 
 void _tralloc_pool_child_new_chunk ( _tralloc_chunk * chunk, _tralloc_pool * pool, size_t length, _tralloc_pool_child * prev, _tralloc_pool_child * next )

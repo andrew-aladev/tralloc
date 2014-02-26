@@ -3,6 +3,7 @@
 // tralloc is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Lesser Public License for more details.
 // You should have received a copy of the GNU General Lesser Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
+#define TRALLOC_UTILS_BUFFER_INCLUDED_FROM_OBJECT
 #include "buffer.h"
 #include "../tree.h"
 #include <string.h>
@@ -27,8 +28,6 @@ tralloc_error tralloc_buffer_with_extensions_new ( tralloc_context * ctx, trallo
     buffer->length      = 0;
     return 0;
 }
-
-extern inline tralloc_error tralloc_buffer_new ( tralloc_context * ctx, tralloc_buffer ** buffer_ptr );
 
 #else
 
@@ -119,9 +118,3 @@ tralloc_error tralloc_buffer_trim ( tralloc_buffer * buffer )
 
     return 0;
 }
-
-extern inline void          tralloc_buffer_written         ( tralloc_buffer * buffer, size_t length );
-extern inline tralloc_error tralloc_buffer_readed          ( tralloc_buffer * buffer, size_t length );
-extern inline uint8_t *     tralloc_buffer_get_read_point  ( const tralloc_buffer * buffer );
-extern inline uint8_t *     tralloc_buffer_get_write_point ( const tralloc_buffer * buffer );
-extern inline size_t        tralloc_buffer_get_length      ( const tralloc_buffer * buffer );

@@ -6,10 +6,18 @@
 #ifndef TRALLOC_DESTRUCTOR_COMMON_H
 #define TRALLOC_DESTRUCTOR_COMMON_H
 
+#include "../macro.h"
 #include "../types.h"
 
+#undef INLINE
+#ifdef TRALLOC_DESTRUCTOR_COMMON_INCLUDED_FROM_OBJECT
+#    define INLINE INLINE_IN_OBJECT
+#else
+#    define INLINE INLINE_IN_HEADER
+#endif
 
-inline
+
+INLINE
 _tralloc_destructors * _tralloc_get_destructors_from_chunk ( _tralloc_chunk * chunk )
 {
     size_t offset = sizeof ( _tralloc_destructors );

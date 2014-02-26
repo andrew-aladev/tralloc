@@ -6,3 +6,5 @@
 #cmakedefine TRALLOC_POOL
 #cmakedefine TRALLOC_UTILS_BUFFER
 #cmakedefine TRALLOC_UTILS
+
+#cmakedefine HAVE_C99_INLINE

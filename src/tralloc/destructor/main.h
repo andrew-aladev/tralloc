@@ -6,9 +6,16 @@
 #ifndef TRALLOC_DESTRUCTOR_H
 #define TRALLOC_DESTRUCTOR_H
 
-#include "../types.h"
 #include "../macro.h"
+#include "../types.h"
 #include <stdbool.h>
+
+#undef INLINE
+#ifdef TRALLOC_DESTRUCTOR_INCLUDED_FROM_OBJECT
+#    define INLINE INLINE_IN_OBJECT
+#else
+#    define INLINE INLINE_IN_HEADER
+#endif
 
 
 tralloc_error tralloc_clear_destructors  ( tralloc_context * chunk_context );
@@ -16,19 +23,19 @@ tralloc_error tralloc_append_destructor  ( tralloc_context * chunk_context, tral
 tralloc_error tralloc_prepend_destructor ( tralloc_context * chunk_context, tralloc_destructor_function function, void * user_data );
 
 
-inline
+INLINE
 bool _tralloc_destructor_comparator_by_function ( _tralloc_destructor * destructor, tralloc_destructor_function function, void * UNUSED ( user_data ) )
 {
     return destructor->function == function;
 }
 
-inline
+INLINE
 bool _tralloc_destructor_comparator_by_data ( _tralloc_destructor * destructor, tralloc_destructor_function UNUSED ( function ), void * user_data )
 {
     return destructor->user_data == user_data;
 }
 
-inline
+INLINE
 bool _tralloc_destructor_comparator_strict ( _tralloc_destructor * destructor, tralloc_destructor_function function, void * user_data )
 {
     return destructor->function == function && destructor->user_data == user_data;
@@ -38,19 +45,19 @@ typedef bool ( * _tralloc_destructor_comparator ) ( _tralloc_destructor * destru
 
 tralloc_error _tralloc_delete_destructors_by_comparator ( tralloc_context * chunk_context, _tralloc_destructor_comparator comparator, tralloc_destructor_function function, void * user_data );
 
-inline
+INLINE
 tralloc_error tralloc_delete_destructors ( tralloc_context * chunk_context, tralloc_destructor_function function, void * user_data )
 {
     return _tralloc_delete_destructors_by_comparator ( chunk_context, _tralloc_destructor_comparator_strict, function, user_data );
 }
 
-inline
+INLINE
 tralloc_error tralloc_delete_destructors_by_function ( tralloc_context * chunk_context, tralloc_destructor_function function )
 {
     return _tralloc_delete_destructors_by_comparator ( chunk_context, _tralloc_destructor_comparator_by_function, function, NULL );
 }
 
-inline
+INLINE
 tralloc_error tralloc_delete_destructors_by_data ( tralloc_context * chunk_context, void * user_data )
 {
     return _tralloc_delete_destructors_by_comparator ( chunk_context, _tralloc_destructor_comparator_by_data, NULL, user_data );

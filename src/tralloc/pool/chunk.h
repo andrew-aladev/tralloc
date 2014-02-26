@@ -9,8 +9,15 @@
 #include "common.h"
 #include "../common.h"
 
+#undef INLINE
+#ifdef TRALLOC_POOL_CHUNK_INCLUDED_FROM_OBJECT
+#    define INLINE INLINE_IN_OBJECT
+#else
+#    define INLINE INLINE_IN_HEADER
+#endif
 
-inline
+
+INLINE
 _tralloc_pool * _tralloc_pool_child_get_pool ( tralloc_context * parent_context )
 {
     if ( parent_context == NULL ) {
@@ -28,7 +35,7 @@ _tralloc_pool * _tralloc_pool_child_get_pool ( tralloc_context * parent_context 
     }
 }
 
-inline
+INLINE
 size_t _tralloc_pool_child_get_prev_fragment_length ( _tralloc_pool_child * pool_child )
 {
     _tralloc_pool_child * prev = pool_child->prev;
@@ -39,7 +46,7 @@ size_t _tralloc_pool_child_get_prev_fragment_length ( _tralloc_pool_child * pool
     }
 }
 
-inline
+INLINE
 size_t _tralloc_pool_child_get_next_fragment_length ( _tralloc_pool_child * pool_child )
 {
     _tralloc_pool_child * next = pool_child->next;

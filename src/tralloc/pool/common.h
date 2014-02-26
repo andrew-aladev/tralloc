@@ -6,10 +6,18 @@
 #ifndef TRALLOC_POOL_COMMON_H
 #define TRALLOC_POOL_COMMON_H
 
+#include "../macro.h"
 #include "../types.h"
 
+#undef INLINE
+#ifdef TRALLOC_POOL_COMMON_INCLUDED_FROM_OBJECT
+#    define INLINE INLINE_IN_OBJECT
+#else
+#    define INLINE INLINE_IN_HEADER
+#endif
 
-inline
+
+INLINE
 size_t _tralloc_get_pool_offset ( _tralloc_chunk * chunk )
 {
     size_t offset = 0;
@@ -37,19 +45,19 @@ size_t _tralloc_get_pool_offset ( _tralloc_chunk * chunk )
     return offset;
 }
 
-inline
+INLINE
 _tralloc_pool_child * _tralloc_get_pool_child_from_chunk ( _tralloc_chunk * chunk )
 {
     return ( _tralloc_pool_child * ) ( ( uintptr_t ) chunk - _tralloc_get_pool_offset ( chunk ) - sizeof ( _tralloc_pool_child ) );
 }
 
-inline
+INLINE
 _tralloc_pool * _tralloc_get_pool_from_chunk ( _tralloc_chunk * chunk )
 {
     return ( _tralloc_pool * ) ( ( uintptr_t ) chunk - _tralloc_get_pool_offset ( chunk ) - sizeof ( _tralloc_pool ) );
 }
 
-inline
+INLINE
 _tralloc_chunk * _tralloc_get_chunk_from_pool ( _tralloc_pool * pool )
 {
     size_t offset = sizeof ( _tralloc_pool );

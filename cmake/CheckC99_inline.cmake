@@ -5,6 +5,12 @@ function (check_c99_inline)
     
     include (CheckC99)
     check_c99 ()
+
+    if (NOT ${HAVE_C99})
+        set (HAVE_C99_INLINE false CACHE STRING "Status of C99 inline support")
+        message (STATUS "Check for C compiler C99 inline support - no")
+        return ()
+    endif ()
     
     try_compile (
         CHECK_C99_INLINE_COMPILE_RESULT
@@ -21,5 +27,5 @@ function (check_c99_inline)
     endif ()
     
     set (HAVE_C99_INLINE false CACHE STRING "Status of C99 inline support")
-    message (FATAL_ERROR "Check for C compiler C99 inline support - no")
+    message (STATUS "Check for C compiler C99 inline support - no")
 endfunction ()

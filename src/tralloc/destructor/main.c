@@ -3,6 +3,7 @@
 // tralloc is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Lesser Public License for more details.
 // You should have received a copy of the GNU General Lesser Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
+#define TRALLOC_DESTRUCTOR_INCLUDED_FROM_OBJECT
 #include "main.h"
 #include "common.h"
 #include "../common.h"
@@ -147,10 +148,3 @@ tralloc_error _tralloc_delete_destructors_by_comparator ( tralloc_context * chun
     }
     return 0;
 }
-
-extern inline bool          _tralloc_destructor_comparator_by_function ( _tralloc_destructor * destructor, tralloc_destructor_function function, void * user_data );
-extern inline bool          _tralloc_destructor_comparator_by_data     ( _tralloc_destructor * destructor, tralloc_destructor_function function, void * user_data );
-extern inline bool          _tralloc_destructor_comparator_strict      ( _tralloc_destructor * destructor, tralloc_destructor_function function, void * user_data );
-extern inline tralloc_error tralloc_delete_destructors                 ( tralloc_context * chunk_context, tralloc_destructor_function function, void * user_data );
-extern inline tralloc_error tralloc_delete_destructors_by_function     ( tralloc_context * chunk_context, tralloc_destructor_function function );
-extern inline tralloc_error tralloc_delete_destructors_by_data         ( tralloc_context * chunk_context, void * user_data );

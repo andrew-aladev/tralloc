@@ -3,6 +3,7 @@
 // tralloc is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Lesser Public License for more details.
 // You should have received a copy of the GNU General Lesser Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
+#define TRALLOC_HELPERS_FILE_INCLUDED_FROM_OBJECT
 #include "file.h"
 #include "../tree.h"
 #include "../destructor/main.h"
@@ -60,6 +61,3 @@ tralloc_error tralloc_open_mode_with_extensions ( tralloc_context * parent_conte
     }
     return _tralloc_process_descriptor ( parent_context, descriptor_ptr, descriptor, extensions );
 }
-
-extern inline tralloc_error tralloc_open      ( tralloc_context * parent_context, int ** descriptor_ptr, const char * path_name, int flags );
-extern inline tralloc_error tralloc_open_mode ( tralloc_context * parent_context, int ** descriptor_ptr, const char * path_name, int flags, mode_t mode );

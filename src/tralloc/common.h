@@ -6,10 +6,19 @@
 #ifndef TRALLOC_COMMON_H
 #define TRALLOC_COMMON_H
 
+#include "macro.h"
+
+#undef INLINE
+#ifdef TRALLOC_COMMON_INCLUDED_FROM_OBJECT
+#    define INLINE INLINE_IN_OBJECT
+#else
+#    define INLINE INLINE_IN_HEADER
+#endif
+
 #include "types.h"
 
 
-inline
+INLINE
 size_t tralloc_predict_chunk_length ( tralloc_extensions extensions )
 {
     size_t extensions_length = 0;
@@ -45,13 +54,13 @@ size_t tralloc_predict_chunk_length ( tralloc_extensions extensions )
     return extensions_length + sizeof ( _tralloc_chunk );
 }
 
-inline
+INLINE
 tralloc_context * _tralloc_get_context_from_chunk ( _tralloc_chunk * chunk )
 {
     return ( tralloc_context * ) ( ( uintptr_t ) chunk + sizeof ( _tralloc_chunk ) );
 }
 
-inline
+INLINE
 _tralloc_chunk * _tralloc_get_chunk_from_context ( tralloc_context * context )
 {
     return ( _tralloc_chunk * ) ( ( uintptr_t ) context - sizeof ( _tralloc_chunk ) );

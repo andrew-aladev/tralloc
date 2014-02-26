@@ -3,6 +3,7 @@
 // tralloc is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Lesser Public License for more details.
 // You should have received a copy of the GNU General Lesser Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
+#define TRALLOC_HELPERS_STRING_PURE_INCLUDED_FROM_OBJECT
 #include "pure.h"
 #include "../../tree.h"
 #include <stdio.h>
@@ -18,10 +19,6 @@ tralloc_error _tralloc_strndup ( tralloc_context * parent_context, char ** child
     ( * child_context ) [length] = '\0';
     return 0;
 }
-
-extern inline tralloc_error tralloc_strndup ( tralloc_context * parent_context, char ** child_context, const char * str, size_t length );
-extern inline tralloc_error tralloc_strdup  ( tralloc_context * parent_context, char ** child_context, const char * str );
-
 
 tralloc_error tralloc_vasprintf ( tralloc_context * parent_context, char ** child_context, const char * format, va_list arguments )
 {

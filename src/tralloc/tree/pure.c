@@ -3,6 +3,7 @@
 // tralloc is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Lesser Public License for more details.
 // You should have received a copy of the GNU General Lesser Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
+#define TRALLOC_TREE_PURE_INCLUDED_FROM_OBJECT
 #include "pure.h"
 #include "common.h"
 
@@ -77,8 +78,6 @@ tralloc_error tralloc_zero ( tralloc_context * parent_context, tralloc_context *
     return _tralloc_with_allocator ( parent_context, child_context, length, _calloc );
 }
 
-extern inline tralloc_error tralloc_new ( tralloc_context * parent_context, tralloc_context ** child_context );
-
 
 tralloc_error tralloc_realloc ( tralloc_context ** chunk_context, size_t length )
 {
@@ -120,9 +119,6 @@ tralloc_error tralloc_realloc ( tralloc_context ** chunk_context, size_t length 
     return 0;
 }
 
-
-extern inline bool _tralloc_can_free_chunk          ( _tralloc_chunk * UNUSED ( chunk ) );
-extern inline bool _tralloc_can_free_chunk_children ( _tralloc_chunk * UNUSED ( chunk ) );
 
 tralloc_error _tralloc_free_chunk ( _tralloc_chunk * chunk )
 {

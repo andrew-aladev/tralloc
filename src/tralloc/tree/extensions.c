@@ -3,6 +3,7 @@
 // tralloc is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Lesser Public License for more details.
 // You should have received a copy of the GNU General Lesser Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
+#define TRALLOC_TREE_EXTENSIONS_INCLUDED_FROM_OBJECT
 #include "extensions.h"
 #include "common.h"
 
@@ -214,20 +215,11 @@ tralloc_error tralloc_with_extensions ( tralloc_context * parent_context, trallo
     return _tralloc_with_extensions_with_allocator ( parent_context, child_context, extensions, length, _malloc );
 }
 
-extern inline tralloc_error tralloc_with_extensions ( tralloc_context * parent_context, tralloc_context ** child_context, tralloc_extensions extensions, size_t length );
-extern inline tralloc_error tralloc                 ( tralloc_context * parent_context, tralloc_context ** child_context, size_t length );
-
 
 tralloc_error tralloc_zero_with_extensions ( tralloc_context * parent_context, tralloc_context ** child_context, tralloc_extensions extensions, size_t length )
 {
     return _tralloc_with_extensions_with_allocator ( parent_context, child_context, extensions, length, _calloc );
 }
-
-extern inline tralloc_error tralloc_zero_with_extensions ( tralloc_context * parent_context, tralloc_context ** child_context, tralloc_extensions extensions, size_t length );
-extern inline tralloc_error tralloc_zero                 ( tralloc_context * parent_context, tralloc_context ** child_context, size_t length );
-
-extern inline tralloc_error tralloc_new                 ( tralloc_context * parent_context, tralloc_context ** child_context );
-extern inline tralloc_error tralloc_with_extensions_new ( tralloc_context * parent_context, tralloc_context ** child_context, tralloc_extensions extensions );
 
 
 tralloc_error tralloc_realloc ( tralloc_context ** chunk_context, size_t length )

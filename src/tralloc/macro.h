@@ -6,11 +6,20 @@
 #ifndef TRALLOC_MACRO_H
 #define TRALLOC_MACRO_H
 
+#include "config.h"
+
+#ifdef HAVE_C99_INLINE
+#    define INLINE_IN_HEADER inline
+#    define INLINE_IN_OBJECT
+#else
+#    define INLINE_IN_HEADER extern inline
+#    define INLINE_IN_OBJECT
+#endif
 
 #ifdef __GNUC__
-#  define UNUSED(x) UNUSED_ ## x __attribute__((__unused__))
+#    define UNUSED(x) UNUSED_ ## x __attribute__((__unused__))
 #else
-#  define UNUSED(x) UNUSED_ ## x
+#    define UNUSED(x) UNUSED_ ## x
 #endif
 
 

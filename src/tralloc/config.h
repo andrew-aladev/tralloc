@@ -6,3 +6,5 @@
 #define TRALLOC_POOL
 #define TRALLOC_UTILS_BUFFER
 #define TRALLOC_UTILS
+
+/* #undef HAVE_C99_INLINE */

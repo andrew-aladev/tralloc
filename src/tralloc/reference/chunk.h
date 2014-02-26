@@ -8,8 +8,15 @@
 
 #include "common.h"
 
+#undef INLINE
+#ifdef TRALLOC_REFERENCE_CHUNK_INCLUDED_FROM_OBJECT
+#    define INLINE INLINE_IN_OBJECT
+#else
+#    define INLINE INLINE_IN_HEADER
+#endif
 
-inline
+
+INLINE
 void _tralloc_reference_new_chunk ( _tralloc_chunk * chunk )
 {
     _tralloc_reference * reference = _tralloc_get_reference_from_chunk ( chunk );

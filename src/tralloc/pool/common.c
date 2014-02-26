@@ -3,10 +3,5 @@
 // tralloc is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Lesser Public License for more details.
 // You should have received a copy of the GNU General Lesser Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
+#define TRALLOC_POOL_COMMON_INCLUDED_FROM_OBJECT
 #include "common.h"
-
-
-extern inline size_t                _tralloc_get_pool_offset           ( _tralloc_chunk * chunk );
-extern inline _tralloc_pool_child * _tralloc_get_pool_child_from_chunk ( _tralloc_chunk * chunk );
-extern inline _tralloc_pool *       _tralloc_get_pool_from_chunk       ( _tralloc_chunk * chunk );
-extern inline _tralloc_chunk *      _tralloc_get_chunk_from_pool       ( _tralloc_pool  * pool );

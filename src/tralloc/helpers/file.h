@@ -6,20 +6,28 @@
 #ifndef TRALLOC_HELPERS_FILE_H
 #define TRALLOC_HELPERS_FILE_H
 
+#include "../macro.h"
 #include "../types.h"
 #include <fcntl.h>
+
+#undef INLINE
+#ifdef TRALLOC_HELPERS_FILE_INCLUDED_FROM_OBJECT
+#    define INLINE INLINE_IN_OBJECT
+#else
+#    define INLINE INLINE_IN_HEADER
+#endif
 
 
 tralloc_error tralloc_open_with_extensions      ( tralloc_context * parent_context, int ** descriptor_ptr, tralloc_extensions extensions, const char * path_name, int flags );
 tralloc_error tralloc_open_mode_with_extensions ( tralloc_context * parent_context, int ** descriptor_ptr, tralloc_extensions extensions, const char * path_name, int flags, mode_t mode );
 
-inline
+INLINE
 tralloc_error tralloc_open ( tralloc_context * parent_context, int ** descriptor_ptr, const char * path_name, int flags )
 {
     return tralloc_open_with_extensions ( parent_context, descriptor_ptr, 0, path_name, flags );
 }
 
-inline
+INLINE
 tralloc_error tralloc_open_mode ( tralloc_context * parent_context, int ** descriptor_ptr, const char * path_name, int flags, mode_t mode )
 {
     return tralloc_open_mode_with_extensions ( parent_context, descriptor_ptr, 0, path_name, flags, mode );

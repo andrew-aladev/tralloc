@@ -31,5 +31,5 @@ function (check_c99)
     
     set (HAVE_C99 false CACHE STRING "Status of C99 support")
     set (C99_CFLAGS "" CACHE STRING "c99 cflags")
-    message (FATAL_ERROR "Check for C compiler C99 support - no")
+    message (STATUS "Check for C compiler C99 support - no")
 endfunction ()

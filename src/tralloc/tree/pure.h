@@ -6,26 +6,33 @@
 #ifndef TRALLOC_TREE_PURE_H
 #define TRALLOC_TREE_PURE_H
 
-#include "../types.h"
 #include "../macro.h"
+#include "../types.h"
+
+#undef INLINE
+#ifdef TRALLOC_TREE_PURE_INCLUDED_FROM_OBJECT
+#    define INLINE INLINE_IN_OBJECT
+#else
+#    define INLINE INLINE_IN_HEADER
+#endif
 
 
 tralloc_error tralloc      ( tralloc_context * parent_context, tralloc_context ** child_context, size_t length );
 tralloc_error tralloc_zero ( tralloc_context * parent_context, tralloc_context ** child_context, size_t length );
 
-inline
+INLINE
 tralloc_error tralloc_new ( tralloc_context * parent_context, tralloc_context ** child_context )
 {
     return tralloc ( parent_context, child_context, 0 );
 }
 
-inline
+INLINE
 bool _tralloc_can_free_chunk ( _tralloc_chunk * UNUSED ( chunk ) )
 {
     return true;
 }
 
-inline
+INLINE
 bool _tralloc_can_free_chunk_children ( _tralloc_chunk * UNUSED ( chunk ) )
 {
     return true;

@@ -3,10 +3,5 @@
 // tralloc is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Lesser Public License for more details.
 // You should have received a copy of the GNU General Lesser Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
+#define TRALLOC_REFERENCE_COMMON_INCLUDED_FROM_OBJECT
 #include "common.h"
-
-
-extern inline size_t                _tralloc_get_reference_offset      ( _tralloc_chunk * chunk );
-extern inline _tralloc_references * _tralloc_get_references_from_chunk ( _tralloc_chunk * chunk );
-extern inline _tralloc_chunk *      _tralloc_get_chunk_from_references ( _tralloc_references * references );
-extern inline _tralloc_reference *  _tralloc_get_reference_from_chunk  ( _tralloc_chunk * chunk );

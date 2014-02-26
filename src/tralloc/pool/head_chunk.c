@@ -3,10 +3,10 @@
 // tralloc is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Lesser Public License for more details.
 // You should have received a copy of the GNU General Lesser Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
+#define TRALLOC_POOL_HEAD_CHUNK_INCLUDED_FROM_OBJECT
 #include "head_chunk.h"
 #include "fragment.h"
 #include "../tree/common.h"
-
 #include <string.h>
 
 
@@ -38,6 +38,3 @@ void _tralloc_pool_alloc ( _tralloc_pool * pool, void ** memory, size_t length, 
         memset ( * memory, 0, length );
     }
 }
-
-extern inline bool _tralloc_pool_can_free_chunk          ( _tralloc_chunk * chunk );
-extern inline bool _tralloc_pool_can_free_chunk_children ( _tralloc_chunk * UNUSED ( chunk ) );

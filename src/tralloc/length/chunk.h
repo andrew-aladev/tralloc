@@ -8,8 +8,15 @@
 
 #include "common.h"
 
+#undef INLINE
+#ifdef TRALLOC_LENGTH_CHUNK_INCLUDED_FROM_OBJECT
+#    define INLINE INLINE_IN_OBJECT
+#else
+#    define INLINE INLINE_IN_HEADER
+#endif
 
-inline
+
+INLINE
 void _tralloc_length_set ( _tralloc_chunk * chunk, size_t length )
 {
     _tralloc_length * length_ext = _tralloc_get_length_from_chunk ( chunk );

@@ -3,12 +3,10 @@
 // tralloc is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Lesser Public License for more details.
 // You should have received a copy of the GNU General Lesser Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
+#define TRALLOC_POOL_FRAGMENT_INCLUDED_FROM_OBJECT
 #include "fragment.h"
-
 #include <string.h>
 
-
-extern inline _tralloc_pool_fragment * _tralloc_pool_fragment_new_memory ( void * memory, size_t length );
 
 void _tralloc_pool_fragment_attach ( _tralloc_pool * pool, _tralloc_pool_fragment * fragment, _tralloc_pool_fragment * prev, _tralloc_pool_fragment * next )
 {
@@ -65,8 +63,6 @@ void _tralloc_pool_fragment_decreased ( _tralloc_pool * pool, _tralloc_pool_frag
 
     _tralloc_pool_fragment_attach ( pool, fragment, prev_fragment, next_fragment );
 }
-
-extern inline bool _tralloc_pool_fragment_can_alloc ( _tralloc_pool_fragment * fragment, size_t length );
 
 _tralloc_pool_child * _tralloc_pool_fragment_alloc ( _tralloc_pool * pool, _tralloc_pool_fragment * fragment, size_t length )
 {

@@ -8,6 +8,13 @@
 
 #include "../common.h"
 
+#undef INLINE
+#ifdef TRALLOC_TREE_COMMON_INCLUDED_FROM_OBJECT
+#    define INLINE INLINE_IN_OBJECT
+#else
+#    define INLINE INLINE_IN_HEADER
+#endif
+
 
 tralloc_error tralloc_realloc ( tralloc_context ** chunk_context, size_t length );
 tralloc_error tralloc_move    ( tralloc_context * child_context, tralloc_context * parent_context );
@@ -21,7 +28,7 @@ void          _tralloc_detach_chunk ( _tralloc_chunk * chunk );
 tralloc_error _tralloc_free_single  ( _tralloc_chunk * chunk );
 tralloc_error _tralloc_free_subtree ( _tralloc_chunk * chunk );
 
-inline
+INLINE
 tralloc_error tralloc_free ( tralloc_context * chunk_context )
 {
     if ( chunk_context == NULL ) {

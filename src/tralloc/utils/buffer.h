@@ -6,7 +6,15 @@
 #ifndef TRALLOC_UTILS_BUFFER_H
 #define TRALLOC_UTILS_BUFFER_H
 
+#include "../macro.h"
 #include "../types.h"
+
+#undef INLINE
+#ifdef TRALLOC_UTILS_BUFFER_INCLUDED_FROM_OBJECT
+#    define INLINE INLINE_IN_OBJECT
+#else
+#    define INLINE INLINE_IN_HEADER
+#endif
 
 
 typedef struct _tralloc_buffer_type {
@@ -20,7 +28,7 @@ typedef struct _tralloc_buffer_type {
 
 tralloc_error tralloc_buffer_with_extensions_new ( tralloc_context * ctx, tralloc_buffer ** buffer_ptr, tralloc_extensions extensions );
 
-inline
+INLINE
 tralloc_error tralloc_buffer_new ( tralloc_context * ctx, tralloc_buffer ** buffer_ptr )
 {
     return tralloc_buffer_with_extensions_new ( ctx, buffer_ptr, 0 );
@@ -32,13 +40,13 @@ tralloc_error tralloc_buffer_new ( tralloc_context * ctx, tralloc_buffer ** buff
 
 #endif
 
-inline
+INLINE
 void tralloc_buffer_written ( tralloc_buffer * buffer, size_t length )
 {
     buffer->data_length += length;
 }
 
-inline
+INLINE
 tralloc_error tralloc_buffer_readed ( tralloc_buffer * buffer, size_t length )
 {
     if ( buffer->data_length < length ) {
@@ -49,19 +57,19 @@ tralloc_error tralloc_buffer_readed ( tralloc_buffer * buffer, size_t length )
     return 0;
 }
 
-inline
+INLINE
 uint8_t * tralloc_buffer_get_read_point ( const tralloc_buffer * buffer )
 {
     return buffer->buf + buffer->data_offset;
 }
 
-inline
+INLINE
 uint8_t * tralloc_buffer_get_write_point ( const tralloc_buffer * buffer )
 {
     return buffer->buf + buffer->data_offset + buffer->data_length;
 }
 
-inline
+INLINE
 size_t tralloc_buffer_get_length ( const tralloc_buffer * buffer )
 {
     return buffer->data_length;
