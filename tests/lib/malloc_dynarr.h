@@ -97,8 +97,9 @@ uint8_t malloc_dynarr_clear ( malloc_dynarr * arr )
         return 1;
     }
     free_item free_item = arr->free_item;
+    size_t index;
     if ( free_item != NULL ) {
-        for ( size_t index = 0; index < arr->length; index ++ ) {
+        for ( index = 0; index < arr->length; index ++ ) {
             free_item ( arr->data[index] );
         }
     }
@@ -139,8 +140,9 @@ void malloc_dynarr_free ( malloc_dynarr * arr )
         return;
     }
     free_item free_item = arr->free_item;
+    size_t index;
     if ( free_item != NULL ) {
-        for ( size_t index = 0; index < arr->length; index ++ ) {
+        for ( index = 0; index < arr->length; index ++ ) {
             free_item ( arr->data[index] );
         }
     }
