@@ -11,11 +11,11 @@
 
 typedef struct tree_type {
     uint8_t *         data_1;
-    uint16_t *        data_2;
+    uint8_t *         data_2;
     char *            data_3;
-    uint32_t *        data_4;
+    int *             data_4;
     size_t *          data_5;
-    double *          data_6;
+    float *           data_6;
     float  *          data_7;
     tralloc_context * trivium;
 } tree;

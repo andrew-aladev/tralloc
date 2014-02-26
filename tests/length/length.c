@@ -20,19 +20,19 @@ tralloc_bool test_length ( tralloc_context * ctx )
         return TRALLOC_FALSE;
     }
 
-    uint16_t * data;
+    uint8_t * data;
     if (
-        tralloc_with_extensions ( ctx, ( tralloc_context ** ) &data, TRALLOC_EXTENSION_LENGTH, sizeof ( uint16_t ) * 2 ) != 0 ||
+        tralloc_with_extensions ( ctx, ( tralloc_context ** ) &data, TRALLOC_EXTENSION_LENGTH, sizeof ( uint8_t ) * 2 ) != 0 ||
         tralloc_get_length ( data, &length ) != 0 ||
-        length != sizeof ( uint16_t ) * 2
+        length != sizeof ( uint8_t ) * 2
     ) {
         return TRALLOC_FALSE;
     }
 
     if (
-        tralloc_realloc ( ( tralloc_context ** ) &data, sizeof ( uint16_t ) * 20 ) != 0 ||
+        tralloc_realloc ( ( tralloc_context ** ) &data, sizeof ( uint8_t ) * 20 ) != 0 ||
         tralloc_get_length ( data, &length ) != 0 ||
-        length != sizeof ( uint16_t ) * 20
+        length != sizeof ( uint8_t ) * 20
     ) {
         return TRALLOC_FALSE;
     }

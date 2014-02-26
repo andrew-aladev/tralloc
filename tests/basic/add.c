@@ -93,15 +93,15 @@ tralloc_bool test_add ( tree * tr )
     * tr->data_1 = 123;
 
     if (
-        tralloc_zero ( tr->data_1, ( tralloc_context ** ) &tr->data_2, sizeof ( uint16_t ) * 4 ) != 0 ||
+        tralloc_zero ( tr->data_1, ( tralloc_context ** ) &tr->data_2, sizeof ( uint8_t ) * 4 ) != 0 ||
         tr->data_2[0] != 0 || tr->data_2[1] != 0 || tr->data_2[2] != 0 || tr->data_2[3] != 0
     ) {
         return TRALLOC_FALSE;
     }
     tr->data_2[0] = 012;
-    tr->data_2[1] = 345;
-    tr->data_2[2] = 678;
-    tr->data_2[3] = 901;
+    tr->data_2[1] = 34;
+    tr->data_2[2] = 56;
+    tr->data_2[3] = 78;
 
     if ( tralloc ( tr->data_1, ( tralloc_context ** ) &tr->data_3, sizeof ( char ) * 3 ) != 0 ) {
         return TRALLOC_FALSE;
@@ -111,28 +111,28 @@ tralloc_bool test_add ( tree * tr )
     tr->data_3[2] = 'e';
 
     if (
-        tralloc_zero ( tr->data_1, ( tralloc_context ** ) &tr->data_4, sizeof ( uint32_t ) * 2 ) != 0 ||
+        tralloc_zero ( tr->data_1, ( tralloc_context ** ) &tr->data_4, sizeof ( int ) * 2 ) != 0 ||
         tr->data_4[0] != 0 || tr->data_4[1] != 0
     ) {
         return TRALLOC_FALSE;
     }
-    tr->data_4[0] = 12345;
-    tr->data_4[1] = 67890;
+    tr->data_4[0] = -102;
+    tr->data_4[1] = 103;
 
     if ( tralloc ( tr->data_3, ( tralloc_context ** ) &tr->data_5, sizeof ( size_t ) * 3 ) != 0 ) {
         return TRALLOC_FALSE;
     }
-    tr->data_5[0] = 123456789;
-    tr->data_5[1] = 987654321;
-    tr->data_5[2] = 123456789;
+    tr->data_5[0] = 123;
+    tr->data_5[1] = 213;
+    tr->data_5[2] = 123;
 
     if (
-        tralloc_zero ( tr->data_3, ( tralloc_context ** ) &tr->data_6, sizeof ( double ) ) != 0 ||
+        tralloc_zero ( tr->data_3, ( tralloc_context ** ) &tr->data_6, sizeof ( float ) ) != 0 ||
         * tr->data_6 != 0
     ) {
         return TRALLOC_FALSE;
     }
-    * tr->data_6 = 0.0123456789;
+    * tr->data_6 = 0.012345;
 
     if ( tralloc ( tr->data_3, ( tralloc_context ** ) &tr->data_7, sizeof ( float ) * 2 ) != 0 ) {
         return TRALLOC_FALSE;

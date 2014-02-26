@@ -98,21 +98,21 @@ tralloc_bool test_chunks ( tree * tr )
 
 tralloc_bool test_add ( tree * tr )
 {
-    if ( tralloc_with_extensions ( NULL, ( tralloc_context ** ) &tr->common, TRALLOC_EXTENSION_REFERENCES, sizeof ( uint32_t ) * 2 ) != 0 ) {
+    if ( tralloc_with_extensions ( NULL, ( tralloc_context ** ) &tr->common, TRALLOC_EXTENSION_REFERENCES, sizeof ( int8_t ) * 2 ) != 0 ) {
         return TRALLOC_FALSE;
     }
-    tr->common[0] = 123456;
-    tr->common[1] = 654321;
+    tr->common[0] = -100;
+    tr->common[1] = 50;
 
     if ( tralloc_with_extensions ( tr, ( tralloc_context ** ) &tr->shared, TRALLOC_EXTENSION_REFERENCES, sizeof ( float ) ) != 0 ) {
         return TRALLOC_FALSE;
     }
     * tr->shared = 0.123456;
 
-    if ( tralloc ( tr, ( tralloc_context ** ) &tr->data_2, sizeof ( uint16_t ) ) != 0 ) {
+    if ( tralloc ( tr, ( tralloc_context ** ) &tr->data_2, sizeof ( uint8_t ) ) != 0 ) {
         return TRALLOC_FALSE;
     }
-    * tr->data_2 = 12345;
+    * tr->data_2 = 123;
 
     if ( tralloc ( tr, ( tralloc_context ** ) &tr->data_1, sizeof ( uint8_t ) * 3 ) != 0 ) {
         return TRALLOC_FALSE;
@@ -142,19 +142,19 @@ tralloc_bool test_add ( tree * tr )
     ) {
         return TRALLOC_FALSE;
     }
-    tr->common_1[0] = 456789;
-    tr->common_1[1] = 987654;
+    tr->common_1[0] = -45;
+    tr->common_1[1] = 56;
 
     if ( tralloc_with_extensions_new ( tr->data_2, ( tralloc_context ** ) &tr->common_2, TRALLOC_EXTENSION_REFERENCE ) != 0 ) {
         return TRALLOC_FALSE;
     }
 
-    if ( tralloc_with_extensions ( tr->common_2, ( tralloc_context ** ) &tr->shared_2, TRALLOC_EXTENSION_REFERENCE, sizeof ( double ) ) != 0 ) {
+    if ( tralloc_with_extensions ( tr->common_2, ( tralloc_context ** ) &tr->shared_2, TRALLOC_EXTENSION_REFERENCE, sizeof ( float ) ) != 0 ) {
         return TRALLOC_FALSE;
     }
-    * tr->shared_2 = 0.123456789;
+    * tr->shared_2 = 0.123456;
 
-    if ( tralloc_with_extensions ( tr->shared, ( tralloc_context ** ) &tr->common_3, TRALLOC_EXTENSION_REFERENCE, sizeof ( uint8_t ) * 2 ) != 0 ) {
+    if ( tralloc_with_extensions ( tr->shared, ( tralloc_context ** ) &tr->common_3, TRALLOC_EXTENSION_REFERENCE, sizeof ( size_t ) * 2 ) != 0 ) {
         return TRALLOC_FALSE;
     }
     tr->common_3[0] = 2;

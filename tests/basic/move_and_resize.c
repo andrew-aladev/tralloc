@@ -91,11 +91,6 @@ tralloc_bool compare_float ( float a, float b )
     return fabs ( a - b ) < 0.000001;
 }
 
-tralloc_bool compare_double ( double a, double b )
-{
-    return fabs ( a - b ) < 0.000000000001;
-}
-
 tralloc_bool test_move_and_resize ( tree * tr )
 {
     if (
@@ -111,20 +106,20 @@ tralloc_bool test_move_and_resize ( tree * tr )
         tralloc_realloc ( ( tralloc_context ** ) &tr->data_1, sizeof ( uint8_t ) * 15 ) != 0 ||
         tr->data_1[0] != 123 ||
 
-        tralloc_realloc ( ( tralloc_context ** ) &tr->data_2, sizeof ( uint16_t ) * 20 ) != 0 ||
-        tr->data_2[0] != 012 || tr->data_2[1] != 345 || tr->data_2[2] != 678 || tr->data_2[3] != 901 ||
+        tralloc_realloc ( ( tralloc_context ** ) &tr->data_2, sizeof ( uint8_t ) * 20 ) != 0 ||
+        tr->data_2[0] != 012 || tr->data_2[1] != 34 || tr->data_2[2] != 56 || tr->data_2[3] != 78 ||
 
         tralloc_realloc ( ( tralloc_context ** ) &tr->data_3, sizeof ( char ) ) != 0 ||
         * tr->data_3 != 'q' ||
 
-        tralloc_realloc ( ( tralloc_context ** ) &tr->data_4, sizeof ( uint32_t ) * 30 ) != 0 ||
-        tr->data_4[0] != 12345 || tr->data_4[1] != 67890 ||
+        tralloc_realloc ( ( tralloc_context ** ) &tr->data_4, sizeof ( int ) * 30 ) != 0 ||
+        tr->data_4[0] != -102 || tr->data_4[1] != 103 ||
 
         tralloc_realloc ( ( tralloc_context ** ) &tr->data_5, sizeof ( size_t ) * 2 ) != 0 ||
-        tr->data_5[0] != 123456789 || tr->data_5[1] != 987654321 ||
+        tr->data_5[0] != 123 || tr->data_5[1] != 213 ||
 
-        tralloc_realloc ( ( tralloc_context ** ) &tr->data_6, sizeof ( double ) * 10 ) != 0 ||
-        !compare_double ( tr->data_6[0], 0.0123456789 ) ||
+        tralloc_realloc ( ( tralloc_context ** ) &tr->data_6, sizeof ( float ) * 10 ) != 0 ||
+        !compare_float ( tr->data_6[0], 0.012345 ) ||
 
         tralloc_realloc ( ( tralloc_context ** ) &tr->data_7, sizeof ( float ) ) != 0 ||
         !compare_float ( tr->data_7[0], 0.01234 )

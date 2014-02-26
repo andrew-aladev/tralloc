@@ -184,11 +184,6 @@ tralloc_bool compare_float ( float a, float b )
     return fabs ( a - b ) < 0.000001;
 }
 
-tralloc_bool compare_double ( double a, double b )
-{
-    return fabs ( a - b ) < 0.000000000001;
-}
-
 tralloc_bool test_move_and_resize ( tree * tr )
 {
     if ( !test_empty_references ( tr ) ) {
@@ -245,14 +240,14 @@ tralloc_bool test_move_and_resize ( tree * tr )
     }
 
     if (
-        tralloc_realloc ( ( tralloc_context ** ) &tr->common, sizeof ( uint32_t ) * 20 ) != 0 ||
-        tr->common[0] != 123456 || tr->common[1] != 654321 ||
+        tralloc_realloc ( ( tralloc_context ** ) &tr->common, sizeof ( int8_t ) * 20 ) != 0 ||
+        tr->common[0] != -100 || tr->common[1] != 50 ||
 
         tralloc_realloc ( ( tralloc_context ** ) &tr->shared, sizeof ( float ) * 20 ) != 0 ||
         !compare_float ( tr->shared[0], 0.123456 ) ||
 
-        tralloc_realloc ( ( tralloc_context ** ) &tr->data_2, sizeof ( uint16_t ) * 30 ) != 0 ||
-        tr->data_2[0] != 12345 ||
+        tralloc_realloc ( ( tralloc_context ** ) &tr->data_2, sizeof ( uint8_t ) * 30 ) != 0 ||
+        tr->data_2[0] != 123 ||
 
         tralloc_realloc ( ( tralloc_context ** ) &tr->data_3, sizeof ( char ) * 40 ) != 0 ||
         tr->data_3[0] != 'q' || tr->data_3[1] != 'w' || tr->data_3[2] != 'e' || tr->data_3[3] != 'r' ||
@@ -260,14 +255,14 @@ tralloc_bool test_move_and_resize ( tree * tr )
         tralloc_realloc ( ( tralloc_context ** ) &tr->shared_1, sizeof ( uint8_t ) * 40 ) != 0 ||
 
         tralloc_realloc ( ( tralloc_context ** ) &tr->common_1, sizeof ( int ) * 20 ) != 0 ||
-        tr->common_1[0] != 456789 || tr->common_1[1] != 987654 ||
+        tr->common_1[0] != -45 || tr->common_1[1] != 56 ||
 
         tralloc_realloc ( ( tralloc_context ** ) &tr->common_2, sizeof ( uint8_t ) * 40 ) != 0 ||
 
-        tralloc_realloc ( ( tralloc_context ** ) &tr->shared_2, sizeof ( double ) * 15 ) != 0 ||
-        tr->shared_2[0] != 0.123456789 ||
+        tralloc_realloc ( ( tralloc_context ** ) &tr->shared_2, sizeof ( float ) * 15 ) != 0 ||
+        !compare_float ( tr->shared_2[0], 0.123456 ) ||
 
-        tralloc_realloc ( ( tralloc_context ** ) &tr->common_3, sizeof ( uint8_t ) * 40 ) != 0 ||
+        tralloc_realloc ( ( tralloc_context ** ) &tr->common_3, sizeof ( size_t ) * 40 ) != 0 ||
         tr->common_3[0] != 2 || tr->common_3[1] != 1
     ) {
         return TRALLOC_FALSE;

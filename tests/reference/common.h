@@ -10,16 +10,16 @@
 
 
 typedef struct tree_type {
-    uint32_t *        common;
+    int8_t *          common;
     float *           shared;
     uint8_t *         data_1;
-    uint16_t *        data_2;
+    uint8_t *         data_2;
     char *            data_3;
     int *             common_1;
     tralloc_context * common_2;
-    uint8_t *         common_3;
+    size_t *          common_3;
     tralloc_context * shared_1;
-    double *          shared_2;
+    float *           shared_2;
 } tree;
 
 tralloc_bool test_errors          ( tralloc_context * ctx );
