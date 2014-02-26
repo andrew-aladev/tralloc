@@ -73,7 +73,7 @@ Other supported compilers
     ::
 
      $ cmake -DCMAKE_TOOLCHAIN_FILE=../cmake/toolchains/arduino.cmake ..
-     $ CC="tcc" ../combinations.sh    
+     $ CC="tcc" cmake -DTRALLOC_SHARED=0 ..
      $ CC="clang" ../combinations.sh
 
 
