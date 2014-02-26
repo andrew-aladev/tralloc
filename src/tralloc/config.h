@@ -7,4 +7,4 @@
 #define TRALLOC_UTILS_BUFFER
 #define TRALLOC_UTILS
 
-/* #undef HAVE_C99_INLINE */
+#define HAVE_C99_INLINE
