@@ -16,7 +16,7 @@ Thread safety, pool.
 Supported platforms
 -------------------
 
-GNU/Linux, GNU/Hurd.
+GNU/Linux, GNU/Hurd and microcontrollers.
 
 
 Debug build
@@ -72,7 +72,7 @@ Other supported compilers
     
     ::
 
-     $ cmake -DCMAKE_BUILD_TYPE="Release" -DCMAKE_TOOLCHAIN_FILE=../cmake/toolchains/sdcc.cmake .. && make
+     $ cmake -DCMAKE_TOOLCHAIN_FILE=../cmake/toolchains/arduino.cmake ..
      $ CC="tcc" ../combinations.sh    
      $ CC="clang" ../combinations.sh
 
