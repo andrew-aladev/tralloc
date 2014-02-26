@@ -8,9 +8,19 @@
 
 #include <stdint.h>
 #include <stddef.h>
-#include <stdbool.h>
 
 #include "config.h"
+
+#ifdef HAVE_BOOL
+#    include <stdbool.h>
+typedef bool tralloc_bool;
+#    define TRALLOC_TRUE true
+#    define TRALLOC_FALSE false
+#else
+typedef char tralloc_bool;
+#    define TRALLOC_TRUE 1
+#    define TRALLOC_FALSE 0
+#endif
 
 
 typedef void tralloc_context;
@@ -104,7 +114,7 @@ typedef struct _tralloc_reference_type {
 typedef struct _tralloc_references_type {
     _tralloc_reference * first_reference;
     tralloc_extensions extensions;
-    bool autofree;
+    tralloc_bool autofree;
 } _tralloc_references;
 #endif
 
@@ -131,7 +141,7 @@ typedef struct _tralloc_pool_type {
     tralloc_extensions extensions;
     void * memory;
     size_t length;
-    bool autofree;
+    tralloc_bool autofree;
 } _tralloc_pool;
 #endif
 

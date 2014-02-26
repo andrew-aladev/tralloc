@@ -49,11 +49,11 @@ tralloc_error on_resize ( void * user_data, _tralloc_chunk * chunk, size_t old_l
     return 0;
 }
 
-bool test_resize ( tralloc_context * ctx )
+tralloc_bool test_resize ( tralloc_context * ctx )
 {
     malloc_dynarr * tralloc_history = malloc_history();
     if ( tralloc_history == NULL ) {
-        return false;
+        return TRALLOC_FALSE;
     }
     _tralloc_set_callback ( NULL, on_resize, NULL, NULL );
 
@@ -66,7 +66,7 @@ bool test_resize ( tralloc_context * ctx )
         tralloc ( a,   ( tralloc_context ** ) &c, sizeof ( float ) * 4 ) != 0
     ) {
         free_history ( tralloc_history );
-        return false;
+        return TRALLOC_FALSE;
     }
 
     if (
@@ -75,7 +75,7 @@ bool test_resize ( tralloc_context * ctx )
         tralloc_realloc ( ( tralloc_context ** ) &c, sizeof ( float ) * 10 ) != 0
     ) {
         free_history ( tralloc_history );
-        return false;
+        return TRALLOC_FALSE;
     }
 
     _tralloc_chunk * a_chunk = _tralloc_get_chunk_from_context ( a );
@@ -93,7 +93,7 @@ bool test_resize ( tralloc_context * ctx )
         info->chunk != c_chunk || info->old_length != sizeof ( float ) * 4 || info->chunk->length != sizeof ( float ) * 10
     ) {
         free_history ( tralloc_history );
-        return false;
+        return TRALLOC_FALSE;
     }
 
     if (
@@ -101,8 +101,8 @@ bool test_resize ( tralloc_context * ctx )
         tralloc_free ( b ) != 0
     ) {
         free_history ( tralloc_history );
-        return false;
+        return TRALLOC_FALSE;
     }
     free_history ( tralloc_history );
-    return true;
+    return TRALLOC_TRUE;
 }

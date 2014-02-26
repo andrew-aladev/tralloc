@@ -7,11 +7,10 @@
 #define TRALLOC_TESTS_EVENTS_COMMON
 
 #include <tralloc/types.h>
-#include <stdbool.h>
 
 
 #if defined(TRALLOC_UTILS_BUFFER)
-bool test_buffer ( tralloc_context * ctx );
+tralloc_bool test_buffer ( tralloc_context * ctx );
 #endif
 
 

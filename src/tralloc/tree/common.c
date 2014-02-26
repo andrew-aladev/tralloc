@@ -184,7 +184,7 @@ void _tralloc_subtree_to_vertical_list ( _tralloc_chunk * list_root_chunk, _tral
     _tralloc_chunk * prev_chunk, * next_chunk, * chunk_to_detach;
     prev_chunk = next_chunk = list_root_chunk;
 
-    while ( true ) {
+    while ( TRALLOC_TRUE ) {
         do {
             if ( _tralloc_can_free_chunk_children ( next_chunk ) && next_chunk->first_child != NULL ) {
                 next_chunk = next_chunk->first_child;

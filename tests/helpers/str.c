@@ -8,14 +8,14 @@
 #include <tralloc/helpers/string.h>
 
 
-bool test_str_errors ( tralloc_context * ctx )
+tralloc_bool test_str_errors ( tralloc_context * ctx )
 {
     if (
         tralloc_strdup   ( NULL, NULL, NULL )    != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL ||
         tralloc_strndup  ( NULL, NULL, NULL, 0 ) != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL ||
         tralloc_asprintf ( NULL, NULL, "\n" )    != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL
     ) {
-        return false;
+        return TRALLOC_FALSE;
     }
 
 #if defined(TRALLOC_EXTENSIONS)
@@ -24,7 +24,7 @@ bool test_str_errors ( tralloc_context * ctx )
         tralloc_strndup_with_extensions  ( NULL, NULL, 0, NULL, 0 ) != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL ||
         tralloc_asprintf_with_extensions ( NULL, NULL, 0, "\n" )    != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL
     ) {
-        return false;
+        return TRALLOC_FALSE;
     }
 #endif
 
@@ -33,7 +33,7 @@ bool test_str_errors ( tralloc_context * ctx )
         tralloc_strdup  ( ctx, &empty, NULL )    != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL ||
         tralloc_strndup ( ctx, &empty, NULL, 0 ) != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL
     ) {
-        return false;
+        return TRALLOC_FALSE;
     }
 
 #if defined(TRALLOC_EXTENSIONS)
@@ -41,27 +41,27 @@ bool test_str_errors ( tralloc_context * ctx )
         tralloc_strdup_with_extensions  ( ctx, &empty, 0, NULL )    != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL ||
         tralloc_strndup_with_extensions ( ctx, &empty, 0, NULL, 0 ) != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL
     ) {
-        return false;
+        return TRALLOC_FALSE;
     }
 #endif
 
     if ( tralloc_asprintf ( ctx, &empty, NULL ) != TRALLOC_ERROR_PRINTF_FAILED ) {
-        return false;
+        return TRALLOC_FALSE;
     }
 
 #if defined(TRALLOC_EXTENSIONS)
     if ( tralloc_asprintf_with_extensions ( ctx, &empty, 0, NULL ) != TRALLOC_ERROR_PRINTF_FAILED ) {
-        return false;
+        return TRALLOC_FALSE;
     }
 #endif
 
-    return true;
+    return TRALLOC_TRUE;
 }
 
-bool test_str ( tralloc_context * ctx )
+tralloc_bool test_str ( tralloc_context * ctx )
 {
     if ( !test_str_errors ( ctx ) ) {
-        return false;
+        return TRALLOC_FALSE;
     }
 
     char * str = "Viktor Tsoi Star Called Sun";
@@ -70,7 +70,7 @@ bool test_str ( tralloc_context * ctx )
         tralloc_strdup ( ctx, &full, str ) != 0 ||
         strcmp ( full, str ) != 0
     ) {
-        return false;
+        return TRALLOC_FALSE;
     }
 
     char * walk = str;
@@ -79,7 +79,7 @@ bool test_str ( tralloc_context * ctx )
         tralloc_strndup ( full, &part_1, walk, 6 ) != 0 ||
         strcmp ( part_1, "Viktor" ) != 0
     ) {
-        return false;
+        return TRALLOC_FALSE;
     }
 
     walk += 7;
@@ -88,7 +88,7 @@ bool test_str ( tralloc_context * ctx )
         tralloc_strndup ( full, &part_2, walk, 4 ) != 0 ||
         strcmp ( part_2, "Tsoi" ) != 0
     ) {
-        return false;
+        return TRALLOC_FALSE;
     }
 
     walk += 5;
@@ -97,7 +97,7 @@ bool test_str ( tralloc_context * ctx )
         tralloc_strndup ( full, &part_3, walk, 4 ) != 0 ||
         strcmp ( part_3, "Star" ) != 0
     ) {
-        return false;
+        return TRALLOC_FALSE;
     }
 
     walk += 5;
@@ -106,7 +106,7 @@ bool test_str ( tralloc_context * ctx )
         tralloc_strndup ( full, &part_4, walk, 6 ) != 0 ||
         strcmp ( part_4, "Called" ) != 0
     ) {
-        return false;
+        return TRALLOC_FALSE;
     }
 
     walk += 7;
@@ -115,7 +115,7 @@ bool test_str ( tralloc_context * ctx )
         tralloc_strndup ( full, &part_5, walk, 3 ) != 0 ||
         strcmp ( part_5, "Sun" ) != 0
     ) {
-        return false;
+        return TRALLOC_FALSE;
     }
 
     char * formatted_string;
@@ -123,11 +123,11 @@ bool test_str ( tralloc_context * ctx )
         tralloc_asprintf ( full, &formatted_string, "%s %s %s %s %s", part_1, part_2, part_3, part_4, part_5 ) != 0 ||
         strcmp ( formatted_string, "Viktor Tsoi Star Called Sun" ) != 0
     ) {
-        return false;
+        return TRALLOC_FALSE;
     }
 
     if ( tralloc_free ( full ) != 0 ) {
-        return false;
+        return TRALLOC_FALSE;
     }
-    return true;
+    return TRALLOC_TRUE;
 }

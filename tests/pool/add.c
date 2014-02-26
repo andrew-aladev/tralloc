@@ -9,15 +9,15 @@
 
 
 static
-bool test_memory_overflow ( tralloc_context * ctx )
+tralloc_bool test_memory_overflow ( tralloc_context * ctx )
 {
     tralloc_context * empty_pool;
     if ( tralloc_with_extensions_new ( ctx, &empty_pool, TRALLOC_EXTENSION_POOL ) != 0 ) {
-        return false;
+        return TRALLOC_FALSE;
     }
     _tralloc_chunk * pool_chunk = _tralloc_get_chunk_from_context ( empty_pool );
     if ( ! ( pool_chunk->extensions & TRALLOC_EXTENSION_POOL ) ) {
-        return false;
+        return TRALLOC_FALSE;
     }
     _tralloc_pool * pool = _tralloc_get_pool_from_chunk ( pool_chunk );
     if (
@@ -25,40 +25,40 @@ bool test_memory_overflow ( tralloc_context * ctx )
         pool->max_fragment != NULL       ||
         pool->memory       != empty_pool ||
         pool->length       != 0          ||
-        pool->autofree     != false
+        pool->autofree     != TRALLOC_FALSE
     ) {
-        return false;
+        return TRALLOC_FALSE;
     }
 
     tralloc_context * empty_pool_child;
     if ( tralloc_new ( empty_pool, &empty_pool_child ) != 0 ) {
-        return false;
+        return TRALLOC_FALSE;
     }
     _tralloc_chunk * pool_child_chunk = _tralloc_get_chunk_from_context ( empty_pool_child );
     if ( pool_child_chunk->extensions & TRALLOC_EXTENSION_POOL_CHILD ) {
-        return false;
+        return TRALLOC_FALSE;
     }
 
     if ( tralloc_free ( empty_pool ) != 0 ) {
-        return false;
+        return TRALLOC_FALSE;
     }
 
-    return true;
+    return TRALLOC_TRUE;
 }
 
 static
-bool test_memory_strict ( tralloc_context * ctx )
+tralloc_bool test_memory_strict ( tralloc_context * ctx )
 {
     size_t pool_child_length = tralloc_predict_chunk_length ( TRALLOC_EXTENSION_POOL_CHILD ) + sizeof ( uint8_t ) * 5;
     size_t pool_data_length  = pool_child_length;
 
     tralloc_context * pool_data;
     if ( tralloc_with_extensions ( ctx, &pool_data, TRALLOC_EXTENSION_POOL, pool_data_length ) != 0 ) {
-        return false;
+        return TRALLOC_FALSE;
     }
     _tralloc_chunk * pool_chunk = _tralloc_get_chunk_from_context ( pool_data );
     if ( ! ( pool_chunk->extensions & TRALLOC_EXTENSION_POOL ) ) {
-        return false;
+        return TRALLOC_FALSE;
     }
     _tralloc_pool * pool = _tralloc_get_pool_from_chunk ( pool_chunk );
     _tralloc_pool_fragment * fragment = pool_data;
@@ -67,7 +67,7 @@ bool test_memory_strict ( tralloc_context * ctx )
         pool->max_fragment != fragment         ||
         pool->memory       != pool_data        ||
         pool->length       != pool_data_length ||
-        pool->autofree     != false            ||
+        pool->autofree     != TRALLOC_FALSE    ||
 
         fragment->prev       != NULL ||
         fragment->next       != NULL ||
@@ -75,16 +75,16 @@ bool test_memory_strict ( tralloc_context * ctx )
         fragment->next_child != NULL ||
         fragment->length     != pool_data_length
     ) {
-        return false;
+        return TRALLOC_FALSE;
     }
 
     uint8_t * pool_child_data;
     if ( tralloc ( pool_data, ( tralloc_context ** ) &pool_child_data, sizeof ( uint8_t ) * 5 ) != 0 ) {
-        return false;
+        return TRALLOC_FALSE;
     }
     _tralloc_chunk * pool_child_chunk = _tralloc_get_chunk_from_context ( pool_child_data );
     if ( ! ( pool_child_chunk->extensions & TRALLOC_EXTENSION_POOL_CHILD ) ) {
-        return false;
+        return TRALLOC_FALSE;
     }
     _tralloc_pool_child * pool_child = _tralloc_get_pool_child_from_chunk ( pool_child_chunk );
     if (
@@ -92,36 +92,36 @@ bool test_memory_strict ( tralloc_context * ctx )
         pool->max_fragment != NULL             ||
         pool->memory       != pool_data        ||
         pool->length       != pool_data_length ||
-        pool->autofree     != false            ||
+        pool->autofree     != TRALLOC_FALSE    ||
 
         pool_child->pool   != pool ||
         pool_child->prev   != NULL ||
         pool_child->next   != NULL ||
         pool_child->length != pool_child_length
     ) {
-        return false;
+        return TRALLOC_FALSE;
     }
 
     if ( tralloc_free ( pool_data ) != 0 ) {
-        return false;
+        return TRALLOC_FALSE;
     }
 
-    return true;
+    return TRALLOC_TRUE;
 }
 
 static
-bool test_memory_much ( tralloc_context * ctx )
+tralloc_bool test_memory_much ( tralloc_context * ctx )
 {
     size_t pool_child_length = tralloc_predict_chunk_length ( TRALLOC_EXTENSION_POOL_CHILD ) + sizeof ( uint8_t ) * 5;
     size_t pool_data_length  = pool_child_length + sizeof ( _tralloc_pool_fragment );
 
     tralloc_context * pool_data;
     if ( tralloc_with_extensions ( ctx, &pool_data, TRALLOC_EXTENSION_POOL, pool_data_length ) != 0 ) {
-        return false;
+        return TRALLOC_FALSE;
     }
     _tralloc_chunk * pool_chunk = _tralloc_get_chunk_from_context ( pool_data );
     if ( ! ( pool_chunk->extensions & TRALLOC_EXTENSION_POOL ) ) {
-        return false;
+        return TRALLOC_FALSE;
     }
     _tralloc_pool * pool = _tralloc_get_pool_from_chunk ( pool_chunk );
     _tralloc_pool_fragment * fragment = pool_data;
@@ -130,7 +130,7 @@ bool test_memory_much ( tralloc_context * ctx )
         pool->max_fragment != fragment         ||
         pool->memory       != pool_data        ||
         pool->length       != pool_data_length ||
-        pool->autofree     != false            ||
+        pool->autofree     != TRALLOC_FALSE    ||
 
         fragment->prev       != NULL ||
         fragment->next       != NULL ||
@@ -138,16 +138,16 @@ bool test_memory_much ( tralloc_context * ctx )
         fragment->next_child != NULL ||
         fragment->length     != pool_data_length
     ) {
-        return false;
+        return TRALLOC_FALSE;
     }
 
     uint8_t * pool_child_data;
     if ( tralloc ( pool_data, ( tralloc_context ** ) &pool_child_data, sizeof ( uint8_t ) * 5 ) != 0 ) {
-        return false;
+        return TRALLOC_FALSE;
     }
     _tralloc_chunk * pool_child_chunk = _tralloc_get_chunk_from_context ( pool_child_data );
     if ( ! ( pool_child_chunk->extensions & TRALLOC_EXTENSION_POOL_CHILD ) ) {
-        return false;
+        return TRALLOC_FALSE;
     }
     _tralloc_pool_child * pool_child = _tralloc_get_pool_child_from_chunk ( pool_child_chunk );
     if (
@@ -155,7 +155,7 @@ bool test_memory_much ( tralloc_context * ctx )
         pool->max_fragment != fragment         ||
         pool->memory       != pool_data        ||
         pool->length       != pool_data_length ||
-        pool->autofree     != false            ||
+        pool->autofree     != TRALLOC_FALSE    ||
 
         pool_child->pool   != pool ||
         pool_child->prev   != NULL ||
@@ -168,18 +168,18 @@ bool test_memory_much ( tralloc_context * ctx )
         fragment->next_child != pool_child ||
         fragment->length     != pool_data_length - pool_child_length
     ) {
-        return false;
+        return TRALLOC_FALSE;
     }
 
     if ( tralloc_free ( pool_data ) != 0 ) {
-        return false;
+        return TRALLOC_FALSE;
     }
 
-    return true;
+    return TRALLOC_TRUE;
 }
 
 static
-bool test_memory_zero ( tralloc_context * ctx )
+tralloc_bool test_memory_zero ( tralloc_context * ctx )
 {
     size_t pool_data_length = tralloc_predict_chunk_length ( TRALLOC_EXTENSION_POOL_CHILD ) + sizeof ( uint8_t ) * 3;
 
@@ -189,7 +189,7 @@ bool test_memory_zero ( tralloc_context * ctx )
         tralloc_with_extensions ( ctx, &pool_data, TRALLOC_EXTENSION_POOL, pool_data_length ) != 0 ||
         tralloc_zero ( pool_data, ( tralloc_context ** ) &pool_child_data, sizeof ( uint8_t ) * 3 ) != 0
     ) {
-        return false;
+        return TRALLOC_FALSE;
     }
 
     if (
@@ -197,17 +197,17 @@ bool test_memory_zero ( tralloc_context * ctx )
         pool_child_data[1] != 0 ||
         pool_child_data[2] != 0
     ) {
-        return false;
+        return TRALLOC_FALSE;
     }
 
     if ( tralloc_free ( pool_data ) != 0 ) {
-        return false;
+        return TRALLOC_FALSE;
     }
 
-    return true;
+    return TRALLOC_TRUE;
 }
 
-bool test_add ( tralloc_context * ctx )
+tralloc_bool test_add ( tralloc_context * ctx )
 {
     if (
         ! test_memory_overflow ( ctx ) ||
@@ -215,8 +215,8 @@ bool test_add ( tralloc_context * ctx )
         ! test_memory_much     ( ctx ) ||
         ! test_memory_zero     ( ctx )
     ) {
-        return false;
+        return TRALLOC_FALSE;
     }
 
-    return true;
+    return TRALLOC_TRUE;
 }

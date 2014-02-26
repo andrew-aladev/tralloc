@@ -36,11 +36,11 @@ tralloc_error on_add ( void * user_data, _tralloc_chunk * chunk )
     return 0;
 }
 
-bool test_add ( tralloc_context * ctx )
+tralloc_bool test_add ( tralloc_context * ctx )
 {
     malloc_dynarr * tralloc_history = malloc_history();
     if ( tralloc_history == NULL ) {
-        return false;
+        return TRALLOC_FALSE;
     }
     _tralloc_set_callback ( on_add, NULL, NULL, NULL );
 
@@ -53,7 +53,7 @@ bool test_add ( tralloc_context * ctx )
         tralloc ( a,   ( tralloc_context ** ) &c, sizeof ( float ) * 4 ) != 0
     ) {
         free_history ( tralloc_history );
-        return false;
+        return TRALLOC_FALSE;
     }
 
     _tralloc_chunk * a_chunk = _tralloc_get_chunk_from_context ( a );
@@ -71,16 +71,16 @@ bool test_add ( tralloc_context * ctx )
         chunk != c_chunk || chunk->length != sizeof ( float ) * 4
     ) {
         free_history ( tralloc_history );
-        return false;
+        return TRALLOC_FALSE;
     }
 
     if (
         tralloc_free ( a ) != 0 ||
         tralloc_free ( b ) != 0
     ) {
-        return false;
+        return TRALLOC_FALSE;
     }
 
     free_history ( tralloc_history );
-    return true;
+    return TRALLOC_TRUE;
 }

@@ -46,8 +46,8 @@ tralloc_error tralloc_with_extensions_new ( tralloc_context * parent_context, tr
 }
 
 
-bool          _tralloc_can_free_chunk          ( _tralloc_chunk * chunk );
-bool          _tralloc_can_free_chunk_children ( _tralloc_chunk * chunk );
+tralloc_bool  _tralloc_can_free_chunk          ( _tralloc_chunk * chunk );
+tralloc_bool  _tralloc_can_free_chunk_children ( _tralloc_chunk * chunk );
 tralloc_error _tralloc_free_chunk              ( _tralloc_chunk * chunk );
 
 

@@ -7,15 +7,14 @@
 #define TRALLOC_TESTS_HELPERS_COMMON
 
 #include <tralloc/types.h>
-#include <stdbool.h>
 
 
-bool test_str_errors ( tralloc_context * ctx );
-bool test_str        ( tralloc_context * ctx );
+tralloc_bool test_str_errors ( tralloc_context * ctx );
+tralloc_bool test_str        ( tralloc_context * ctx );
 
 #if defined(TRALLOC_DESTRUCTOR)
-bool test_file_errors ( tralloc_context * ctx );
-bool test_file        ( tralloc_context * ctx );
+tralloc_bool test_file_errors ( tralloc_context * ctx );
+tralloc_bool test_file        ( tralloc_context * ctx );
 #endif
 
 

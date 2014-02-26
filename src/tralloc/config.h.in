@@ -8,3 +8,4 @@
 #cmakedefine TRALLOC_UTILS
 
 #cmakedefine HAVE_C99_INLINE
+#cmakedefine HAVE_BOOL

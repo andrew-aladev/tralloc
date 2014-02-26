@@ -7,11 +7,10 @@
 #define TRALLOC_TESTS_LENGTH_COMMON
 
 #include <tralloc/types.h>
-#include <stdbool.h>
 
 
-bool test_errors ( tralloc_context * ctx );
-bool test_length ( tralloc_context * ctx );
+tralloc_bool test_errors ( tralloc_context * ctx );
+tralloc_bool test_length ( tralloc_context * ctx );
 
 
 #endif

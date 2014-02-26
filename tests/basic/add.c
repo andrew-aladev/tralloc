@@ -21,7 +21,7 @@
 */
 
 static
-bool test_chunks ( tree * tr )
+tralloc_bool test_chunks ( tree * tr )
 {
     _tralloc_chunk * root_chunk    = _tralloc_get_chunk_from_context ( tr );
     _tralloc_chunk * data_1_chunk  = _tralloc_get_chunk_from_context ( tr->data_1 );
@@ -79,16 +79,16 @@ bool test_chunks ( tree * tr )
         trivium_chunk->next        != NULL         ||
         trivium_chunk->first_child != NULL
     ) {
-        return false;
+        return TRALLOC_FALSE;
     }
 
-    return true;
+    return TRALLOC_TRUE;
 }
 
-bool test_add ( tree * tr )
+tralloc_bool test_add ( tree * tr )
 {
     if ( tralloc ( tr, ( tralloc_context ** ) &tr->data_1, sizeof ( uint8_t ) ) != 0 ) {
-        return false;
+        return TRALLOC_FALSE;
     }
     * tr->data_1 = 123;
 
@@ -96,7 +96,7 @@ bool test_add ( tree * tr )
         tralloc_zero ( tr->data_1, ( tralloc_context ** ) &tr->data_2, sizeof ( uint16_t ) * 4 ) != 0 ||
         tr->data_2[0] != 0 || tr->data_2[1] != 0 || tr->data_2[2] != 0 || tr->data_2[3] != 0
     ) {
-        return false;
+        return TRALLOC_FALSE;
     }
     tr->data_2[0] = 012;
     tr->data_2[1] = 345;
@@ -104,7 +104,7 @@ bool test_add ( tree * tr )
     tr->data_2[3] = 901;
 
     if ( tralloc ( tr->data_1, ( tralloc_context ** ) &tr->data_3, sizeof ( char ) * 3 ) != 0 ) {
-        return false;
+        return TRALLOC_FALSE;
     }
     tr->data_3[0] = 'q';
     tr->data_3[1] = 'w';
@@ -114,13 +114,13 @@ bool test_add ( tree * tr )
         tralloc_zero ( tr->data_1, ( tralloc_context ** ) &tr->data_4, sizeof ( uint32_t ) * 2 ) != 0 ||
         tr->data_4[0] != 0 || tr->data_4[1] != 0
     ) {
-        return false;
+        return TRALLOC_FALSE;
     }
     tr->data_4[0] = 12345;
     tr->data_4[1] = 67890;
 
     if ( tralloc ( tr->data_3, ( tralloc_context ** ) &tr->data_5, sizeof ( size_t ) * 3 ) != 0 ) {
-        return false;
+        return TRALLOC_FALSE;
     }
     tr->data_5[0] = 123456789;
     tr->data_5[1] = 987654321;
@@ -130,18 +130,18 @@ bool test_add ( tree * tr )
         tralloc_zero ( tr->data_3, ( tralloc_context ** ) &tr->data_6, sizeof ( double ) ) != 0 ||
         * tr->data_6 != 0
     ) {
-        return false;
+        return TRALLOC_FALSE;
     }
     * tr->data_6 = 0.0123456789;
 
     if ( tralloc ( tr->data_3, ( tralloc_context ** ) &tr->data_7, sizeof ( float ) * 2 ) != 0 ) {
-        return false;
+        return TRALLOC_FALSE;
     }
     tr->data_7[0] = 0.01234;
     tr->data_7[1] = 0.56789;
 
     if ( tralloc_new ( tr->data_7, ( tralloc_context ** ) &tr->trivium ) != 0 ) {
-        return false;
+        return TRALLOC_FALSE;
     }
 
     return test_chunks ( tr );

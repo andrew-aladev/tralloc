@@ -9,7 +9,7 @@
 #include <string.h>
 
 
-bool test_errors ()
+tralloc_bool test_errors ()
 {
 
 #if defined(TRALLOC_EXTENSIONS)
@@ -17,37 +17,37 @@ bool test_errors ()
         tralloc_buffer_new                 ( NULL, NULL )    != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL ||
         tralloc_buffer_with_extensions_new ( NULL, NULL, 0 ) != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL
     ) {
-        return false;
+        return TRALLOC_FALSE;
     }
 #else
     if ( tralloc_buffer_new ( NULL, NULL ) != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL ) {
-        return false;
+        return TRALLOC_FALSE;
     }
 #endif
 
-    return true;
+    return TRALLOC_TRUE;
 }
 
-bool test_buffer ( tralloc_context * ctx )
+tralloc_bool test_buffer ( tralloc_context * ctx )
 {
     if ( !test_errors () ) {
-        return false;
+        return TRALLOC_FALSE;
     }
 
     tralloc_buffer * buffer;
 
 #if defined(TRALLOC_EXTENSIONS)
     if ( tralloc_buffer_with_extensions_new ( ctx, &buffer, 0 ) != 0 ) {
-        return false;
+        return TRALLOC_FALSE;
     }
 #else
     if ( tralloc_buffer_new ( ctx, &buffer ) != 0 ) {
-        return false;
+        return TRALLOC_FALSE;
     }
 #endif
 
     if ( tralloc_buffer_prepare ( buffer, 9 ) != 0 ) {
-        return false;
+        return TRALLOC_FALSE;
     }
     uint8_t * buf = tralloc_buffer_get_write_point ( buffer );
     buf[0] = '0';
@@ -56,7 +56,7 @@ bool test_buffer ( tralloc_context * ctx )
     tralloc_buffer_written ( buffer, 3 );
 
     if ( tralloc_buffer_prepare ( buffer, 3 ) != 0 ) {
-        return false;
+        return TRALLOC_FALSE;
     }
     buf    = tralloc_buffer_get_write_point ( buffer );
     buf[0] = '3';
@@ -64,7 +64,7 @@ bool test_buffer ( tralloc_context * ctx )
     tralloc_buffer_written ( buffer, 2 );
 
     if ( tralloc_buffer_prepare ( buffer, 5 ) != 0 ) {
-        return false;
+        return TRALLOC_FALSE;
     }
     buf    = tralloc_buffer_get_write_point ( buffer );
     buf[0] = '5';
@@ -74,11 +74,11 @@ bool test_buffer ( tralloc_context * ctx )
         tralloc_buffer_get_length ( buffer ) != 6 ||
         buffer->length != 10
     ) {
-        return false;
+        return TRALLOC_FALSE;
     }
 
     if ( tralloc_buffer_prepare ( buffer, 4 ) != 0 ) {
-        return false;
+        return TRALLOC_FALSE;
     }
     buf    = tralloc_buffer_get_write_point ( buffer );
     buf[0] = '6';
@@ -88,7 +88,7 @@ bool test_buffer ( tralloc_context * ctx )
     tralloc_buffer_written ( buffer, 4 );
 
     if ( tralloc_buffer_trim ( buffer ) != 0 ) {
-        return false;
+        return TRALLOC_FALSE;
     }
 
     if (
@@ -97,15 +97,15 @@ bool test_buffer ( tralloc_context * ctx )
         tralloc_buffer_get_length ( buffer ) != 10 ||
         strncmp ( ( char * ) tralloc_buffer_get_read_point ( buffer ), "0123456789", 10 ) != 0
     ) {
-        return false;
+        return TRALLOC_FALSE;
     }
 
     if ( tralloc_buffer_readed ( buffer, 20 ) != TRALLOC_ERROR_UTILS_BUFFER_OVERFLOW ) {
-        return false;
+        return TRALLOC_FALSE;
     }
 
     if ( tralloc_buffer_readed ( buffer, 4 ) != 0 ) {
-        return false;
+        return TRALLOC_FALSE;
     }
 
     if (
@@ -114,14 +114,14 @@ bool test_buffer ( tralloc_context * ctx )
         tralloc_buffer_get_length ( buffer ) != 6 ||
         strncmp ( ( char * ) tralloc_buffer_get_read_point ( buffer ), "456789", 6 ) != 0
     ) {
-        return false;
+        return TRALLOC_FALSE;
     }
 
     if (
         tralloc_buffer_readed ( buffer, 1 ) != 0 ||
         tralloc_buffer_trim ( buffer )      != 0
     ) {
-        return false;
+        return TRALLOC_FALSE;
     }
 
     if (
@@ -130,7 +130,7 @@ bool test_buffer ( tralloc_context * ctx )
         tralloc_buffer_get_length ( buffer ) != 5 ||
         strncmp ( ( char * ) tralloc_buffer_get_read_point ( buffer ), "56789", 5 ) != 0
     ) {
-        return false;
+        return TRALLOC_FALSE;
     }
 
     if (
@@ -141,12 +141,12 @@ bool test_buffer ( tralloc_context * ctx )
         buffer->length      != 0 ||
         buffer->buf         != NULL
     ) {
-        return false;
+        return TRALLOC_FALSE;
     }
 
     if ( tralloc_free ( buffer ) != 0 ) {
-        return false;
+        return TRALLOC_FALSE;
     }
 
-    return true;
+    return TRALLOC_TRUE;
 }

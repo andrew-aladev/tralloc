@@ -22,7 +22,7 @@
 */
 
 static
-bool test_chunks ( tree * tr )
+tralloc_bool test_chunks ( tree * tr )
 {
     _tralloc_chunk * root_chunk    = _tralloc_get_chunk_from_context ( tr );
     _tralloc_chunk * data_1_chunk  = _tralloc_get_chunk_from_context ( tr->data_1 );
@@ -80,23 +80,23 @@ bool test_chunks ( tree * tr )
         trivium_chunk->next        != NULL         ||
         trivium_chunk->first_child != NULL
     ) {
-        return false;
+        return TRALLOC_FALSE;
     }
 
-    return true;
+    return TRALLOC_TRUE;
 }
 
-bool compare_float ( float a, float b )
+tralloc_bool compare_float ( float a, float b )
 {
     return fabs ( a - b ) < 0.000001;
 }
 
-bool compare_double ( double a, double b )
+tralloc_bool compare_double ( double a, double b )
 {
     return fabs ( a - b ) < 0.000000000001;
 }
 
-bool test_move_and_resize ( tree * tr )
+tralloc_bool test_move_and_resize ( tree * tr )
 {
     if (
         tralloc_move ( tr->data_7, tr->data_2 ) != 0 ||
@@ -104,7 +104,7 @@ bool test_move_and_resize ( tree * tr )
         tralloc_move ( tr->data_6, tr->data_1 ) != 0 ||
         tralloc_move ( tr->data_5, tr->data_4 ) != 0
     ) {
-        return false;
+        return TRALLOC_FALSE;
     }
 
     if (
@@ -129,7 +129,7 @@ bool test_move_and_resize ( tree * tr )
         tralloc_realloc ( ( tralloc_context ** ) &tr->data_7, sizeof ( float ) ) != 0 ||
         !compare_float ( tr->data_7[0], 0.01234 )
     ) {
-        return false;
+        return TRALLOC_FALSE;
     }
 
     return test_chunks ( tr );

@@ -8,14 +8,14 @@
 #include <tralloc/reference/main.h>
 
 
-bool test_errors ( tralloc_context * ctx )
+tralloc_bool test_errors ( tralloc_context * ctx )
 {
     if (
         tralloc_move_reference ( NULL, NULL ) != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL ||
         tralloc_clear_references ( NULL )     != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL ||
         tralloc_move_reference ( ctx, ctx )   != TRALLOC_ERROR_CHILD_EQUALS_PARENT
     ) {
-        return false;
+        return TRALLOC_FALSE;
     }
 
     tralloc_context * empty;
@@ -24,7 +24,7 @@ bool test_errors ( tralloc_context * ctx )
         tralloc_clear_references ( empty )       != TRALLOC_ERROR_NO_SUCH_EXTENSION ||
         tralloc_move_reference   ( empty, NULL ) != TRALLOC_ERROR_NO_SUCH_EXTENSION
     ) {
-        return false;
+        return TRALLOC_FALSE;
     }
 
     tralloc_context * references, * reference;
@@ -39,7 +39,7 @@ bool test_errors ( tralloc_context * ctx )
         tralloc_move_reference      ( reference, NULL )       != 0 ||
         tralloc_move_reference      ( reference, NULL )       != TRALLOC_ERROR_CHILD_HAS_SAME_PARENT
     ) {
-        return false;
+        return TRALLOC_FALSE;
     }
 
     if (
@@ -47,8 +47,8 @@ bool test_errors ( tralloc_context * ctx )
         tralloc_free ( references ) != 0 ||
         tralloc_free ( reference )  != 0
     ) {
-        return false;
+        return TRALLOC_FALSE;
     }
 
-    return true;
+    return TRALLOC_TRUE;
 }

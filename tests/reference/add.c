@@ -20,7 +20,7 @@ common_1   3      common_2  common_3
 */
 
 static
-bool test_chunks ( tree * tr )
+tralloc_bool test_chunks ( tree * tr )
 {
     _tralloc_chunk * root_chunk     = _tralloc_get_chunk_from_context ( tr );
     _tralloc_chunk * common_chunk   = _tralloc_get_chunk_from_context ( tr->common );
@@ -90,32 +90,32 @@ bool test_chunks ( tree * tr )
         common_3_chunk->next        != NULL         ||
         common_3_chunk->first_child != NULL
     ) {
-        return false;
+        return TRALLOC_FALSE;
     }
 
-    return true;
+    return TRALLOC_TRUE;
 }
 
-bool test_add ( tree * tr )
+tralloc_bool test_add ( tree * tr )
 {
     if ( tralloc_with_extensions ( NULL, ( tralloc_context ** ) &tr->common, TRALLOC_EXTENSION_REFERENCES, sizeof ( uint32_t ) * 2 ) != 0 ) {
-        return false;
+        return TRALLOC_FALSE;
     }
     tr->common[0] = 123456;
     tr->common[1] = 654321;
 
     if ( tralloc_with_extensions ( tr, ( tralloc_context ** ) &tr->shared, TRALLOC_EXTENSION_REFERENCES, sizeof ( float ) ) != 0 ) {
-        return false;
+        return TRALLOC_FALSE;
     }
     * tr->shared = 0.123456;
 
     if ( tralloc ( tr, ( tralloc_context ** ) &tr->data_2, sizeof ( uint16_t ) ) != 0 ) {
-        return false;
+        return TRALLOC_FALSE;
     }
     * tr->data_2 = 12345;
 
     if ( tralloc ( tr, ( tralloc_context ** ) &tr->data_1, sizeof ( uint8_t ) * 3 ) != 0 ) {
-        return false;
+        return TRALLOC_FALSE;
     }
     tr->data_1[0] = 1;
     tr->data_1[1] = 2;
@@ -125,7 +125,7 @@ bool test_add ( tree * tr )
         tralloc_zero ( tr->data_1, ( tralloc_context ** ) &tr->data_3, sizeof ( char ) * 4 ) != 0 ||
         tr->data_3[0] != 0 || tr->data_3[1] != 0 || tr->data_3[2] != 0 || tr->data_3[3] != 0
     ) {
-        return false;
+        return TRALLOC_FALSE;
     }
     tr->data_3[0] = 'q';
     tr->data_3[1] = 'w';
@@ -133,29 +133,29 @@ bool test_add ( tree * tr )
     tr->data_3[3] = 'r';
 
     if ( tralloc_with_extensions_new ( tr->data_3, ( tralloc_context ** ) &tr->shared_1, TRALLOC_EXTENSION_REFERENCE ) != 0 ) {
-        return false;
+        return TRALLOC_FALSE;
     }
 
     if (
         tralloc_zero_with_extensions ( tr->data_1, ( tralloc_context ** ) &tr->common_1, TRALLOC_EXTENSION_REFERENCE, sizeof ( int ) * 2 ) != 0 ||
         tr->common_1[0] != 0 || tr->common_1[1] != 0
     ) {
-        return false;
+        return TRALLOC_FALSE;
     }
     tr->common_1[0] = 456789;
     tr->common_1[1] = 987654;
 
     if ( tralloc_with_extensions_new ( tr->data_2, ( tralloc_context ** ) &tr->common_2, TRALLOC_EXTENSION_REFERENCE ) != 0 ) {
-        return false;
+        return TRALLOC_FALSE;
     }
 
     if ( tralloc_with_extensions ( tr->common_2, ( tralloc_context ** ) &tr->shared_2, TRALLOC_EXTENSION_REFERENCE, sizeof ( double ) ) != 0 ) {
-        return false;
+        return TRALLOC_FALSE;
     }
     * tr->shared_2 = 0.123456789;
 
     if ( tralloc_with_extensions ( tr->shared, ( tralloc_context ** ) &tr->common_3, TRALLOC_EXTENSION_REFERENCE, sizeof ( uint8_t ) * 2 ) != 0 ) {
-        return false;
+        return TRALLOC_FALSE;
     }
     tr->common_3[0] = 2;
     tr->common_3[1] = 1;

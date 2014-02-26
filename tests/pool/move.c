@@ -7,11 +7,11 @@
 #include <tralloc/tree.h>
 
 
-bool test_move ( tralloc_context * ctx )
+tralloc_bool test_move ( tralloc_context * ctx )
 {
     size_t pool_data_length = tralloc_predict_chunk_length ( TRALLOC_EXTENSION_POOL_CHILD ) + sizeof ( uint8_t ) * 5;
 
     ;
 
-    return true;
+    return TRALLOC_TRUE;
 }

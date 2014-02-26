@@ -7,7 +7,6 @@
 #define TRALLOC_TESTS_REFERENCE_COMMON
 
 #include <tralloc/types.h>
-#include <stdbool.h>
 
 
 typedef struct tree_type {
@@ -23,10 +22,10 @@ typedef struct tree_type {
     double *          shared_2;
 } tree;
 
-bool test_errors          ( tralloc_context * ctx );
-bool test_add             ( tree * tr );
-bool test_move_and_resize ( tree * tr );
-bool test_free_subtree    ( tree * tr );
+tralloc_bool test_errors          ( tralloc_context * ctx );
+tralloc_bool test_add             ( tree * tr );
+tralloc_bool test_move_and_resize ( tree * tr );
+tralloc_bool test_free_subtree    ( tree * tr );
 
 
 #endif

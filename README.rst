@@ -71,7 +71,9 @@ Other supported compilers
 ---------
     
     ::
-    
+
+     $ cmake -DCMAKE_BUILD_TYPE="Release" -DCMAKE_TOOLCHAIN_FILE=../cmake/toolchains/sdcc.cmake .. && make
+     $ CC="tcc" ../combinations.sh    
      $ CC="clang" ../combinations.sh
 
 

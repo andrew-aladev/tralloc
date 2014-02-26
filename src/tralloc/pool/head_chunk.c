@@ -18,15 +18,15 @@ void _tralloc_pool_new_chunk ( _tralloc_chunk * chunk, size_t length )
     pool->memory       = _tralloc_get_context_from_chunk ( chunk );
     pool->max_fragment = _tralloc_pool_fragment_new_memory ( pool->memory, length );
     pool->length       = length;
-    pool->autofree     = false;
+    pool->autofree     = TRALLOC_FALSE;
 }
 
-bool _tralloc_pool_can_alloc ( _tralloc_pool * pool, size_t length )
+tralloc_bool _tralloc_pool_can_alloc ( _tralloc_pool * pool, size_t length )
 {
     return _tralloc_pool_fragment_can_alloc ( pool->max_fragment, length );
 }
 
-void _tralloc_pool_alloc ( _tralloc_pool * pool, void ** memory, size_t length, bool zero, _tralloc_pool_child ** prev_pool_child, _tralloc_pool_child ** next_pool_child )
+void _tralloc_pool_alloc ( _tralloc_pool * pool, void ** memory, size_t length, tralloc_bool zero, _tralloc_pool_child ** prev_pool_child, _tralloc_pool_child ** next_pool_child )
 {
     _tralloc_pool_fragment * fragment = pool->max_fragment;
     * prev_pool_child = fragment->prev_child;

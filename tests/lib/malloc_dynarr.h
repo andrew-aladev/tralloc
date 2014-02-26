@@ -7,11 +7,9 @@
 #define TRALLOC_UTILS_MALLOC_DYNARR_H
 
 #include <tralloc/macro.h>
+#include <tralloc/types.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdint.h>
-#include <stddef.h>
-#include <stdbool.h>
 
 #undef INLINE
 #ifdef TRALLOC_UTILS_MALLOC_DYNARR_INCLUDED_FROM_OBJECT

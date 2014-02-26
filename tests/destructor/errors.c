@@ -8,7 +8,7 @@
 #include <tralloc/destructor/main.h>
 
 
-bool test_errors ( tralloc_context * ctx )
+tralloc_bool test_errors ( tralloc_context * ctx )
 {
     if (
         tralloc_append_destructor              ( NULL, NULL, NULL ) != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL ||
@@ -18,12 +18,12 @@ bool test_errors ( tralloc_context * ctx )
         tralloc_delete_destructors_by_function ( NULL, NULL )       != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL ||
         tralloc_delete_destructors_by_data     ( NULL, NULL )       != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL
     ) {
-        return false;
+        return TRALLOC_FALSE;
     }
 
     tralloc_context * test;
     if ( tralloc_new ( ctx, &test ) != 0 ) {
-        return false;
+        return TRALLOC_FALSE;
     }
 
     if (
@@ -34,11 +34,11 @@ bool test_errors ( tralloc_context * ctx )
         tralloc_delete_destructors_by_function ( test, NULL )       != TRALLOC_ERROR_NO_SUCH_EXTENSION ||
         tralloc_delete_destructors_by_data     ( test, NULL )       != TRALLOC_ERROR_NO_SUCH_EXTENSION
     ) {
-        return false;
+        return TRALLOC_FALSE;
     }
 
     if ( tralloc_free ( test ) != 0 ) {
-        return false;
+        return TRALLOC_FALSE;
     }
-    return true;
+    return TRALLOC_TRUE;
 }

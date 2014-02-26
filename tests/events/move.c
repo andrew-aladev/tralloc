@@ -49,11 +49,11 @@ tralloc_error on_move ( void * user_data, _tralloc_chunk * chunk, _tralloc_chunk
     return 0;
 }
 
-bool test_move ( tralloc_context * ctx )
+tralloc_bool test_move ( tralloc_context * ctx )
 {
     malloc_dynarr * tralloc_history = malloc_history();
     if ( tralloc_history == NULL ) {
-        return false;
+        return TRALLOC_FALSE;
     }
     _tralloc_set_callback ( NULL, NULL, on_move, NULL );
 
@@ -66,7 +66,7 @@ bool test_move ( tralloc_context * ctx )
         tralloc ( a,   ( tralloc_context ** ) &c, sizeof ( float ) * 4 ) != 0
     ) {
         free_history ( tralloc_history );
-        return false;
+        return TRALLOC_FALSE;
     }
 
     if (
@@ -78,7 +78,7 @@ bool test_move ( tralloc_context * ctx )
         tralloc_free ( a );
         tralloc_free ( b );
         free_history ( tralloc_history );
-        return false;
+        return TRALLOC_FALSE;
     }
 
     _tralloc_chunk * root_chunk = _tralloc_get_chunk_from_context ( ctx );
@@ -100,13 +100,13 @@ bool test_move ( tralloc_context * ctx )
         info->chunk != c_chunk || info->old_parent != root_chunk || info->chunk->parent != a_chunk
     ) {
         free_history ( tralloc_history );
-        return false;
+        return TRALLOC_FALSE;
     }
 
     if ( tralloc_free ( a ) != 0 ) {
         free_history ( tralloc_history );
-        return false;
+        return TRALLOC_FALSE;
     }
     free_history ( tralloc_history );
-    return true;
+    return TRALLOC_TRUE;
 }

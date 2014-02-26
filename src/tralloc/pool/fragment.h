@@ -40,12 +40,12 @@ void _tralloc_pool_fragment_increased ( _tralloc_pool * pool, _tralloc_pool_frag
 void _tralloc_pool_fragment_decreased ( _tralloc_pool * pool, _tralloc_pool_fragment * fragment );
 
 INLINE
-bool _tralloc_pool_fragment_can_alloc ( _tralloc_pool_fragment * fragment, size_t length )
+tralloc_bool _tralloc_pool_fragment_can_alloc ( _tralloc_pool_fragment * fragment, size_t length )
 {
     if ( fragment == NULL || length > fragment->length ) {
-        return false;
+        return TRALLOC_FALSE;
     }
-    return true;
+    return TRALLOC_TRUE;
 }
 
 _tralloc_pool_child * _tralloc_pool_fragment_alloc ( _tralloc_pool * pool, _tralloc_pool_fragment * fragment, size_t length );

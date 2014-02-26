@@ -7,7 +7,7 @@
 #include <tralloc/tree.h>
 
 
-bool test_errors ( tralloc_context * ctx )
+tralloc_bool test_errors ( tralloc_context * ctx )
 {
     tralloc_context * pool;
     if (
@@ -15,8 +15,8 @@ bool test_errors ( tralloc_context * ctx )
         tralloc_realloc ( &pool, 1 ) != TRALLOC_ERROR_POOL_CANT_BE_REALLOCATED ||
         tralloc_free ( pool ) != 0
     ) {
-        return false;
+        return TRALLOC_FALSE;
     }
 
-    return true;
+    return TRALLOC_TRUE;
 }

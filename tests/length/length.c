@@ -8,7 +8,7 @@
 #include <tralloc/length/main.h>
 
 
-bool test_length ( tralloc_context * ctx )
+tralloc_bool test_length ( tralloc_context * ctx )
 {
     size_t length;
     tralloc_context * empty;
@@ -17,7 +17,7 @@ bool test_length ( tralloc_context * ctx )
         tralloc_get_length ( empty, &length ) != 0 ||
         length != 0
     ) {
-        return false;
+        return TRALLOC_FALSE;
     }
 
     uint16_t * data;
@@ -26,7 +26,7 @@ bool test_length ( tralloc_context * ctx )
         tralloc_get_length ( data, &length ) != 0 ||
         length != sizeof ( uint16_t ) * 2
     ) {
-        return false;
+        return TRALLOC_FALSE;
     }
 
     if (
@@ -34,8 +34,8 @@ bool test_length ( tralloc_context * ctx )
         tralloc_get_length ( data, &length ) != 0 ||
         length != sizeof ( uint16_t ) * 20
     ) {
-        return false;
+        return TRALLOC_FALSE;
     }
 
-    return true;
+    return TRALLOC_TRUE;
 }

@@ -7,12 +7,11 @@
 #define TRALLOC_TESTS_POOL_COMMON
 
 #include <tralloc/types.h>
-#include <stdbool.h>
 
 
-bool test_errors ( tralloc_context * ctx );
-bool test_add    ( tralloc_context * ctx );
-bool test_move   ( tralloc_context * ctx );
+tralloc_bool test_errors ( tralloc_context * ctx );
+tralloc_bool test_add    ( tralloc_context * ctx );
+tralloc_bool test_move   ( tralloc_context * ctx );
 
 
 #endif

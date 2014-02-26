@@ -12,7 +12,7 @@
 #include <unistd.h>
 
 
-bool test_file_errors ( tralloc_context * ctx )
+tralloc_bool test_file_errors ( tralloc_context * ctx )
 {
     if (
         tralloc_open                      ( NULL, NULL, NULL, 0 )       != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL ||
@@ -20,7 +20,7 @@ bool test_file_errors ( tralloc_context * ctx )
         tralloc_open_mode                 ( NULL, NULL, NULL, 0, 0 )    != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL ||
         tralloc_open_mode_with_extensions ( NULL, NULL, 0, NULL, 0, 0 ) != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL
     ) {
-        return false;
+        return TRALLOC_FALSE;
     }
 
     int * hosts;
@@ -30,10 +30,10 @@ bool test_file_errors ( tralloc_context * ctx )
         tralloc_open_mode                 ( ctx, &hosts, "/tmp/tralloc_file_not_exists", O_RDONLY, 0 )    != TRALLOC_ERROR_OPEN_DESCRIPTOR_FAILED ||
         tralloc_open_mode_with_extensions ( ctx, &hosts, 0, "/tmp/tralloc_file_not_exists", O_RDONLY, 0 ) != TRALLOC_ERROR_OPEN_DESCRIPTOR_FAILED
     ) {
-        return false;
+        return TRALLOC_FALSE;
     }
 
-    return true;
+    return TRALLOC_TRUE;
 }
 
 static
@@ -47,18 +47,18 @@ tralloc_error destructor_unlink_file ( tralloc_context * UNUSED ( chunk_context 
     }
 }
 
-bool test_file ( tralloc_context * ctx )
+tralloc_bool test_file ( tralloc_context * ctx )
 {
     if ( !test_file_errors ( ctx ) ) {
-        return false;
+        return TRALLOC_FALSE;
     }
 
     int * hosts;
     if ( tralloc_open ( ctx, &hosts, "/etc/hosts", O_RDONLY ) != 0 ) {
-        return false;
+        return TRALLOC_FALSE;
     }
     if ( tralloc_free ( hosts ) != 0 ) {
-        return false;
+        return TRALLOC_FALSE;
     }
 
     char * file_name;
@@ -68,19 +68,19 @@ bool test_file ( tralloc_context * ctx )
         tralloc_open_mode ( ctx, &test_file, file_name, O_CREAT | O_WRONLY, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH ) != 0 // 0644
     ) {
         tralloc_free ( file_name );
-        return false;
+        return TRALLOC_FALSE;
     }
     if ( tralloc_move ( file_name, test_file ) != 0 ) {
         tralloc_free ( test_file );
         tralloc_free ( file_name );
-        return false;
+        return TRALLOC_FALSE;
     }
     if ( tralloc_append_destructor ( test_file, destructor_unlink_file, file_name ) != 0 ) {
         tralloc_free ( test_file );
-        return false;
+        return TRALLOC_FALSE;
     }
     if ( tralloc_free ( test_file ) != 0 ) {
-        return false;
+        return TRALLOC_FALSE;
     }
-    return true;
+    return TRALLOC_TRUE;
 }

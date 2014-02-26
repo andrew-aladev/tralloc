@@ -7,13 +7,12 @@
 #define TRALLOC_TESTS_EVENTS_COMMON
 
 #include <tralloc/types.h>
-#include <stdbool.h>
 
 
-bool test_add    ( tralloc_context * ctx );
-bool test_resize ( tralloc_context * ctx );
-bool test_move   ( tralloc_context * ctx );
-bool test_free   ( tralloc_context * ctx );
+tralloc_bool test_add    ( tralloc_context * ctx );
+tralloc_bool test_resize ( tralloc_context * ctx );
+tralloc_bool test_move   ( tralloc_context * ctx );
+tralloc_bool test_free   ( tralloc_context * ctx );
 
 
 #endif
