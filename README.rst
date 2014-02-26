@@ -94,7 +94,7 @@ DEB and RPM
 
 LICENSE
 -------
-LGPL v3+
+LGPL v3+ + SLE ( static link exception )
 
 
 .. _talloc:  http://talloc.samba.org/talloc/doc/html/group__talloc.html
