@@ -4,8 +4,10 @@
 #cmakedefine TRALLOC_DESTRUCTOR
 #cmakedefine TRALLOC_REFERENCE
 #cmakedefine TRALLOC_POOL
+#cmakedefine TRALLOC_FILE
 #cmakedefine TRALLOC_UTILS_BUFFER
 #cmakedefine TRALLOC_UTILS
 
 #cmakedefine HAVE_C99_INLINE
 #cmakedefine HAVE_BOOL
+#cmakedefine HAVE_FILE

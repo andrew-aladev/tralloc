@@ -1,5 +1,5 @@
 set (SRC main.c str.c)
-if (${TRALLOC_DESTRUCTOR})
+if (${TRALLOC_FILE})
     set (SRC ${SRC} file.c)
 endif ()
 

@@ -4,8 +4,10 @@
 #define TRALLOC_DESTRUCTOR
 #define TRALLOC_REFERENCE
 #define TRALLOC_POOL
+#define TRALLOC_FILE
 #define TRALLOC_UTILS_BUFFER
 #define TRALLOC_UTILS
 
-/* #undef HAVE_C99_INLINE */
-/* #undef HAVE_BOOL */
+#define HAVE_C99_INLINE
+#define HAVE_BOOL
+#define HAVE_FILE

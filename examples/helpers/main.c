@@ -10,7 +10,7 @@
 #include <tralloc/events.h>
 #endif
 
-#if defined(TRALLOC_DESTRUCTOR)
+#if defined(TRALLOC_FILE)
 #include <tralloc/helpers/file.h>
 #include <tralloc/destructor/main.h>
 
@@ -61,7 +61,7 @@ int main ()
         return 5;
     }
 
-#if defined(TRALLOC_DESTRUCTOR)
+#if defined(TRALLOC_FILE)
     char * file_name;
     if ( tralloc_strdup ( NULL, &file_name, "/tmp/tralloc_test_file" ) != 0 ) {
         return 6;

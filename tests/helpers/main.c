@@ -22,7 +22,7 @@ int main ()
         return 2;
     }
 
-#if defined(TRALLOC_DESTRUCTOR)
+#if defined(TRALLOC_FILE)
     if ( !test_file ( ctx ) ) {
         tralloc_free ( ctx );
         return 3;
