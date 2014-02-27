@@ -23,13 +23,13 @@ tralloc_error tralloc_prepend_destructor ( tralloc_context * chunk_context, tral
 
 
 INLINE
-tralloc_bool _tralloc_destructor_comparator_by_function ( _tralloc_destructor * destructor, tralloc_destructor_function function, void * UNUSED ( user_data ) )
+tralloc_bool _tralloc_destructor_comparator_by_function ( _tralloc_destructor * destructor, tralloc_destructor_function function, void * _TRALLOC_UNUSED ( user_data ) )
 {
     return destructor->function == function;
 }
 
 INLINE
-tralloc_bool _tralloc_destructor_comparator_by_data ( _tralloc_destructor * destructor, tralloc_destructor_function UNUSED ( function ), void * user_data )
+tralloc_bool _tralloc_destructor_comparator_by_data ( _tralloc_destructor * destructor, tralloc_destructor_function _TRALLOC_UNUSED ( function ), void * user_data )
 {
     return destructor->user_data == user_data;
 }

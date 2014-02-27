@@ -28,25 +28,25 @@ static const tralloc_error BAD_DESTRUCTOR_ERROR_1 = 1;
 static const tralloc_error BAD_DESTRUCTOR_ERROR_2 = 2;
 
 static
-tralloc_error bad_destructor_1 ( tralloc_context * UNUSED ( chunk_context ), void * UNUSED ( user_data ) )
+tralloc_error bad_destructor_1 ( tralloc_context * _TRALLOC_UNUSED ( chunk_context ), void * _TRALLOC_UNUSED ( user_data ) )
 {
     return BAD_DESTRUCTOR_ERROR_1;
 }
 
 static
-tralloc_error bad_destructor_2 ( tralloc_context * UNUSED ( chunk_context ), void * UNUSED ( user_data ) )
+tralloc_error bad_destructor_2 ( tralloc_context * _TRALLOC_UNUSED ( chunk_context ), void * _TRALLOC_UNUSED ( user_data ) )
 {
     return BAD_DESTRUCTOR_ERROR_2;
 }
 
 static
-tralloc_error empty_destructor_1 ( tralloc_context * UNUSED ( chunk_context ), void * UNUSED ( user_data ) )
+tralloc_error empty_destructor_1 ( tralloc_context * _TRALLOC_UNUSED ( chunk_context ), void * _TRALLOC_UNUSED ( user_data ) )
 {
     return 0;
 }
 
 static
-tralloc_error empty_destructor_2 ( tralloc_context * UNUSED ( chunk_context ), void * UNUSED ( user_data ) )
+tralloc_error empty_destructor_2 ( tralloc_context * _TRALLOC_UNUSED ( chunk_context ), void * _TRALLOC_UNUSED ( user_data ) )
 {
     return 0;
 }

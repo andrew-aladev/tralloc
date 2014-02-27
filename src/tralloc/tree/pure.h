@@ -27,13 +27,13 @@ tralloc_error tralloc_new ( tralloc_context * parent_context, tralloc_context **
 }
 
 INLINE
-tralloc_bool _tralloc_can_free_chunk ( _tralloc_chunk * UNUSED ( chunk ) )
+tralloc_bool _tralloc_can_free_chunk ( _tralloc_chunk * _TRALLOC_UNUSED ( chunk ) )
 {
     return TRALLOC_TRUE;
 }
 
 INLINE
-tralloc_bool _tralloc_can_free_chunk_children ( _tralloc_chunk * UNUSED ( chunk ) )
+tralloc_bool _tralloc_can_free_chunk_children ( _tralloc_chunk * _TRALLOC_UNUSED ( chunk ) )
 {
     return TRALLOC_TRUE;
 }

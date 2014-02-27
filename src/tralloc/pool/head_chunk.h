@@ -34,7 +34,7 @@ tralloc_bool _tralloc_pool_can_free_chunk ( _tralloc_chunk * chunk )
 }
 
 INLINE
-tralloc_bool _tralloc_pool_can_free_chunk_children ( _tralloc_chunk * UNUSED ( chunk ) )
+tralloc_bool _tralloc_pool_can_free_chunk_children ( _tralloc_chunk * _TRALLOC_UNUSED ( chunk ) )
 {
     return TRALLOC_TRUE;
 }

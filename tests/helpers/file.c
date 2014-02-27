@@ -37,7 +37,7 @@ tralloc_bool test_file_errors ( tralloc_context * ctx )
 }
 
 static
-tralloc_error destructor_unlink_file ( tralloc_context * UNUSED ( chunk_context ), void * user_data )
+tralloc_error destructor_unlink_file ( tralloc_context * _TRALLOC_UNUSED ( chunk_context ), void * user_data )
 {
     char * file_name = user_data;
     if ( unlink ( file_name ) != 0 ) {

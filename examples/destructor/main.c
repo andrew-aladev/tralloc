@@ -11,22 +11,22 @@
 #endif
 
 
-tralloc_error empty_destructor ( tralloc_context * UNUSED ( context ), void * UNUSED ( user_data ) )
+tralloc_error empty_destructor ( tralloc_context * _TRALLOC_UNUSED ( context ), void * _TRALLOC_UNUSED ( user_data ) )
 {
     return 0;
 }
 
-tralloc_error bad_destructor ( tralloc_context * UNUSED ( context ), void * UNUSED ( user_data ) )
+tralloc_error bad_destructor ( tralloc_context * _TRALLOC_UNUSED ( context ), void * _TRALLOC_UNUSED ( user_data ) )
 {
     return 1;
 }
 
-tralloc_error file_destructor ( tralloc_context * context, void * UNUSED ( user_data ) )
+tralloc_error file_destructor ( tralloc_context * context, void * _TRALLOC_UNUSED ( user_data ) )
 {
     if ( context == NULL ) {
         return TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL;
     }
-    int * UNUSED ( number ) = context;
+    int * _TRALLOC_UNUSED ( number ) = context;
     return 0;
 }
 

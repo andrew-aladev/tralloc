@@ -11,7 +11,7 @@
 
 
 static
-tralloc_error _tralloc_close ( tralloc_context * chunk_context, void * UNUSED ( user_data ) )
+tralloc_error _tralloc_close ( tralloc_context * chunk_context, void * _TRALLOC_UNUSED ( user_data ) )
 {
     int * descriptor_ptr = chunk_context;
     if ( close ( * descriptor_ptr ) != 0 ) {

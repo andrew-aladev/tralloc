@@ -17,9 +17,9 @@
 #endif
 
 #ifdef __GNUC__
-#    define UNUSED(x) UNUSED_ ## x __attribute__((__unused__))
+#    define _TRALLOC_UNUSED(x) _TRALLOC_UNUSED_ ## x __attribute__((__unused__))
 #else
-#    define UNUSED(x) UNUSED_ ## x
+#    define _TRALLOC_UNUSED(x) _TRALLOC_UNUSED_ ## x
 #endif
 
 
