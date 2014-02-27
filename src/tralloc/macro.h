@@ -8,12 +8,12 @@
 
 #include "config.h"
 
-#ifdef HAVE_C99_INLINE
-#    define INLINE_IN_HEADER inline
-#    define INLINE_IN_OBJECT
+#ifdef TRALLOC_HAVE_C99_INLINE
+#    define _TRALLOC_INLINE_IN_HEADER inline
+#    define _TRALLOC_INLINE_IN_OBJECT
 #else
-#    define INLINE_IN_HEADER extern inline
-#    define INLINE_IN_OBJECT
+#    define _TRALLOC_INLINE_IN_HEADER extern inline
+#    define _TRALLOC_INLINE_IN_OBJECT
 #endif
 
 #ifdef __GNUC__

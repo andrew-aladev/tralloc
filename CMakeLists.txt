@@ -55,7 +55,7 @@ check_c99_inline ()
 include (CheckLTO)
 check_lto ()
 
-if (${TRALLOC_DESTRUCTOR} AND ${HAVE_FILE})
+if (${TRALLOC_DESTRUCTOR} AND ${TRALLOC_HAVE_FILE})
     set (TRALLOC_FILE true)
 endif ()
 

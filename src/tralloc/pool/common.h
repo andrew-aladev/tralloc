@@ -9,15 +9,15 @@
 #include "../macro.h"
 #include "../types.h"
 
-#undef INLINE
+#undef _TRALLOC_INLINE
 #ifdef _TRALLOC_POOL_COMMON_INCLUDED_FROM_OBJECT
-#    define INLINE INLINE_IN_OBJECT
+#    define _TRALLOC_INLINE _TRALLOC_INLINE_IN_OBJECT
 #else
-#    define INLINE INLINE_IN_HEADER
+#    define _TRALLOC_INLINE _TRALLOC_INLINE_IN_HEADER
 #endif
 
 
-INLINE
+_TRALLOC_INLINE
 size_t _tralloc_get_pool_offset ( _tralloc_chunk * chunk )
 {
     size_t offset = 0;
@@ -45,19 +45,19 @@ size_t _tralloc_get_pool_offset ( _tralloc_chunk * chunk )
     return offset;
 }
 
-INLINE
+_TRALLOC_INLINE
 _tralloc_pool_child * _tralloc_get_pool_child_from_chunk ( _tralloc_chunk * chunk )
 {
     return ( _tralloc_pool_child * ) ( ( uintptr_t ) chunk - _tralloc_get_pool_offset ( chunk ) - sizeof ( _tralloc_pool_child ) );
 }
 
-INLINE
+_TRALLOC_INLINE
 _tralloc_pool * _tralloc_get_pool_from_chunk ( _tralloc_chunk * chunk )
 {
     return ( _tralloc_pool * ) ( ( uintptr_t ) chunk - _tralloc_get_pool_offset ( chunk ) - sizeof ( _tralloc_pool ) );
 }
 
-INLINE
+_TRALLOC_INLINE
 _tralloc_chunk * _tralloc_get_chunk_from_pool ( _tralloc_pool * pool )
 {
     size_t offset = sizeof ( _tralloc_pool );

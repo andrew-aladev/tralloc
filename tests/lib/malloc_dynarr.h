@@ -11,11 +11,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#undef INLINE
-#ifdef TRALLOC_UTILS_MALLOC_DYNARR_INCLUDED_FROM_OBJECT
-#    define INLINE INLINE_IN_OBJECT
+#undef _TRALLOC_INLINE
+#ifdef _TRALLOC_UTILS_MALLOC_DYNARR_INCLUDED_FROM_OBJECT
+#    define _TRALLOC_INLINE _TRALLOC_INLINE_IN_OBJECT
 #else
-#    define INLINE INLINE_IN_HEADER
+#    define _TRALLOC_INLINE _TRALLOC_INLINE_IN_HEADER
 #endif
 
 // this was implemented to store history of tralloc events
@@ -30,7 +30,7 @@ typedef struct malloc_dynarr_t {
     free_item free_item;
 } malloc_dynarr;
 
-INLINE
+_TRALLOC_INLINE
 malloc_dynarr * malloc_dynarr_new ( size_t capacity )
 {
     if ( capacity == 0 ) {
@@ -55,13 +55,13 @@ malloc_dynarr * malloc_dynarr_new ( size_t capacity )
     return arr;
 }
 
-INLINE
+_TRALLOC_INLINE
 void malloc_dynarr_set_free_item ( malloc_dynarr * arr, free_item free_item )
 {
     arr->free_item = free_item;
 }
 
-INLINE
+_TRALLOC_INLINE
 uint8_t malloc_dynarr_grow ( malloc_dynarr * arr )
 {
     // linear growth
@@ -74,7 +74,7 @@ uint8_t malloc_dynarr_grow ( malloc_dynarr * arr )
     return 0;
 }
 
-INLINE
+_TRALLOC_INLINE
 uint8_t malloc_dynarr_append ( malloc_dynarr * arr, void * pointer )
 {
     size_t index = arr->length;
@@ -88,7 +88,7 @@ uint8_t malloc_dynarr_append ( malloc_dynarr * arr, void * pointer )
     return 0;
 }
 
-INLINE
+_TRALLOC_INLINE
 uint8_t malloc_dynarr_clear ( malloc_dynarr * arr )
 {
     if ( arr == NULL ) {
@@ -113,25 +113,25 @@ uint8_t malloc_dynarr_clear ( malloc_dynarr * arr )
     return 0;
 }
 
-INLINE
+_TRALLOC_INLINE
 void malloc_dynarr_set ( malloc_dynarr * arr, size_t position, void * pointer )
 {
     arr->data[position] = pointer;
 }
 
-INLINE
+_TRALLOC_INLINE
 void * malloc_dynarr_get ( malloc_dynarr * arr, size_t position )
 {
     return arr->data[position];
 }
 
-INLINE
+_TRALLOC_INLINE
 size_t malloc_dynarr_get_length ( malloc_dynarr * arr )
 {
     return arr->length;
 }
 
-INLINE
+_TRALLOC_INLINE
 void malloc_dynarr_free ( malloc_dynarr * arr )
 {
     if ( arr == NULL ) {

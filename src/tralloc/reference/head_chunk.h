@@ -8,15 +8,15 @@
 
 #include "common.h"
 
-#undef INLINE
+#undef _TRALLOC_INLINE
 #ifdef _TRALLOC_REFERENCE_HEAD_CHUNK_INCLUDED_FROM_OBJECT
-#    define INLINE INLINE_IN_OBJECT
+#    define _TRALLOC_INLINE _TRALLOC_INLINE_IN_OBJECT
 #else
-#    define INLINE INLINE_IN_HEADER
+#    define _TRALLOC_INLINE _TRALLOC_INLINE_IN_HEADER
 #endif
 
 
-INLINE
+_TRALLOC_INLINE
 void _tralloc_references_new_chunk ( _tralloc_chunk * chunk )
 {
     _tralloc_references * references = _tralloc_get_references_from_chunk ( chunk );
@@ -25,7 +25,7 @@ void _tralloc_references_new_chunk ( _tralloc_chunk * chunk )
     references->autofree        = TRALLOC_FALSE;
 }
 
-INLINE
+_TRALLOC_INLINE
 void _tralloc_references_update_chunk ( _tralloc_chunk * chunk )
 {
     _tralloc_references * references = _tralloc_get_references_from_chunk ( chunk );
@@ -36,7 +36,7 @@ void _tralloc_references_update_chunk ( _tralloc_chunk * chunk )
     }
 }
 
-INLINE
+_TRALLOC_INLINE
 tralloc_bool _tralloc_references_can_free_chunk ( _tralloc_chunk * chunk )
 {
     _tralloc_references * references = _tralloc_get_references_from_chunk ( chunk );
@@ -48,7 +48,7 @@ tralloc_bool _tralloc_references_can_free_chunk ( _tralloc_chunk * chunk )
     }
 }
 
-INLINE
+_TRALLOC_INLINE
 tralloc_bool _tralloc_references_can_free_chunk_children ( _tralloc_chunk * chunk )
 {
     _tralloc_references * references = _tralloc_get_references_from_chunk ( chunk );

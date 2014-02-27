@@ -9,15 +9,15 @@
 #include "../macro.h"
 #include "../types.h"
 
-#undef INLINE
+#undef _TRALLOC_INLINE
 #ifdef _TRALLOC_POOL_FRAGMENT_INCLUDED_FROM_OBJECT
-#    define INLINE INLINE_IN_OBJECT
+#    define _TRALLOC_INLINE _TRALLOC_INLINE_IN_OBJECT
 #else
-#    define INLINE INLINE_IN_HEADER
+#    define _TRALLOC_INLINE _TRALLOC_INLINE_IN_HEADER
 #endif
 
 
-INLINE
+_TRALLOC_INLINE
 _tralloc_pool_fragment * _tralloc_pool_fragment_new_memory ( void * memory, size_t length )
 {
     if ( length < sizeof ( _tralloc_pool_fragment ) ) {
@@ -39,7 +39,7 @@ void _tralloc_pool_fragment_detach ( _tralloc_pool * pool, _tralloc_pool_fragmen
 void _tralloc_pool_fragment_increased ( _tralloc_pool * pool, _tralloc_pool_fragment * fragment );
 void _tralloc_pool_fragment_decreased ( _tralloc_pool * pool, _tralloc_pool_fragment * fragment );
 
-INLINE
+_TRALLOC_INLINE
 tralloc_bool _tralloc_pool_fragment_can_alloc ( _tralloc_pool_fragment * fragment, size_t length )
 {
     if ( fragment == NULL || length > fragment->length ) {

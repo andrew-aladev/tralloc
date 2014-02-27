@@ -9,11 +9,11 @@
 #include "common.h"
 #include "../macro.h"
 
-#undef INLINE
+#undef _TRALLOC_INLINE
 #ifdef _TRALLOC_POOL_HEAD_CHUNK_INCLUDED_FROM_OBJECT
-#    define INLINE INLINE_IN_OBJECT
+#    define _TRALLOC_INLINE _TRALLOC_INLINE_IN_OBJECT
 #else
-#    define INLINE INLINE_IN_HEADER
+#    define _TRALLOC_INLINE _TRALLOC_INLINE_IN_HEADER
 #endif
 
 
@@ -21,7 +21,7 @@ void         _tralloc_pool_new_chunk ( _tralloc_chunk * chunk, size_t length );
 tralloc_bool _tralloc_pool_can_alloc ( _tralloc_pool * pool, size_t length );
 void         _tralloc_pool_alloc     ( _tralloc_pool * pool, void ** memory, size_t length, tralloc_bool zero, _tralloc_pool_child ** prev_pool_child, _tralloc_pool_child ** next_pool_child );
 
-INLINE
+_TRALLOC_INLINE
 tralloc_bool _tralloc_pool_can_free_chunk ( _tralloc_chunk * chunk )
 {
     _tralloc_pool * pool = _tralloc_get_pool_from_chunk ( chunk );
@@ -33,7 +33,7 @@ tralloc_bool _tralloc_pool_can_free_chunk ( _tralloc_chunk * chunk )
     }
 }
 
-INLINE
+_TRALLOC_INLINE
 tralloc_bool _tralloc_pool_can_free_chunk_children ( _tralloc_chunk * _TRALLOC_UNUSED ( chunk ) )
 {
     return TRALLOC_TRUE;

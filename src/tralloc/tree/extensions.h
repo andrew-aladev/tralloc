@@ -8,17 +8,17 @@
 
 #include "../common.h"
 
-#undef INLINE
+#undef _TRALLOC_INLINE
 #ifdef _TRALLOC_TREE_EXTENSIONS_INCLUDED_FROM_OBJECT
-#    define INLINE INLINE_IN_OBJECT
+#    define _TRALLOC_INLINE _TRALLOC_INLINE_IN_OBJECT
 #else
-#    define INLINE INLINE_IN_HEADER
+#    define _TRALLOC_INLINE _TRALLOC_INLINE_IN_HEADER
 #endif
 
 
 tralloc_error tralloc_with_extensions ( tralloc_context * parent_context, tralloc_context ** child_context, tralloc_extensions extensions, size_t length );
 
-INLINE
+_TRALLOC_INLINE
 tralloc_error tralloc ( tralloc_context * parent_context, tralloc_context ** child_context, size_t length )
 {
     return tralloc_with_extensions ( parent_context, child_context, 0, length );
@@ -26,20 +26,20 @@ tralloc_error tralloc ( tralloc_context * parent_context, tralloc_context ** chi
 
 tralloc_error tralloc_zero_with_extensions ( tralloc_context * parent_context, tralloc_context ** child_context, tralloc_extensions extensions, size_t length );
 
-INLINE
+_TRALLOC_INLINE
 tralloc_error tralloc_zero ( tralloc_context * parent_context, tralloc_context ** child_context, size_t length )
 {
     return tralloc_zero_with_extensions ( parent_context, child_context, 0, length );
 }
 
 
-INLINE
+_TRALLOC_INLINE
 tralloc_error tralloc_new ( tralloc_context * parent_context, tralloc_context ** child_context )
 {
     return tralloc ( parent_context, child_context, 0 );
 }
 
-INLINE
+_TRALLOC_INLINE
 tralloc_error tralloc_with_extensions_new ( tralloc_context * parent_context, tralloc_context ** child_context, tralloc_extensions extensions )
 {
     return tralloc_with_extensions ( parent_context, child_context, extensions, 0 );

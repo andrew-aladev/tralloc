@@ -9,15 +9,15 @@
 #include "../macro.h"
 #include "../types.h"
 
-#undef INLINE
+#undef _TRALLOC_INLINE
 #ifdef _TRALLOC_DESTRUCTOR_COMMON_INCLUDED_FROM_OBJECT
-#    define INLINE INLINE_IN_OBJECT
+#    define _TRALLOC_INLINE _TRALLOC_INLINE_IN_OBJECT
 #else
-#    define INLINE INLINE_IN_HEADER
+#    define _TRALLOC_INLINE _TRALLOC_INLINE_IN_HEADER
 #endif
 
 
-INLINE
+_TRALLOC_INLINE
 _tralloc_destructors * _tralloc_get_destructors_from_chunk ( _tralloc_chunk * chunk )
 {
     size_t offset = sizeof ( _tralloc_destructors );

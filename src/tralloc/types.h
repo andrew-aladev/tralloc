@@ -11,7 +11,7 @@
 
 #include "config.h"
 
-#ifdef HAVE_BOOL
+#ifdef TRALLOC_HAVE_BOOL
 #    include <stdbool.h>
 typedef bool tralloc_bool;
 #    define TRALLOC_TRUE true

@@ -1,5 +1,5 @@
 function (check_lto)
-    if (DEFINED HAVE_LTO)
+    if (DEFINED TRALLOC_HAVE_LTO)
         return ()
     endif ()
     
@@ -10,14 +10,14 @@ function (check_lto)
         COMPILE_DEFINITIONS "-flto -fuse-linker-plugin"
     )
     if (${CHECK_LTO_COMPILE_RESULT})
-        set (HAVE_LTO true CACHE STRING "Status of LTO support")
+        set (TRALLOC_HAVE_LTO true CACHE STRING "Status of LTO support")
         set (LTO_CFLAGS "-flto -fuse-linker-plugin" CACHE STRING "LTO cflags")
         set (LTO_LDLAGS "-flto -fuse-linker-plugin" CACHE STRING "LTO ldflags")
         message (STATUS "Check for C compiler LTO support - yes")
         return ()
     endif ()
     
-    set (HAVE_LTO false CACHE STRING "Status of LTO support")
+    set (TRALLOC_HAVE_LTO false CACHE STRING "Status of LTO support")
     set (LTO_CFLAGS "" CACHE STRING "LTO cflags")
     set (LTO_LDLAGS "" CACHE STRING "LTO ldflags")
     message (STATUS "Check for C compiler LTO support - no")

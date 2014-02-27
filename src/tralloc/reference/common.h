@@ -9,15 +9,15 @@
 #include "../macro.h"
 #include "../types.h"
 
-#undef INLINE
+#undef _TRALLOC_INLINE
 #ifdef _TRALLOC_REFERENCE_COMMON_INCLUDED_FROM_OBJECT
-#    define INLINE INLINE_IN_OBJECT
+#    define _TRALLOC_INLINE _TRALLOC_INLINE_IN_OBJECT
 #else
-#    define INLINE INLINE_IN_HEADER
+#    define _TRALLOC_INLINE _TRALLOC_INLINE_IN_HEADER
 #endif
 
 
-INLINE
+_TRALLOC_INLINE
 size_t _tralloc_get_reference_offset ( _tralloc_chunk * chunk )
 {
     size_t offset = 0;
@@ -37,19 +37,19 @@ size_t _tralloc_get_reference_offset ( _tralloc_chunk * chunk )
     return offset;
 }
 
-INLINE
+_TRALLOC_INLINE
 _tralloc_references * _tralloc_get_references_from_chunk ( _tralloc_chunk * chunk )
 {
     return ( _tralloc_references * ) ( ( uintptr_t ) chunk - _tralloc_get_reference_offset ( chunk ) - sizeof ( _tralloc_references ) );
 }
 
-INLINE
+_TRALLOC_INLINE
 _tralloc_reference * _tralloc_get_reference_from_chunk ( _tralloc_chunk * chunk )
 {
     return ( _tralloc_reference * ) ( ( uintptr_t ) chunk - _tralloc_get_reference_offset ( chunk ) - sizeof ( _tralloc_reference ) );
 }
 
-INLINE
+_TRALLOC_INLINE
 _tralloc_chunk * _tralloc_get_chunk_from_references ( _tralloc_references * references )
 {
     size_t offset = sizeof ( _tralloc_references );

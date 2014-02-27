@@ -9,15 +9,15 @@
 #include "../macro.h"
 #include "../types.h"
 
-#undef INLINE
+#undef _TRALLOC_INLINE
 #ifdef _TRALLOC_LENGTH_COMMON_INCLUDED_FROM_OBJECT
-#    define INLINE INLINE_IN_OBJECT
+#    define _TRALLOC_INLINE _TRALLOC_INLINE_IN_OBJECT
 #else
-#    define INLINE INLINE_IN_HEADER
+#    define _TRALLOC_INLINE _TRALLOC_INLINE_IN_HEADER
 #endif
 
 
-INLINE
+_TRALLOC_INLINE
 _tralloc_length * _tralloc_get_length_from_chunk ( _tralloc_chunk * chunk )
 {
     return ( _tralloc_length * ) ( ( uintptr_t ) chunk - sizeof ( _tralloc_length ) );

@@ -8,6 +8,6 @@
 #cmakedefine TRALLOC_UTILS_BUFFER
 #cmakedefine TRALLOC_UTILS
 
-#cmakedefine HAVE_C99_INLINE
-#cmakedefine HAVE_BOOL
-#cmakedefine HAVE_FILE
+#cmakedefine TRALLOC_HAVE_C99_INLINE
+#cmakedefine TRALLOC_HAVE_BOOL
+#cmakedefine TRALLOC_HAVE_FILE

@@ -11,17 +11,17 @@
 #include <stdarg.h>
 #include <string.h>
 
-#undef INLINE
+#undef _TRALLOC_INLINE
 #ifdef _TRALLOC_HELPERS_STRING_PURE_INCLUDED_FROM_OBJECT
-#    define INLINE INLINE_IN_OBJECT
+#    define _TRALLOC_INLINE _TRALLOC_INLINE_IN_OBJECT
 #else
-#    define INLINE INLINE_IN_HEADER
+#    define _TRALLOC_INLINE _TRALLOC_INLINE_IN_HEADER
 #endif
 
 
 tralloc_error _tralloc_strndup ( tralloc_context * parent_context, char ** child_context, const char * str, size_t length );
 
-INLINE
+_TRALLOC_INLINE
 tralloc_error tralloc_strndup ( tralloc_context * parent_context, char ** child_context, const char * str, size_t length )
 {
     if ( str == NULL ) {
@@ -30,7 +30,7 @@ tralloc_error tralloc_strndup ( tralloc_context * parent_context, char ** child_
     return _tralloc_strndup ( parent_context, child_context, str, length );
 }
 
-INLINE
+_TRALLOC_INLINE
 tralloc_error tralloc_strdup ( tralloc_context * parent_context, char ** child_context, const char * str )
 {
     if ( str == NULL ) {

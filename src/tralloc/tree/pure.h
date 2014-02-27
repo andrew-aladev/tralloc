@@ -9,30 +9,30 @@
 #include "../macro.h"
 #include "../types.h"
 
-#undef INLINE
+#undef _TRALLOC_INLINE
 #ifdef _TRALLOC_TREE_PURE_INCLUDED_FROM_OBJECT
-#    define INLINE INLINE_IN_OBJECT
+#    define _TRALLOC_INLINE _TRALLOC_INLINE_IN_OBJECT
 #else
-#    define INLINE INLINE_IN_HEADER
+#    define _TRALLOC_INLINE _TRALLOC_INLINE_IN_HEADER
 #endif
 
 
 tralloc_error tralloc      ( tralloc_context * parent_context, tralloc_context ** child_context, size_t length );
 tralloc_error tralloc_zero ( tralloc_context * parent_context, tralloc_context ** child_context, size_t length );
 
-INLINE
+_TRALLOC_INLINE
 tralloc_error tralloc_new ( tralloc_context * parent_context, tralloc_context ** child_context )
 {
     return tralloc ( parent_context, child_context, 0 );
 }
 
-INLINE
+_TRALLOC_INLINE
 tralloc_bool _tralloc_can_free_chunk ( _tralloc_chunk * _TRALLOC_UNUSED ( chunk ) )
 {
     return TRALLOC_TRUE;
 }
 
-INLINE
+_TRALLOC_INLINE
 tralloc_bool _tralloc_can_free_chunk_children ( _tralloc_chunk * _TRALLOC_UNUSED ( chunk ) )
 {
     return TRALLOC_TRUE;
