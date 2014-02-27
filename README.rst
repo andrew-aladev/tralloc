@@ -72,8 +72,8 @@ Other supported compilers
     
     ::
 
-     $ cmake -DCMAKE_TOOLCHAIN_FILE=../cmake/toolchains/arduino.cmake ..
-     $ CC="tcc" cmake -DTRALLOC_SHARED=0 ..
+     $ NO_TESTS=1 ../combinations.sh -DCMAKE_TOOLCHAIN_FILE=../cmake/toolchains/arduino.cmake -DTRALLOC_SHARED=0
+     $ CC="tcc" ../combinations.sh -DTRALLOC_SHARED=0
      $ CC="clang" ../combinations.sh
 
 

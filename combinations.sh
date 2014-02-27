@@ -34,14 +34,23 @@ for feature in $feature_combinations; do
     else
         arguments+="-DTRALLOC_UTILS_BUFFER=0 "
     fi
+    arguments+="$@"
     
-    command="cmake .. $arguments && make clean && make -j $make_jobs && make test"
+    command="cmake .. $arguments && make clean && make -j $make_jobs"
     echo $command
     eval $command
     if [ ! $? -eq 0 ]; then
         echo "Failed arguments:"
         echo "  $arguments"
         exit 1
+    fi
+    if [ -z "$NO_TESTS" ]; then
+        eval "make test"
+        if [ ! $? -eq 0 ]; then
+            echo "Failed arguments:"
+            echo "  $arguments"
+            exit 1
+        fi
     fi
 done
 
