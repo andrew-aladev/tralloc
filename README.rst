@@ -67,11 +67,13 @@ Multilib
      $ CFLAGS="-m32" ../combinations.sh
      
      
-Other supported compilers
+Supported compilers
 ---------
     
     ::
 
+     $ CC="gcc-4.7.3" ../combinations.sh
+     $ CC="gcc-4.8.2" ../combinations.sh
      $ NO_TESTS=1 ../combinations.sh -DCMAKE_TOOLCHAIN_FILE=../cmake/toolchains/arduino.cmake -DTRALLOC_SHARED=0
      $ CC="tcc" ../combinations.sh -DTRALLOC_SHARED=0
      $ CC="clang" ../combinations.sh
