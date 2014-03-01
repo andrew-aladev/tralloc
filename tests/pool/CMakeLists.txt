@@ -1,4 +1,5 @@
-set (SOURCES errors.c add.c move.c resize.c)
+set (SOURCES errors.c add.c move.c)
+add_subdirectory ("resize")
 
 if (${TRALLOC_SHARED})
     add_library (${TRALLOC_TARGET}-libtest-pool SHARED ${SOURCES})

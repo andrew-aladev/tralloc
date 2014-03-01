@@ -4,6 +4,7 @@
 // You should have received a copy of the GNU General Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
 #include "common.h"
+#include "resize/common.h"
 #include <tralloc/tree.h>
 
 #if defined(TRALLOC_DEBUG)
