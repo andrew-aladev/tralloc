@@ -92,7 +92,7 @@ void _tralloc_pool_fragment_resize_next_child ( _tralloc_pool_child * pool_child
 {
     _tralloc_pool          * pool       = pool_child->pool;
     _tralloc_pool_child    * next_child = pool_child->next;
-    _tralloc_pool_fragment * next       = ( _tralloc_pool_fragment * ) ( ( uintptr_t ) pool_child + pool_child->next );
+    _tralloc_pool_fragment * next       = ( _tralloc_pool_fragment * ) ( ( uintptr_t ) pool_child + pool_child->length );
     _tralloc_pool_fragment * new_next   = ( _tralloc_pool_fragment * ) ( ( uintptr_t ) pool_child + target_length );
 
     size_t new_next_length = pool_child->length + next_length - target_length;
@@ -101,12 +101,12 @@ void _tralloc_pool_fragment_resize_next_child ( _tralloc_pool_child * pool_child
         if ( new_next_length < sizeof ( _tralloc_pool_fragment ) ) {
             return;
         } else {
-            next->length     = new_next_length;
-            next->prev_child = pool_child;
-            next->next_child = next_child;
-            next->prev       = NULL;
-            next->next       = pool->max_fragment;
-            _tralloc_pool_fragment_decreased ( pool, next );
+            new_next->length     = new_next_length;
+            new_next->prev_child = pool_child;
+            new_next->next_child = next_child;
+            new_next->prev       = NULL;
+            new_next->next       = pool->max_fragment;
+            _tralloc_pool_fragment_decreased ( pool, new_next );
         }
     } else {
         _tralloc_pool_fragment_detach ( pool, next );

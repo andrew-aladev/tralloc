@@ -4,16 +4,11 @@
 // You should have received a copy of the GNU General Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
 #include "common.h"
+#include <tralloc/tree.h>
+#include <tralloc/pool/common.h>
 
 
-tralloc_bool test_pool_resize ( tralloc_context * ctx )
+tralloc_bool test_pool_resize_left ( tralloc_context * ctx )
 {
-    if (
-        ! test_pool_resize_overflow ( ctx ) ||
-        ! test_pool_resize_left     ( ctx ) ||
-        ! test_pool_resize_right    ( ctx )
-    ) {
-        return TRALLOC_FALSE;
-    }
     return TRALLOC_TRUE;
 }

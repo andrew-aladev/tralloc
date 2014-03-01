@@ -8,6 +8,7 @@
 
 #include "common.h"
 #include "../macro.h"
+#include "fragment.h"
 
 #undef _TRALLOC_INLINE
 #ifdef _TRALLOC_POOL_HEAD_CHUNK_INCLUDED_FROM_OBJECT
@@ -17,9 +18,15 @@
 #endif
 
 
-void         _tralloc_pool_new_chunk ( _tralloc_chunk * chunk, size_t length );
-tralloc_bool _tralloc_pool_can_alloc ( _tralloc_pool * pool, size_t length );
-void         _tralloc_pool_alloc     ( _tralloc_pool * pool, void ** memory, size_t length, tralloc_bool zero, _tralloc_pool_child ** prev_pool_child, _tralloc_pool_child ** next_pool_child );
+void _tralloc_pool_new_chunk ( _tralloc_chunk * chunk, size_t length );
+
+_TRALLOC_INLINE
+tralloc_bool _tralloc_pool_can_alloc ( _tralloc_pool * pool, size_t length )
+{
+    return _tralloc_pool_fragment_can_alloc ( pool->max_fragment, length );
+}
+
+void _tralloc_pool_alloc ( _tralloc_pool * pool, void ** memory, size_t length, tralloc_bool zero, _tralloc_pool_child ** prev_pool_child, _tralloc_pool_child ** next_pool_child );
 
 _TRALLOC_INLINE
 tralloc_bool _tralloc_pool_can_free_chunk ( _tralloc_chunk * chunk )

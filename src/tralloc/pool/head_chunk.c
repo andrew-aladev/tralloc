@@ -5,7 +5,6 @@
 
 #define _TRALLOC_POOL_HEAD_CHUNK_INCLUDED_FROM_OBJECT
 #include "head_chunk.h"
-#include "fragment.h"
 #include "../tree/common.h"
 #include <string.h>
 
@@ -19,11 +18,6 @@ void _tralloc_pool_new_chunk ( _tralloc_chunk * chunk, size_t length )
     pool->max_fragment = _tralloc_pool_fragment_new_memory ( pool->memory, length );
     pool->length       = length;
     pool->autofree     = TRALLOC_FALSE;
-}
-
-tralloc_bool _tralloc_pool_can_alloc ( _tralloc_pool * pool, size_t length )
-{
-    return _tralloc_pool_fragment_can_alloc ( pool->max_fragment, length );
 }
 
 void _tralloc_pool_alloc ( _tralloc_pool * pool, void ** memory, size_t length, tralloc_bool zero, _tralloc_pool_child ** prev_pool_child, _tralloc_pool_child ** next_pool_child )
