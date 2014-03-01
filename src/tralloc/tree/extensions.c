@@ -283,7 +283,6 @@ tralloc_error tralloc_realloc ( tralloc_context ** chunk_context, size_t length 
             // pool_child should be deleted
             _tralloc_pool_child * pool_child = _tralloc_get_pool_child_from_chunk ( old_chunk );
             size_t old_total_length = pool_child->length;
-            _tralloc_pool_child_free_chunk ( old_chunk );
 
             old_chunk->extensions &= ~ ( TRALLOC_EXTENSION_POOL_CHILD );
             extensions_length -= sizeof ( _tralloc_pool_child );
@@ -293,9 +292,15 @@ tralloc_error tralloc_realloc ( tralloc_context ** chunk_context, size_t length 
 
             new_memory = malloc ( total_length );
             if ( new_memory == NULL ) {
-                return TRALLOC_ERROR_CALLOC_FAILED;
+                return TRALLOC_ERROR_MALLOC_FAILED;
             }
             memmove ( new_memory, old_memory, old_total_length );
+
+            tralloc_error result = _tralloc_pool_child_free_chunk ( old_chunk );
+            if ( result != 0 ) {
+                free ( new_memory );
+                return result;
+            }
         }
     } else {
         new_memory = realloc ( old_memory, total_length );
