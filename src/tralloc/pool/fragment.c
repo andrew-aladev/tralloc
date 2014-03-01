@@ -99,8 +99,13 @@ void _tralloc_pool_fragment_resize_next_child ( _tralloc_pool_child * pool_child
 
     if ( next_length < sizeof ( _tralloc_pool_fragment ) ) {
         if ( new_next_length < sizeof ( _tralloc_pool_fragment ) ) {
+            // no registered next fragment.
+            // no enough length to create new registered next fragment.
             return;
         } else {
+            // no registered next fragment.
+            // creating new registered next fragment.
+
             new_next->length     = new_next_length;
             new_next->prev_child = pool_child;
             new_next->next_child = next_child;
@@ -109,11 +114,17 @@ void _tralloc_pool_fragment_resize_next_child ( _tralloc_pool_child * pool_child
             _tralloc_pool_fragment_decreased ( pool, new_next );
         }
     } else {
+        // next fragment is registered.
+
         _tralloc_pool_fragment_detach ( pool, next );
 
         if ( new_next_length < sizeof ( _tralloc_pool_fragment ) ) {
+            // no enough length to store new registered next fragment.
+
             return;
         } else {
+            // enough length to resize registered next fragment.
+
             memmove ( new_next, next, sizeof ( _tralloc_pool_fragment ) );
             new_next->length = new_next_length;
 
