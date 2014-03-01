@@ -17,19 +17,19 @@ int main ()
     if ( tralloc_new ( NULL, &ctx ) != 0 ) {
         return 1;
     }
-    if ( !test_errors ( ctx ) ) {
+    if ( !test_pool_errors ( ctx ) ) {
         tralloc_free ( ctx );
         return 2;
     }
-    if ( !test_add ( ctx ) ) {
+    if ( !test_pool_add ( ctx ) ) {
         tralloc_free ( ctx );
         return 3;
     }
-    if ( !test_move ( ctx ) ) {
+    if ( !test_pool_move ( ctx ) ) {
         tralloc_free ( ctx );
         return 4;
     }
-    if ( !test_resize ( ctx ) ) {
+    if ( !test_pool_resize ( ctx ) ) {
         tralloc_free ( ctx );
         return 5;
     }

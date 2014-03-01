@@ -9,8 +9,8 @@
 #include <tralloc/types.h>
 
 
-tralloc_bool test_errors     ( tralloc_context * ctx );
-tralloc_bool test_destructor ( tralloc_context * ctx );
+tralloc_bool test_destructor_errors ( tralloc_context * ctx );
+tralloc_bool test_destructor        ( tralloc_context * ctx );
 
 
 #endif

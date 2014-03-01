@@ -8,8 +8,25 @@
 #include <tralloc/length/main.h>
 
 
+static
+tralloc_bool test_length_errors ( tralloc_context * ctx )
+{
+    size_t length;
+    if (
+        tralloc_get_length ( NULL, &length ) != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL ||
+        tralloc_get_length ( ctx,  &length ) != TRALLOC_ERROR_NO_SUCH_EXTENSION
+    ) {
+        return TRALLOC_FALSE;
+    }
+    return TRALLOC_TRUE;
+}
+
 tralloc_bool test_length ( tralloc_context * ctx )
 {
+    if ( !test_length_errors ( ctx ) ) {
+        return TRALLOC_FALSE;
+    }
+
     size_t length;
     tralloc_context * empty;
     if (

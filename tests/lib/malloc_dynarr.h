@@ -18,6 +18,7 @@
 #    define _TRALLOC_INLINE _TRALLOC_INLINE_IN_HEADER
 #endif
 
+
 // this was implemented to store history of tralloc events
 
 typedef void ( * free_item ) ( void * item );
@@ -30,30 +31,7 @@ typedef struct malloc_dynarr_t {
     free_item free_item;
 } malloc_dynarr;
 
-_TRALLOC_INLINE
-malloc_dynarr * malloc_dynarr_new ( size_t capacity )
-{
-    if ( capacity == 0 ) {
-        return NULL;
-    }
-
-    malloc_dynarr * arr = malloc ( sizeof ( malloc_dynarr ) );
-    if ( arr == NULL ) {
-        return NULL;
-    }
-
-    arr->start_capacity = arr->current_capacity = capacity;
-    void ** data = malloc ( arr->current_capacity * sizeof ( uintptr_t ) );
-    if ( data == NULL ) {
-        free ( arr );
-        return NULL;
-    }
-    arr->data      = data;
-    arr->length    = 0;
-    arr->free_item = NULL;
-
-    return arr;
-}
+malloc_dynarr * malloc_dynarr_new ( size_t capacity );
 
 _TRALLOC_INLINE
 void malloc_dynarr_set_free_item ( malloc_dynarr * arr, free_item free_item )
@@ -61,57 +39,9 @@ void malloc_dynarr_set_free_item ( malloc_dynarr * arr, free_item free_item )
     arr->free_item = free_item;
 }
 
-_TRALLOC_INLINE
-uint8_t malloc_dynarr_grow ( malloc_dynarr * arr )
-{
-    // linear growth
-    arr->current_capacity = arr->current_capacity + arr->start_capacity;
-    void ** reallocated_data = realloc ( arr->data, arr->current_capacity * sizeof ( uintptr_t ) );
-    if ( reallocated_data == NULL ) {
-        return 1;
-    }
-    arr->data = reallocated_data;
-    return 0;
-}
-
-_TRALLOC_INLINE
-uint8_t malloc_dynarr_append ( malloc_dynarr * arr, void * pointer )
-{
-    size_t index = arr->length;
-    arr->length++;
-    if ( arr->length > arr->current_capacity ) {
-        if ( malloc_dynarr_grow ( arr ) != 0 ) {
-            return 1;
-        }
-    }
-    arr->data[index] = pointer;
-    return 0;
-}
-
-_TRALLOC_INLINE
-uint8_t malloc_dynarr_clear ( malloc_dynarr * arr )
-{
-    if ( arr == NULL ) {
-        return 1;
-    }
-    free_item free_item = arr->free_item;
-    size_t index;
-    if ( free_item != NULL ) {
-        for ( index = 0; index < arr->length; index ++ ) {
-            free_item ( arr->data[index] );
-        }
-    }
-    free ( arr->data );
-
-    arr->current_capacity = arr->start_capacity;
-    void ** data = malloc ( arr->current_capacity * sizeof ( uintptr_t ) );
-    if ( data == NULL ) {
-        return 2;
-    }
-    arr->data   = data;
-    arr->length = 0;
-    return 0;
-}
+uint8_t malloc_dynarr_grow   ( malloc_dynarr * arr );
+uint8_t malloc_dynarr_append ( malloc_dynarr * arr, void * pointer );
+uint8_t malloc_dynarr_clear  ( malloc_dynarr * arr );
 
 _TRALLOC_INLINE
 void malloc_dynarr_set ( malloc_dynarr * arr, size_t position, void * pointer )
@@ -131,21 +61,7 @@ size_t malloc_dynarr_get_length ( malloc_dynarr * arr )
     return arr->length;
 }
 
-_TRALLOC_INLINE
-void malloc_dynarr_free ( malloc_dynarr * arr )
-{
-    if ( arr == NULL ) {
-        return;
-    }
-    free_item free_item = arr->free_item;
-    size_t index;
-    if ( free_item != NULL ) {
-        for ( index = 0; index < arr->length; index ++ ) {
-            free_item ( arr->data[index] );
-        }
-    }
-    free ( arr->data );
-    free ( arr );
-}
+void malloc_dynarr_free ( malloc_dynarr * arr );
+
 
 #endif

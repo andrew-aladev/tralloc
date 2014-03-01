@@ -5,3 +5,93 @@
 
 #define _TRALLOC_UTILS_MALLOC_DYNARR_INCLUDED_FROM_OBJECT
 #include "malloc_dynarr.h"
+
+
+malloc_dynarr * malloc_dynarr_new ( size_t capacity )
+{
+    if ( capacity == 0 ) {
+        return NULL;
+    }
+
+    malloc_dynarr * arr = malloc ( sizeof ( malloc_dynarr ) );
+    if ( arr == NULL ) {
+        return NULL;
+    }
+
+    arr->start_capacity = arr->current_capacity = capacity;
+    void ** data = malloc ( arr->current_capacity * sizeof ( uintptr_t ) );
+    if ( data == NULL ) {
+        free ( arr );
+        return NULL;
+    }
+    arr->data      = data;
+    arr->length    = 0;
+    arr->free_item = NULL;
+
+    return arr;
+}
+
+uint8_t malloc_dynarr_grow ( malloc_dynarr * arr )
+{
+    // linear growth
+    arr->current_capacity = arr->current_capacity + arr->start_capacity;
+    void ** reallocated_data = realloc ( arr->data, arr->current_capacity * sizeof ( uintptr_t ) );
+    if ( reallocated_data == NULL ) {
+        return 1;
+    }
+    arr->data = reallocated_data;
+    return 0;
+}
+
+uint8_t malloc_dynarr_append ( malloc_dynarr * arr, void * pointer )
+{
+    size_t index = arr->length;
+    arr->length++;
+    if ( arr->length > arr->current_capacity ) {
+        if ( malloc_dynarr_grow ( arr ) != 0 ) {
+            return 1;
+        }
+    }
+    arr->data[index] = pointer;
+    return 0;
+}
+
+uint8_t malloc_dynarr_clear ( malloc_dynarr * arr )
+{
+    if ( arr == NULL ) {
+        return 1;
+    }
+    free_item free_item = arr->free_item;
+    size_t index;
+    if ( free_item != NULL ) {
+        for ( index = 0; index < arr->length; index ++ ) {
+            free_item ( arr->data[index] );
+        }
+    }
+    free ( arr->data );
+
+    arr->current_capacity = arr->start_capacity;
+    void ** data = malloc ( arr->current_capacity * sizeof ( uintptr_t ) );
+    if ( data == NULL ) {
+        return 2;
+    }
+    arr->data   = data;
+    arr->length = 0;
+    return 0;
+}
+
+void malloc_dynarr_free ( malloc_dynarr * arr )
+{
+    if ( arr == NULL ) {
+        return;
+    }
+    free_item free_item = arr->free_item;
+    size_t index;
+    if ( free_item != NULL ) {
+        for ( index = 0; index < arr->length; index ++ ) {
+            free_item ( arr->data[index] );
+        }
+    }
+    free ( arr->data );
+    free ( arr );
+}

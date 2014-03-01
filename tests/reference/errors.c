@@ -8,7 +8,7 @@
 #include <tralloc/reference/main.h>
 
 
-tralloc_bool test_errors ( tralloc_context * ctx )
+tralloc_bool test_reference_errors ( tralloc_context * ctx )
 {
     if (
         tralloc_move_reference ( NULL, NULL ) != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL ||

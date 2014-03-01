@@ -22,7 +22,7 @@
 */
 
 static
-tralloc_bool test_chunks ( tree * tr )
+tralloc_bool test_chunks ( test_basic_tree * tr )
 {
     _tralloc_chunk * root_chunk    = _tralloc_get_chunk_from_context ( tr );
     _tralloc_chunk * data_1_chunk  = _tralloc_get_chunk_from_context ( tr->data_1 );
@@ -82,7 +82,6 @@ tralloc_bool test_chunks ( tree * tr )
     ) {
         return TRALLOC_FALSE;
     }
-
     return TRALLOC_TRUE;
 }
 
@@ -91,7 +90,7 @@ tralloc_bool compare_float ( float a, float b )
     return fabs ( a - b ) < 0.000001;
 }
 
-tralloc_bool test_move_and_resize ( tree * tr )
+tralloc_bool test_basic_move_and_resize ( test_basic_tree * tr )
 {
     if (
         tralloc_move ( tr->data_7, tr->data_2 ) != 0 ||

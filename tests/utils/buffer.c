@@ -28,7 +28,7 @@ tralloc_bool test_errors ()
     return TRALLOC_TRUE;
 }
 
-tralloc_bool test_buffer ( tralloc_context * ctx )
+tralloc_bool test_utils_buffer ( tralloc_context * ctx )
 {
     if ( !test_errors () ) {
         return TRALLOC_FALSE;
@@ -147,6 +147,5 @@ tralloc_bool test_buffer ( tralloc_context * ctx )
     if ( tralloc_free ( buffer ) != 0 ) {
         return TRALLOC_FALSE;
     }
-
     return TRALLOC_TRUE;
 }

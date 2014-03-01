@@ -8,6 +8,7 @@
 #include <tralloc/helpers/string.h>
 
 
+static
 tralloc_bool test_str_errors ( tralloc_context * ctx )
 {
     if (
@@ -58,7 +59,7 @@ tralloc_bool test_str_errors ( tralloc_context * ctx )
     return TRALLOC_TRUE;
 }
 
-tralloc_bool test_str ( tralloc_context * ctx )
+tralloc_bool test_helpers_str ( tralloc_context * ctx )
 {
     if ( !test_str_errors ( ctx ) ) {
         return TRALLOC_FALSE;

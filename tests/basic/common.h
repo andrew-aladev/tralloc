@@ -9,7 +9,7 @@
 #include <tralloc/types.h>
 
 
-typedef struct tree_type {
+typedef struct test_basic_tree_type {
     uint8_t *         data_1;
     uint8_t *         data_2;
     char *            data_3;
@@ -18,12 +18,12 @@ typedef struct tree_type {
     float *           data_6;
     float  *          data_7;
     tralloc_context * trivium;
-} tree;
+} test_basic_tree;
 
-tralloc_bool test_errors          ( tralloc_context * ctx );
-tralloc_bool test_add             ( tree * tr );
-tralloc_bool test_move_and_resize ( tree * tr );
-tralloc_bool test_free_subtree    ( tree * tr );
+tralloc_bool test_basic_errors          ( tralloc_context * ctx );
+tralloc_bool test_basic_add             ( test_basic_tree * tr );
+tralloc_bool test_basic_move_and_resize ( test_basic_tree * tr );
+tralloc_bool test_basic_free_subtree    ( test_basic_tree * tr );
 
 
 #endif

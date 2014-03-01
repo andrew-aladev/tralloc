@@ -10,7 +10,7 @@
 
 
 #if defined(TRALLOC_UTILS_BUFFER)
-tralloc_bool test_buffer ( tralloc_context * ctx );
+tralloc_bool test_utils_buffer ( tralloc_context * ctx );
 #endif
 
 

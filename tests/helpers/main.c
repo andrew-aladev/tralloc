@@ -17,13 +17,13 @@ int main ()
     if ( tralloc_new ( NULL, &ctx ) != 0 ) {
         return 1;
     }
-    if ( !test_str ( ctx ) ) {
+    if ( !test_helpers_str ( ctx ) ) {
         tralloc_free ( ctx );
         return 2;
     }
 
 #if defined(TRALLOC_FILE)
-    if ( !test_file ( ctx ) ) {
+    if ( !test_helpers_file ( ctx ) ) {
         tralloc_free ( ctx );
         return 3;
     }

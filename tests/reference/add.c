@@ -20,7 +20,7 @@ common_1   3      common_2  common_3
 */
 
 static
-tralloc_bool test_chunks ( tree * tr )
+tralloc_bool test_chunks ( test_reference_tree * tr )
 {
     _tralloc_chunk * root_chunk     = _tralloc_get_chunk_from_context ( tr );
     _tralloc_chunk * common_chunk   = _tralloc_get_chunk_from_context ( tr->common );
@@ -92,11 +92,10 @@ tralloc_bool test_chunks ( tree * tr )
     ) {
         return TRALLOC_FALSE;
     }
-
     return TRALLOC_TRUE;
 }
 
-tralloc_bool test_add ( tree * tr )
+tralloc_bool test_reference_add ( test_reference_tree * tr )
 {
     if ( tralloc_with_extensions ( NULL, ( tralloc_context ** ) &tr->common, TRALLOC_EXTENSION_REFERENCES, sizeof ( int8_t ) * 2 ) != 0 ) {
         return TRALLOC_FALSE;

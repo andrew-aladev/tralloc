@@ -17,16 +17,12 @@ int main ()
     if ( tralloc_new ( NULL, &ctx ) != 0 ) {
         return 1;
     }
-    if ( !test_errors ( ctx ) ) {
+    if ( !test_length ( ctx ) ) {
         tralloc_free ( ctx );
         return 2;
     }
-    if ( !test_length ( ctx ) ) {
-        tralloc_free ( ctx );
-        return 3;
-    }
     if ( tralloc_free ( ctx ) != 0 ) {
-        return 4;
+        return 3;
     }
 
 #if defined(TRALLOC_DEBUG)
@@ -35,7 +31,7 @@ int main ()
         tralloc_get_chunks_overhead_length() != 0 ||
         tralloc_get_chunks_length()          != 0
     ) {
-        return 5;
+        return 4;
     }
 #endif
 

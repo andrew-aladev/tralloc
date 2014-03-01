@@ -263,7 +263,7 @@ tralloc_bool test_normal ( tralloc_context * ctx )
     return TRALLOC_TRUE;
 }
 
-tralloc_bool test_add ( tralloc_context * ctx )
+tralloc_bool test_pool_add ( tralloc_context * ctx )
 {
     if (
         ! test_memory_overflow ( ctx ) ||

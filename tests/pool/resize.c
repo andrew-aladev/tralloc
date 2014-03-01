@@ -290,7 +290,7 @@ tralloc_bool test_overflow_center ( tralloc_context * ctx )
     return TRALLOC_TRUE;
 }
 
-tralloc_bool test_resize ( tralloc_context * ctx )
+tralloc_bool test_pool_resize ( tralloc_context * ctx )
 {
     if (
         ! test_overflow_solo   ( ctx ) ||

@@ -49,7 +49,7 @@ tralloc_error on_move ( void * user_data, _tralloc_chunk * chunk, _tralloc_chunk
     return 0;
 }
 
-tralloc_bool test_move ( tralloc_context * ctx )
+tralloc_bool test_events_move ( tralloc_context * ctx )
 {
     malloc_dynarr * tralloc_history = malloc_history();
     if ( tralloc_history == NULL ) {

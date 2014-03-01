@@ -21,7 +21,7 @@ shared_1 shared_2
 */
 
 static
-tralloc_bool test_empty_references ( tree * tr )
+tralloc_bool test_empty_references ( test_reference_tree * tr )
 {
     _tralloc_references * common_references  = _tralloc_get_references_from_chunk ( _tralloc_get_chunk_from_context ( tr->common ) );
     _tralloc_references * shared_references  = _tralloc_get_references_from_chunk ( _tralloc_get_chunk_from_context ( tr->shared ) );
@@ -62,7 +62,7 @@ tralloc_bool test_empty_references ( tree * tr )
 }
 
 static
-tralloc_bool test_references ( tree * tr )
+tralloc_bool test_references ( test_reference_tree * tr )
 {
     _tralloc_references * common_references  = _tralloc_get_references_from_chunk ( _tralloc_get_chunk_from_context ( tr->common ) );
     _tralloc_references * shared_references  = _tralloc_get_references_from_chunk ( _tralloc_get_chunk_from_context ( tr->shared ) );
@@ -103,7 +103,7 @@ tralloc_bool test_references ( tree * tr )
 }
 
 static
-tralloc_bool test_chunks ( tree * tr )
+tralloc_bool test_chunks ( test_reference_tree * tr )
 {
     _tralloc_chunk * root_chunk     = _tralloc_get_chunk_from_context ( tr );
     _tralloc_chunk * common_chunk   = _tralloc_get_chunk_from_context ( tr->common );
@@ -175,7 +175,6 @@ tralloc_bool test_chunks ( tree * tr )
     ) {
         return TRALLOC_FALSE;
     }
-
     return test_references ( tr );
 }
 
@@ -184,7 +183,7 @@ tralloc_bool compare_float ( float a, float b )
     return fabs ( a - b ) < 0.000001;
 }
 
-tralloc_bool test_move_and_resize ( tree * tr )
+tralloc_bool test_reference_move_and_resize ( test_reference_tree * tr )
 {
     if ( !test_empty_references ( tr ) ) {
         return TRALLOC_FALSE;

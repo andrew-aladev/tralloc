@@ -9,12 +9,10 @@
 #include <tralloc/types.h>
 
 
-tralloc_bool test_str_errors ( tralloc_context * ctx );
-tralloc_bool test_str        ( tralloc_context * ctx );
+tralloc_bool test_helpers_str ( tralloc_context * ctx );
 
 #if defined(TRALLOC_FILE)
-tralloc_bool test_file_errors ( tralloc_context * ctx );
-tralloc_bool test_file        ( tralloc_context * ctx );
+tralloc_bool test_helpers_file ( tralloc_context * ctx );
 #endif
 
 

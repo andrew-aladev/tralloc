@@ -36,7 +36,7 @@ tralloc_error on_add ( void * user_data, _tralloc_chunk * chunk )
     return 0;
 }
 
-tralloc_bool test_add ( tralloc_context * ctx )
+tralloc_bool test_events_add ( tralloc_context * ctx )
 {
     malloc_dynarr * tralloc_history = malloc_history();
     if ( tralloc_history == NULL ) {

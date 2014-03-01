@@ -8,7 +8,7 @@
 #include <tralloc/pool/common.h>
 
 
-tralloc_bool test_move ( tralloc_context * ctx )
+tralloc_bool test_pool_move ( tralloc_context * ctx )
 {
     size_t data_1_length    = tralloc_predict_chunk_length ( TRALLOC_EXTENSION_POOL_CHILD ) + sizeof ( uint8_t ) * 5;
     size_t data_2_length    = tralloc_predict_chunk_length ( TRALLOC_EXTENSION_POOL_CHILD ) + sizeof ( uint8_t ) * 4;

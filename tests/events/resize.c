@@ -49,7 +49,7 @@ tralloc_error on_resize ( void * user_data, _tralloc_chunk * chunk, size_t old_l
     return 0;
 }
 
-tralloc_bool test_resize ( tralloc_context * ctx )
+tralloc_bool test_events_resize ( tralloc_context * ctx )
 {
     malloc_dynarr * tralloc_history = malloc_history();
     if ( tralloc_history == NULL ) {

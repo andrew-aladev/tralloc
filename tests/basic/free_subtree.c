@@ -17,7 +17,7 @@
 */
 
 static
-tralloc_bool test_chunks ( tree * tr )
+tralloc_bool test_chunks ( test_basic_tree * tr )
 {
     _tralloc_chunk * root_chunk    = _tralloc_get_chunk_from_context ( tr );
     _tralloc_chunk * data_1_chunk  = _tralloc_get_chunk_from_context ( tr->data_1 );
@@ -47,11 +47,10 @@ tralloc_bool test_chunks ( tree * tr )
     ) {
         return TRALLOC_FALSE;
     }
-
     return TRALLOC_TRUE;
 }
 
-tralloc_bool test_free_subtree ( tree * tr )
+tralloc_bool test_basic_free_subtree ( test_basic_tree * tr )
 {
     if (
         tralloc_free ( tr->data_4 ) != 0 ||
@@ -59,6 +58,5 @@ tralloc_bool test_free_subtree ( tree * tr )
     ) {
         return TRALLOC_FALSE;
     }
-
     return test_chunks ( tr );
 }

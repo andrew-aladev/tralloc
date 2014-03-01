@@ -17,7 +17,7 @@ int main ()
     if ( tralloc_new ( NULL, &ctx ) != 0 ) {
         return 1;
     }
-    if ( !test_errors ( ctx ) ) {
+    if ( !test_destructor_errors ( ctx ) ) {
         tralloc_free ( ctx );
         return 3;
     }

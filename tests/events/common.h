@@ -9,10 +9,10 @@
 #include <tralloc/types.h>
 
 
-tralloc_bool test_add    ( tralloc_context * ctx );
-tralloc_bool test_resize ( tralloc_context * ctx );
-tralloc_bool test_move   ( tralloc_context * ctx );
-tralloc_bool test_free   ( tralloc_context * ctx );
+tralloc_bool test_events_add    ( tralloc_context * ctx );
+tralloc_bool test_events_resize ( tralloc_context * ctx );
+tralloc_bool test_events_move   ( tralloc_context * ctx );
+tralloc_bool test_events_free   ( tralloc_context * ctx );
 
 
 #endif

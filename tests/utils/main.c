@@ -18,7 +18,7 @@ int main ()
     }
 
 #if defined(TRALLOC_UTILS_BUFFER)
-    if ( !test_buffer ( ctx ) ) {
+    if ( !test_utils_buffer ( ctx ) ) {
         tralloc_free ( ctx );
         return 2;
     }

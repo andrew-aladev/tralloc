@@ -9,7 +9,6 @@
 #include <tralloc/types.h>
 
 
-tralloc_bool test_errors ( tralloc_context * ctx );
 tralloc_bool test_length ( tralloc_context * ctx );
 
 

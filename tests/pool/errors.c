@@ -7,7 +7,7 @@
 #include <tralloc/tree.h>
 
 
-tralloc_bool test_errors ( tralloc_context * ctx )
+tralloc_bool test_pool_errors ( tralloc_context * ctx )
 {
     tralloc_context * pool;
     if (
@@ -17,6 +17,5 @@ tralloc_bool test_errors ( tralloc_context * ctx )
     ) {
         return TRALLOC_FALSE;
     }
-
     return TRALLOC_TRUE;
 }

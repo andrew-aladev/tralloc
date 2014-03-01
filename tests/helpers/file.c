@@ -12,6 +12,7 @@
 #include <unistd.h>
 
 
+static
 tralloc_bool test_file_errors ( tralloc_context * ctx )
 {
     if (
@@ -47,7 +48,7 @@ tralloc_error destructor_unlink_file ( tralloc_context * _TRALLOC_UNUSED ( chunk
     }
 }
 
-tralloc_bool test_file ( tralloc_context * ctx )
+tralloc_bool test_helpers_file ( tralloc_context * ctx )
 {
     if ( !test_file_errors ( ctx ) ) {
         return TRALLOC_FALSE;
