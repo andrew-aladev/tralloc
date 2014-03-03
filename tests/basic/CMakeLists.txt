@@ -6,7 +6,7 @@ if (${TRALLOC_SHARED})
 endif ()
 if (${TRALLOC_STATIC})
     add_library (${TRALLOC_TARGET}-libtest-basic-static STATIC ${SOURCES})
-    target_link_libraries (${TRALLOC_TARGET}-libtest-basic-static ${TRALLOC_TARGET} m)
+    target_link_libraries (${TRALLOC_TARGET}-libtest-basic-static ${TRALLOC_TARGET}-static m)
     set_target_properties (${TRALLOC_TARGET}-libtest-basic-static PROPERTIES OUTPUT_NAME ${TRALLOC_TARGET}-libtest-basic-static)
 endif ()
 
