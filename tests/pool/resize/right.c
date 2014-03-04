@@ -10,15 +10,16 @@
 
 tralloc_bool test_pool_resize_right ( tralloc_context * ctx )
 {
-    size_t data_1_length    = tralloc_predict_chunk_length ( TRALLOC_EXTENSION_POOL_CHILD ) + sizeof ( _tralloc_pool_fragment ) + sizeof ( uint8_t );
-    size_t pool_data_length = data_1_length;
+    size_t data_1_user_length = sizeof ( _tralloc_pool_fragment ) + sizeof ( uint8_t );
+    size_t data_1_length      = tralloc_predict_chunk_length ( TRALLOC_EXTENSION_POOL_CHILD ) + data_1_user_length;
+    size_t pool_data_length   = data_1_length;
 
     tralloc_context * pool_data;
     uint8_t * data_1;
     if (
         tralloc_with_extensions ( ctx, &pool_data, TRALLOC_EXTENSION_POOL, pool_data_length ) != 0 ||
-        tralloc ( pool_data, ( tralloc_context ** ) &data_1, sizeof ( _tralloc_pool_fragment ) + sizeof ( uint8_t ) ) != 0 ||
-        tralloc_realloc ( ( tralloc_context ** ) &data_1, sizeof ( _tralloc_pool_fragment ) ) != 0
+        tralloc ( pool_data, ( tralloc_context ** ) &data_1, data_1_user_length ) != 0 ||
+        tralloc_realloc ( ( tralloc_context ** ) &data_1, data_1_user_length - sizeof ( uint8_t ) ) != 0
     ) {
         return TRALLOC_FALSE;
     }
@@ -35,6 +36,7 @@ tralloc_bool test_pool_resize_right ( tralloc_context * ctx )
     }
     _tralloc_pool_child * data_1_child = _tralloc_get_pool_child_from_chunk ( data_1_chunk );
 
+    // [ data_1 ] [ empty space ]
     if (
         pool->first_child  != data_1_child     ||
         pool->max_fragment != NULL             ||
@@ -50,12 +52,13 @@ tralloc_bool test_pool_resize_right ( tralloc_context * ctx )
         return TRALLOC_FALSE;
     }
 
-    if ( tralloc_realloc ( ( tralloc_context ** ) &data_1, sizeof ( uint8_t ) ) != 0 ) {
+    if ( tralloc_realloc ( ( tralloc_context ** ) &data_1, data_1_user_length - sizeof ( _tralloc_pool_fragment ) ) != 0 ) {
         return TRALLOC_FALSE;
     }
 
     _tralloc_pool_fragment * fragment = ( _tralloc_pool_fragment * ) ( ( uintptr_t ) data_1_child + data_1_length - sizeof ( _tralloc_pool_fragment ) );
 
+    // [ data_1 ] [ fragment ]
     if (
         pool->first_child  != data_1_child     ||
         pool->max_fragment != fragment         ||
@@ -81,8 +84,9 @@ tralloc_bool test_pool_resize_right ( tralloc_context * ctx )
         return TRALLOC_FALSE;
     }
 
-    fragment = ( _tralloc_pool_fragment * ) ( ( uintptr_t ) data_1_child + data_1_length - sizeof ( _tralloc_pool_fragment ) - sizeof ( uint8_t ) );
+    fragment = ( _tralloc_pool_fragment * ) ( ( uintptr_t ) data_1_child + data_1_length - data_1_user_length );
 
+    // [ data_1 ] [ fragment ]
     if (
         pool->first_child  != data_1_child     ||
         pool->max_fragment != fragment         ||
@@ -93,13 +97,13 @@ tralloc_bool test_pool_resize_right ( tralloc_context * ctx )
         data_1_child->pool   != pool ||
         data_1_child->prev   != NULL ||
         data_1_child->next   != NULL ||
-        data_1_child->length != data_1_length - sizeof ( _tralloc_pool_fragment ) - sizeof ( uint8_t ) ||
+        data_1_child->length != data_1_length - data_1_user_length ||
 
         fragment->prev       != NULL         ||
         fragment->next       != NULL         ||
         fragment->prev_child != data_1_child ||
         fragment->next_child != NULL         ||
-        fragment->length     != sizeof ( _tralloc_pool_fragment ) + sizeof ( uint8_t )
+        fragment->length     != data_1_user_length
     ) {
         return TRALLOC_FALSE;
     }

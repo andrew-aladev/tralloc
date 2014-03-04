@@ -101,7 +101,7 @@ _tralloc_pool_child * _tralloc_pool_child_resize ( _tralloc_pool_child * pool_ch
         new_pool_child->length += prev_fragment_length;
         _tralloc_pool_child_update ( new_pool_child );
 
-        _tralloc_pool_fragment_resize_next_child ( pool_child, target_length, next_fragment_length );
+        _tralloc_pool_fragment_resize_next_child ( new_pool_child, target_length, next_fragment_length );
 
         new_pool_child->length = target_length;
         return new_pool_child;
