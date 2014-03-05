@@ -75,58 +75,6 @@ tralloc_bool test_pool_resize_left ( tralloc_context * ctx )
         return TRALLOC_FALSE;
     }
 
-    if ( tralloc_realloc ( ( tralloc_context ** ) &data_2, data_2_user_length + data_1_length - sizeof ( uint8_t ) ) != 0 ) {
-        return TRALLOC_FALSE;
-    }
-
-    // [ data_3_fragment ] [ data_2 ] [ empty space ]
-    if (
-        pool->first_child  != data_2_child     ||
-        pool->max_fragment != data_3_fragment  ||
-        pool->memory       != pool_data        ||
-        pool->length       != pool_data_length ||
-        pool->autofree     != TRALLOC_FALSE    ||
-
-        data_3_fragment->prev       != NULL          ||
-        data_3_fragment->next       != NULL          ||
-        data_3_fragment->prev_child != NULL          ||
-        data_3_fragment->next_child != data_2_child  ||
-        data_3_fragment->length     != data_3_length ||
-
-        data_2_child->pool   != pool ||
-        data_2_child->prev   != NULL ||
-        data_2_child->next   != NULL ||
-        data_2_child->length != data_2_length + data_1_length - sizeof ( uint8_t )
-    ) {
-        return TRALLOC_FALSE;
-    }
-
-    if ( tralloc_realloc ( ( tralloc_context ** ) &data_2, data_2_user_length + data_1_length ) != 0 ) {
-        return TRALLOC_FALSE;
-    }
-
-    // [ data_3_fragment ] [ data_2 ]
-    if (
-        pool->first_child  != data_2_child     ||
-        pool->max_fragment != data_3_fragment  ||
-        pool->memory       != pool_data        ||
-        pool->length       != pool_data_length ||
-        pool->autofree     != TRALLOC_FALSE    ||
-
-        data_3_fragment->prev       != NULL          ||
-        data_3_fragment->next       != NULL          ||
-        data_3_fragment->prev_child != NULL          ||
-        data_3_fragment->next_child != data_2_child  ||
-        data_3_fragment->length     != data_3_length ||
-
-        data_2_child->pool   != pool ||
-        data_2_child->prev   != NULL ||
-        data_2_child->next   != NULL ||
-        data_2_child->length != data_2_length + data_1_length
-    ) {
-        return TRALLOC_FALSE;
-    }
-
     if ( tralloc_realloc ( ( tralloc_context ** ) &data_2, data_2_user_length + data_1_length + data_3_length - sizeof ( _tralloc_pool_fragment ) ) != 0 ) {
         return TRALLOC_FALSE;
     }
