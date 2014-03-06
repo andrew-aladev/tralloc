@@ -9,9 +9,10 @@
 tralloc_bool test_pool_resize ( tralloc_context * ctx )
 {
     if (
-        ! test_pool_resize_overflow ( ctx ) ||
-        ! test_pool_resize_left     ( ctx ) ||
-        ! test_pool_resize_right    ( ctx )
+        ! test_pool_resize_overflow        ( ctx ) ||
+        ! test_pool_resize_left            ( ctx ) ||
+        ! test_pool_resize_right           ( ctx ) ||
+        ! test_pool_resize_fragments_order ( ctx )
     ) {
         return TRALLOC_FALSE;
     }

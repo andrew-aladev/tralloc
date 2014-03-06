@@ -2,5 +2,6 @@ set (SOURCES ${SOURCES}
     ${CMAKE_CURRENT_SOURCE_DIR}/overflow.c
     ${CMAKE_CURRENT_SOURCE_DIR}/left.c
     ${CMAKE_CURRENT_SOURCE_DIR}/right.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/fragments_order.c
     ${CMAKE_CURRENT_SOURCE_DIR}/main.c
 PARENT_SCOPE)
