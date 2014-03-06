@@ -53,10 +53,7 @@ tralloc_bool test_overflow_solo ( tralloc_context * ctx )
         return TRALLOC_FALSE;
     }
 
-    if (
-        tralloc_realloc ( ( tralloc_context ** ) &data_1, sizeof ( uint8_t ) * 15 ) != 0 ||
-        tralloc_free ( pool_data ) != 0
-    ) {
+    if ( tralloc_free ( pool_data ) != 0 ) {
         return TRALLOC_FALSE;
     }
     return TRALLOC_TRUE;
@@ -129,10 +126,7 @@ tralloc_bool test_overflow_left ( tralloc_context * ctx )
         return TRALLOC_FALSE;
     }
 
-    if (
-        tralloc_realloc ( ( tralloc_context ** ) &data_3, sizeof ( uint8_t ) * 15 ) != 0 ||
-        tralloc_free ( pool_data ) != 0
-    ) {
+    if ( tralloc_free ( pool_data ) != 0 ) {
         return TRALLOC_FALSE;
     }
     return TRALLOC_TRUE;
@@ -205,10 +199,7 @@ tralloc_bool test_overflow_right ( tralloc_context * ctx )
         return TRALLOC_FALSE;
     }
 
-    if (
-        tralloc_realloc ( ( tralloc_context ** ) &data_1, sizeof ( uint8_t ) * 15 ) != 0 ||
-        tralloc_free ( pool_data ) != 0
-    ) {
+    if ( tralloc_free ( pool_data ) != 0 ) {
         return TRALLOC_FALSE;
     }
     return TRALLOC_TRUE;
@@ -281,10 +272,7 @@ tralloc_bool test_overflow_center ( tralloc_context * ctx )
         return TRALLOC_FALSE;
     }
 
-    if (
-        tralloc_realloc ( ( tralloc_context ** ) &data_2, sizeof ( uint8_t ) * 15 ) != 0 ||
-        tralloc_free ( pool_data ) != 0
-    ) {
+    if ( tralloc_free ( pool_data ) != 0 ) {
         return TRALLOC_FALSE;
     }
     return TRALLOC_TRUE;
