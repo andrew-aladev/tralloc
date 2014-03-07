@@ -92,6 +92,7 @@ tralloc_error tralloc_prepend_destructor ( tralloc_context * chunk_context, tral
     _tralloc_destructors * destructors     = _tralloc_get_destructors_from_chunk ( chunk );
     _tralloc_destructor * first_destructor = destructors->first_destructor;
     if ( first_destructor == NULL ) {
+        destructor->next              = NULL;
         destructors->first_destructor = destructor;
         destructors->last_destructor  = destructor;
         return 0;
@@ -99,7 +100,6 @@ tralloc_error tralloc_prepend_destructor ( tralloc_context * chunk_context, tral
 
     destructor->next              = first_destructor;
     destructors->first_destructor = destructor;
-
     return 0;
 }
 
