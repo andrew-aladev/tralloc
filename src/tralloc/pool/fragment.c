@@ -192,11 +192,11 @@ void _tralloc_pool_fragment_free_child ( _tralloc_pool_child * pool_child, size_
             // increasing length of prev fragment.
             // detaching next fragment.
 
-            _tralloc_pool_fragment_detach ( pool, prev );
             _tralloc_pool_fragment_detach ( pool, next );
+            _tralloc_pool_fragment_detach ( pool, prev );
 
-            prev->next_child = next_child;
             prev->length     = length;
+            prev->next_child = next_child;
 
             _tralloc_pool_fragment_increased ( pool, prev );
         }

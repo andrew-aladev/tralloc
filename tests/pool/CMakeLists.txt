@@ -1,4 +1,4 @@
-set (SOURCES errors.c add.c move.c)
+set (SOURCES errors.c add.c move.c free.c)
 add_subdirectory ("resize")
 
 if (${TRALLOC_SHARED})

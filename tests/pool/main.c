@@ -34,8 +34,12 @@ int main ()
         tralloc_free ( ctx );
         return 5;
     }
-    if ( tralloc_free ( ctx ) != 0 ) {
+    if ( !test_pool_free ( ctx ) ) {
+        tralloc_free ( ctx );
         return 6;
+    }
+    if ( tralloc_free ( ctx ) != 0 ) {
+        return 7;
     }
 
 #if defined(TRALLOC_DEBUG)
@@ -44,7 +48,7 @@ int main ()
         tralloc_get_chunks_overhead_length() != 0 ||
         tralloc_get_chunks_length()          != 0
     ) {
-        return 7;
+        return 8;
     }
 #endif
 
