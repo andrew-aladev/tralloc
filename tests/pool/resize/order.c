@@ -181,11 +181,11 @@ tralloc_bool test_pool_resize_fragments_order ( tralloc_context * ctx )
     ) {
         return TRALLOC_FALSE;
     }
-    
+
     if ( tralloc_free ( spacer_3 ) != 0 ) {
         return TRALLOC_FALSE;
     }
-    
+
     // [ spacer_4 ] [ fragment of data_4 + spacer_3 ] [ data_3 ] [ fragment of spacer_2 + data_2 ] [ spacer_1 ] [ fragment of data_1 ]
     if (
         pool->first_child  != spacer_4_child   ||
@@ -220,7 +220,7 @@ tralloc_bool test_pool_resize_fragments_order ( tralloc_context * ctx )
         fragment_4->prev_child != spacer_4_child ||
         fragment_4->next_child != data_3_child   ||
         fragment_4->length     != data_4_length + spacer_3_length ||
-        
+
         fragment_1->prev       != fragment_4     ||
         fragment_1->next       != NULL           ||
         fragment_1->prev_child != spacer_1_child ||
