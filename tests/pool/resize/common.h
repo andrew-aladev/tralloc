@@ -9,11 +9,11 @@
 #include <tralloc/types.h>
 
 
-tralloc_bool test_pool_resize_overflow        ( tralloc_context * ctx );
-tralloc_bool test_pool_resize_left            ( tralloc_context * ctx );
-tralloc_bool test_pool_resize_right           ( tralloc_context * ctx );
-tralloc_bool test_pool_resize_fragments_order ( tralloc_context * ctx );
-tralloc_bool test_pool_resize                 ( tralloc_context * ctx );
+tralloc_bool test_pool_resize_overflow ( tralloc_context * ctx );
+tralloc_bool test_pool_resize_left     ( tralloc_context * ctx );
+tralloc_bool test_pool_resize_right    ( tralloc_context * ctx );
+tralloc_bool test_pool_resize_order    ( tralloc_context * ctx );
+tralloc_bool test_pool_resize          ( tralloc_context * ctx );
 
 
 #endif

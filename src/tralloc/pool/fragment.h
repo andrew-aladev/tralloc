@@ -56,6 +56,3 @@ void _tralloc_pool_fragment_free_child        ( _tralloc_pool_child * pool_child
 
 
 #endif
-
-
-
