@@ -44,8 +44,8 @@ void _tralloc_pool_fragment_increased ( _tralloc_pool * pool, _tralloc_pool_frag
     _tralloc_pool_fragment * next_fragment = fragment->next;
 
     while ( prev_fragment != NULL && fragment->length > prev_fragment->length ) {
-        prev_fragment = prev_fragment->prev;
         next_fragment = prev_fragment;
+        prev_fragment = prev_fragment->prev;
     }
 
     _tralloc_pool_fragment_attach ( pool, fragment, prev_fragment, next_fragment );
