@@ -10,7 +10,9 @@
 
 
 tralloc_bool test_destructor_errors ( tralloc_context * ctx );
-tralloc_bool test_destructor        ( tralloc_context * ctx );
+tralloc_bool test_destructor_common ( tralloc_context * ctx );
+
+int test_destructor ( tralloc_context * ctx );
 
 
 #endif

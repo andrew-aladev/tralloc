@@ -1,4 +1,4 @@
-set (SOURCES length.c)
+set (SOURCES common.c test.c)
 
 if (${TRALLOC_SHARED})
     add_library (${TRALLOC_TARGET}-libtest-length SHARED ${SOURCES})

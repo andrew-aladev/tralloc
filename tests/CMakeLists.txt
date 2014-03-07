@@ -20,6 +20,7 @@ endif ()
 
 if (${TRALLOC_POOL})
     add_subdirectory ("pool")
+    add_subdirectory ("pool-root")
 endif ()
 
 if (${TRALLOC_UTILS})

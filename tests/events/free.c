@@ -53,6 +53,7 @@ tralloc_bool test_events_free ( tralloc_context * ctx )
         tralloc ( a,   ( tralloc_context ** ) &c, sizeof ( float ) * 4 ) != 0
     ) {
         free_history ( tralloc_history );
+        _tralloc_set_callback ( NULL, NULL, NULL, NULL );
         return TRALLOC_FALSE;
     }
 
@@ -65,6 +66,7 @@ tralloc_bool test_events_free ( tralloc_context * ctx )
         tralloc_free ( b ) != 0
     ) {
         free_history ( tralloc_history );
+        _tralloc_set_callback ( NULL, NULL, NULL, NULL );
         return TRALLOC_FALSE;
     }
 
@@ -79,9 +81,11 @@ tralloc_bool test_events_free ( tralloc_context * ctx )
         chunk != b_chunk
     ) {
         free_history ( tralloc_history );
+        _tralloc_set_callback ( NULL, NULL, NULL, NULL );
         return TRALLOC_FALSE;
     }
 
     free_history ( tralloc_history );
+    _tralloc_set_callback ( NULL, NULL, NULL, NULL );
     return TRALLOC_TRUE;
 }

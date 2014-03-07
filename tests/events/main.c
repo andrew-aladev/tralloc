@@ -4,35 +4,14 @@
 // You should have received a copy of the GNU General Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
 #include "common.h"
-
-#include <tralloc/tree.h>
 #include <tralloc/events.h>
 
 
 int main ()
 {
-    tralloc_context * ctx;
-    if ( tralloc_new ( NULL, &ctx ) != 0 ) {
-        return 1;
-    }
-    if ( !test_events_add ( ctx ) ) {
-        tralloc_free ( ctx );
-        return 2;
-    }
-    if ( !test_events_resize ( ctx ) ) {
-        tralloc_free ( ctx );
-        return 3;
-    }
-    if ( !test_events_move ( ctx ) ) {
-        tralloc_free ( ctx );
-        return 4;
-    }
-    if ( !test_events_free ( ctx ) ) {
-        tralloc_free ( ctx );
-        return 5;
-    }
-    if ( tralloc_free ( ctx ) != 0 ) {
-        return 6;
+    int result = test_events ( NULL );
+    if ( result != 0 ) {
+        return result;
     }
 
     if (
@@ -40,7 +19,7 @@ int main ()
         tralloc_get_chunks_overhead_length() != 0 ||
         tralloc_get_chunks_length()          != 0
     ) {
-        return 7;
+        return 256;
     }
 
     return 0;

@@ -14,5 +14,7 @@ tralloc_bool test_pool_add    ( tralloc_context * ctx );
 tralloc_bool test_pool_move   ( tralloc_context * ctx );
 tralloc_bool test_pool_free   ( tralloc_context * ctx );
 
+int test_pool ( tralloc_context * ctx );
+
 
 #endif

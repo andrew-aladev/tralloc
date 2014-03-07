@@ -1,4 +1,4 @@
-set (SOURCES str.c)
+set (SOURCES test.c str.c)
 if (${TRALLOC_FILE})
     set (SOURCES ${SOURCES} file.c)
 endif ()

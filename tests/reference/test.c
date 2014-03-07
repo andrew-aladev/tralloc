@@ -4,28 +4,37 @@
 // You should have received a copy of the GNU General Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
 #include "common.h"
+#include <tralloc/tree.h>
 
 #if defined(TRALLOC_DEBUG)
 #include <tralloc/events.h>
 #endif
 
 
-int main ()
+int test_reference ( test_reference_tree * ctx )
 {
-    int result = test_helpers ( NULL );
-    if ( result != 0 ) {
-        return result;
+    test_reference_tree * tr;
+    if ( tralloc ( ctx, ( tralloc_context ** ) &tr, sizeof ( test_reference_tree ) ) != 0 ) {
+        return 1;
     }
-
-#if defined(TRALLOC_DEBUG)
-    if (
-        tralloc_get_chunks_count()           != 0 ||
-        tralloc_get_chunks_overhead_length() != 0 ||
-        tralloc_get_chunks_length()          != 0
-    ) {
-        return 256;
+    if ( !test_reference_errors ( tr ) ) {
+        tralloc_free ( tr );
+        return 2;
     }
-#endif
-
+    if ( !test_reference_add ( tr ) ) {
+        tralloc_free ( tr );
+        return 3;
+    }
+    if ( !test_reference_move_and_resize ( tr ) ) {
+        tralloc_free ( tr );
+        return 4;
+    }
+    if ( !test_reference_free_subtree ( tr ) ) {
+        tralloc_free ( tr );
+        return 5;
+    }
+    if ( tralloc_free ( tr ) != 0 ) {
+        return 6;
+    }
     return 0;
 }

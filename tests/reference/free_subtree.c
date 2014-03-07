@@ -67,7 +67,6 @@ tralloc_bool test_chunks ( test_reference_tree * tr )
         common_chunk->next        != NULL ||
         common_chunk->first_child != NULL ||
 
-        root_chunk->parent      != NULL         ||
         root_chunk->prev        != NULL         ||
         root_chunk->next        != NULL         ||
         root_chunk->first_child != data_1_chunk ||

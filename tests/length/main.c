@@ -4,7 +4,6 @@
 // You should have received a copy of the GNU General Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
 #include "common.h"
-#include <tralloc/tree.h>
 
 #if defined(TRALLOC_DEBUG)
 #include <tralloc/events.h>
@@ -13,16 +12,9 @@
 
 int main ()
 {
-    tralloc_context * ctx;
-    if ( tralloc_new ( NULL, &ctx ) != 0 ) {
-        return 1;
-    }
-    if ( !test_length ( ctx ) ) {
-        tralloc_free ( ctx );
-        return 2;
-    }
-    if ( tralloc_free ( ctx ) != 0 ) {
-        return 3;
+    int result = test_length ( NULL );
+    if ( result != 0 ) {
+        return result;
     }
 
 #if defined(TRALLOC_DEBUG)

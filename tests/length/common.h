@@ -9,7 +9,9 @@
 #include <tralloc/types.h>
 
 
-tralloc_bool test_length ( tralloc_context * ctx );
+tralloc_bool test_length_common ( tralloc_context * ctx );
+
+int test_length ( tralloc_context * ctx );
 
 
 #endif

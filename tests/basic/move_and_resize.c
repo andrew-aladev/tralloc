@@ -35,7 +35,6 @@ tralloc_bool test_chunks ( test_basic_tree * tr )
     _tralloc_chunk * trivium_chunk = _tralloc_get_chunk_from_context ( tr->trivium );
 
     if (
-        root_chunk->parent      != NULL         ||
         root_chunk->prev        != NULL         ||
         root_chunk->next        != NULL         ||
         root_chunk->first_child != data_1_chunk ||
@@ -85,6 +84,7 @@ tralloc_bool test_chunks ( test_basic_tree * tr )
     return TRALLOC_TRUE;
 }
 
+static
 tralloc_bool compare_float ( float a, float b )
 {
     return fabs ( a - b ) < 0.000001;

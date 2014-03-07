@@ -3,8 +3,8 @@
 // tralloc is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TRALLOC_TESTS_EVENTS_COMMON
-#define TRALLOC_TESTS_EVENTS_COMMON
+#ifndef TRALLOC_TESTS_UTILS_COMMON
+#define TRALLOC_TESTS_UTILS_COMMON
 
 #include <tralloc/types.h>
 
@@ -12,6 +12,8 @@
 #if defined(TRALLOC_UTILS_BUFFER)
 tralloc_bool test_utils_buffer ( tralloc_context * ctx );
 #endif
+
+int test_utils ( tralloc_context * ctx );
 
 
 #endif

@@ -123,7 +123,6 @@ tralloc_bool test_chunks ( test_reference_tree * tr )
         common_chunk->next        != NULL ||
         common_chunk->first_child != NULL ||
 
-        root_chunk->parent      != NULL         ||
         root_chunk->prev        != NULL         ||
         root_chunk->next        != NULL         ||
         root_chunk->first_child != data_1_chunk ||
@@ -178,6 +177,7 @@ tralloc_bool test_chunks ( test_reference_tree * tr )
     return test_references ( tr );
 }
 
+static
 tralloc_bool compare_float ( float a, float b )
 {
     return fabs ( a - b ) < 0.000001;

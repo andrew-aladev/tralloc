@@ -34,7 +34,6 @@ tralloc_bool test_chunks ( test_basic_tree * tr )
     _tralloc_chunk * trivium_chunk = _tralloc_get_chunk_from_context ( tr->trivium );
 
     if (
-        root_chunk->parent      != NULL         ||
         root_chunk->prev        != NULL         ||
         root_chunk->next        != NULL         ||
         root_chunk->first_child != data_1_chunk ||

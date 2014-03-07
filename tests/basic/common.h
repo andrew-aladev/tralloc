@@ -25,5 +25,7 @@ tralloc_bool test_basic_add             ( test_basic_tree * tr );
 tralloc_bool test_basic_move_and_resize ( test_basic_tree * tr );
 tralloc_bool test_basic_free_subtree    ( test_basic_tree * tr );
 
+int test_basic ( tralloc_context * ctx );
+
 
 #endif

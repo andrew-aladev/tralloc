@@ -1,4 +1,4 @@
-set (SOURCES add.c resize.c move.c free.c ../lib/malloc_dynarr.c)
+set (SOURCES add.c resize.c move.c free.c ../lib/malloc_dynarr.c test.c)
 
 if (${TRALLOC_SHARED})
     add_library (${TRALLOC_TARGET}-libtest-events SHARED ${SOURCES})

@@ -15,5 +15,7 @@ tralloc_bool test_helpers_str ( tralloc_context * ctx );
 tralloc_bool test_helpers_file ( tralloc_context * ctx );
 #endif
 
+int test_helpers ( tralloc_context * ctx );
+
 
 #endif

@@ -1,4 +1,4 @@
-set (SOURCES errors.c destructor.c ../lib/malloc_dynarr.c)
+set (SOURCES errors.c common.c ../lib/malloc_dynarr.c test.c)
 
 if (${TRALLOC_SHARED})
     add_library (${TRALLOC_TARGET}-libtest-destructor SHARED ${SOURCES})

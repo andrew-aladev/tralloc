@@ -1,4 +1,4 @@
-set (SOURCES errors.c add.c move_and_resize.c free_subtree.c)
+set (SOURCES errors.c add.c move_and_resize.c free_subtree.c test.c)
 
 if (${TRALLOC_SHARED})
     add_library (${TRALLOC_TARGET}-libtest-basic SHARED ${SOURCES})

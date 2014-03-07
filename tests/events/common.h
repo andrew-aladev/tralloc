@@ -14,5 +14,7 @@ tralloc_bool test_events_resize ( tralloc_context * ctx );
 tralloc_bool test_events_move   ( tralloc_context * ctx );
 tralloc_bool test_events_free   ( tralloc_context * ctx );
 
+int test_events ( tralloc_context * ctx );
+
 
 #endif

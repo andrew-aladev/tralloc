@@ -27,5 +27,7 @@ tralloc_bool test_reference_add             ( test_reference_tree * tr );
 tralloc_bool test_reference_move_and_resize ( test_reference_tree * tr );
 tralloc_bool test_reference_free_subtree    ( test_reference_tree * tr );
 
+int test_reference ( test_reference_tree * ctx );
+
 
 #endif

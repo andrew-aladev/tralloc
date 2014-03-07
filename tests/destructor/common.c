@@ -67,7 +67,7 @@ void free_history ( malloc_dynarr * tralloc_history )
     malloc_dynarr_free ( tralloc_history );
 }
 
-tralloc_bool test_destructor ( tralloc_context * ctx )
+tralloc_bool test_destructor_common ( tralloc_context * ctx )
 {
     malloc_dynarr * tralloc_history = malloc_history();
     if ( tralloc_history == NULL ) {

@@ -1,4 +1,4 @@
-set (SOURCES)
+set (SOURCES test.c)
 if (${TRALLOC_UTILS_BUFFER})
     set (SOURCES ${SOURCES} buffer.c)
 endif ()
