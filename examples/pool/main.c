@@ -24,12 +24,22 @@ int main ()
         return 1;
     }
 
-    // there was only 1 alloc call
-    // data_1 and data_2 are pool children
+    if ( tralloc_free ( data_1 ) != 0 ) {
+        return 2;
+    }
+
+    if (
+        tralloc      ( pool_ctx, ( tralloc_context ** ) & data_1, sizeof ( uint8_t ) * 100 ) != 0 ||
+        tralloc_zero ( data_1,   ( tralloc_context ** ) & data_2, sizeof ( uint8_t ) * 200 ) != 0
+    ) {
+        return 3;
+    }
 
     if ( tralloc_free ( pool_ctx ) != 0 ) {
         return 2;
     }
+    // there were only 1 alloc and 1 free calls
+    // data_1 and data_2 are pool children
 
 #   if defined(TRALLOC_DEBUG)
     if ( tralloc_get_chunks_count() != 0 ) {

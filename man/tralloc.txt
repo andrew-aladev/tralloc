@@ -16,10 +16,11 @@ SYNOPSIS
         TRALLOC_EXTENSION_LENGTH,
         TRALLOC_EXTENSION_DESTRUCTORS,
         TRALLOC_EXTENSION_REFERENCE,
-        TRALLOC_EXTENSION_REFERENCES
+        TRALLOC_EXTENSION_REFERENCES,
+        TRALLOC_EXTENSION_POOL
     };
     enum {
-        TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL,
+        TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL = 1,
         TRALLOC_ERROR_MALLOC_FAILED,
         TRALLOC_ERROR_CALLOC_FAILED,
         TRALLOC_ERROR_REALLOC_FAILED,
@@ -29,12 +30,18 @@ SYNOPSIS
         TRALLOC_ERROR_CHILD_EQUALS_PARENT,
         TRALLOC_ERROR_CHILD_HAS_SAME_PARENT,
         TRALLOC_ERROR_NO_SUCH_EXTENSION,
+        TRALLOC_ERROR_BOTH_REFERENCES_AND_REFERENSE,
+        TRALLOC_ERROR_POOL_CANT_BE_REALLOCATED,
         TRALLOC_ERROR_UTILS_BUFFER_OVERFLOW
     };
     typedef void    tralloc_context;
     typedef uint8_t tralloc_error;
     typedef uint8_t tralloc_extensions;
     typedef uint8_t ( * tralloc_destructor_function ) ( tralloc_context * chunk_context, void * user_data );
+    
+#include <tralloc/common.h>
+
+    size_t tralloc_predict_chunk_length ( tralloc_extensions extensions );
     
 #include <tralloc/tree.h>
 
@@ -105,17 +112,15 @@ DESCRIPTION
 Tralloc (tree alloc) is a hierarchical memory allocator with extensions.
 It is an alternative implementation of simplified talloc api.
 The main goal of the project is to minimize memory overhead.
-Size of chunk is 32-88 bytes on x86_64 system (depends on compiled and runtime features).
-Debug features will increase size of each chunk by 16 bytes.
 
 Implementation uses tree to store chunks, not graph. All important functions have O(1) complexity.
 Each chunk has one parent chunk, prev chunk, next chunk, child chunks list.
 
-You can enable several extensions : references/reference, destructors or length by using bitwise operator "|".
+You can enable several extensions : length, destructor, pool, references or reference.
 In this case control structures of extensions will be placed before chunk.
 You can store any data after chunk.
 
-You can create, move, realloc and free any chunk.
+You can create, move, realloc (except pool) and free any chunk.
 
 
 
@@ -138,7 +143,15 @@ You will obtain a memory leak.
     // b and b_ref still exists
 
 Do not use tralloc_asprintf and tralloc_vasprintf functions if you care about performance.
-It runs formating two times, because there is no ability to pass custom allocator to asprintf.
+It runs formating two times to predict output's length, and there is no ability to pass custom allocator to asprintf.
+
+
+
+common.h
+-------
+    size_t tralloc_predict_chunk_length ( tralloc_extensions extensions );
+
+Function returns real size of chunk with extensions.
 
 
 
@@ -152,7 +165,7 @@ Use these constants with bitwise operator "|" to enable extensions.
     TRALLOC_ERROR*
     typedef uint8_t tralloc_error;
 
-Functions can return these not null error codes.
+Functions can return these not zero error codes.
 
     typedef void tralloc_context;
 
@@ -198,9 +211,12 @@ New chunk will have provided extensions.
 Function works the same as "tralloc_new".
 New chunk will have provided extensions.
 
-    tralloc_context * tralloc_realloc ( const tralloc_context * chunk_context, size_t length );
+    tralloc_context * tralloc_realloc ( tralloc_context ** chunk_context, size_t length );
 
-Function obtains chunk from chunk_context, uses realloc to change size of chunk from current_length to length.
+Function obtains chunk from chunk_context.
+If chunk is pool it will return error.
+If chunk has pool child it will try to resize chunk in the pool, otherwise it will use malloc to create new chunk and copy chunk to it.
+Otherwise it will use realloc to resize chunk.
 Function sets pointer (with length size) to chunk_context or returns error code if error occurred.
 
     tralloc_error tralloc_move ( tralloc_context * child_context, tralloc_context * parent_context );
@@ -211,13 +227,27 @@ Function returns error code if error occurred.
 
     tralloc_error tralloc_free ( tralloc_context * chunk_context );
 
-Function obtains chunk from chunk_context, detaches it from the tree and start delete operation on subtree.
+Function obtains chunk from chunk_context, detaches it from the tree and start delete operation from this chunk.
+It uses non-recursive algorithm (known as "pre-order") to traverse the tree.
+Function will not make any memory allocations.
+
 If chunk has references list and it is not empty - chunk with it's subtree will be detached from tree and delete operation will not proceed to it's children.
 Such references chunk will be marked as "ready to be deleted".
+
+If chunk is pool and it is not empty - chunk will be detached from tree and it's children.
+Delete operation will proceed to it's children.
+Such pool chunk will be marked as "ready to be deleted".
+
 Otherwise chunk will be deleted.
+
 If chunk has reference it will be deleted from related references list.
+If chunk has pool child it will be deleted from related pool.
+
 Reference chunk will delete related references chunk if it is the last reference and references chunk is marked as "ready to be deleted".
+Pool child chunk will delete related pool chunk if it is the last pool child and pool chunk is marked as "ready to be deleted".
+
 All destructors will be invoked on delete.
+
 Function returns error code if error occurred.
 Non-zero value meaning is "error code of the last failed operation".
 Function will not stop on errors.
@@ -675,6 +705,46 @@ Example
         if ( tralloc_free ( buffer ) != 0 ) {
             return 4;
         }
+        return 0;
+    }
+
+
+
+Pool
+----
+Pool is created to improve performance in the bottleneck of the program.
+System's alloc and free function can be enough slow.
+Pool will be a great improvement if you are sure that memory will be reused many times.
+
+Example
+
+    int main ()
+    {
+        size_t data_1_length = tralloc_predict_chunk_length ( TRALLOC_EXTENSION_POOL_CHILD ) + sizeof ( uint8_t ) * 200;
+        size_t data_2_length = tralloc_predict_chunk_length ( TRALLOC_EXTENSION_POOL_CHILD ) + sizeof ( uint8_t ) * 100;
+        tralloc_context * pool_ctx;
+        uint8_t * data_1, * data_2;
+        if (
+            tralloc_with_extensions ( NULL, &pool_ctx, TRALLOC_EXTENSION_POOL, data_1_length + data_2_length ) != 0 ||
+            tralloc      ( pool_ctx, ( tralloc_context ** ) & data_1, sizeof ( uint8_t ) * 200 ) != 0 ||
+            tralloc_zero ( data_1,   ( tralloc_context ** ) & data_2, sizeof ( uint8_t ) * 100 ) != 0
+        ) {
+            return 1;
+        }
+        if ( tralloc_free ( data_1 ) != 0 ) {
+            return 2;
+        }
+        if (
+            tralloc      ( pool_ctx, ( tralloc_context ** ) & data_1, sizeof ( uint8_t ) * 100 ) != 0 ||
+            tralloc_zero ( data_1,   ( tralloc_context ** ) & data_2, sizeof ( uint8_t ) * 200 ) != 0
+        ) {
+            return 3;
+        }
+        if ( tralloc_free ( pool_ctx ) != 0 ) {
+            return 2;
+        }
+        // there were only 1 alloc and 1 free calls
+        // data_1 and data_2 are pool children
         return 0;
     }
 
