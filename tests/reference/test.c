@@ -6,10 +6,6 @@
 #include "common.h"
 #include <tralloc/tree.h>
 
-#if defined(TRALLOC_DEBUG)
-#include <tralloc/events.h>
-#endif
-
 
 int test_reference ( test_reference_tree * ctx )
 {

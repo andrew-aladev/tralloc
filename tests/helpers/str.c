@@ -19,7 +19,7 @@ tralloc_bool test_str_errors ( tralloc_context * ctx )
         return TRALLOC_FALSE;
     }
 
-#if defined(TRALLOC_EXTENSIONS)
+#   if defined(TRALLOC_EXTENSIONS)
     if (
         tralloc_strdup_with_extensions   ( NULL, NULL, 0, NULL )    != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL ||
         tralloc_strndup_with_extensions  ( NULL, NULL, 0, NULL, 0 ) != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL ||
@@ -27,7 +27,7 @@ tralloc_bool test_str_errors ( tralloc_context * ctx )
     ) {
         return TRALLOC_FALSE;
     }
-#endif
+#   endif
 
     char * empty;
     if (
@@ -37,24 +37,24 @@ tralloc_bool test_str_errors ( tralloc_context * ctx )
         return TRALLOC_FALSE;
     }
 
-#if defined(TRALLOC_EXTENSIONS)
+#   if defined(TRALLOC_EXTENSIONS)
     if (
         tralloc_strdup_with_extensions  ( ctx, &empty, 0, NULL )    != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL ||
         tralloc_strndup_with_extensions ( ctx, &empty, 0, NULL, 0 ) != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL
     ) {
         return TRALLOC_FALSE;
     }
-#endif
+#   endif
 
     if ( tralloc_asprintf ( ctx, &empty, NULL ) != TRALLOC_ERROR_PRINTF_FAILED ) {
         return TRALLOC_FALSE;
     }
 
-#if defined(TRALLOC_EXTENSIONS)
+#   if defined(TRALLOC_EXTENSIONS)
     if ( tralloc_asprintf_with_extensions ( ctx, &empty, 0, NULL ) != TRALLOC_ERROR_PRINTF_FAILED ) {
         return TRALLOC_FALSE;
     }
-#endif
+#   endif
 
     return TRALLOC_TRUE;
 }

@@ -7,7 +7,7 @@
 #include "../tree.h"
 
 #if defined(TRALLOC_DEBUG)
-#include "../events.h"
+#   include "../events.h"
 #endif
 
 
@@ -21,18 +21,18 @@ tralloc_error tralloc_move ( tralloc_context * child_context, tralloc_context * 
     }
     _tralloc_chunk * child_chunk = _tralloc_get_chunk_from_context ( child_context );
 
-#if defined(TRALLOC_DEBUG)
+#   if defined(TRALLOC_DEBUG)
     _tralloc_chunk * old_parent_chunk;
-#endif
+#   endif
 
     if ( parent_context == NULL ) {
         if ( child_chunk->parent == NULL ) {
             return TRALLOC_ERROR_CHILD_HAS_SAME_PARENT;
         }
 
-#if defined(TRALLOC_DEBUG)
+#       if defined(TRALLOC_DEBUG)
         old_parent_chunk = child_chunk->parent;
-#endif
+#       endif
 
         _tralloc_detach_chunk ( child_chunk );
     } else {
@@ -41,18 +41,18 @@ tralloc_error tralloc_move ( tralloc_context * child_context, tralloc_context * 
             return TRALLOC_ERROR_CHILD_HAS_SAME_PARENT;
         }
 
-#if defined(TRALLOC_DEBUG)
+#       if defined(TRALLOC_DEBUG)
         old_parent_chunk = child_chunk->parent;
-#endif
+#       endif
 
         _tralloc_attach_chunk ( child_chunk, new_parent_chunk );
     }
 
-#if defined(TRALLOC_DEBUG)
+#   if defined(TRALLOC_DEBUG)
     return _tralloc_on_move ( child_chunk, old_parent_chunk );
-#else
+#   else
     return 0;
-#endif
+#   endif
 
 }
 
@@ -81,11 +81,11 @@ tralloc_error _tralloc_add_chunk ( tralloc_context * parent_context, _tralloc_ch
 
     child_chunk->prev = NULL;
 
-#if defined(TRALLOC_DEBUG)
+#   if defined(TRALLOC_DEBUG)
     return _tralloc_on_add ( child_chunk );
-#else
+#   else
     return 0;
-#endif
+#   endif
 
 }
 

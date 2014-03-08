@@ -6,7 +6,7 @@
 #include <tralloc/tree.h>
 
 #if defined(TRALLOC_DEBUG)
-#include <tralloc/events.h>
+#   include <tralloc/events.h>
 #endif
 
 int main ()
@@ -39,11 +39,11 @@ int main ()
         return 5;
     }
 
-#if defined(TRALLOC_DEBUG)
+#   if defined(TRALLOC_DEBUG)
     if ( tralloc_get_chunks_count() != 0 ) {
         return 6;
     }
-#endif
+#   endif
 
     return 0;
 }

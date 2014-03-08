@@ -11,9 +11,9 @@
 #include "tree/common.h"
 
 #if defined(TRALLOC_EXTENSIONS)
-#include "tree/extensions.h"
+#   include "tree/extensions.h"
 #else
-#include "tree/pure.h"
+#   include "tree/pure.h"
 #endif
 
 

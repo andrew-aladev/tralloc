@@ -6,7 +6,7 @@
 #include "common.h"
 
 #if defined(TRALLOC_DEBUG)
-#include <tralloc/events.h>
+#   include <tralloc/events.h>
 #endif
 
 int main ()
@@ -16,7 +16,7 @@ int main ()
         return result;
     }
 
-#if defined(TRALLOC_DEBUG)
+#   if defined(TRALLOC_DEBUG)
     if (
         tralloc_get_chunks_count()           != 0 ||
         tralloc_get_chunks_overhead_length() != 0 ||
@@ -24,7 +24,7 @@ int main ()
     ) {
         return 256;
     }
-#endif
+#   endif
 
     return 0;
 }

@@ -12,18 +12,18 @@
 tralloc_bool test_errors ()
 {
 
-#if defined(TRALLOC_EXTENSIONS)
+#   if defined(TRALLOC_EXTENSIONS)
     if (
         tralloc_buffer_new                 ( NULL, NULL )    != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL ||
         tralloc_buffer_with_extensions_new ( NULL, NULL, 0 ) != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL
     ) {
         return TRALLOC_FALSE;
     }
-#else
+#   else
     if ( tralloc_buffer_new ( NULL, NULL ) != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL ) {
         return TRALLOC_FALSE;
     }
-#endif
+#   endif
 
     return TRALLOC_TRUE;
 }
@@ -36,15 +36,15 @@ tralloc_bool test_utils_buffer ( tralloc_context * ctx )
 
     tralloc_buffer * buffer;
 
-#if defined(TRALLOC_EXTENSIONS)
+#   if defined(TRALLOC_EXTENSIONS)
     if ( tralloc_buffer_with_extensions_new ( ctx, &buffer, 0 ) != 0 ) {
         return TRALLOC_FALSE;
     }
-#else
+#   else
     if ( tralloc_buffer_new ( ctx, &buffer ) != 0 ) {
         return TRALLOC_FALSE;
     }
-#endif
+#   endif
 
     if ( tralloc_buffer_prepare ( buffer, 9 ) != 0 ) {
         return TRALLOC_FALSE;

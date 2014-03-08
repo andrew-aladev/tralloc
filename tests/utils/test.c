@@ -14,12 +14,12 @@ int test_utils ( tralloc_context * ctx )
         return 1;
     }
 
-#if defined(TRALLOC_UTILS_BUFFER)
+#   if defined(TRALLOC_UTILS_BUFFER)
     if ( !test_utils_buffer ( root ) ) {
         tralloc_free ( root );
         return 2;
     }
-#endif
+#   endif
 
     if ( tralloc_free ( root ) != 0 ) {
         return 3;

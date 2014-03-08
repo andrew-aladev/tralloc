@@ -6,11 +6,11 @@
 #include <tralloc/tree.h>
 
 #if defined(TRALLOC_UTILS_BUFFER)
-#include <tralloc/utils/buffer.h>
+#   include <tralloc/utils/buffer.h>
 #endif
 
 #if defined(TRALLOC_DEBUG)
-#include <tralloc/events.h>
+#   include <tralloc/events.h>
 #endif
 
 #include <string.h>
@@ -18,7 +18,7 @@
 int main ()
 {
 
-#if defined(TRALLOC_UTILS_BUFFER)
+#   if defined(TRALLOC_UTILS_BUFFER)
     tralloc_buffer * buffer;
     if ( tralloc_buffer_new ( NULL, &buffer ) != 0 ) {
         return 1;
@@ -45,13 +45,13 @@ int main ()
     if ( tralloc_free ( buffer ) != 0 ) {
         return 4;
     }
-#endif
+#   endif
 
-#if defined(TRALLOC_DEBUG)
+#   if defined(TRALLOC_DEBUG)
     if ( tralloc_get_chunks_count() != 0 ) {
         return 5;
     }
-#endif
+#   endif
 
     return 0;
 }

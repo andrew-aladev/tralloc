@@ -22,11 +22,11 @@ _tralloc_destructors * _tralloc_get_destructors_from_chunk ( _tralloc_chunk * ch
 {
     size_t offset = sizeof ( _tralloc_destructors );
 
-#if defined(TRALLOC_LENGTH)
+#   if defined(TRALLOC_LENGTH)
     if ( chunk->extensions & TRALLOC_EXTENSION_LENGTH ) {
         offset += sizeof ( _tralloc_length );
     }
-#endif
+#   endif
 
     return ( _tralloc_destructors * ) ( ( uintptr_t ) chunk - offset );
 }

@@ -22,17 +22,17 @@ size_t _tralloc_get_reference_offset ( _tralloc_chunk * chunk )
 {
     size_t offset = 0;
 
-#if defined(TRALLOC_LENGTH)
+#   if defined(TRALLOC_LENGTH)
     if ( chunk->extensions & TRALLOC_EXTENSION_LENGTH ) {
         offset += sizeof ( _tralloc_length );
     }
-#endif
+#   endif
 
-#if defined(TRALLOC_DESTRUCTOR)
+#   if defined(TRALLOC_DESTRUCTOR)
     if ( chunk->extensions & TRALLOC_EXTENSION_DESTRUCTORS ) {
         offset += sizeof ( _tralloc_destructors );
     }
-#endif
+#   endif
 
     return offset;
 }
@@ -54,17 +54,17 @@ _tralloc_chunk * _tralloc_get_chunk_from_references ( _tralloc_references * refe
 {
     size_t offset = sizeof ( _tralloc_references );
 
-#if defined(TRALLOC_LENGTH)
+#   if defined(TRALLOC_LENGTH)
     if ( references->extensions & TRALLOC_EXTENSION_LENGTH ) {
         offset += sizeof ( _tralloc_length );
     }
-#endif
+#   endif
 
-#if defined(TRALLOC_DESTRUCTOR)
+#   if defined(TRALLOC_DESTRUCTOR)
     if ( references->extensions & TRALLOC_EXTENSION_DESTRUCTORS ) {
         offset += sizeof ( _tralloc_destructors );
     }
-#endif
+#   endif
 
     return ( _tralloc_chunk * ) ( ( uintptr_t ) references + offset );
 }

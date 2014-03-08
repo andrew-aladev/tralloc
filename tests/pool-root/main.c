@@ -8,24 +8,24 @@
 #include "../pool/common.h"
 
 #if defined(TRALLOC_DESTRUCTOR)
-#include "../destructor/common.h"
+#   include "../destructor/common.h"
 #endif
 
 #if defined(TRALLOC_DEBUG)
-#include "../events/common.h"
-#include <tralloc/events.h>
+#   include "../events/common.h"
+#   include <tralloc/events.h>
 #endif
 
 #if defined(TRALLOC_LENGTH)
-#include "../length/common.h"
+#   include "../length/common.h"
 #endif
 
 #if defined(TRALLOC_REFERENCE)
-#include "../reference/common.h"
+#   include "../reference/common.h"
 #endif
 
 #if defined(TRALLOC_UTILS)
-#include "../utils/common.h"
+#   include "../utils/common.h"
 #endif
 
 #include <tralloc/tree.h>
@@ -51,42 +51,42 @@ int main ()
         return result;
     }
 
-#if defined(TRALLOC_DESTRUCTOR)
+#   if defined(TRALLOC_DESTRUCTOR)
     result = test_destructor ( pool_data );
     if ( result != 0 ) {
         return result;
     }
-#endif
+#   endif
 
-#if defined(TRALLOC_DEBUG)
+#   if defined(TRALLOC_DEBUG)
     result = test_events ( pool_data );
     if ( result != 0 ) {
         return result;
     }
-#endif
+#   endif
 
-#if defined(TRALLOC_LENGTH)
+#   if defined(TRALLOC_LENGTH)
     result = test_length ( pool_data );
     if ( result != 0 ) {
         return result;
     }
-#endif
+#   endif
 
-#if defined(TRALLOC_REFERENCE)
+#   if defined(TRALLOC_REFERENCE)
     result = test_reference ( pool_data );
     if ( result != 0 ) {
         return result;
     }
-#endif
+#   endif
 
-#if defined(TRALLOC_UTILS)
+#   if defined(TRALLOC_UTILS)
     result = test_utils ( pool_data );
     if ( result != 0 ) {
         return result;
     }
-#endif
+#   endif
 
-#if defined(TRALLOC_DEBUG)
+#   if defined(TRALLOC_DEBUG)
     if (
         tralloc_get_chunks_count()           != 0 ||
         tralloc_get_chunks_overhead_length() != 0 ||
@@ -94,7 +94,7 @@ int main ()
     ) {
         return 256;
     }
-#endif
+#   endif
 
     return 0;
 }

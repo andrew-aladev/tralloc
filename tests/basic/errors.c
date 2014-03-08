@@ -17,7 +17,7 @@ tralloc_bool test_basic_errors ( tralloc_context * ctx )
         return TRALLOC_FALSE;
     }
 
-#if defined(TRALLOC_EXTENSIONS)
+#   if defined(TRALLOC_EXTENSIONS)
     if (
         tralloc_with_extensions      ( NULL, NULL, 0, 0 ) != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL ||
         tralloc_zero_with_extensions ( NULL, NULL, 0, 0 ) != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL ||
@@ -25,7 +25,7 @@ tralloc_bool test_basic_errors ( tralloc_context * ctx )
     ) {
         return TRALLOC_FALSE;
     }
-#endif
+#   endif
 
     if (
         tralloc_move ( NULL, NULL ) != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL ||

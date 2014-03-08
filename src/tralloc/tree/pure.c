@@ -10,7 +10,7 @@
 #include "../chunk.h"
 
 #if defined(TRALLOC_DEBUG)
-#include "../events.h"
+#   include "../events.h"
 #endif
 
 #include <stdlib.h>
@@ -55,10 +55,10 @@ tralloc_error _tralloc_with_allocator ( tralloc_context * parent_context, trallo
         return result;
     }
 
-#if defined(TRALLOC_DEBUG)
+#   if defined(TRALLOC_DEBUG)
     chunk->chunk_length = sizeof ( _tralloc_chunk );
     chunk->length       = length;
-#endif
+#   endif
 
     result = _tralloc_add_chunk ( parent_context, chunk );
     if ( result != 0 ) {
@@ -90,9 +90,9 @@ tralloc_error tralloc_realloc ( tralloc_context ** chunk_context, size_t length 
     }
     _tralloc_chunk * old_chunk = _tralloc_get_chunk_from_context ( context );
 
-#if defined(TRALLOC_DEBUG)
+#   if defined(TRALLOC_DEBUG)
     size_t old_length = old_chunk->length;
-#endif
+#   endif
 
     _tralloc_chunk * new_chunk = realloc ( old_chunk, sizeof ( _tralloc_chunk ) + length );
     if ( new_chunk == NULL ) {
@@ -101,19 +101,19 @@ tralloc_error tralloc_realloc ( tralloc_context ** chunk_context, size_t length 
 
     if ( old_chunk == new_chunk ) {
 
-#if defined(TRALLOC_DEBUG)
+#   if defined(TRALLOC_DEBUG)
         old_chunk->length = length;
         return _tralloc_on_resize ( old_chunk, old_length );
-#endif
+#   endif
 
     } else {
         _tralloc_usual_update_chunk ( new_chunk );
         * chunk_context = _tralloc_get_context_from_chunk ( new_chunk );
 
-#if defined(TRALLOC_DEBUG)
+#   if defined(TRALLOC_DEBUG)
         new_chunk->length = length;
         return _tralloc_on_resize ( new_chunk, old_length );
-#endif
+#   endif
 
     }
     return 0;
@@ -124,12 +124,12 @@ tralloc_error _tralloc_free_chunk ( _tralloc_chunk * chunk )
 {
     tralloc_error error = 0, result;
 
-#if defined(TRALLOC_DEBUG)
+#   if defined(TRALLOC_DEBUG)
     result = _tralloc_on_free ( chunk );
     if ( result != 0 ) {
         error = result;
     }
-#endif
+#   endif
 
     free ( chunk );
     return error;

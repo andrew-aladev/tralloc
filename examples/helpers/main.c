@@ -7,10 +7,11 @@
 #include <tralloc/helpers/string.h>
 
 #if defined(TRALLOC_DEBUG)
-#include <tralloc/events.h>
+#   include <tralloc/events.h>
 #endif
 
 #if defined(TRALLOC_FILE)
+
 #include <tralloc/helpers/file.h>
 #include <tralloc/destructor/main.h>
 
@@ -61,7 +62,7 @@ int main ()
         return 5;
     }
 
-#if defined(TRALLOC_FILE)
+#   if defined(TRALLOC_FILE)
     char * file_name;
     if ( tralloc_strdup ( NULL, &file_name, "/tmp/tralloc_test_file" ) != 0 ) {
         return 6;
@@ -83,13 +84,13 @@ int main ()
     if ( tralloc_free ( test_file ) != 0 ) {
         return 10;
     }
-#endif
+#   endif
 
-#if defined(TRALLOC_DEBUG)
+#   if defined(TRALLOC_DEBUG)
     if ( tralloc_get_chunks_count() != 0 ) {
         return 11;
     }
-#endif
+#   endif
 
     return 0;
 }

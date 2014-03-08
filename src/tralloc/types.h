@@ -38,21 +38,21 @@ enum {
     TRALLOC_ERROR_CHILD_EQUALS_PARENT,
     TRALLOC_ERROR_CHILD_HAS_SAME_PARENT,
 
-#if defined(TRALLOC_EXTENSIONS)
+#   if defined(TRALLOC_EXTENSIONS)
     TRALLOC_ERROR_NO_SUCH_EXTENSION,
-#endif
+#   endif
 
-#if defined(TRALLOC_REFERENCE)
+#   if defined(TRALLOC_REFERENCE)
     TRALLOC_ERROR_BOTH_REFERENCES_AND_REFERENSE,
-#endif
+#   endif
 
-#if defined(TRALLOC_POOL)
+#   if defined(TRALLOC_POOL)
     TRALLOC_ERROR_POOL_CANT_BE_REALLOCATED,
-#endif
+#   endif
 
-#if defined(TRALLOC_UTILS_BUFFER)
+#   if defined(TRALLOC_UTILS_BUFFER)
     TRALLOC_ERROR_UTILS_BUFFER_OVERFLOW,
-#endif
+#   endif
 
 };
 typedef uint8_t tralloc_error;
@@ -60,23 +60,23 @@ typedef uint8_t tralloc_error;
 #if defined(TRALLOC_EXTENSIONS)
 enum {
 
-#if defined(TRALLOC_LENGTH)
+#   if defined(TRALLOC_LENGTH)
     TRALLOC_EXTENSION_LENGTH = 1,
-#endif
+#   endif
 
-#if defined(TRALLOC_DESTRUCTOR)
+#   if defined(TRALLOC_DESTRUCTOR)
     TRALLOC_EXTENSION_DESTRUCTORS = 1 << 1,
-#endif
+#   endif
 
-#if defined(TRALLOC_REFERENCE)
+#   if defined(TRALLOC_REFERENCE)
     TRALLOC_EXTENSION_REFERENCE  = 1 << 2,
     TRALLOC_EXTENSION_REFERENCES = 1 << 3,
-#endif
+#   endif
 
-#if defined(TRALLOC_POOL)
+#   if defined(TRALLOC_POOL)
     TRALLOC_EXTENSION_POOL_CHILD = 1 << 4,
     TRALLOC_EXTENSION_POOL       = 1 << 5,
-#endif
+#   endif
 
 };
 #endif
@@ -151,14 +151,14 @@ typedef struct _tralloc_chunk_type {
     struct _tralloc_chunk_type * next;
     struct _tralloc_chunk_type * first_child;
 
-#if defined(TRALLOC_EXTENSIONS)
+#   if defined(TRALLOC_EXTENSIONS)
     tralloc_extensions extensions;
-#endif
+#   endif
 
-#if defined(TRALLOC_DEBUG)
+#   if defined(TRALLOC_DEBUG)
     size_t chunk_length;
     size_t length;
-#endif
+#   endif
 
 } _tralloc_chunk;
 

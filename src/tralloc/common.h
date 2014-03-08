@@ -23,33 +23,33 @@ size_t tralloc_predict_chunk_length ( tralloc_extensions extensions )
 {
     size_t extensions_length = 0;
 
-#if defined(TRALLOC_LENGTH)
+#   if defined(TRALLOC_LENGTH)
     if ( extensions & TRALLOC_EXTENSION_LENGTH ) {
         extensions_length += sizeof ( _tralloc_length );
     }
-#endif
+#   endif
 
-#if defined(TRALLOC_DESTRUCTOR)
+#   if defined(TRALLOC_DESTRUCTOR)
     if ( extensions & TRALLOC_EXTENSION_DESTRUCTORS ) {
         extensions_length += sizeof ( _tralloc_destructors );
     }
-#endif
+#   endif
 
-#if defined(TRALLOC_REFERENCE)
+#   if defined(TRALLOC_REFERENCE)
     if ( extensions & TRALLOC_EXTENSION_REFERENCES ) {
         extensions_length += sizeof ( _tralloc_references );
     } else if ( extensions & TRALLOC_EXTENSION_REFERENCE ) {
         extensions_length += sizeof ( _tralloc_reference );
     }
-#endif
+#   endif
 
-#if defined(TRALLOC_POOL)
+#   if defined(TRALLOC_POOL)
     if ( extensions & TRALLOC_EXTENSION_POOL ) {
         extensions_length += sizeof ( _tralloc_pool );
     } else if ( extensions & TRALLOC_EXTENSION_POOL_CHILD ) {
         extensions_length += sizeof ( _tralloc_pool_child );
     }
-#endif
+#   endif
 
     return extensions_length + sizeof ( _tralloc_chunk );
 }
