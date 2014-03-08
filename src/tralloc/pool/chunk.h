@@ -18,20 +18,25 @@
 
 
 _TRALLOC_INLINE
-_tralloc_pool * _tralloc_pool_child_get_pool ( tralloc_context * parent_context )
+_tralloc_pool * _tralloc_pool_child_get_pool_from_chunk ( _tralloc_chunk * chunk )
+{
+    if ( chunk->extensions & TRALLOC_EXTENSION_POOL ) {
+        return _tralloc_get_pool_from_chunk ( chunk );
+    } else if ( chunk->extensions & TRALLOC_EXTENSION_POOL_CHILD ) {
+        _tralloc_pool_child * parent_pool_child = _tralloc_get_pool_child_from_chunk ( chunk );
+        return parent_pool_child->pool;
+    } else {
+        return NULL;
+    }
+}
+
+_TRALLOC_INLINE
+_tralloc_pool * _tralloc_pool_child_get_pool_from_context ( tralloc_context * parent_context )
 {
     if ( parent_context == NULL ) {
         return NULL;
     } else {
-        _tralloc_chunk * parent_chunk = _tralloc_get_chunk_from_context ( parent_context );
-        if ( parent_chunk->extensions & TRALLOC_EXTENSION_POOL ) {
-            return _tralloc_get_pool_from_chunk ( parent_chunk );
-        } else if ( parent_chunk->extensions & TRALLOC_EXTENSION_POOL_CHILD ) {
-            _tralloc_pool_child * parent_pool_child = _tralloc_get_pool_child_from_chunk ( parent_chunk );
-            return parent_pool_child->pool;
-        } else {
-            return NULL;
-        }
+        return _tralloc_pool_child_get_pool_from_chunk ( _tralloc_get_chunk_from_context ( parent_context ) );
     }
 }
 

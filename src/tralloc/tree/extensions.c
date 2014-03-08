@@ -107,7 +107,7 @@ tralloc_error _tralloc_with_extensions_with_allocator ( tralloc_context * parent
         extensions        &= ~ ( TRALLOC_EXTENSION_POOL_CHILD );
         extensions_length += sizeof ( _tralloc_pool );
     } else {
-        parent_pool = _tralloc_pool_child_get_pool ( parent_context );
+        parent_pool = _tralloc_pool_child_get_pool_from_context ( parent_context );
         if ( parent_pool == NULL ) {
             have_pool_child = TRALLOC_FALSE;
             extensions      &= ~ ( TRALLOC_EXTENSION_POOL_CHILD );
