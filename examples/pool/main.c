@@ -36,14 +36,14 @@ int main ()
     }
 
     if ( tralloc_free ( pool_ctx ) != 0 ) {
-        return 2;
+        return 4;
     }
     // there were only 1 alloc and 1 free calls
     // data_1 and data_2 are pool children
 
 #   if defined(TRALLOC_DEBUG)
     if ( tralloc_get_chunks_count() != 0 ) {
-        return 6;
+        return 5;
     }
 #   endif
 

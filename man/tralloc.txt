@@ -741,7 +741,7 @@ Example
             return 3;
         }
         if ( tralloc_free ( pool_ctx ) != 0 ) {
-            return 2;
+            return 4;
         }
         // there were only 1 alloc and 1 free calls
         // data_1 and data_2 are pool children
