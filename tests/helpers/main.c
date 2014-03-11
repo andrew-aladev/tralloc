@@ -23,7 +23,7 @@ int main ()
         tralloc_get_chunks_overhead_length() != 0 ||
         tralloc_get_chunks_length()          != 0
     ) {
-        return 256;
+        return 255;
     }
 #   endif
 

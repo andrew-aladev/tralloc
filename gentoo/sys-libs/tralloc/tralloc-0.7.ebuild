@@ -9,7 +9,7 @@ DESCRIPTION="Lightweight implementation of simplified talloc api."
 HOMEPAGE="https://github.com/andrew-aladev/tralloc"
 SRC_URI="https://github.com/andrew-aladev/tralloc/archive/v${PV}.tar.gz"
 
-LICENSE="LGPL-3+"
+LICENSE="LGPL-3+ + SLE"
 SLOT="0/7"
 KEYWORDS=""
 

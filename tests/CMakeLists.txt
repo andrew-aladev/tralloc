@@ -8,6 +8,10 @@ if (${TRALLOC_DEBUG})
     add_subdirectory ("events")
 endif ()
 
+if (${TRALLOC_THREADS})
+    add_subdirectory ("threads")
+endif ()
+
 add_subdirectory ("helpers")
 
 if (${TRALLOC_LENGTH})

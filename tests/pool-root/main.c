@@ -35,7 +35,7 @@ int main ()
 {
     tralloc_context * pool_data;
     if ( tralloc_with_extensions ( NULL, &pool_data, TRALLOC_EXTENSION_POOL, sizeof ( uint8_t ) * 5000 ) != 0 ) {
-        return 255;
+        return 253;
     }
 
     int result = test_basic ( pool_data );
@@ -86,13 +86,17 @@ int main ()
     }
 #   endif
 
+    if ( tralloc_free ( pool_data ) != 0 ) {
+        return 254;
+    }
+
 #   if defined(TRALLOC_DEBUG)
     if (
         tralloc_get_chunks_count()           != 0 ||
         tralloc_get_chunks_overhead_length() != 0 ||
         tralloc_get_chunks_length()          != 0
     ) {
-        return 256;
+        return 255;
     }
 #   endif
 

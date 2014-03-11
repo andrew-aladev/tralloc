@@ -3,29 +3,14 @@
 // tralloc is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
-#include "common.h"
+#ifndef TRALLOC_TESTS_THREADS_BASIC_COMMON
+#define TRALLOC_TESTS_THREADS_BASIC_COMMON
 
-#if defined(TRALLOC_DEBUG)
-#   include <tralloc/events.h>
+#include <tralloc/types.h>
+
+tralloc_bool test_basic_add ( tralloc_context * ctx );
+
+int test_basic ( tralloc_context * ctx );
+
+
 #endif
-
-
-int main ()
-{
-    int result = test_destructor ( NULL );
-    if ( result != 0 ) {
-        return result;
-    }
-
-#   if defined(TRALLOC_DEBUG)
-    if (
-        tralloc_get_chunks_count()           != 0 ||
-        tralloc_get_chunks_overhead_length() != 0 ||
-        tralloc_get_chunks_length()          != 0
-    ) {
-        return 255;
-    }
-#   endif
-
-    return 0;
-}
