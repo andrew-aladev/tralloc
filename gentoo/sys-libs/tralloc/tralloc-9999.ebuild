@@ -9,11 +9,11 @@ DESCRIPTION="Lightweight implementation of simplified talloc api."
 HOMEPAGE="https://github.com/andrew-aladev/tralloc"
 EGIT_REPO_URI="git://github.com/andrew-aladev/tralloc.git"
 
-LICENSE="LGPL-3+"
+LICENSE="LGPL-3+ + SLE"
 SLOT="0/9999"
 KEYWORDS=""
 
-IUSE="debug shared-libs static-libs man test"
+IUSE="debug shared-libs static-libs threads man test"
 
 IUSE_EXTENSIONS="destructor reference pool"
 for extension in ${IUSE_EXTENSIONS}; do
@@ -40,6 +40,7 @@ src_configure() {
         $(cmake-utils_use debug       TRALLOC_DEBUG)
         $(cmake-utils_use shared-libs TRALLOC_SHARED)
         $(cmake-utils_use static-libs TRALLOC_STATIC)
+        $(cmake-utils_use threads     TRALLOC_THREADS)
         $(cmake-utils_use man         TRALLOC_MAN)
         $(cmake-utils_use test        TRALLOC_TEST)
         
