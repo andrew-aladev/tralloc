@@ -3,28 +3,13 @@
 // tralloc is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Lesser Public License for more details.
 // You should have received a copy of the GNU General Lesser Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
-#include "chunk.h"
+#ifndef TRALLOC_REFERENCE_MOVE_H
+#define TRALLOC_REFERENCE_MOVE_H
+
+#include "../types.h"
 
 
-void _tralloc_usual_update_chunk ( _tralloc_chunk * chunk )
-{
-    _tralloc_chunk * prev = chunk->prev;
-    if ( prev == NULL ) {
-        _tralloc_chunk * parent = chunk->parent;
-        if ( parent != NULL ) {
-            parent->first_child = chunk;
-        }
-    } else {
-        prev->next = chunk;
-    }
-    _tralloc_chunk * next = chunk->next;
-    if ( next != NULL ) {
-        next->prev = chunk;
-    }
+tralloc_error tralloc_move_reference   ( tralloc_context * child_context, tralloc_context * parent_context );
 
-    _tralloc_chunk * next_child = chunk->first_child;
-    while ( next_child != NULL ) {
-        next_child->parent = chunk;
-        next_child = next_child->next;
-    }
-}
+
+#endif

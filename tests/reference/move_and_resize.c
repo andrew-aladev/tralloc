@@ -5,7 +5,7 @@
 
 #include "common.h"
 #include <tralloc/tree.h>
-#include <tralloc/reference/main.h>
+#include <tralloc/reference.h>
 #include <tralloc/reference/common.h>
 #include <math.h>
 

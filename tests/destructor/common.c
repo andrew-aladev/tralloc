@@ -7,8 +7,8 @@
 #include "../lib/malloc_dynarr.h"
 #include <tralloc/tree.h>
 #include <tralloc/helpers/string.h>
-#include <tralloc/destructor/main.h>
-#include <tralloc/destructor/common.h>
+#include <tralloc/destructor.h>
+#include <tralloc/destructor/chunk.h>
 
 
 static

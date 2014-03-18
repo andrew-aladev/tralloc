@@ -5,7 +5,10 @@
 
 #define _TRALLOC_UTILS_BUFFER_INCLUDED_FROM_OBJECT
 #include "buffer.h"
-#include "../tree.h"
+#include "../tree/alloc.h"
+#include "../tree/realloc.h"
+#include "../tree/free.h"
+
 #include <string.h>
 
 
@@ -21,7 +24,7 @@ tralloc_error tralloc_buffer_with_extensions_new ( tralloc_context * ctx, trallo
         return result;
     }
     tralloc_buffer * buffer = * buffer_ptr;
-    
+
     buffer->buf         = NULL;
     buffer->data_offset = 0;
     buffer->data_length = 0;
@@ -41,7 +44,7 @@ tralloc_error tralloc_buffer_new ( tralloc_context * ctx, tralloc_buffer ** buff
         return result;
     }
     tralloc_buffer * buffer = * buffer_ptr;
-    
+
     buffer->buf         = NULL;
     buffer->data_offset = 0;
     buffer->data_length = 0;

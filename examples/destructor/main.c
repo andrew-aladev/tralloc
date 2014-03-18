@@ -4,7 +4,7 @@
 // You should have received a copy of the GNU General Lesser Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
 #include <tralloc/tree.h>
-#include <tralloc/destructor/main.h>
+#include <tralloc/destructor.h>
 
 #if defined(TRALLOC_DEBUG)
 #   include <tralloc/events.h>

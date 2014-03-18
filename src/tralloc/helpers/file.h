@@ -8,6 +8,7 @@
 
 #include "../macro.h"
 #include "../types.h"
+
 #include <fcntl.h>
 
 #undef _TRALLOC_INLINE

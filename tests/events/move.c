@@ -18,11 +18,13 @@ static
 malloc_dynarr * malloc_history()
 {
     malloc_dynarr * tralloc_history = malloc_dynarr_new ( 8 );
-    if ( tralloc_history == NULL ) {
+    if (
+        tralloc_history == NULL ||
+        _tralloc_set_user_data ( tralloc_history ) != 0
+    ) {
         return NULL;
     }
     malloc_dynarr_set_free_item ( tralloc_history, free );
-    _tralloc_set_user_data ( tralloc_history );
     return tralloc_history;
 }
 
@@ -52,10 +54,12 @@ tralloc_error on_move ( void * user_data, _tralloc_chunk * chunk, _tralloc_chunk
 tralloc_bool test_events_move ( tralloc_context * ctx )
 {
     malloc_dynarr * tralloc_history = malloc_history();
-    if ( tralloc_history == NULL ) {
+    if (
+        tralloc_history == NULL ||
+        _tralloc_set_callback ( NULL, NULL, on_move, NULL ) != 0
+    ) {
         return TRALLOC_FALSE;
     }
-    _tralloc_set_callback ( NULL, NULL, on_move, NULL );
 
     int * a;
     char * b;
@@ -106,12 +110,14 @@ tralloc_bool test_events_move ( tralloc_context * ctx )
         return TRALLOC_FALSE;
     }
 
-    if ( tralloc_free ( a ) != 0 ) {
+    if (
+        tralloc_free ( a ) != 0 ||
+        _tralloc_set_callback ( NULL, NULL, NULL, NULL ) != 0
+    ) {
         free_history ( tralloc_history );
-        _tralloc_set_callback ( NULL, NULL, NULL, NULL );
         return TRALLOC_FALSE;
     }
+
     free_history ( tralloc_history );
-    _tralloc_set_callback ( NULL, NULL, NULL, NULL );
     return TRALLOC_TRUE;
 }

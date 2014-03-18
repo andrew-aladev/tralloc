@@ -1,7 +1,7 @@
 configure_file (${CMAKE_CURRENT_SOURCE_DIR}/config.h.in ${CMAKE_CURRENT_SOURCE_DIR}/config.h)
 
-install (FILES config.h types.h macro.h common.h chunk.h tree.h DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/${CURRENT_INCLUDEDIR}")
-set (SOURCES common.c chunk.c)
+install (FILES common.h config.h destructor.h length.h macro.h reference.h tree.h types.h DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/${CURRENT_INCLUDEDIR}")
+set (SOURCES common.c)
 
 if (${TRALLOC_DEBUG})
     install (FILES events.h DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/${CURRENT_INCLUDEDIR}")

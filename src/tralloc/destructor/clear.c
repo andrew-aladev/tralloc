@@ -3,37 +3,37 @@
 // tralloc is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Lesser Public License for more details.
 // You should have received a copy of the GNU General Lesser Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
-#define _TRALLOC_DESTRUCTOR_CHUNK_INCLUDED_FROM_OBJECT
+#include "clear.h"
 #include "chunk.h"
 #include "../common.h"
 
 #include <stdlib.h>
 
 
-tralloc_error _tralloc_destructor_free_chunk ( _tralloc_chunk * chunk )
+tralloc_error tralloc_clear_destructors ( tralloc_context * chunk_context )
 {
+    if ( chunk_context == NULL ) {
+        return TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL;
+    }
+    _tralloc_chunk * chunk = _tralloc_get_chunk_from_context ( chunk_context );
+
+    if ( ! ( chunk->extensions & TRALLOC_EXTENSION_DESTRUCTORS ) ) {
+        return TRALLOC_ERROR_NO_SUCH_EXTENSION;
+    }
+
     _tralloc_destructors * destructors = _tralloc_get_destructors_from_chunk ( chunk );
-    if ( destructors == NULL ) {
+    _tralloc_destructor * destructor   = destructors->first_destructor;
+    if ( destructor == NULL ) {
         return 0;
     }
 
-    tralloc_error result, error = 0;
-    tralloc_context * chunk_context  = _tralloc_get_context_from_chunk ( chunk );
-    _tralloc_destructor * destructor = destructors->first_destructor;
     _tralloc_destructor * next_destructor;
-    tralloc_destructor_function function;
-
     while ( destructor != NULL ) {
-        function = destructor->function;
-        if ( function != NULL ) {
-            if ( ( result = function ( chunk_context, destructor->user_data ) ) != 0 ) {
-                error = result;
-            }
-        }
-
         next_destructor = destructor->next;
         free ( destructor );
         destructor = next_destructor;
     }
-    return error;
+    destructors->first_destructor = NULL;
+    destructors->last_destructor  = NULL;
+    return 0;
 }

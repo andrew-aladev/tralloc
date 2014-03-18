@@ -3,23 +3,18 @@
 // tralloc is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Lesser Public License for more details.
 // You should have received a copy of the GNU General Lesser Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TRALLOC_DESTRUCTOR_H
-#define TRALLOC_DESTRUCTOR_H
+#ifndef TRALLOC_DESTRUCTOR_DELETE_H
+#define TRALLOC_DESTRUCTOR_DELETE_H
 
 #include "../macro.h"
 #include "../types.h"
 
 #undef _TRALLOC_INLINE
-#ifdef _TRALLOC_DESTRUCTOR_INCLUDED_FROM_OBJECT
+#ifdef _TRALLOC_DESTRUCTOR_DELETE_INCLUDED_FROM_OBJECT
 #    define _TRALLOC_INLINE _TRALLOC_INLINE_IN_OBJECT
 #else
 #    define _TRALLOC_INLINE _TRALLOC_INLINE_IN_HEADER
 #endif
-
-
-tralloc_error tralloc_clear_destructors  ( tralloc_context * chunk_context );
-tralloc_error tralloc_append_destructor  ( tralloc_context * chunk_context, tralloc_destructor_function function, void * user_data );
-tralloc_error tralloc_prepend_destructor ( tralloc_context * chunk_context, tralloc_destructor_function function, void * user_data );
 
 
 _TRALLOC_INLINE
@@ -41,6 +36,7 @@ tralloc_bool _tralloc_destructor_comparator_strict ( _tralloc_destructor * destr
 }
 
 typedef tralloc_bool ( * _tralloc_destructor_comparator ) ( _tralloc_destructor * destructor, tralloc_destructor_function function, void * user_data );
+
 
 tralloc_error _tralloc_delete_destructors_by_comparator ( tralloc_context * chunk_context, _tralloc_destructor_comparator comparator, tralloc_destructor_function function, void * user_data );
 

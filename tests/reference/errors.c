@@ -5,7 +5,7 @@
 
 #include "common.h"
 #include <tralloc/tree.h>
-#include <tralloc/reference/main.h>
+#include <tralloc/reference.h>
 
 
 tralloc_bool test_reference_errors ( tralloc_context * ctx )

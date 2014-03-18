@@ -5,7 +5,8 @@
 
 #define _TRALLOC_POOL_HEAD_CHUNK_INCLUDED_FROM_OBJECT
 #include "head_chunk.h"
-#include "../tree/common.h"
+#include "../common.h"
+
 #include <string.h>
 
 

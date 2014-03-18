@@ -3,13 +3,13 @@
 // tralloc is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Lesser Public License for more details.
 // You should have received a copy of the GNU General Lesser Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TRALLOC_CHUNK_H
-#define TRALLOC_CHUNK_H
+#ifndef TRALLOC_REFERENCE_CLEAR_H
+#define TRALLOC_REFERENCE_CLEAR_H
 
-#include "types.h"
+#include "../types.h"
 
 
-void _tralloc_usual_update_chunk ( _tralloc_chunk * chunk );
+tralloc_error tralloc_clear_references ( tralloc_context * chunk_context );
 
 
 #endif

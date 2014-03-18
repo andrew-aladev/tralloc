@@ -3,13 +3,14 @@
 // tralloc is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Lesser Public License for more details.
 // You should have received a copy of the GNU General Lesser Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TRALLOC_TREE_EXTENSIONS_H
-#define TRALLOC_TREE_EXTENSIONS_H
+#ifndef TRALLOC_TREE_ALLOC_H
+#define TRALLOC_TREE_ALLOC_H
 
-#include "../common.h"
+#include "../macro.h"
+#include "../types.h"
 
 #undef _TRALLOC_INLINE
-#ifdef _TRALLOC_TREE_EXTENSIONS_INCLUDED_FROM_OBJECT
+#ifdef _TRALLOC_TREE_ALLOC_INCLUDED_FROM_OBJECT
 #    define _TRALLOC_INLINE _TRALLOC_INLINE_IN_OBJECT
 #else
 #    define _TRALLOC_INLINE _TRALLOC_INLINE_IN_HEADER
@@ -44,11 +45,6 @@ tralloc_error tralloc_with_extensions_new ( tralloc_context * parent_context, tr
 {
     return tralloc_with_extensions ( parent_context, child_context, extensions, 0 );
 }
-
-
-tralloc_bool  _tralloc_can_free_chunk          ( _tralloc_chunk * chunk );
-tralloc_bool  _tralloc_can_free_chunk_children ( _tralloc_chunk * chunk );
-tralloc_error _tralloc_free_chunk              ( _tralloc_chunk * chunk );
 
 
 #endif

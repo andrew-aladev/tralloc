@@ -7,14 +7,10 @@
 #define TRALLOC_TREE_H
 
 
-#include "config.h"
-#include "tree/common.h"
-
-#if defined(TRALLOC_EXTENSIONS)
-#   include "tree/extensions.h"
-#else
-#   include "tree/pure.h"
-#endif
+#include "tree/alloc.h"
+#include "tree/move.h"
+#include "tree/realloc.h"
+#include "tree/free.h"
 
 
 #endif

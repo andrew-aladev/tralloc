@@ -3,140 +3,141 @@
 // tralloc is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Lesser Public License for more details.
 // You should have received a copy of the GNU General Lesser Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
-#define _TRALLOC_TREE_COMMON_INCLUDED_FROM_OBJECT
-#include "../tree.h"
+#define _TRALLOC_TREE_FREE_INCLUDED_FROM_OBJECT
+#include "free.h"
+#include "chunk.h"
 
 #if defined(TRALLOC_DEBUG)
 #   include "../events.h"
 #endif
 
+#if defined(TRALLOC_DESTRUCTOR)
+#   include "../destructor/chunk.h"
+#endif
 
-tralloc_error tralloc_move ( tralloc_context * child_context, tralloc_context * parent_context )
+#if defined(TRALLOC_REFERENCE)
+#   include "../reference/head_chunk.h"
+#   include "../reference/chunk.h"
+#endif
+
+#if defined(TRALLOC_POOL)
+#   include "../pool/chunk.h"
+#   include "../pool/head_chunk.h"
+#endif
+
+#include <stdlib.h>
+
+
+static inline
+tralloc_bool _tralloc_can_free_chunk ( _tralloc_chunk * chunk )
 {
-    if ( child_context == NULL ) {
-        return TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL;
-    }
-    if ( child_context == parent_context ) {
-        return TRALLOC_ERROR_CHILD_EQUALS_PARENT;
-    }
-    _tralloc_chunk * child_chunk = _tralloc_get_chunk_from_context ( child_context );
 
-#   if defined(TRALLOC_DEBUG)
-    _tralloc_chunk * old_parent_chunk;
+#   if defined(TRALLOC_REFERENCE)
+    if ( chunk->extensions & TRALLOC_EXTENSION_REFERENCES ) {
+        if ( ! _tralloc_references_can_free_chunk ( chunk ) ) {
+            return TRALLOC_FALSE;
+        }
+    }
 #   endif
 
-    if ( parent_context == NULL ) {
-        if ( child_chunk->parent == NULL ) {
-            return TRALLOC_ERROR_CHILD_HAS_SAME_PARENT;
+#   if defined(TRALLOC_POOL)
+    if ( chunk->extensions & TRALLOC_EXTENSION_POOL ) {
+        if ( ! _tralloc_pool_can_free_chunk ( chunk ) ) {
+            return TRALLOC_FALSE;
         }
-
-#       if defined(TRALLOC_DEBUG)
-        old_parent_chunk = child_chunk->parent;
-#       endif
-
-        _tralloc_detach_chunk ( child_chunk );
-    } else {
-        _tralloc_chunk * new_parent_chunk = _tralloc_get_chunk_from_context ( parent_context );
-        if ( child_chunk->parent == new_parent_chunk ) {
-            return TRALLOC_ERROR_CHILD_HAS_SAME_PARENT;
-        }
-
-#       if defined(TRALLOC_DEBUG)
-        old_parent_chunk = child_chunk->parent;
-#       endif
-
-        _tralloc_attach_chunk ( child_chunk, new_parent_chunk );
     }
-
-#   if defined(TRALLOC_DEBUG)
-    return _tralloc_on_move ( child_chunk, old_parent_chunk );
-#   else
-    return 0;
 #   endif
 
+    return TRALLOC_TRUE;
 }
 
-
-tralloc_error _tralloc_add_chunk ( tralloc_context * parent_context, _tralloc_chunk * child_chunk )
+static inline
+tralloc_bool _tralloc_can_free_chunk_children ( _tralloc_chunk * chunk )
 {
-    child_chunk->first_child = NULL;
 
-    if ( parent_context != NULL ) {
-        _tralloc_chunk * parent_chunk       = _tralloc_get_chunk_from_context ( parent_context );
-        _tralloc_chunk * parent_first_child = parent_chunk->first_child;
-
-        child_chunk->parent = parent_chunk;
-
-        if ( parent_first_child != NULL ) {
-            parent_first_child->prev = child_chunk;
-            child_chunk->next        = parent_first_child;
-        } else {
-            child_chunk->next = NULL;
+#   if defined(TRALLOC_REFERENCE)
+    if ( chunk->extensions & TRALLOC_EXTENSION_REFERENCES ) {
+        if ( ! _tralloc_references_can_free_chunk_children ( chunk ) ) {
+            return TRALLOC_FALSE;
         }
-        parent_chunk->first_child = child_chunk;
-    } else {
-        child_chunk->parent = NULL;
-        child_chunk->next   = NULL;
     }
-
-    child_chunk->prev = NULL;
-
-#   if defined(TRALLOC_DEBUG)
-    return _tralloc_on_add ( child_chunk );
-#   else
-    return 0;
 #   endif
 
+#   if defined(TRALLOC_POOL)
+    if ( chunk->extensions & TRALLOC_EXTENSION_POOL ) {
+        if ( ! _tralloc_pool_can_free_chunk_children ( chunk ) ) {
+            return TRALLOC_FALSE;
+        }
+    }
+#   endif
+
+    return TRALLOC_TRUE;
 }
 
-void _tralloc_attach_chunk ( _tralloc_chunk * child, _tralloc_chunk * new_parent )
+static inline
+tralloc_error _tralloc_free_chunk ( _tralloc_chunk * chunk )
 {
-    _tralloc_chunk * parent = child->parent;
-    _tralloc_chunk * prev   = child->prev;
-    _tralloc_chunk * next   = child->next;
+    tralloc_error error = 0, result;
 
-    child->parent = new_parent;
-    child->prev   = NULL;
+#   if defined(TRALLOC_DEBUG)
+    result = _tralloc_on_free ( chunk );
+    if ( result != 0 ) {
+        error = result;
+    }
+#   endif
 
-    if ( prev != NULL ) {
-        prev->next = next;
-    } else if ( parent != NULL ) {
-        parent->first_child = next;
-    }
-    if ( next != NULL ) {
-        next->prev = prev;
-    }
+    size_t extensions_length = 0;
 
-    _tralloc_chunk * first_child = new_parent->first_child;
-    if ( first_child != NULL ) {
-        first_child->prev = child;
-        child->next = first_child;
-    } else {
-        child->next = NULL;
+#   if defined(TRALLOC_LENGTH)
+    if ( chunk->extensions & TRALLOC_EXTENSION_LENGTH ) {
+        extensions_length += sizeof ( _tralloc_length );
     }
-    new_parent->first_child = child;
+#   endif
+
+#   if defined(TRALLOC_DESTRUCTOR)
+    if ( chunk->extensions & TRALLOC_EXTENSION_DESTRUCTORS ) {
+        result = _tralloc_destructor_free_chunk ( chunk );
+        if ( result != 0 ) {
+            error = result;
+        }
+        extensions_length += sizeof ( _tralloc_destructors );
+    }
+#   endif
+
+#   if defined(TRALLOC_REFERENCE)
+    if ( chunk->extensions & TRALLOC_EXTENSION_REFERENCES ) {
+        extensions_length += sizeof ( _tralloc_references );
+    } else if ( chunk->extensions & TRALLOC_EXTENSION_REFERENCE ) {
+        result = _tralloc_reference_free_chunk ( chunk );
+        if ( result != 0 ) {
+            error = result;
+        }
+        extensions_length += sizeof ( _tralloc_reference );
+    }
+#   endif
+
+#   if defined(TRALLOC_POOL)
+    tralloc_bool have_pool_child = chunk->extensions & TRALLOC_EXTENSION_POOL_CHILD;
+    if ( chunk->extensions & TRALLOC_EXTENSION_POOL ) {
+        extensions_length += sizeof ( _tralloc_pool );
+    } else if ( have_pool_child ) {
+        result = _tralloc_pool_child_free_chunk ( chunk );
+        if ( result != 0 ) {
+            error = result;
+        }
+    }
+#   endif
+
+#   if defined(TRALLOC_POOL)
+    if ( have_pool_child ) {
+        return error;
+    }
+#   endif
+
+    free ( ( void * ) ( ( uintptr_t ) chunk - extensions_length ) );
+
+    return error;
 }
-
-void _tralloc_detach_chunk ( _tralloc_chunk * chunk )
-{
-    _tralloc_chunk * prev   = chunk->prev;
-    _tralloc_chunk * next   = chunk->next;
-    _tralloc_chunk * parent = chunk->parent;
-
-    chunk->parent = NULL;
-    chunk->prev   = NULL;
-    chunk->next   = NULL;
-
-    if ( prev != NULL ) {
-        prev->next = next;
-    } else if ( parent != NULL ) {
-        parent->first_child = next;
-    }
-    if ( next != NULL ) {
-        next->prev = prev;
-    }
-}
-
 
 static inline
 void _tralloc_silent_detach_chunk ( _tralloc_chunk * chunk )
@@ -246,3 +247,4 @@ tralloc_error _tralloc_free_single ( _tralloc_chunk * chunk )
     _tralloc_detach_chunk ( chunk );
     return _tralloc_free_chunk ( chunk );
 }
+

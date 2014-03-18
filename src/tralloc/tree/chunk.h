@@ -3,25 +3,16 @@
 // tralloc is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Lesser Public License for more details.
 // You should have received a copy of the GNU General Lesser Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TRALLOC_LENGTH_COMMON_H
-#define TRALLOC_LENGTH_COMMON_H
+#ifndef TRALLOC_TREE_CHUNK_H
+#define TRALLOC_TREE_CHUNK_H
 
-#include "../macro.h"
 #include "../types.h"
 
-#undef _TRALLOC_INLINE
-#ifdef _TRALLOC_LENGTH_COMMON_INCLUDED_FROM_OBJECT
-#    define _TRALLOC_INLINE _TRALLOC_INLINE_IN_OBJECT
-#else
-#    define _TRALLOC_INLINE _TRALLOC_INLINE_IN_HEADER
-#endif
 
-
-_TRALLOC_INLINE
-_tralloc_length * _tralloc_get_length_from_chunk ( _tralloc_chunk * chunk )
-{
-    return ( _tralloc_length * ) ( ( uintptr_t ) chunk - sizeof ( _tralloc_length ) );
-}
+tralloc_error _tralloc_add_chunk          ( tralloc_context * parent_context, _tralloc_chunk * child_chunk );
+void          _tralloc_usual_update_chunk ( _tralloc_chunk * chunk );
+void          _tralloc_attach_chunk       ( _tralloc_chunk * child, _tralloc_chunk * new_parent );
+void          _tralloc_detach_chunk       ( _tralloc_chunk * chunk );
 
 
 #endif

@@ -5,11 +5,12 @@
 
 #include <tralloc/tree.h>
 #include <tralloc/helpers/string.h>
-#include <tralloc/reference/main.h>
+#include <tralloc/reference.h>
 
 #if defined(TRALLOC_DEBUG)
 #   include <tralloc/events.h>
 #endif
+
 
 int main ()
 {

@@ -6,7 +6,8 @@
 #define _TRALLOC_POOL_CHUNK_INCLUDED_FROM_OBJECT
 #include "chunk.h"
 #include "fragment.h"
-#include "../tree/common.h"
+#include "../tree/free.h"
+
 #include <string.h>
 
 

@@ -1,7 +1,8 @@
-install (FILES common.h head_chunk.h chunk.h main.h DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/${CURRENT_INCLUDEDIR}")
+install (FILES chunk.h clear.h common.h head_chunk.h move.h DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/${CURRENT_INCLUDEDIR}")
 set (SOURCES ${SOURCES}
+    ${CMAKE_CURRENT_SOURCE_DIR}/chunk.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/clear.c
     ${CMAKE_CURRENT_SOURCE_DIR}/common.c
     ${CMAKE_CURRENT_SOURCE_DIR}/head_chunk.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/chunk.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/main.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/move.c
 PARENT_SCOPE)

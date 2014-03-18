@@ -3,5 +3,13 @@
 // tralloc is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Lesser Public License for more details.
 // You should have received a copy of the GNU General Lesser Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
-#define _TRALLOC_DESTRUCTOR_COMMON_INCLUDED_FROM_OBJECT
-#include "common.h"
+#ifndef TRALLOC_TREE_MOVE_H
+#define TRALLOC_TREE_MOVE_H
+
+#include "../types.h"
+
+
+tralloc_error tralloc_move ( tralloc_context * child_context, tralloc_context * parent_context );
+
+
+#endif

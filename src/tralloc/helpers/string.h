@@ -6,14 +6,68 @@
 #ifndef TRALLOC_HELPERS_STRING_H
 #define TRALLOC_HELPERS_STRING_H
 
-#include "../config.h"
+#include "../macro.h"
+#include "../types.h"
+#include <string.h>
+#include <stdarg.h>
 
-
-#if defined(TRALLOC_EXTENSIONS)
-#   include "string/extensions.h"
+#undef _TRALLOC_INLINE
+#ifdef _TRALLOC_HELPERS_STRING_EXTENSIONS_INCLUDED_FROM_OBJECT
+#    define _TRALLOC_INLINE _TRALLOC_INLINE_IN_OBJECT
 #else
-#   include "string/pure.h"
+#    define _TRALLOC_INLINE _TRALLOC_INLINE_IN_HEADER
 #endif
+
+
+tralloc_error _tralloc_strndup_with_extensions ( tralloc_context * parent_context, char ** child_context, tralloc_extensions extensions, const char * str, size_t length );
+
+_TRALLOC_INLINE
+tralloc_error tralloc_strndup_with_extensions ( tralloc_context * parent_context, char ** child_context, tralloc_extensions extensions, const char * str, size_t length )
+{
+    if ( str == NULL ) {
+        return TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL;
+    }
+    return _tralloc_strndup_with_extensions ( parent_context, child_context, extensions, str, length );
+}
+
+_TRALLOC_INLINE
+tralloc_error tralloc_strndup ( tralloc_context * parent_context, char ** child_context, const char * str, size_t length )
+{
+    if ( str == NULL ) {
+        return TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL;
+    }
+    return _tralloc_strndup_with_extensions ( parent_context, child_context, 0, str, length );
+}
+
+_TRALLOC_INLINE
+tralloc_error tralloc_strdup_with_extensions ( tralloc_context * parent_context, char ** child_context, tralloc_extensions extensions, const char * str )
+{
+    if ( str == NULL ) {
+        return TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL;
+    }
+    return _tralloc_strndup_with_extensions ( parent_context, child_context, extensions, str, strlen ( str ) );
+}
+
+_TRALLOC_INLINE
+tralloc_error tralloc_strdup ( tralloc_context * parent_context, char ** child_context, const char * str )
+{
+    if ( str == NULL ) {
+        return TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL;
+    }
+    return _tralloc_strndup_with_extensions ( parent_context, child_context, 0, str, strlen ( str ) );
+}
+
+
+tralloc_error tralloc_vasprintf_with_extensions ( tralloc_context * parent_context, char ** child_context, tralloc_extensions extensions, const char * format, va_list arguments );
+
+_TRALLOC_INLINE
+tralloc_error tralloc_vasprintf ( tralloc_context * parent_context, char ** child_context, const char * format, va_list arguments )
+{
+    return tralloc_vasprintf_with_extensions ( parent_context, child_context, 0, format, arguments );
+}
+
+tralloc_error tralloc_asprintf_with_extensions ( tralloc_context * parent_context, char ** child_context, tralloc_extensions extensions, const char * format, ... );
+tralloc_error tralloc_asprintf                 ( tralloc_context * parent_context, char ** child_context, const char * format, ... );
 
 
 #endif

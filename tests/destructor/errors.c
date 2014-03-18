@@ -5,7 +5,7 @@
 
 #include "common.h"
 #include <tralloc/tree.h>
-#include <tralloc/destructor/main.h>
+#include <tralloc/destructor.h>
 
 
 tralloc_bool test_destructor_errors ( tralloc_context * ctx )

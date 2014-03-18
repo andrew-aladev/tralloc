@@ -3,33 +3,13 @@
 // tralloc is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Lesser Public License for more details.
 // You should have received a copy of the GNU General Lesser Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TRALLOC_DESTRUCTOR_COMMON_H
-#define TRALLOC_DESTRUCTOR_COMMON_H
-
-#include "../macro.h"
-#include "../types.h"
-
-#undef _TRALLOC_INLINE
-#ifdef _TRALLOC_DESTRUCTOR_COMMON_INCLUDED_FROM_OBJECT
-#    define _TRALLOC_INLINE _TRALLOC_INLINE_IN_OBJECT
-#else
-#    define _TRALLOC_INLINE _TRALLOC_INLINE_IN_HEADER
-#endif
+#ifndef TRALLOC_DESTRUCTOR_H
+#define TRALLOC_DESTRUCTOR_H
 
 
-_TRALLOC_INLINE
-_tralloc_destructors * _tralloc_get_destructors_from_chunk ( _tralloc_chunk * chunk )
-{
-    size_t offset = sizeof ( _tralloc_destructors );
-
-#   if defined(TRALLOC_LENGTH)
-    if ( chunk->extensions & TRALLOC_EXTENSION_LENGTH ) {
-        offset += sizeof ( _tralloc_length );
-    }
-#   endif
-
-    return ( _tralloc_destructors * ) ( ( uintptr_t ) chunk - offset );
-}
+#include "destructor/append.h"
+#include "destructor/clear.h"
+#include "destructor/delete.h"
 
 
 #endif

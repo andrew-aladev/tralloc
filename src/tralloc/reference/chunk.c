@@ -5,7 +5,7 @@
 
 #define _TRALLOC_REFERENCE_CHUNK_INCLUDED_FROM_OBJECT
 #include "chunk.h"
-#include "../tree/common.h"
+#include "../tree/free.h"
 
 
 void _tralloc_reference_update_chunk ( _tralloc_chunk * chunk )

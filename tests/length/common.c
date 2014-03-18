@@ -5,7 +5,7 @@
 
 #include "common.h"
 #include <tralloc/tree.h>
-#include <tralloc/length/main.h>
+#include <tralloc/length.h>
 
 
 static

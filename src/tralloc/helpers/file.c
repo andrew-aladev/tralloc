@@ -5,8 +5,10 @@
 
 #define _TRALLOC_HELPERS_FILE_INCLUDED_FROM_OBJECT
 #include "file.h"
-#include "../tree.h"
-#include "../destructor/main.h"
+#include "../tree/alloc.h"
+#include "../tree/free.h"
+#include "../destructor/append.h"
+
 #include <unistd.h>
 
 

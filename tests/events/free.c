@@ -13,10 +13,12 @@ static
 malloc_dynarr * malloc_history()
 {
     malloc_dynarr * tralloc_history = malloc_dynarr_new ( 8 );
-    if ( tralloc_history == NULL ) {
+    if (
+        tralloc_history == NULL ||
+        _tralloc_set_user_data ( tralloc_history ) != 0
+    ) {
         return NULL;
     }
-    _tralloc_set_user_data ( tralloc_history );
     return tralloc_history;
 }
 
@@ -39,10 +41,12 @@ tralloc_error on_free ( void * user_data, _tralloc_chunk * chunk )
 tralloc_bool test_events_free ( tralloc_context * ctx )
 {
     malloc_dynarr * tralloc_history = malloc_history();
-    if ( tralloc_history == NULL ) {
+    if (
+        tralloc_history == NULL ||
+        _tralloc_set_callback ( NULL, NULL, NULL, on_free ) != 0
+    ) {
         return TRALLOC_FALSE;
     }
-    _tralloc_set_callback ( NULL, NULL, NULL, on_free );
 
     int * a;
     char * b;
@@ -63,10 +67,10 @@ tralloc_bool test_events_free ( tralloc_context * ctx )
 
     if (
         tralloc_free ( a ) != 0 ||
-        tralloc_free ( b ) != 0
+        tralloc_free ( b ) != 0 ||
+        _tralloc_set_callback ( NULL, NULL, NULL, NULL ) != 0
     ) {
         free_history ( tralloc_history );
-        _tralloc_set_callback ( NULL, NULL, NULL, NULL );
         return TRALLOC_FALSE;
     }
 
@@ -81,11 +85,9 @@ tralloc_bool test_events_free ( tralloc_context * ctx )
         chunk != b_chunk
     ) {
         free_history ( tralloc_history );
-        _tralloc_set_callback ( NULL, NULL, NULL, NULL );
         return TRALLOC_FALSE;
     }
 
     free_history ( tralloc_history );
-    _tralloc_set_callback ( NULL, NULL, NULL, NULL );
     return TRALLOC_TRUE;
 }

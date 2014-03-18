@@ -3,42 +3,30 @@
 // tralloc is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Lesser Public License for more details.
 // You should have received a copy of the GNU General Lesser Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TRALLOC_TREE_PURE_H
-#define TRALLOC_TREE_PURE_H
+#ifndef TRALLOC_TREE_FREE_H
+#define TRALLOC_TREE_FREE_H
 
-#include "../macro.h"
-#include "../types.h"
+#include "../common.h"
 
 #undef _TRALLOC_INLINE
-#ifdef _TRALLOC_TREE_PURE_INCLUDED_FROM_OBJECT
+#ifdef _TRALLOC_TREE_FREE_INCLUDED_FROM_OBJECT
 #    define _TRALLOC_INLINE _TRALLOC_INLINE_IN_OBJECT
 #else
 #    define _TRALLOC_INLINE _TRALLOC_INLINE_IN_HEADER
 #endif
 
 
-tralloc_error tralloc      ( tralloc_context * parent_context, tralloc_context ** child_context, size_t length );
-tralloc_error tralloc_zero ( tralloc_context * parent_context, tralloc_context ** child_context, size_t length );
+tralloc_error _tralloc_free_single  ( _tralloc_chunk * chunk );
+tralloc_error _tralloc_free_subtree ( _tralloc_chunk * chunk );
 
 _TRALLOC_INLINE
-tralloc_error tralloc_new ( tralloc_context * parent_context, tralloc_context ** child_context )
+tralloc_error tralloc_free ( tralloc_context * chunk_context )
 {
-    return tralloc ( parent_context, child_context, 0 );
+    if ( chunk_context == NULL ) {
+        return TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL;
+    }
+    return _tralloc_free_subtree ( _tralloc_get_chunk_from_context ( chunk_context ) );
 }
-
-_TRALLOC_INLINE
-tralloc_bool _tralloc_can_free_chunk ( _tralloc_chunk * _TRALLOC_UNUSED ( chunk ) )
-{
-    return TRALLOC_TRUE;
-}
-
-_TRALLOC_INLINE
-tralloc_bool _tralloc_can_free_chunk_children ( _tralloc_chunk * _TRALLOC_UNUSED ( chunk ) )
-{
-    return TRALLOC_TRUE;
-}
-
-tralloc_error _tralloc_free_chunk ( _tralloc_chunk * chunk );
 
 
 #endif

@@ -4,8 +4,10 @@
 // You should have received a copy of the GNU General Lesser Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
 #define _TRALLOC_HELPERS_STRING_EXTENSIONS_INCLUDED_FROM_OBJECT
-#include "extensions.h"
-#include "../../tree.h"
+#include "string.h"
+#include "../tree/alloc.h"
+#include "../tree/free.h"
+
 #include <stdio.h>
 
 

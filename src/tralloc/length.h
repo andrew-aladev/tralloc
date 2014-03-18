@@ -3,14 +3,11 @@
 // tralloc is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Lesser Public License for more details.
 // You should have received a copy of the GNU General Lesser Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TRALLOC_REFERENCE_MAIN_H
-#define TRALLOC_REFERENCE_MAIN_H
-
-#include "../tree.h"
+#ifndef TRALLOC_LENGTH_H
+#define TRALLOC_LENGTH_H
 
 
-tralloc_error tralloc_move_reference   ( tralloc_context * child_context, tralloc_context * parent_context );
-tralloc_error tralloc_clear_references ( tralloc_context * chunk_context );
+#include "length/get.h"
 
 
 #endif
