@@ -14,8 +14,8 @@ typedef tralloc_error ( * _tralloc_callback_on_resize ) ( void * user_data, _tra
 typedef tralloc_error ( * _tralloc_callback_on_move )   ( void * user_data, _tralloc_chunk * chunk, _tralloc_chunk * old_parent_chunk );
 typedef tralloc_error ( * _tralloc_callback_on_free )   ( void * user_data, _tralloc_chunk * chunk );
 
-void _tralloc_set_user_data ( void * user_data );
-void _tralloc_set_callback  ( _tralloc_callback_on_add on_add, _tralloc_callback_on_resize on_resize, _tralloc_callback_on_move on_move, _tralloc_callback_on_free on_free );
+tralloc_error _tralloc_set_user_data ( void * user_data );
+tralloc_error _tralloc_set_callback  ( _tralloc_callback_on_add on_add, _tralloc_callback_on_resize on_resize, _tralloc_callback_on_move on_move, _tralloc_callback_on_free on_free );
 
 tralloc_error _tralloc_on_add    ( _tralloc_chunk * chunk );
 tralloc_error _tralloc_on_resize ( _tralloc_chunk * chunk, size_t old_length );

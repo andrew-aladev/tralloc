@@ -54,6 +54,11 @@ enum {
     TRALLOC_ERROR_UTILS_BUFFER_OVERFLOW,
 #   endif
 
+#   if defined(TRALLOC_THREADS)
+    TRALLOC_ERROR_MUTEX_FAILED,
+    TRALLOC_ERROR_SPINLOCK_FAILED,
+#   endif
+
 };
 typedef uint8_t tralloc_error;
 
