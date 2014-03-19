@@ -54,7 +54,7 @@ for feature in $feature_combinations; do
         if [ ! $? -eq 0 ]; then
             echo "Failed arguments:"
             echo "  $arguments"
-            exit 1
+            exit 2
         fi
     fi
 done
