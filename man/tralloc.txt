@@ -75,9 +75,9 @@ SYNOPSIS
 
 #include <tralloc/events.h>
 
-    size_t tralloc_get_chunks_count           ();
-    size_t tralloc_get_chunks_overhead_length ();
-    size_t tralloc_get_chunks_length          ();
+    tralloc_error tralloc_get_chunks_count           ( size_t * length );
+    tralloc_error tralloc_get_chunks_overhead_length ( size_t * length );
+    tralloc_error tralloc_get_chunks_length          ( size_t * length );
 
 #include <tralloc/destructor.h>
 
@@ -440,17 +440,17 @@ Example
 
 events.h
 --------
-    size_t tralloc_get_chunks_count ();
+    tralloc_error tralloc_get_chunks_count ( size_t * length );
 
-Function returns global count of chunks.
+Function sets global count of chunks to length, returns error code if error occurred.
 
-    size_t tralloc_get_chunks_overhead_length ();
+    tralloc_error tralloc_get_chunks_overhead_length ( size_t * length );
 
-Function returns global length used by chunk's controll structures.
+Function sets global length used by chunk's controll structures to length, returns error code if error occurred.
 
-    size_t tralloc_get_chunks_length ();
+    tralloc_error tralloc_get_chunks_length ( size_t * length );
 
-Function returns global usable for user length of chunks.
+Function sets global usable for user length of chunks to length, returns error code if error occurred.
 
 Example
 
@@ -459,10 +459,11 @@ Example
         ...
         
         #if defined(TRALLOC_DEBUG)
+        size_t length;
         if (
-            tralloc_get_chunks_count()           != 0 ||
-            tralloc_get_chunks_overhead_length() != 0 ||
-            tralloc_get_chunks_length()          != 0
+            tralloc_get_chunks_count           ( &length ) != 0 || length != 0 ||
+            tralloc_get_chunks_overhead_length ( &length ) != 0 || length != 0 ||
+            tralloc_get_chunks_length          ( &length ) != 0 || length != 0
             ) {
             return 1;
         }

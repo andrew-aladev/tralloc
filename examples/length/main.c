@@ -30,10 +30,10 @@ int main ()
     if ( tralloc_free ( ctx ) != 0 ) {
         return 2;
     }
-    
+
 #   if defined(TRALLOC_DEBUG)
-    if ( tralloc_get_chunks_count() != 0 ) {
-        return 3;
+    if ( tralloc_get_chunks_count ( &length ) != 0 || length != 0 ) {
+        return 255;
     }
 #   endif
 

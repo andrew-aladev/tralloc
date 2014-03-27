@@ -352,7 +352,7 @@ tralloc_error _tralloc_on_free ( _tralloc_chunk * chunk )
     }
 }
 
-size_t tralloc_get_chunks_count ()
+tralloc_error tralloc_get_chunks_count ( size_t * length )
 {
 
 #   if defined(TRALLOC_THREADS)
@@ -361,7 +361,7 @@ size_t tralloc_get_chunks_count ()
     }
 #   endif
 
-    size_t chunks_count = _chunks_count;
+    * length = _chunks_count;
 
 #   if defined(TRALLOC_THREADS)
     if ( pthread_mutex_unlock ( &_chunks_count_mutex ) != 0 ) {
@@ -369,10 +369,10 @@ size_t tralloc_get_chunks_count ()
     }
 #   endif
 
-    return chunks_count;
+    return 0;
 }
 
-size_t tralloc_get_chunks_overhead_length ()
+tralloc_error tralloc_get_chunks_overhead_length ( size_t * length )
 {
 
 #   if defined(TRALLOC_THREADS)
@@ -381,7 +381,7 @@ size_t tralloc_get_chunks_overhead_length ()
     }
 #   endif
 
-    size_t chunks_overhead_length = _chunks_overhead_length;
+    * length = _chunks_overhead_length;
 
 #   if defined(TRALLOC_THREADS)
     if ( pthread_mutex_unlock ( &_chunks_overhead_length_mutex ) != 0 ) {
@@ -389,10 +389,10 @@ size_t tralloc_get_chunks_overhead_length ()
     }
 #   endif
 
-    return chunks_overhead_length;
+    return 0;
 }
 
-size_t tralloc_get_chunks_length ()
+tralloc_error tralloc_get_chunks_length ( size_t * length )
 {
 
 #   if defined(TRALLOC_THREADS)
@@ -401,7 +401,7 @@ size_t tralloc_get_chunks_length ()
     }
 #   endif
 
-    size_t chunks_length = _chunks_length;
+    * length = _chunks_length;
 
 #   if defined(TRALLOC_THREADS)
     if ( pthread_mutex_unlock ( &_chunks_length_mutex ) != 0 ) {
@@ -409,5 +409,5 @@ size_t tralloc_get_chunks_length ()
     }
 #   endif
 
-    return chunks_length;
+    return 0;
 }

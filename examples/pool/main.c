@@ -43,8 +43,9 @@ int main ()
     // data_1 and data_2 are pool children
 
 #   if defined(TRALLOC_DEBUG)
-    if ( tralloc_get_chunks_count() != 0 ) {
-        return 5;
+    size_t length;
+    if ( tralloc_get_chunks_count ( &length ) != 0 || length != 0 ) {
+        return 255;
     }
 #   endif
 

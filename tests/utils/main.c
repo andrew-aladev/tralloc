@@ -18,10 +18,11 @@ int main ()
     }
 
 #   if defined(TRALLOC_DEBUG)
+    size_t length;
     if (
-        tralloc_get_chunks_count()           != 0 ||
-        tralloc_get_chunks_overhead_length() != 0 ||
-        tralloc_get_chunks_length()          != 0
+        tralloc_get_chunks_count           ( &length ) != 0 || length != 0 ||
+        tralloc_get_chunks_overhead_length ( &length ) != 0 || length != 0 ||
+        tralloc_get_chunks_length          ( &length ) != 0 || length != 0
     ) {
         return 255;
     }
