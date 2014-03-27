@@ -8,6 +8,10 @@
 #include "chunk.h"
 #include "../common.h"
 
+#if defined(TRALLOC_DEBUG)
+#   include "../events.h"
+#endif
+
 #include <stdlib.h>
 
 
@@ -28,6 +32,10 @@ tralloc_error _tralloc_delete_destructors_by_comparator ( tralloc_context * chun
         return 0;
     }
 
+#   if defined(TRALLOC_DEBUG)
+    size_t destructors_count = 0;
+#   endif
+
     _tralloc_destructor * last_destructor = NULL;
     _tralloc_destructor * destructor      = first_destructor;
     _tralloc_destructor * next_destructor;
@@ -42,6 +50,10 @@ tralloc_error _tralloc_delete_destructors_by_comparator ( tralloc_context * chun
             if ( last_destructor != NULL ) {
                 last_destructor->next = next_destructor;
             }
+
+#           if defined(TRALLOC_DEBUG)
+            destructors_count ++;
+#           endif
         } else {
             last_destructor = destructor;
         }
@@ -53,5 +65,13 @@ tralloc_error _tralloc_delete_destructors_by_comparator ( tralloc_context * chun
     if ( destructors->last_destructor != last_destructor ) {
         destructors->last_destructor = last_destructor;
     }
+
+#   if defined(TRALLOC_DEBUG)
+    tralloc_error error = _tralloc_on_free_overhead ( sizeof ( _tralloc_destructor ) * destructors_count );
+    if ( error != 0 ) {
+        return error;
+    }
+#   endif
+
     return 0;
 }

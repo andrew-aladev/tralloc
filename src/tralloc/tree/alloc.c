@@ -159,6 +159,7 @@ tralloc_error _tralloc_with_extensions_with_allocator ( tralloc_context * parent
 #   endif
 
 #   if defined(TRALLOC_DEBUG)
+    chunk->thread_id    = pthread_self();
     chunk->chunk_length = chunk_length;
     chunk->length       = length;
 #   endif

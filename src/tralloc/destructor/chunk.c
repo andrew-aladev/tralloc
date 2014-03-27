@@ -7,6 +7,10 @@
 #include "chunk.h"
 #include "../common.h"
 
+#if defined(TRALLOC_DEBUG)
+#   include "../events.h"
+#endif
+
 #include <stdlib.h>
 
 
@@ -16,6 +20,10 @@ tralloc_error _tralloc_destructor_free_chunk ( _tralloc_chunk * chunk )
     if ( destructors == NULL ) {
         return 0;
     }
+
+#   if defined(TRALLOC_DEBUG)
+    size_t destructors_count = 0;
+#   endif
 
     tralloc_error result, error = 0;
     tralloc_context * chunk_context  = _tralloc_get_context_from_chunk ( chunk );
@@ -34,6 +42,18 @@ tralloc_error _tralloc_destructor_free_chunk ( _tralloc_chunk * chunk )
         next_destructor = destructor->next;
         free ( destructor );
         destructor = next_destructor;
+
+#       if defined(TRALLOC_DEBUG)
+        destructors_count ++;
+#       endif
     }
+
+#   if defined(TRALLOC_DEBUG)
+    result = _tralloc_on_free_overhead ( sizeof ( _tralloc_destructor ) * destructors_count );
+    if ( result != 0 ) {
+        error = result;
+    }
+#   endif
+
     return error;
 }

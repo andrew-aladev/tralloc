@@ -142,7 +142,7 @@ tralloc_error tralloc_realloc ( tralloc_context ** chunk_context, size_t length 
 
     } else {
         _tralloc_chunk * new_chunk = ( _tralloc_chunk * ) ( ( uintptr_t ) new_memory + extensions_length );
-        _tralloc_usual_update_chunk ( new_chunk );
+        _tralloc_update_chunk ( new_chunk );
 
 #       if defined(TRALLOC_LENGTH)
         if ( have_length ) {

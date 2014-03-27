@@ -8,6 +8,7 @@
 
 #include "config.h"
 
+
 #ifdef TRALLOC_HAVE_C99_INLINE
 #    define _TRALLOC_INLINE_IN_HEADER inline
 #    define _TRALLOC_INLINE_IN_OBJECT

@@ -7,6 +7,10 @@
 #include "chunk.h"
 #include "../common.h"
 
+#if defined(TRALLOC_DEBUG)
+#   include "../events.h"
+#endif
+
 #include <stdlib.h>
 
 
@@ -25,6 +29,14 @@ tralloc_error tralloc_append_destructor ( tralloc_context * chunk_context, trall
     if ( destructor == NULL ) {
         return TRALLOC_ERROR_MALLOC_FAILED;
     }
+
+#   if defined(TRALLOC_DEBUG)
+    tralloc_error error = _tralloc_on_add_overhead ( sizeof ( _tralloc_destructor ) );
+    if ( error != 0 ) {
+        return error;
+    }
+#   endif
+
     destructor->function  = function;
     destructor->user_data = user_data;
     destructor->next      = NULL;
@@ -57,6 +69,14 @@ tralloc_error tralloc_prepend_destructor ( tralloc_context * chunk_context, tral
     if ( destructor == NULL ) {
         return TRALLOC_ERROR_MALLOC_FAILED;
     }
+
+#   if defined(TRALLOC_DEBUG)
+    tralloc_error error = _tralloc_on_add_overhead ( sizeof ( _tralloc_destructor ) );
+    if ( error != 0 ) {
+        return error;
+    }
+#   endif
+
     destructor->function  = function;
     destructor->user_data = user_data;
 

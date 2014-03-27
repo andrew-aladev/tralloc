@@ -22,6 +22,9 @@ tralloc_error _tralloc_on_resize ( _tralloc_chunk * chunk, size_t old_length );
 tralloc_error _tralloc_on_move   ( _tralloc_chunk * chunk, _tralloc_chunk * old_parent_chunk );
 tralloc_error _tralloc_on_free   ( _tralloc_chunk * chunk );
 
+tralloc_error _tralloc_on_add_overhead  ( size_t length );
+tralloc_error _tralloc_on_free_overhead ( size_t length );
+
 tralloc_error tralloc_get_chunks_count           ( size_t * length );
 tralloc_error tralloc_get_chunks_overhead_length ( size_t * length );
 tralloc_error tralloc_get_chunks_length          ( size_t * length );

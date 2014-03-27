@@ -11,39 +11,7 @@
 #endif
 
 
-tralloc_error _tralloc_add_chunk ( tralloc_context * parent_context, _tralloc_chunk * child_chunk )
-{
-    child_chunk->first_child = NULL;
-
-    if ( parent_context != NULL ) {
-        _tralloc_chunk * parent_chunk       = _tralloc_get_chunk_from_context ( parent_context );
-        _tralloc_chunk * parent_first_child = parent_chunk->first_child;
-
-        child_chunk->parent = parent_chunk;
-
-        if ( parent_first_child != NULL ) {
-            parent_first_child->prev = child_chunk;
-            child_chunk->next        = parent_first_child;
-        } else {
-            child_chunk->next = NULL;
-        }
-        parent_chunk->first_child = child_chunk;
-    } else {
-        child_chunk->parent = NULL;
-        child_chunk->next   = NULL;
-    }
-
-    child_chunk->prev = NULL;
-
-#   if defined(TRALLOC_DEBUG)
-    return _tralloc_on_add ( child_chunk );
-#   else
-    return 0;
-#   endif
-
-}
-
-void _tralloc_usual_update_chunk ( _tralloc_chunk * chunk )
+void _tralloc_update_chunk ( _tralloc_chunk * chunk )
 {
     _tralloc_chunk * prev = chunk->prev;
     if ( prev == NULL ) {
@@ -112,4 +80,23 @@ void _tralloc_detach_chunk ( _tralloc_chunk * chunk )
     if ( next != NULL ) {
         next->prev = prev;
     }
+}
+
+tralloc_error _tralloc_add_chunk ( tralloc_context * parent_context, _tralloc_chunk * child_chunk )
+{
+    child_chunk->parent      = NULL;
+    child_chunk->first_child = NULL;
+    child_chunk->prev        = NULL;
+    child_chunk->next        = NULL;
+
+    if ( parent_context != NULL ) {
+        _tralloc_attach_chunk ( child_chunk, _tralloc_get_chunk_from_context ( parent_context ) );
+    }
+
+#   if defined(TRALLOC_DEBUG)
+    return _tralloc_on_add ( child_chunk );
+#   else
+    return 0;
+#   endif
+
 }

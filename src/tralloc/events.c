@@ -5,10 +5,6 @@
 
 #include "events.h"
 
-#if defined(TRALLOC_THREADS)
-#   include <pthread.h>
-#endif
-
 
 #if defined(TRALLOC_THREADS)
 static pthread_mutex_t _user_data_mutex = PTHREAD_MUTEX_INITIALIZER;
@@ -352,6 +348,46 @@ tralloc_error _tralloc_on_free ( _tralloc_chunk * chunk )
     }
 }
 
+tralloc_error _tralloc_on_add_overhead ( size_t length )
+{
+
+#   if defined(TRALLOC_THREADS)
+    if ( pthread_mutex_lock ( &_chunks_overhead_length_mutex ) != 0 ) {
+        return TRALLOC_ERROR_MUTEX_FAILED;
+    }
+#   endif
+
+    _chunks_overhead_length += length;
+
+#   if defined(TRALLOC_THREADS)
+    if ( pthread_mutex_unlock ( &_chunks_overhead_length_mutex ) != 0 ) {
+        return TRALLOC_ERROR_MUTEX_FAILED;
+    }
+#   endif
+
+    return 0;
+}
+
+tralloc_error _tralloc_on_free_overhead ( size_t length )
+{
+
+#   if defined(TRALLOC_THREADS)
+    if ( pthread_mutex_lock ( &_chunks_overhead_length_mutex ) != 0 ) {
+        return TRALLOC_ERROR_MUTEX_FAILED;
+    }
+#   endif
+
+    _chunks_overhead_length -= length;
+
+#   if defined(TRALLOC_THREADS)
+    if ( pthread_mutex_unlock ( &_chunks_overhead_length_mutex ) != 0 ) {
+        return TRALLOC_ERROR_MUTEX_FAILED;
+    }
+#   endif
+
+    return 0;
+}
+
 tralloc_error tralloc_get_chunks_count ( size_t * length )
 {
 
@@ -411,3 +447,6 @@ tralloc_error tralloc_get_chunks_length ( size_t * length )
 
     return 0;
 }
+
+
+

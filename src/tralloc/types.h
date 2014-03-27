@@ -11,6 +11,11 @@
 
 #include "config.h"
 
+#if defined(TRALLOC_THREADS)
+#   include <pthread.h>
+#endif
+
+
 #ifdef TRALLOC_HAVE_BOOL
 #    include <stdbool.h>
 typedef bool tralloc_bool;
@@ -21,7 +26,6 @@ typedef char tralloc_bool;
 #    define TRALLOC_TRUE 1
 #    define TRALLOC_FALSE 0
 #endif
-
 
 typedef void tralloc_context;
 
@@ -161,6 +165,11 @@ typedef struct _tralloc_chunk_type {
 #   endif
 
 #   if defined(TRALLOC_DEBUG)
+
+#   if defined(TRALLOC_THREADS)
+    pthread_t thread_id;
+#   endif
+
     size_t chunk_length;
     size_t length;
 #   endif

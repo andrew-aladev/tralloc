@@ -7,6 +7,10 @@
 #include "chunk.h"
 #include "../common.h"
 
+#if defined(TRALLOC_DEBUG)
+#   include "../events.h"
+#endif
+
 #include <stdlib.h>
 
 
@@ -27,13 +31,29 @@ tralloc_error tralloc_clear_destructors ( tralloc_context * chunk_context )
         return 0;
     }
 
+#   if defined(TRALLOC_DEBUG)
+    size_t destructors_count = 0;
+#   endif
+
     _tralloc_destructor * next_destructor;
     while ( destructor != NULL ) {
         next_destructor = destructor->next;
         free ( destructor );
         destructor = next_destructor;
+
+#       if defined(TRALLOC_DEBUG)
+        destructors_count ++;
+#       endif
     }
     destructors->first_destructor = NULL;
     destructors->last_destructor  = NULL;
+
+#   if defined(TRALLOC_DEBUG)
+    tralloc_error error = _tralloc_on_free_overhead ( sizeof ( _tralloc_destructor ) * destructors_count );
+    if ( error != 0 ) {
+        return error;
+    }
+#   endif
+
     return 0;
 }
