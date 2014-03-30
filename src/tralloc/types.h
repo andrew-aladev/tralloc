@@ -61,6 +61,10 @@ enum {
 #   if defined(TRALLOC_THREADS)
     TRALLOC_ERROR_MUTEX_FAILED,
     TRALLOC_ERROR_SPINLOCK_FAILED,
+    TRALLOC_ERROR_NO_PARENT_LOCK,
+    TRALLOC_ERROR_NO_FIRST_CHILD_LOCK,
+    TRALLOC_ERROR_NO_PREV_LOCK,
+    TRALLOC_ERROR_NO_NEXT_LOCK,
 #   endif
 
 };
@@ -86,11 +90,18 @@ enum {
     TRALLOC_EXTENSION_POOL_CHILD = 1 << 4,
     TRALLOC_EXTENSION_POOL       = 1 << 5,
 #   endif
+    
+#   if defined(TRALLOC_THREADS)
+    TRALLOC_EXTENSION_LOCK_PARENT      = 1 << 6,
+    TRALLOC_EXTENSION_LOCK_FIRST_CHILD = 1 << 7,
+    TRALLOC_EXTENSION_LOCK_PREV        = 1 << 8,
+    TRALLOC_EXTENSION_LOCK_NEXT        = 1 << 9,
+#   endif
 
 };
 #endif
 
-typedef uint8_t tralloc_extensions;
+typedef uint16_t tralloc_extensions;
 
 #if defined(TRALLOC_LENGTH)
 typedef struct _tralloc_length_type {
