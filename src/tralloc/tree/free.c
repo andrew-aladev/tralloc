@@ -247,4 +247,3 @@ tralloc_error _tralloc_free_single ( _tralloc_chunk * chunk )
     _tralloc_detach_chunk ( chunk );
     return _tralloc_free_chunk ( chunk );
 }
-

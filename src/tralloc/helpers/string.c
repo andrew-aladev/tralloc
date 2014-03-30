@@ -49,7 +49,6 @@ tralloc_error tralloc_vasprintf_with_extensions ( tralloc_context * parent_conte
     return 0;
 }
 
-
 tralloc_error tralloc_asprintf_with_extensions ( tralloc_context * parent_context, char ** child_context, tralloc_extensions extensions, const char * format, ... )
 {
     va_list arguments;

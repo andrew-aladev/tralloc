@@ -217,7 +217,6 @@ tralloc_error tralloc_with_extensions ( tralloc_context * parent_context, trallo
     return _tralloc_with_extensions_with_allocator ( parent_context, child_context, extensions, length, _malloc );
 }
 
-
 tralloc_error tralloc_zero_with_extensions ( tralloc_context * parent_context, tralloc_context ** child_context, tralloc_extensions extensions, size_t length )
 {
     return _tralloc_with_extensions_with_allocator ( parent_context, child_context, extensions, length, _calloc );

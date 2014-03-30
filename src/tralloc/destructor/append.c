@@ -31,9 +31,9 @@ tralloc_error tralloc_append_destructor ( tralloc_context * chunk_context, trall
     }
 
 #   if defined(TRALLOC_DEBUG)
-    tralloc_error error = _tralloc_on_add_overhead ( sizeof ( _tralloc_destructor ) );
-    if ( error != 0 ) {
-        return error;
+    tralloc_error result = _tralloc_add_chunks_overhead_length ( sizeof ( _tralloc_destructor ) );
+    if ( result != 0 ) {
+        return result;
     }
 #   endif
 
@@ -71,9 +71,9 @@ tralloc_error tralloc_prepend_destructor ( tralloc_context * chunk_context, tral
     }
 
 #   if defined(TRALLOC_DEBUG)
-    tralloc_error error = _tralloc_on_add_overhead ( sizeof ( _tralloc_destructor ) );
-    if ( error != 0 ) {
-        return error;
+    tralloc_error result = _tralloc_add_chunks_overhead_length ( sizeof ( _tralloc_destructor ) );
+    if ( result != 0 ) {
+        return result;
     }
 #   endif
 

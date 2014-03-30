@@ -59,7 +59,6 @@ void _tralloc_pool_child_update ( _tralloc_pool_child * pool_child )
     }
 }
 
-
 void _tralloc_pool_child_new_chunk ( _tralloc_chunk * chunk, _tralloc_pool * pool, size_t length, _tralloc_pool_child * prev, _tralloc_pool_child * next )
 {
     _tralloc_pool_child * pool_child = _tralloc_get_pool_child_from_chunk ( chunk );
@@ -67,7 +66,6 @@ void _tralloc_pool_child_new_chunk ( _tralloc_chunk * chunk, _tralloc_pool * poo
     pool_child->length = length;
     _tralloc_pool_child_attach ( pool_child, prev, next );
 }
-
 
 _tralloc_pool_child * _tralloc_pool_child_resize ( _tralloc_pool_child * pool_child, size_t target_length )
 {

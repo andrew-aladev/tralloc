@@ -49,7 +49,7 @@ tralloc_error _tralloc_destructor_free_chunk ( _tralloc_chunk * chunk )
     }
 
 #   if defined(TRALLOC_DEBUG)
-    result = _tralloc_on_free_overhead ( sizeof ( _tralloc_destructor ) * destructors_count );
+    result = _tralloc_subtract_chunks_overhead_length ( sizeof ( _tralloc_destructor ) * destructors_count );
     if ( result != 0 ) {
         error = result;
     }

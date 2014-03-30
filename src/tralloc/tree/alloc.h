@@ -33,7 +33,6 @@ tralloc_error tralloc_zero ( tralloc_context * parent_context, tralloc_context *
     return tralloc_zero_with_extensions ( parent_context, child_context, 0, length );
 }
 
-
 _TRALLOC_INLINE
 tralloc_error tralloc_new ( tralloc_context * parent_context, tralloc_context ** child_context )
 {
