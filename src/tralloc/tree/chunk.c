@@ -34,73 +34,11 @@ void _tralloc_update_chunk ( _tralloc_chunk * chunk )
     }
 }
 
-tralloc_error _tralloc_attach_chunk ( _tralloc_chunk * child, _tralloc_chunk * new_parent )
+void _tralloc_attach_chunk ( _tralloc_chunk * child, _tralloc_chunk * new_parent )
 {
     _tralloc_chunk * parent = child->parent;
     _tralloc_chunk * prev   = child->prev;
     _tralloc_chunk * next   = child->next;
-    _tralloc_chunk * new_first_child = new_parent->first_child;
-
-#   if defined(TRALLOC_DEBUG) && defined(TRALLOC_THREADS)
-
-    // child->parent           = new_parent;
-    // new_parent->first_child = child;
-
-    if ( pthread_equal ( child->thread_id, new_parent->thread_id ) == 0 ) {
-        if ( ! ( child->extensions & TRALLOC_EXTENSION_LOCK_PARENT ) ) {
-            return TRALLOC_ERROR_NO_PARENT_LOCK;
-        }
-        if ( ! ( new_parent->extensions & TRALLOC_EXTENSION_LOCK_FIRST_CHILD ) ) {
-            return TRALLOC_ERROR_NO_FIRST_CHILD_LOCK;
-        }
-    }
-
-    if ( prev != NULL ) {
-        if ( next != NULL ) {
-
-            // prev->next = next;
-            // next->prev = prev;
-
-            if ( pthread_equal ( prev->thread_id, next->thread_id ) == 0 ) {
-                if ( ! ( prev->extensions & TRALLOC_EXTENSION_LOCK_NEXT ) ) {
-                    return TRALLOC_ERROR_NO_NEXT_LOCK;
-                }
-                if ( ! ( next->extensions & TRALLOC_EXTENSION_LOCK_PREV ) ) {
-                    return TRALLOC_ERROR_NO_PREV_LOCK;
-                }
-            }
-        }
-    } else if ( parent != NULL ) {
-        if ( next != NULL ) {
-
-            // parent->first_child = next;
-
-            if ( pthread_equal ( parent->thread_id, next->thread_id ) == 0 ) {
-                if ( ! ( next->extensions & TRALLOC_EXTENSION_LOCK_PARENT ) ) {
-                    return TRALLOC_ERROR_NO_PARENT_LOCK;
-                }
-                if ( ! ( parent->extensions & TRALLOC_EXTENSION_LOCK_FIRST_CHILD ) ) {
-                    return TRALLOC_ERROR_NO_FIRST_CHILD_LOCK;
-                }
-            }
-        }
-    }
-
-    if ( new_first_child != NULL ) {
-
-        // new_first_child->prev = child;
-        // child->next = new_first_child;
-
-        if ( pthread_equal ( new_first_child->thread_id, child->thread_id ) == 0 ) {
-            if ( ! ( child->extensions & TRALLOC_EXTENSION_LOCK_NEXT ) ) {
-                return TRALLOC_ERROR_NO_NEXT_LOCK;
-            }
-            if ( ! ( new_first_child->extensions & TRALLOC_EXTENSION_LOCK_PREV ) ) {
-                return TRALLOC_ERROR_NO_PREV_LOCK;
-            }
-        }
-    }
-#   endif
 
     child->parent = new_parent;
     child->prev   = NULL;
@@ -114,6 +52,7 @@ tralloc_error _tralloc_attach_chunk ( _tralloc_chunk * child, _tralloc_chunk * n
         next->prev = prev;
     }
 
+    _tralloc_chunk * new_first_child = new_parent->first_child;
     if ( new_first_child != NULL ) {
         new_first_child->prev = child;
         child->next = new_first_child;
@@ -121,8 +60,6 @@ tralloc_error _tralloc_attach_chunk ( _tralloc_chunk * child, _tralloc_chunk * n
         child->next = NULL;
     }
     new_parent->first_child = child;
-
-    return 0;
 }
 
 void _tralloc_detach_chunk ( _tralloc_chunk * chunk )
@@ -153,10 +90,7 @@ tralloc_error _tralloc_add_chunk ( tralloc_context * parent_context, _tralloc_ch
     child_chunk->next        = NULL;
 
     if ( parent_context != NULL ) {
-        tralloc_error result = _tralloc_attach_chunk ( child_chunk, _tralloc_get_chunk_from_context ( parent_context ) );
-        if ( result != 0 ) {
-            return result;
-        }
+        _tralloc_attach_chunk ( child_chunk, _tralloc_get_chunk_from_context ( parent_context ) );
     }
 
 #   if defined(TRALLOC_DEBUG)

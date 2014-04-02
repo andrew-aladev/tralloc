@@ -46,10 +46,7 @@ tralloc_error tralloc_move ( tralloc_context * child_context, tralloc_context * 
         old_parent_chunk = child_chunk->parent;
 #       endif
 
-        tralloc_error result = _tralloc_attach_chunk ( child_chunk, new_parent_chunk );
-        if ( result != 0 ) {
-            return result;
-        }
+        _tralloc_attach_chunk ( child_chunk, new_parent_chunk );
     }
 
 #   if defined(TRALLOC_DEBUG)
