@@ -18,7 +18,7 @@ tralloc_error _tralloc_set_user_data ( void * user_data );
 tralloc_error _tralloc_set_callback  ( _tralloc_callback_on_add on_add, _tralloc_callback_on_resize on_resize, _tralloc_callback_on_move on_move, _tralloc_callback_on_free on_free );
 
 tralloc_error _tralloc_on_add    ( _tralloc_chunk * chunk );
-tralloc_error _tralloc_on_resize ( _tralloc_chunk * chunk, size_t old_length );
+tralloc_error _tralloc_on_resize ( _tralloc_chunk * chunk, size_t old_length, size_t length );
 tralloc_error _tralloc_on_move   ( _tralloc_chunk * chunk, _tralloc_chunk * old_parent_chunk );
 tralloc_error _tralloc_on_free   ( _tralloc_chunk * chunk );
 

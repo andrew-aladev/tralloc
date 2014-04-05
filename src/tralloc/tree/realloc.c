@@ -43,9 +43,14 @@ tralloc_error tralloc_realloc ( tralloc_context ** chunk_context, size_t length 
         return TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL;
     }
     _tralloc_chunk * old_chunk = _tralloc_get_chunk_from_context ( context );
+    tralloc_error result;
 
 #   if defined(TRALLOC_DEBUG)
-    size_t old_length = old_chunk->length;
+    size_t old_length;
+    result = _tralloc_get_length ( old_chunk, &old_length );
+    if ( result != 0 ) {
+        return result;
+    }
 #   endif
 
     size_t extensions_length = 0;
@@ -108,7 +113,7 @@ tralloc_error tralloc_realloc ( tralloc_context ** chunk_context, size_t length 
             }
             memmove ( new_memory, old_memory, old_total_length );
 
-            tralloc_error result = _tralloc_pool_child_free_chunk ( old_chunk );
+            result = _tralloc_pool_child_free_chunk ( old_chunk );
             if ( result != 0 ) {
                 free ( new_memory );
                 return result;
@@ -136,8 +141,11 @@ tralloc_error tralloc_realloc ( tralloc_context ** chunk_context, size_t length 
 #       endif
 
 #       if defined(TRALLOC_DEBUG)
-        old_chunk->length = length;
-        return _tralloc_on_resize ( old_chunk, old_length );
+        result = _tralloc_set_length ( old_chunk, length );
+        if ( result != 0 ) {
+            return result;
+        }
+        return _tralloc_on_resize ( old_chunk, old_length, length );
 #       endif
 
     } else {
@@ -161,8 +169,11 @@ tralloc_error tralloc_realloc ( tralloc_context ** chunk_context, size_t length 
         * chunk_context = _tralloc_get_context_from_chunk ( new_chunk );
 
 #       if defined(TRALLOC_DEBUG)
-        new_chunk->length = length;
-        return _tralloc_on_resize ( new_chunk, old_length );
+        result = _tralloc_set_length ( new_chunk, length );
+        if ( result != 0 ) {
+            return result;
+        }
+        return _tralloc_on_resize ( new_chunk, old_length, length );
 #       endif
 
     }

@@ -4,6 +4,7 @@
 // You should have received a copy of the GNU General Lesser Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
 #include "events.h"
+#include "tree/chunk.h"
 
 
 #if defined(TRALLOC_THREADS)
@@ -306,10 +307,12 @@ tralloc_error tralloc_get_chunks_length ( size_t * length )
 tralloc_error _tralloc_on_add ( _tralloc_chunk * chunk )
 {
     tralloc_error result;
+    size_t length;
     if (
         ( result = _tralloc_add_chunks_count           ( 1 ) )                   != 0 ||
         ( result = _tralloc_add_chunks_overhead_length ( chunk->chunk_length ) ) != 0 ||
-        ( result = _tralloc_add_chunks_length          ( chunk->length ) )       != 0
+        ( result = _tralloc_get_length                 ( chunk, &length ) )      != 0 ||
+        ( result = _tralloc_add_chunks_length          ( length ) )              != 0
     ) {
         return result;
     }
@@ -352,16 +355,16 @@ tralloc_error _tralloc_on_add ( _tralloc_chunk * chunk )
     }
 }
 
-tralloc_error _tralloc_on_resize ( _tralloc_chunk * chunk, size_t old_length )
+tralloc_error _tralloc_on_resize ( _tralloc_chunk * chunk, size_t old_length, size_t length )
 {
     tralloc_error result;
-    if ( chunk->length > old_length ) {
-        result = _tralloc_add_chunks_length ( chunk->length - old_length );
+    if ( length > old_length ) {
+        result = _tralloc_add_chunks_length ( length - old_length );
         if ( result != 0 ) {
             return result;
         }
-    } else if ( chunk->length < old_length ) {
-        result = _tralloc_subtract_chunks_length ( old_length - chunk->length );
+    } else if ( length < old_length ) {
+        result = _tralloc_subtract_chunks_length ( old_length - length );
         if ( result != 0 ) {
             return result;
         }
@@ -449,10 +452,12 @@ tralloc_error _tralloc_on_move ( _tralloc_chunk * chunk, _tralloc_chunk * old_pa
 tralloc_error _tralloc_on_free ( _tralloc_chunk * chunk )
 {
     tralloc_error result;
+    size_t length;
     if (
         ( result = _tralloc_subtract_chunks_count           ( 1 ) )                   != 0 ||
         ( result = _tralloc_subtract_chunks_overhead_length ( chunk->chunk_length ) ) != 0 ||
-        ( result = _tralloc_subtract_chunks_length          ( chunk->length ) )       != 0
+        ( result = _tralloc_get_length                      ( chunk, &length ) )      != 0 ||
+        ( result = _tralloc_subtract_chunks_length          ( length ) )              != 0
     ) {
         return result;
     }

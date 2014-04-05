@@ -100,3 +100,63 @@ tralloc_error _tralloc_add_chunk ( tralloc_context * parent_context, _tralloc_ch
 #   endif
 
 }
+
+#if defined(TRALLOC_DEBUG)
+
+tralloc_error _tralloc_get_length ( _tralloc_chunk * chunk, size_t * length )
+{
+
+#   if TRALLOC_THREADS_LENGTH == TRALLOC_SPINLOCK
+    if ( pthread_spin_lock ( &chunk->length_lock ) != 0 ) {
+        return TRALLOC_ERROR_SPINLOCK_FAILED;
+    }
+#   elif TRALLOC_THREADS_LENGTH == TRALLOC_MUTEX
+    if ( pthread_mutex_lock ( &chunk->length_lock ) != 0 ) {
+        return TRALLOC_ERROR_MUTEX_FAILED;
+    }
+#   endif
+
+    * length = chunk->length;
+
+#   if TRALLOC_THREADS_LENGTH == TRALLOC_SPINLOCK
+    if ( pthread_spin_unlock ( &chunk->length_lock ) != 0 ) {
+        return TRALLOC_ERROR_SPINLOCK_FAILED;
+    }
+#   elif TRALLOC_THREADS_LENGTH == TRALLOC_MUTEX
+    if ( pthread_mutex_unlock ( &chunk->length_lock ) != 0 ) {
+        return TRALLOC_ERROR_MUTEX_FAILED;
+    }
+#   endif
+
+    return 0;
+}
+
+tralloc_error _tralloc_set_length ( _tralloc_chunk * chunk, size_t length )
+{
+
+#   if TRALLOC_THREADS_LENGTH == TRALLOC_SPINLOCK
+    if ( pthread_spin_lock ( &chunk->length_lock ) != 0 ) {
+        return TRALLOC_ERROR_SPINLOCK_FAILED;
+    }
+#   elif TRALLOC_THREADS_LENGTH == TRALLOC_MUTEX
+    if ( pthread_mutex_lock ( &chunk->length_lock ) != 0 ) {
+        return TRALLOC_ERROR_MUTEX_FAILED;
+    }
+#   endif
+
+    chunk->length = length;
+
+#   if TRALLOC_THREADS_LENGTH == TRALLOC_SPINLOCK
+    if ( pthread_spin_unlock ( &chunk->length_lock ) != 0 ) {
+        return TRALLOC_ERROR_SPINLOCK_FAILED;
+    }
+#   elif TRALLOC_THREADS_LENGTH == TRALLOC_MUTEX
+    if ( pthread_mutex_unlock ( &chunk->length_lock ) != 0 ) {
+        return TRALLOC_ERROR_MUTEX_FAILED;
+    }
+#   endif
+
+    return 0;
+}
+
+#endif

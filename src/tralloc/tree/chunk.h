@@ -14,5 +14,9 @@ void          _tralloc_update_chunk ( _tralloc_chunk * chunk );
 void          _tralloc_attach_chunk ( _tralloc_chunk * child, _tralloc_chunk * new_parent );
 void          _tralloc_detach_chunk ( _tralloc_chunk * chunk );
 
+#if defined(TRALLOC_DEBUG)
+tralloc_error _tralloc_get_length ( _tralloc_chunk * chunk, size_t * length );
+tralloc_error _tralloc_set_length ( _tralloc_chunk * chunk, size_t length );
+#endif
 
 #endif

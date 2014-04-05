@@ -60,6 +60,24 @@ tralloc_error _calloc ( void ** data, size_t length )
 }
 
 static inline
+tralloc_error _emergency_free ( void * memory, _tralloc_chunk * chunk, bool have_pool_child )
+{
+
+#   if defined(TRALLOC_POOL)
+    if ( have_pool_child ) {
+        return _tralloc_pool_child_free_chunk ( chunk );
+    } else {
+        free ( memory );
+        return 0;
+    }
+#   else
+    free ( memory );
+    return 0;
+#   endif
+
+}
+
+static inline
 tralloc_error _tralloc_with_extensions_with_allocator ( tralloc_context * parent_context, tralloc_context ** child_context, tralloc_extensions extensions, size_t length, _allocator allocator )
 {
     if ( child_context == NULL ) {
@@ -159,9 +177,40 @@ tralloc_error _tralloc_with_extensions_with_allocator ( tralloc_context * parent
 #   endif
 
 #   if defined(TRALLOC_DEBUG)
-    chunk->thread_id    = pthread_self();
+
     chunk->chunk_length = chunk_length;
     chunk->length       = length;
+
+#   if defined(TRALLOC_THREADS)
+    chunk->initialized_by_thread    = pthread_self();
+    chunk->used_by_multiple_threads = false;
+
+#   if TRALLOC_THREADS_LENGTH == TRALLOC_SPINLOCK
+    if ( pthread_spin_init ( &chunk->length_lock, 0 ) != 0 ) {
+        _emergency_free ( memory, chunk, have_pool_child );
+        return TRALLOC_ERROR_SPINLOCK_FAILED;
+    }
+#   elif TRALLOC_THREADS_LENGTH == TRALLOC_MUTEX
+    if ( pthread_mutex_init ( &chunk->length_lock, NULL ) != 0 ) {
+        _emergency_free ( memory, chunk, have_pool_child );
+        return TRALLOC_ERROR_MUTEX_FAILED;
+    }
+#   endif
+
+#   if TRALLOC_THREADS_USED_BY_MULTIPLE_THREADS == TRALLOC_SPINLOCK
+    if ( pthread_spin_init ( &chunk->used_by_multiple_threads_lock, 0 ) != 0 ) {
+        _emergency_free ( memory, chunk, have_pool_child );
+        return TRALLOC_ERROR_SPINLOCK_FAILED;
+    }
+#   elif TRALLOC_THREADS_USED_BY_MULTIPLE_THREADS == TRALLOC_MUTEX
+    if ( pthread_mutex_init ( &chunk->used_by_multiple_threads_lock, NULL ) != 0 ) {
+        _emergency_free ( memory, chunk, have_pool_child );
+        return TRALLOC_ERROR_MUTEX_FAILED;
+    }
+#   endif
+
+#   endif
+
 #   endif
 
 #   if defined(TRALLOC_LENGTH)
@@ -194,17 +243,7 @@ tralloc_error _tralloc_with_extensions_with_allocator ( tralloc_context * parent
 
     result = _tralloc_add_chunk ( parent_context, chunk );
     if ( result != 0 ) {
-
-#       if defined(TRALLOC_POOL)
-        if ( have_pool_child ) {
-            _tralloc_pool_child_free_chunk ( chunk );
-        } else {
-            free ( memory );
-        }
-#       else
-        free ( memory );
-#       endif
-
+        _emergency_free ( memory, chunk, have_pool_child );
         return result;
     }
 

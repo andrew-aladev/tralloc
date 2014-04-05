@@ -61,6 +61,7 @@ enum {
 #   if defined(TRALLOC_THREADS)
     TRALLOC_ERROR_MUTEX_FAILED,
     TRALLOC_ERROR_SPINLOCK_FAILED,
+
     TRALLOC_ERROR_NO_PARENT_LOCK,
     TRALLOC_ERROR_NO_FIRST_CHILD_LOCK,
     TRALLOC_ERROR_NO_PREV_LOCK,
@@ -90,7 +91,7 @@ enum {
     TRALLOC_EXTENSION_POOL_CHILD = 1 << 4,
     TRALLOC_EXTENSION_POOL       = 1 << 5,
 #   endif
-    
+
 #   if defined(TRALLOC_THREADS)
     TRALLOC_EXTENSION_LOCK_PARENT      = 1 << 6,
     TRALLOC_EXTENSION_LOCK_FIRST_CHILD = 1 << 7,
@@ -166,23 +167,45 @@ typedef struct _tralloc_pool_type {
 #endif
 
 typedef struct _tralloc_chunk_type {
+    // parent, prev, next, first_child should be locked for thread safety.
     struct _tralloc_chunk_type * parent;
     struct _tralloc_chunk_type * prev;
     struct _tralloc_chunk_type * next;
     struct _tralloc_chunk_type * first_child;
 
 #   if defined(TRALLOC_EXTENSIONS)
+    // extensions should not be locked for thread safety. It will be written only in alloc function. Other functions will read it.
     tralloc_extensions extensions;
 #   endif
 
 #   if defined(TRALLOC_DEBUG)
+    // chunk_length should not be locked for thread safety. It will be written only in alloc function. Other functions will read it.
+    size_t chunk_length;
+
+    // length should be locked for thread safety.
+    size_t length;
 
 #   if defined(TRALLOC_THREADS)
-    pthread_t thread_id;
+    // initialized_by_thread should not be locked for thread safety. It will be written only in alloc function. Other functions will read it.
+    pthread_t initialized_by_thread;
+
+    // used_in_multiple_threads should be locked for thread safety.
+    bool used_by_multiple_threads;
+
+#   if TRALLOC_THREADS_USED_BY_MULTIPLE_THREADS == TRALLOC_SPINLOCK
+    pthread_spinlock_t used_by_multiple_threads_lock;
+#   elif TRALLOC_THREADS_USED_BY_MULTIPLE_THREADS == TRALLOC_MUTEX
+    pthread_mutex_t used_by_multiple_threads_lock;
 #   endif
 
-    size_t chunk_length;
-    size_t length;
+#   if TRALLOC_THREADS_LENGTH == TRALLOC_SPINLOCK
+    pthread_spinlock_t length_lock;
+#   elif TRALLOC_THREADS_LENGTH == TRALLOC_MUTEX
+    pthread_mutex_t length_lock;
+#   endif
+
+#   endif
+
 #   endif
 
 } _tralloc_chunk;

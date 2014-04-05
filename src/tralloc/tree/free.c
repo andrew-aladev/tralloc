@@ -134,6 +134,30 @@ tralloc_error _tralloc_free_chunk ( _tralloc_chunk * chunk )
     }
 #   endif
 
+#   if defined(TRALLOC_DEBUG) && defined(TRALLOC_THREADS)
+
+#   if TRALLOC_THREADS_LENGTH == TRALLOC_SPINLOCK
+    if ( pthread_spin_destroy ( &chunk->length_lock ) != 0 ) {
+        error = TRALLOC_ERROR_SPINLOCK_FAILED;
+    }
+#   elif TRALLOC_THREADS_LENGTH == TRALLOC_MUTEX
+    if ( pthread_mutex_destroy ( &chunk->length_lock ) != 0 ) {
+        error = TRALLOC_ERROR_MUTEX_FAILED;
+    }
+#   endif
+
+#   if TRALLOC_THREADS_USED_BY_MULTIPLE_THREADS == TRALLOC_SPINLOCK
+    if ( pthread_spin_destroy ( &chunk->used_by_multiple_threads_lock ) != 0 ) {
+        error = TRALLOC_ERROR_SPINLOCK_FAILED;
+    }
+#   elif TRALLOC_THREADS_USED_BY_MULTIPLE_THREADS == TRALLOC_MUTEX
+    if ( pthread_mutex_destroy ( &chunk->used_by_multiple_threads_lock ) != 0 ) {
+        error = TRALLOC_ERROR_MUTEX_FAILED;
+    }
+#   endif
+
+#   endif
+
     free ( ( void * ) ( ( uintptr_t ) chunk - extensions_length ) );
 
     return error;
