@@ -94,16 +94,21 @@ tralloc_error _tralloc_add_chunk ( tralloc_context * parent_context, _tralloc_ch
     }
 
 #   if defined(TRALLOC_DEBUG)
-    return _tralloc_on_add ( child_chunk );
-#   else
-    return 0;
+    tralloc_error result = _tralloc_on_add ( child_chunk );
+    if ( result != 0 ) {
+        if ( parent_context != NULL ) {
+            _tralloc_detach_chunk ( child_chunk );
+        }
+        return result;
+    }
 #   endif
 
+    return 0;
 }
 
 #if defined(TRALLOC_DEBUG)
 
-tralloc_error _tralloc_get_length ( _tralloc_chunk * chunk, size_t * length )
+tralloc_error _tralloc_get_chunk_length ( _tralloc_chunk * chunk, size_t * length )
 {
 
 #   if TRALLOC_THREADS_LENGTH == TRALLOC_SPINLOCK
@@ -131,7 +136,7 @@ tralloc_error _tralloc_get_length ( _tralloc_chunk * chunk, size_t * length )
     return 0;
 }
 
-tralloc_error _tralloc_set_length ( _tralloc_chunk * chunk, size_t length )
+tralloc_error _tralloc_set_chunk_length ( _tralloc_chunk * chunk, size_t length )
 {
 
 #   if TRALLOC_THREADS_LENGTH == TRALLOC_SPINLOCK
@@ -152,6 +157,62 @@ tralloc_error _tralloc_set_length ( _tralloc_chunk * chunk, size_t length )
     }
 #   elif TRALLOC_THREADS_LENGTH == TRALLOC_MUTEX
     if ( pthread_mutex_unlock ( &chunk->length_lock ) != 0 ) {
+        return TRALLOC_ERROR_MUTEX_FAILED;
+    }
+#   endif
+
+    return 0;
+}
+
+tralloc_error _tralloc_get_chunk_used_by_multiple_threads ( _tralloc_chunk * chunk, bool * used_by_multiple_threads )
+{
+
+#   if TRALLOC_THREADS_LENGTH == TRALLOC_SPINLOCK
+    if ( pthread_spin_lock ( &chunk->used_by_multiple_threads_lock ) != 0 ) {
+        return TRALLOC_ERROR_SPINLOCK_FAILED;
+    }
+#   elif TRALLOC_THREADS_LENGTH == TRALLOC_MUTEX
+    if ( pthread_mutex_lock ( &chunk->used_by_multiple_threads_lock ) != 0 ) {
+        return TRALLOC_ERROR_MUTEX_FAILED;
+    }
+#   endif
+
+    * used_by_multiple_threads = chunk->used_by_multiple_threads;
+
+#   if TRALLOC_THREADS_LENGTH == TRALLOC_SPINLOCK
+    if ( pthread_spin_unlock ( &chunk->used_by_multiple_threads_lock ) != 0 ) {
+        return TRALLOC_ERROR_SPINLOCK_FAILED;
+    }
+#   elif TRALLOC_THREADS_LENGTH == TRALLOC_MUTEX
+    if ( pthread_mutex_unlock ( &chunk->used_by_multiple_threads_lock ) != 0 ) {
+        return TRALLOC_ERROR_MUTEX_FAILED;
+    }
+#   endif
+
+    return 0;
+}
+
+tralloc_error _tralloc_set_chunk_used_by_multiple_threads ( _tralloc_chunk * chunk, bool used_by_multiple_threads )
+{
+
+#   if TRALLOC_THREADS_LENGTH == TRALLOC_SPINLOCK
+    if ( pthread_spin_lock ( &chunk->used_by_multiple_threads_lock ) != 0 ) {
+        return TRALLOC_ERROR_SPINLOCK_FAILED;
+    }
+#   elif TRALLOC_THREADS_LENGTH == TRALLOC_MUTEX
+    if ( pthread_mutex_lock ( &chunk->used_by_multiple_threads_lock ) != 0 ) {
+        return TRALLOC_ERROR_MUTEX_FAILED;
+    }
+#   endif
+
+    chunk->used_by_multiple_threads = used_by_multiple_threads;
+
+#   if TRALLOC_THREADS_LENGTH == TRALLOC_SPINLOCK
+    if ( pthread_spin_unlock ( &chunk->used_by_multiple_threads_lock ) != 0 ) {
+        return TRALLOC_ERROR_SPINLOCK_FAILED;
+    }
+#   elif TRALLOC_THREADS_LENGTH == TRALLOC_MUTEX
+    if ( pthread_mutex_unlock ( &chunk->used_by_multiple_threads_lock ) != 0 ) {
         return TRALLOC_ERROR_MUTEX_FAILED;
     }
 #   endif

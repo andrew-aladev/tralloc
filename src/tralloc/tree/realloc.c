@@ -47,7 +47,7 @@ tralloc_error tralloc_realloc ( tralloc_context ** chunk_context, size_t length 
 
 #   if defined(TRALLOC_DEBUG)
     size_t old_length;
-    result = _tralloc_get_length ( old_chunk, &old_length );
+    result = _tralloc_get_chunk_length ( old_chunk, &old_length );
     if ( result != 0 ) {
         return result;
     }
@@ -141,11 +141,11 @@ tralloc_error tralloc_realloc ( tralloc_context ** chunk_context, size_t length 
 #       endif
 
 #       if defined(TRALLOC_DEBUG)
-        result = _tralloc_set_length ( old_chunk, length );
+        result = _tralloc_set_chunk_length ( old_chunk, length );
         if ( result != 0 ) {
             return result;
         }
-        return _tralloc_on_resize ( old_chunk, old_length, length );
+        return _tralloc_on_resize ( old_chunk, old_length );
 #       endif
 
     } else {
@@ -169,11 +169,11 @@ tralloc_error tralloc_realloc ( tralloc_context ** chunk_context, size_t length 
         * chunk_context = _tralloc_get_context_from_chunk ( new_chunk );
 
 #       if defined(TRALLOC_DEBUG)
-        result = _tralloc_set_length ( new_chunk, length );
+        result = _tralloc_set_chunk_length ( new_chunk, length );
         if ( result != 0 ) {
             return result;
         }
-        return _tralloc_on_resize ( new_chunk, old_length, length );
+        return _tralloc_on_resize ( new_chunk, old_length );
 #       endif
 
     }
