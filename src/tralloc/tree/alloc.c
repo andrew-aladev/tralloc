@@ -60,7 +60,13 @@ tralloc_error _calloc ( void ** data, size_t length )
 }
 
 static inline
+
+#if defined(TRALLOC_DEBUG)
+tralloc_error _tralloc_with_extensions_with_allocator ( const char * file, size_t line, tralloc_context * parent_context, tralloc_context ** child_context, tralloc_extensions extensions, size_t length, _allocator allocator )
+#else
 tralloc_error _tralloc_with_extensions_with_allocator ( tralloc_context * parent_context, tralloc_context ** child_context, tralloc_extensions extensions, size_t length, _allocator allocator )
+#endif
+
 {
     if ( child_context == NULL ) {
         return TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL;
@@ -196,7 +202,7 @@ tralloc_error _tralloc_with_extensions_with_allocator ( tralloc_context * parent
     }
 
 #   if defined(TRALLOC_DEBUG)
-    result = _tralloc_debug_new_chunk ( chunk, chunk_length, length );
+    result = _tralloc_debug_new_chunk ( chunk, chunk_length, length, file, line );
     if ( result != 0 ) {
         if ( parent_context != NULL ) {
             _tralloc_detach_chunk ( chunk );
@@ -220,6 +226,21 @@ tralloc_error _tralloc_with_extensions_with_allocator ( tralloc_context * parent
     return 0;
 }
 
+
+#if defined(TRALLOC_DEBUG)
+
+tralloc_error tralloc_with_extensions ( const char * file, size_t line, tralloc_context * parent_context, tralloc_context ** child_context, tralloc_extensions extensions, size_t length )
+{
+    return _tralloc_with_extensions_with_allocator ( file, line, parent_context, child_context, extensions, length, _malloc );
+}
+
+tralloc_error tralloc_zero_with_extensions ( const char * file, size_t line, tralloc_context * parent_context, tralloc_context ** child_context, tralloc_extensions extensions, size_t length )
+{
+    return _tralloc_with_extensions_with_allocator ( file, line, parent_context, child_context, extensions, length, _calloc );
+}
+
+#else
+
 tralloc_error tralloc_with_extensions ( tralloc_context * parent_context, tralloc_context ** child_context, tralloc_extensions extensions, size_t length )
 {
     return _tralloc_with_extensions_with_allocator ( parent_context, child_context, extensions, length, _malloc );
@@ -229,3 +250,5 @@ tralloc_error tralloc_zero_with_extensions ( tralloc_context * parent_context, t
 {
     return _tralloc_with_extensions_with_allocator ( parent_context, child_context, extensions, length, _calloc );
 }
+
+#endif

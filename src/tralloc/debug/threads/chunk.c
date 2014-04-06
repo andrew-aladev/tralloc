@@ -5,6 +5,12 @@
 
 #include "chunk.h"
 
+#if defined(TRALLOC_DEBUG_LOG)
+#   include "../../common.h"
+#   include <stdio.h>
+#   include <stdlib.h>
+#endif
+
 
 static inline
 tralloc_error _get_used_by_multiple_threads ( _tralloc_chunk * chunk, bool * used_by_multiple_threads )
@@ -88,9 +94,33 @@ tralloc_error _check_lock_between_chunks (
             pthread_equal ( chunk_1->initialized_by_thread, chunk_2->initialized_by_thread ) == 0
         ) {
             if ( ! ( chunk_1->extensions & chunk_1_extension ) ) {
+
+#               if defined(TRALLOC_DEBUG_LOG)
+                fprintf (
+                    stderr,
+                    "%s: data, initialized at %s:%zu should have %s\n",
+                    tralloc_get_string_for_error ( chunk_1_error ),
+                    chunk_1->initialized_in_file,
+                    chunk_1->initialized_at_line,
+                    tralloc_get_string_for_extension ( chunk_1_extension )
+                );
+#               endif
+
                 return chunk_1_error;
             }
             if ( ! ( chunk_2->extensions & chunk_2_extension ) ) {
+
+#               if defined(TRALLOC_DEBUG_LOG)
+                fprintf (
+                    stderr,
+                    "%s: data, initialized at %s:%zu should have %s\n",
+                    tralloc_get_string_for_error ( chunk_2_error ),
+                    chunk_2->initialized_in_file,
+                    chunk_2->initialized_at_line,
+                    tralloc_get_string_for_extension ( chunk_2_extension )
+                );
+#               endif
+
                 return chunk_2_error;
             }
         }

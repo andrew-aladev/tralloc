@@ -12,15 +12,19 @@
 #endif
 
 #include <stdlib.h>
+#include <string.h>
 
 
-tralloc_error _tralloc_debug_new_chunk ( _tralloc_chunk * chunk, size_t chunk_length, size_t length )
+tralloc_error _tralloc_debug_new_chunk ( _tralloc_chunk * chunk, size_t chunk_length, size_t length, const char * file, size_t line )
 {
     chunk->chunk_length = chunk_length;
     chunk->length       = length;
 
-    chunk->initialized_in_file = NULL;
-    chunk->initialized_at_line = 0;
+    chunk->initialized_in_file = strdup ( file );
+    if ( chunk->initialized_in_file == NULL ) {
+        return TRALLOC_ERROR_MALLOC_FAILED;
+    }
+    chunk->initialized_at_line = line;
 
 #   if defined(TRALLOC_THREADS)
     tralloc_error result = _tralloc_debug_threads_new_chunk ( chunk );

@@ -16,6 +16,7 @@ set (TRALLOC_MAN          true CACHE BOOL "create man")
 set (TRALLOC_TEST         true CACHE BOOL "build tests")
 set (TRALLOC_EXAMPLES     true CACHE BOOL "build examples")
 
+set (TRALLOC_DEBUG_LOG                              true       CACHE BOOL "debug's log")
 set (TRALLOC_DEBUG_THREADS_LENGTH                   "spinlock" CACHE BOOL "lock type of length variable in chunk")
 set (TRALLOC_DEBUG_THREADS_USED_BY_MULTIPLE_THREADS "spinlock" CACHE BOOL "lock type of used_by_multiple_threads_lock variable in chunk")
 

@@ -9,9 +9,8 @@
 #include "../types.h"
 
 
-tralloc_error _tralloc_debug_get_length        ( _tralloc_chunk * chunk, size_t * length );
-tralloc_error _tralloc_debug_set_length        ( _tralloc_chunk * chunk, size_t length );
-tralloc_error _tralloc_debug_set_file_and_line ( _tralloc_chunk * chunk, const char * file, size_t line );
+tralloc_error _tralloc_debug_get_length ( _tralloc_chunk * chunk, size_t * length );
+tralloc_error _tralloc_debug_set_length ( _tralloc_chunk * chunk, size_t length );
 
 
 #endif

@@ -7,6 +7,7 @@
 #define TRALLOC_COMMON_H
 
 #include "macro.h"
+#include "types.h"
 
 #undef _TRALLOC_INLINE
 #ifdef _TRALLOC_COMMON_INCLUDED_FROM_OBJECT
@@ -15,44 +16,10 @@
 #    define _TRALLOC_INLINE _TRALLOC_INLINE_IN_HEADER
 #endif
 
-#include "types.h"
 
-
-_TRALLOC_INLINE
-size_t tralloc_predict_chunk_length ( tralloc_extensions extensions )
-{
-    size_t extensions_length = 0;
-
-#   if defined(TRALLOC_LENGTH)
-    if ( extensions & TRALLOC_EXTENSION_LENGTH ) {
-        extensions_length += sizeof ( _tralloc_length );
-    }
-#   endif
-
-#   if defined(TRALLOC_DESTRUCTOR)
-    if ( extensions & TRALLOC_EXTENSION_DESTRUCTORS ) {
-        extensions_length += sizeof ( _tralloc_destructors );
-    }
-#   endif
-
-#   if defined(TRALLOC_REFERENCE)
-    if ( extensions & TRALLOC_EXTENSION_REFERENCES ) {
-        extensions_length += sizeof ( _tralloc_references );
-    } else if ( extensions & TRALLOC_EXTENSION_REFERENCE ) {
-        extensions_length += sizeof ( _tralloc_reference );
-    }
-#   endif
-
-#   if defined(TRALLOC_POOL)
-    if ( extensions & TRALLOC_EXTENSION_POOL ) {
-        extensions_length += sizeof ( _tralloc_pool );
-    } else if ( extensions & TRALLOC_EXTENSION_POOL_CHILD ) {
-        extensions_length += sizeof ( _tralloc_pool_child );
-    }
-#   endif
-
-    return extensions_length + sizeof ( _tralloc_chunk );
-}
+const char * tralloc_get_string_for_extension ( tralloc_extensions extension );
+const char * tralloc_get_string_for_error     ( tralloc_error error );
+size_t       tralloc_predict_chunk_length     ( tralloc_extensions extensions );
 
 _TRALLOC_INLINE
 tralloc_context * _tralloc_get_context_from_chunk ( _tralloc_chunk * chunk )

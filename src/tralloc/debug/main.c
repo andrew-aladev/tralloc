@@ -5,8 +5,6 @@
 
 #include "main.h"
 
-#include <string.h>
-
 
 tralloc_error _tralloc_debug_get_length ( _tralloc_chunk * chunk, size_t * length )
 {
@@ -77,15 +75,5 @@ tralloc_error _tralloc_debug_set_length ( _tralloc_chunk * chunk, size_t length 
 
 #   endif
 
-    return 0;
-}
-
-tralloc_error _tralloc_debug_set_file_and_line ( _tralloc_chunk * chunk, const char * file, size_t line )
-{
-    chunk->initialized_in_file = strdup ( file );
-    if ( chunk->initialized_in_file == NULL ) {
-        return TRALLOC_ERROR_MALLOC_FAILED;
-    }
-    chunk->initialized_at_line = line;
     return 0;
 }
