@@ -9,7 +9,7 @@
 #include "../common.h"
 
 #if defined(TRALLOC_DEBUG)
-#   include "../events.h"
+#   include "../debug/events.h"
 #endif
 
 #include <stdlib.h>
@@ -67,7 +67,7 @@ tralloc_error _tralloc_delete_destructors_by_comparator ( tralloc_context * chun
     }
 
 #   if defined(TRALLOC_DEBUG)
-    tralloc_error result = _tralloc_subtract_chunks_overhead_length ( sizeof ( _tralloc_destructor ) * destructors_count );
+    tralloc_error result = _tralloc_debug_subtract_chunks_overhead_length ( sizeof ( _tralloc_destructor ) * destructors_count );
     if ( result != 0 ) {
         return result;
     }

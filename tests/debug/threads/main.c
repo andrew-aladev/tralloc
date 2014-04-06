@@ -5,27 +5,13 @@
 
 #include "common.h"
 
-#if defined(TRALLOC_DEBUG)
-#   include <tralloc/events.h>
-#endif
 
-int main ()
+tralloc_bool test_debug_threads ( tralloc_context * ctx )
 {
-    int result = test_basic ( NULL );
-    if ( result != 0 ) {
-        return result;
-    }
-
-#   if defined(TRALLOC_DEBUG)
-    size_t length;
     if (
-        tralloc_get_chunks_count           ( &length ) != 0 || length != 0 ||
-        tralloc_get_chunks_overhead_length ( &length ) != 0 || length != 0 ||
-        tralloc_get_chunks_length          ( &length ) != 0 || length != 0
+        ! test_debug_threads_test_add ( ctx )
     ) {
-        return 255;
+        return TRALLOC_FALSE;
     }
-#   endif
-
-    return 0;
+    return TRALLOC_TRUE;
 }

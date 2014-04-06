@@ -1,0 +1,13 @@
+set (INCLUDEDIR ${CURRENT_INCLUDEDIR})
+
+if (${TRALLOC_THREADS})
+    set (CURRENT_INCLUDEDIR "${INCLUDEDIR}/threads")
+    add_subdirectory ("threads")
+endif()
+
+install (FILES chunk.h events.h main.h DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/${INCLUDEDIR}")
+set (SOURCES ${SOURCES}
+    ${CMAKE_CURRENT_SOURCE_DIR}/chunk.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/events.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/main.c
+PARENT_SCOPE)

@@ -56,7 +56,8 @@ You can test all possible combinations of extensions and features : debug, lengt
 
     ::
     
-     $ ../combinations.sh
+     $ ../combinations.sh -DCMAKE_BUILD_TYPE="DEBUG"
+     $ ../combinations.sh -DCMAKE_BUILD_TYPE="RELEASE"
 
 
 Multilib

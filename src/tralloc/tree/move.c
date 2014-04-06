@@ -8,7 +8,7 @@
 #include "../common.h"
 
 #if defined(TRALLOC_DEBUG)
-#   include "../events.h"
+#   include "../debug/chunk.h"
 #endif
 
 
@@ -50,7 +50,7 @@ tralloc_error tralloc_move ( tralloc_context * child_context, tralloc_context * 
     }
 
 #   if defined(TRALLOC_DEBUG)
-    return _tralloc_on_move ( child_chunk, old_parent_chunk );
+    return _tralloc_debug_move_chunk ( child_chunk, old_parent_chunk );
 #   else
     return 0;
 #   endif

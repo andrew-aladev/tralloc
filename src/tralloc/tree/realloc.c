@@ -8,7 +8,8 @@
 #include "../common.h"
 
 #if defined(TRALLOC_DEBUG)
-#   include "../events.h"
+#   include "../debug/chunk.h"
+#   include "../debug/main.h"
 #endif
 
 #if defined(TRALLOC_LENGTH)
@@ -47,7 +48,7 @@ tralloc_error tralloc_realloc ( tralloc_context ** chunk_context, size_t length 
 
 #   if defined(TRALLOC_DEBUG)
     size_t old_length;
-    result = _tralloc_get_chunk_length ( old_chunk, &old_length );
+    result = _tralloc_debug_get_length ( old_chunk, &old_length );
     if ( result != 0 ) {
         return result;
     }
@@ -105,7 +106,7 @@ tralloc_error tralloc_realloc ( tralloc_context ** chunk_context, size_t length 
             extensions_length -= sizeof ( _tralloc_pool_child );
             old_total_length  -= sizeof ( _tralloc_pool_child );
             total_length      -= sizeof ( _tralloc_pool_child );
-            old_memory        += sizeof ( _tralloc_pool_child );
+            old_memory        = ( void * ) ( ( uintptr_t ) old_memory + sizeof ( _tralloc_pool_child ) );
 
             new_memory = malloc ( total_length );
             if ( new_memory == NULL ) {
@@ -141,11 +142,7 @@ tralloc_error tralloc_realloc ( tralloc_context ** chunk_context, size_t length 
 #       endif
 
 #       if defined(TRALLOC_DEBUG)
-        result = _tralloc_set_chunk_length ( old_chunk, length );
-        if ( result != 0 ) {
-            return result;
-        }
-        return _tralloc_on_resize ( old_chunk, old_length );
+        return _tralloc_debug_resize_chunk ( old_chunk, old_length, length );
 #       endif
 
     } else {
@@ -169,11 +166,7 @@ tralloc_error tralloc_realloc ( tralloc_context ** chunk_context, size_t length 
         * chunk_context = _tralloc_get_context_from_chunk ( new_chunk );
 
 #       if defined(TRALLOC_DEBUG)
-        result = _tralloc_set_chunk_length ( new_chunk, length );
-        if ( result != 0 ) {
-            return result;
-        }
-        return _tralloc_on_resize ( new_chunk, old_length );
+        return _tralloc_debug_resize_chunk ( new_chunk, old_length, length );
 #       endif
 
     }

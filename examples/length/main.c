@@ -7,7 +7,7 @@
 #include <tralloc/length.h>
 
 #if defined(TRALLOC_DEBUG)
-#   include <tralloc/events.h>
+#   include <tralloc/debug.h>
 #endif
 
 
@@ -32,7 +32,7 @@ int main ()
     }
 
 #   if defined(TRALLOC_DEBUG)
-    if ( tralloc_get_chunks_count ( &length ) != 0 || length != 0 ) {
+    if ( tralloc_debug_get_chunks_count ( &length ) != 0 || length != 0 ) {
         return 255;
     }
 #   endif

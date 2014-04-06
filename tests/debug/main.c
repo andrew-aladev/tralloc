@@ -4,12 +4,12 @@
 // You should have received a copy of the GNU General Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
 #include "common.h"
-#include <tralloc/events.h>
+#include <tralloc/debug.h>
 
 
 int main ()
 {
-    int result = test_events ( NULL );
+    int result = test_debug ( NULL );
     if ( result != 0 ) {
         return result;
     }
@@ -17,9 +17,9 @@ int main ()
 #   if defined(TRALLOC_DEBUG)
     size_t length;
     if (
-        tralloc_get_chunks_count           ( &length ) != 0 || length != 0 ||
-        tralloc_get_chunks_overhead_length ( &length ) != 0 || length != 0 ||
-        tralloc_get_chunks_length          ( &length ) != 0 || length != 0
+        tralloc_debug_get_chunks_count           ( &length ) != 0 || length != 0 ||
+        tralloc_debug_get_chunks_overhead_length ( &length ) != 0 || length != 0 ||
+        tralloc_debug_get_chunks_length          ( &length ) != 0 || length != 0
     ) {
         return 255;
     }

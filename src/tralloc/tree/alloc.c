@@ -9,7 +9,7 @@
 #include "../common.h"
 
 #if defined(TRALLOC_DEBUG)
-#   include "../events.h"
+#   include "../debug/chunk.h"
 #endif
 
 #if defined(TRALLOC_LENGTH)
@@ -158,11 +158,6 @@ tralloc_error _tralloc_with_extensions_with_allocator ( tralloc_context * parent
     chunk->extensions = extensions;
 #   endif
 
-#   if defined(TRALLOC_DEBUG)
-    chunk->chunk_length = chunk_length;
-    chunk->length       = length;
-#   endif
-
 #   if defined(TRALLOC_LENGTH)
     if ( have_length ) {
         _tralloc_length_set ( chunk, length );
@@ -191,8 +186,21 @@ tralloc_error _tralloc_with_extensions_with_allocator ( tralloc_context * parent
     }
 #   endif
 
-    result = _tralloc_add_chunk ( parent_context, chunk );
+    chunk->parent      = NULL;
+    chunk->first_child = NULL;
+    chunk->prev        = NULL;
+    chunk->next        = NULL;
+
+    if ( parent_context != NULL ) {
+        _tralloc_attach_chunk ( chunk, _tralloc_get_chunk_from_context ( parent_context ) );
+    }
+
+#   if defined(TRALLOC_DEBUG)
+    result = _tralloc_debug_new_chunk ( chunk, chunk_length, length );
     if ( result != 0 ) {
+        if ( parent_context != NULL ) {
+            _tralloc_detach_chunk ( chunk );
+        }
 
 #       if defined(TRALLOC_POOL)
         if ( have_pool_child ) {
@@ -206,6 +214,7 @@ tralloc_error _tralloc_with_extensions_with_allocator ( tralloc_context * parent
 
         return result;
     }
+#   endif
 
     * child_context = _tralloc_get_context_from_chunk ( chunk );
     return 0;

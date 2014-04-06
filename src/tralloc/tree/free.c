@@ -8,7 +8,7 @@
 #include "chunk.h"
 
 #if defined(TRALLOC_DEBUG)
-#   include "../events.h"
+#   include "../debug/chunk.h"
 #endif
 
 #if defined(TRALLOC_DESTRUCTOR)
@@ -78,14 +78,6 @@ static inline
 tralloc_error _tralloc_free_chunk ( _tralloc_chunk * chunk )
 {
     tralloc_error error = 0, result;
-
-#   if defined(TRALLOC_DEBUG)
-    result = _tralloc_on_free ( chunk );
-    if ( result != 0 ) {
-        error = result;
-    }
-#   endif
-
     size_t extensions_length = 0;
 
 #   if defined(TRALLOC_LENGTH)
@@ -125,6 +117,13 @@ tralloc_error _tralloc_free_chunk ( _tralloc_chunk * chunk )
         if ( result != 0 ) {
             error = result;
         }
+    }
+#   endif
+
+#   if defined(TRALLOC_DEBUG)
+    result = _tralloc_debug_free_chunk ( chunk );
+    if ( result != 0 ) {
+        error = result;
     }
 #   endif
 

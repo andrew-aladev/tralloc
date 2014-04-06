@@ -6,20 +6,43 @@
 #include "common.h"
 #include <tralloc/tree.h>
 
+#if defined(TRALLOC_THREADS)
+#   include "threads/common.h"
+#endif
 
-int test_basic ( tralloc_context * root )
+
+int test_debug ( tralloc_context * ctx )
 {
-    tralloc_context * ctx;
-    if ( tralloc_new ( root, &ctx ) != 0 ) {
+    tralloc_context * root;
+    if ( tralloc_new ( ctx, &root ) != 0 ) {
         return 1;
     }
-    if ( !test_basic_add ( ctx ) ) {
-        tralloc_free ( ctx );
+    if ( !test_debug_add ( root ) ) {
+        tralloc_free ( root );
         return 2;
     }
-    if ( tralloc_free ( ctx ) != 0 ) {
-        tralloc_free ( ctx );
+    if ( !test_debug_resize ( root ) ) {
+        tralloc_free ( root );
         return 3;
+    }
+    if ( !test_debug_move ( root ) ) {
+        tralloc_free ( root );
+        return 4;
+    }
+    if ( !test_debug_free ( root ) ) {
+        tralloc_free ( root );
+        return 5;
+    }
+
+#   if defined(TRALLOC_THREADS)
+    if ( !test_debug_threads ( root ) ) {
+        tralloc_free ( root );
+        return 6;
+    }
+#   endif
+
+    if ( tralloc_free ( root ) != 0 ) {
+        return 7;
     }
     return 0;
 }

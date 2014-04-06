@@ -3,15 +3,16 @@
 // tralloc is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Lesser Public License for more details.
 // You should have received a copy of the GNU General Lesser Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TRALLOC_TREE_CHUNK_H
-#define TRALLOC_TREE_CHUNK_H
+#ifndef TRALLOC_DEBUG_THREADS_CHUNK_H
+#define TRALLOC_DEBUG_THREADS_CHUNK_H
 
-#include "../types.h"
+#include "../../types.h"
 
 
-void _tralloc_update_chunk ( _tralloc_chunk * chunk );
-void _tralloc_attach_chunk ( _tralloc_chunk * child, _tralloc_chunk * new_parent );
-void _tralloc_detach_chunk ( _tralloc_chunk * chunk );
+tralloc_error _tralloc_debug_threads_new_chunk    ( _tralloc_chunk * chunk );
+tralloc_error _tralloc_debug_threads_resize_chunk ( _tralloc_chunk * chunk );
+tralloc_error _tralloc_debug_threads_move_chunk   ( _tralloc_chunk * chunk );
+tralloc_error _tralloc_debug_threads_free_chunk   ( _tralloc_chunk * chunk );
 
 
 #endif

@@ -8,7 +8,7 @@
 #include "../common.h"
 
 #if defined(TRALLOC_DEBUG)
-#   include "../events.h"
+#   include "../debug/events.h"
 #endif
 
 #include <stdlib.h>
@@ -31,7 +31,7 @@ tralloc_error tralloc_append_destructor ( tralloc_context * chunk_context, trall
     }
 
 #   if defined(TRALLOC_DEBUG)
-    tralloc_error result = _tralloc_add_chunks_overhead_length ( sizeof ( _tralloc_destructor ) );
+    tralloc_error result = _tralloc_debug_add_chunks_overhead_length ( sizeof ( _tralloc_destructor ) );
     if ( result != 0 ) {
         return result;
     }
@@ -71,7 +71,7 @@ tralloc_error tralloc_prepend_destructor ( tralloc_context * chunk_context, tral
     }
 
 #   if defined(TRALLOC_DEBUG)
-    tralloc_error result = _tralloc_add_chunks_overhead_length ( sizeof ( _tralloc_destructor ) );
+    tralloc_error result = _tralloc_debug_add_chunks_overhead_length ( sizeof ( _tralloc_destructor ) );
     if ( result != 0 ) {
         return result;
     }
