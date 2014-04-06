@@ -9,6 +9,11 @@
 #include "../macro.h"
 #include "../types.h"
 
+#if defined(TRALLOC_DEBUG)
+#   include "../common.h"
+#   include "../debug/main.h"
+#endif
+
 #undef _TRALLOC_INLINE
 #ifdef _TRALLOC_TREE_ALLOC_INCLUDED_FROM_OBJECT
 #    define _TRALLOC_INLINE _TRALLOC_INLINE_IN_OBJECT
@@ -45,5 +50,67 @@ tralloc_error tralloc_with_extensions_new ( tralloc_context * parent_context, tr
     return tralloc_with_extensions ( parent_context, child_context, extensions, 0 );
 }
 
+
+#if defined(TRALLOC_DEBUG)
+
+_TRALLOC_INLINE
+tralloc_error __tralloc_set_file_and_line ( tralloc_error init_result, tralloc_context ** context, const char * file, size_t line )
+{
+    if ( init_result == 0 ) {
+        _tralloc_chunk * chunk = _tralloc_get_chunk_from_context ( * context );
+        tralloc_error result   = _tralloc_debug_set_file_and_line ( chunk, file, line );
+        if ( result != 0 ) {
+            return result;
+        }
+    }
+    return init_result;
+}
+
+_TRALLOC_INLINE
+tralloc_error __tralloc_with_extensions ( const char * file, size_t line, tralloc_context * parent_context, tralloc_context ** child_context, tralloc_extensions extensions, size_t length )
+{
+    return __tralloc_set_file_and_line ( tralloc_with_extensions ( parent_context, child_context, extensions, length ), child_context, file, line );
+}
+
+_TRALLOC_INLINE
+tralloc_error __tralloc ( const char * file, size_t line, tralloc_context * parent_context, tralloc_context ** child_context, size_t length )
+{
+    return __tralloc_set_file_and_line ( tralloc ( parent_context, child_context, length ), child_context, file, line );
+}
+
+_TRALLOC_INLINE
+tralloc_error __tralloc_zero_with_extensions ( const char * file, size_t line, tralloc_context * parent_context, tralloc_context ** child_context, tralloc_extensions extensions, size_t length )
+{
+    return __tralloc_set_file_and_line ( tralloc_zero_with_extensions ( parent_context, child_context, extensions, length ), child_context, file, line );
+}
+
+_TRALLOC_INLINE
+tralloc_error __tralloc_zero ( const char * file, size_t line, tralloc_context * parent_context, tralloc_context ** child_context, size_t length )
+{
+    return __tralloc_set_file_and_line ( tralloc_zero ( parent_context, child_context, length ), child_context, file, line );
+}
+
+_TRALLOC_INLINE
+tralloc_error __tralloc_new ( const char * file, size_t line, tralloc_context * parent_context, tralloc_context ** child_context )
+{
+    return __tralloc_set_file_and_line ( tralloc_new ( parent_context, child_context ), child_context, file, line );
+}
+
+_TRALLOC_INLINE
+tralloc_error __tralloc_with_extensions_new ( const char * file, size_t line, tralloc_context * parent_context, tralloc_context ** child_context, tralloc_extensions extensions )
+{
+    return __tralloc_set_file_and_line ( tralloc_with_extensions_new ( parent_context, child_context, extensions ), child_context, file, line );
+}
+
+#if !defined(_TRALLOC_TREE_ALLOC_INCLUDED_FROM_OBJECT)
+#   define tralloc_with_extensions(...)      __tralloc_with_extensions      (__FILE__, __LINE__, ##__VA_ARGS__)
+#   define tralloc(...)                      __tralloc                      (__FILE__, __LINE__, ##__VA_ARGS__)
+#   define tralloc_zero_with_extensions(...) __tralloc_zero_with_extensions (__FILE__, __LINE__, ##__VA_ARGS__)
+#   define tralloc_zero(...)                 __tralloc_zero                 (__FILE__, __LINE__, ##__VA_ARGS__)
+#   define tralloc_new(...)                  __tralloc_new                  (__FILE__, __LINE__, ##__VA_ARGS__)
+#   define tralloc_with_extensions_new(...)  __tralloc_with_extensions_new  (__FILE__, __LINE__, ##__VA_ARGS__)
+#endif
+
+#endif
 
 #endif

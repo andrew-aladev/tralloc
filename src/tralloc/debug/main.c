@@ -5,17 +5,19 @@
 
 #include "main.h"
 
+#include <string.h>
+
 
 tralloc_error _tralloc_debug_get_length ( _tralloc_chunk * chunk, size_t * length )
 {
 
 #   if defined(TRALLOC_THREADS)
 
-#   if TRALLOC_THREADS_LENGTH == TRALLOC_SPINLOCK
+#   if TRALLOC_DEBUG_THREADS_LENGTH == TRALLOC_SPINLOCK
     if ( pthread_spin_lock ( &chunk->length_lock ) != 0 ) {
         return TRALLOC_ERROR_SPINLOCK_FAILED;
     }
-#   elif TRALLOC_THREADS_LENGTH == TRALLOC_MUTEX
+#   elif TRALLOC_DEBUG_THREADS_LENGTH == TRALLOC_MUTEX
     if ( pthread_mutex_lock ( &chunk->length_lock ) != 0 ) {
         return TRALLOC_ERROR_MUTEX_FAILED;
     }
@@ -27,11 +29,11 @@ tralloc_error _tralloc_debug_get_length ( _tralloc_chunk * chunk, size_t * lengt
 
 #   if defined(TRALLOC_THREADS)
 
-#   if TRALLOC_THREADS_LENGTH == TRALLOC_SPINLOCK
+#   if TRALLOC_DEBUG_THREADS_LENGTH == TRALLOC_SPINLOCK
     if ( pthread_spin_unlock ( &chunk->length_lock ) != 0 ) {
         return TRALLOC_ERROR_SPINLOCK_FAILED;
     }
-#   elif TRALLOC_THREADS_LENGTH == TRALLOC_MUTEX
+#   elif TRALLOC_DEBUG_THREADS_LENGTH == TRALLOC_MUTEX
     if ( pthread_mutex_unlock ( &chunk->length_lock ) != 0 ) {
         return TRALLOC_ERROR_MUTEX_FAILED;
     }
@@ -47,11 +49,11 @@ tralloc_error _tralloc_debug_set_length ( _tralloc_chunk * chunk, size_t length 
 
 #   if defined(TRALLOC_THREADS)
 
-#   if TRALLOC_THREADS_LENGTH == TRALLOC_SPINLOCK
+#   if TRALLOC_DEBUG_THREADS_LENGTH == TRALLOC_SPINLOCK
     if ( pthread_spin_lock ( &chunk->length_lock ) != 0 ) {
         return TRALLOC_ERROR_SPINLOCK_FAILED;
     }
-#   elif TRALLOC_THREADS_LENGTH == TRALLOC_MUTEX
+#   elif TRALLOC_DEBUG_THREADS_LENGTH == TRALLOC_MUTEX
     if ( pthread_mutex_lock ( &chunk->length_lock ) != 0 ) {
         return TRALLOC_ERROR_MUTEX_FAILED;
     }
@@ -63,11 +65,11 @@ tralloc_error _tralloc_debug_set_length ( _tralloc_chunk * chunk, size_t length 
 
 #   if defined(TRALLOC_THREADS)
 
-#   if TRALLOC_THREADS_LENGTH == TRALLOC_SPINLOCK
+#   if TRALLOC_DEBUG_THREADS_LENGTH == TRALLOC_SPINLOCK
     if ( pthread_spin_unlock ( &chunk->length_lock ) != 0 ) {
         return TRALLOC_ERROR_SPINLOCK_FAILED;
     }
-#   elif TRALLOC_THREADS_LENGTH == TRALLOC_MUTEX
+#   elif TRALLOC_DEBUG_THREADS_LENGTH == TRALLOC_MUTEX
     if ( pthread_mutex_unlock ( &chunk->length_lock ) != 0 ) {
         return TRALLOC_ERROR_MUTEX_FAILED;
     }
@@ -75,5 +77,15 @@ tralloc_error _tralloc_debug_set_length ( _tralloc_chunk * chunk, size_t length 
 
 #   endif
 
+    return 0;
+}
+
+tralloc_error _tralloc_debug_set_file_and_line ( _tralloc_chunk * chunk, const char * file, size_t line )
+{
+    chunk->initialized_in_file = strdup ( file );
+    if ( chunk->initialized_in_file == NULL ) {
+        return TRALLOC_ERROR_MALLOC_FAILED;
+    }
+    chunk->initialized_at_line = line;
     return 0;
 }

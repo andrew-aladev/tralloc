@@ -11,11 +11,16 @@
 #   include "threads/chunk.h"
 #endif
 
+#include <stdlib.h>
+
 
 tralloc_error _tralloc_debug_new_chunk ( _tralloc_chunk * chunk, size_t chunk_length, size_t length )
 {
     chunk->chunk_length = chunk_length;
     chunk->length       = length;
+
+    chunk->initialized_in_file = NULL;
+    chunk->initialized_at_line = 0;
 
 #   if defined(TRALLOC_THREADS)
     tralloc_error result = _tralloc_debug_threads_new_chunk ( chunk );
@@ -59,6 +64,9 @@ tralloc_error _tralloc_debug_move_chunk ( _tralloc_chunk * chunk, _tralloc_chunk
 
 tralloc_error _tralloc_debug_free_chunk ( _tralloc_chunk * chunk )
 {
+    if ( chunk->initialized_in_file != NULL ) {
+        free ( chunk->initialized_in_file );
+    }
 
 #   if defined(TRALLOC_THREADS)
     tralloc_error result = _tralloc_debug_threads_free_chunk ( chunk );

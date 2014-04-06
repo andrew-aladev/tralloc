@@ -16,8 +16,8 @@ set (TRALLOC_MAN          true CACHE BOOL "create man")
 set (TRALLOC_TEST         true CACHE BOOL "build tests")
 set (TRALLOC_EXAMPLES     true CACHE BOOL "build examples")
 
-set (TRALLOC_THREADS_LENGTH                   "spinlock" CACHE BOOL "lock type of length variable in chunk")
-set (TRALLOC_THREADS_USED_BY_MULTIPLE_THREADS "spinlock" CACHE BOOL "lock type of used_by_multiple_threads_lock variable in chunk")
+set (TRALLOC_DEBUG_THREADS_LENGTH                   "spinlock" CACHE BOOL "lock type of length variable in chunk")
+set (TRALLOC_DEBUG_THREADS_USED_BY_MULTIPLE_THREADS "spinlock" CACHE BOOL "lock type of used_by_multiple_threads_lock variable in chunk")
 
 if (NOT DEFINED CMAKE_INSTALL_LIBDIR)
     set (CMAKE_INSTALL_LIBDIR "lib" CACHE PATH "Output directory for libraries")

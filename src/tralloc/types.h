@@ -185,6 +185,10 @@ typedef struct _tralloc_chunk_type {
     // length should be locked for thread safety.
     size_t length;
 
+    // initialized_in_file and initialized_at_line should not be locked for thread safety. It will be written only in alloc function. Other functions will read it.
+    char * initialized_in_file;
+    size_t initialized_at_line;
+
 #   if defined(TRALLOC_THREADS)
     // initialized_by_thread should not be locked for thread safety. It will be written only in alloc function. Other functions will read it.
     pthread_t initialized_by_thread;
@@ -192,15 +196,15 @@ typedef struct _tralloc_chunk_type {
     // used_in_multiple_threads should be locked for thread safety.
     bool used_by_multiple_threads;
 
-#   if TRALLOC_THREADS_USED_BY_MULTIPLE_THREADS == TRALLOC_SPINLOCK
+#   if TRALLOC_DEBUG_THREADS_USED_BY_MULTIPLE_THREADS == TRALLOC_SPINLOCK
     pthread_spinlock_t used_by_multiple_threads_lock;
-#   elif TRALLOC_THREADS_USED_BY_MULTIPLE_THREADS == TRALLOC_MUTEX
+#   elif TRALLOC_DEBUG_THREADS_USED_BY_MULTIPLE_THREADS == TRALLOC_MUTEX
     pthread_mutex_t used_by_multiple_threads_lock;
 #   endif
 
-#   if TRALLOC_THREADS_LENGTH == TRALLOC_SPINLOCK
+#   if TRALLOC_DEBUG_THREADS_LENGTH == TRALLOC_SPINLOCK
     pthread_spinlock_t length_lock;
-#   elif TRALLOC_THREADS_LENGTH == TRALLOC_MUTEX
+#   elif TRALLOC_DEBUG_THREADS_LENGTH == TRALLOC_MUTEX
     pthread_mutex_t length_lock;
 #   endif
 
