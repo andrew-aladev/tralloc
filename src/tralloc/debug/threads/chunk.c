@@ -98,10 +98,10 @@ tralloc_error _check_lock_between_chunks (
 #               if defined(TRALLOC_DEBUG_LOG)
                 fprintf (
                     stderr,
-                    "%s: data, initialized at %s:%zu should have %s\n",
-                    tralloc_get_string_for_error ( chunk_1_error ),
+                    "%s:%zu error %s: chunk should have %s\n",
                     chunk_1->initialized_in_file,
                     chunk_1->initialized_at_line,
+                    tralloc_get_string_for_error ( chunk_1_error ),
                     tralloc_get_string_for_extension ( chunk_1_extension )
                 );
 #               endif
@@ -113,10 +113,10 @@ tralloc_error _check_lock_between_chunks (
 #               if defined(TRALLOC_DEBUG_LOG)
                 fprintf (
                     stderr,
-                    "%s: data, initialized at %s:%zu should have %s\n",
-                    tralloc_get_string_for_error ( chunk_2_error ),
+                    "%s:%zu error %s: chunk should have %s\n",
                     chunk_2->initialized_in_file,
                     chunk_2->initialized_at_line,
+                    tralloc_get_string_for_error ( chunk_2_error ),
                     tralloc_get_string_for_extension ( chunk_2_extension )
                 );
 #               endif

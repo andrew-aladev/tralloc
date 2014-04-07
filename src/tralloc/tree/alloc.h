@@ -53,12 +53,12 @@ tralloc_error tralloc_with_extensions_new ( const char * file, size_t line, tral
 }
 
 #if !defined(_TRALLOC_TREE_ALLOC_INCLUDED_FROM_OBJECT)
-#   define tralloc_with_extensions(...)      tralloc_with_extensions      (__FILE__, __LINE__, ##__VA_ARGS__)
-#   define tralloc(...)                      tralloc                      (__FILE__, __LINE__, ##__VA_ARGS__)
-#   define tralloc_zero_with_extensions(...) tralloc_zero_with_extensions (__FILE__, __LINE__, ##__VA_ARGS__)
-#   define tralloc_zero(...)                 tralloc_zero                 (__FILE__, __LINE__, ##__VA_ARGS__)
-#   define tralloc_new(...)                  tralloc_new                  (__FILE__, __LINE__, ##__VA_ARGS__)
-#   define tralloc_with_extensions_new(...)  tralloc_with_extensions_new  (__FILE__, __LINE__, ##__VA_ARGS__)
+#   define tralloc_with_extensions(...)      tralloc_with_extensions      (__FILE__, __LINE__, __VA_ARGS__)
+#   define tralloc(...)                      tralloc                      (__FILE__, __LINE__, __VA_ARGS__)
+#   define tralloc_zero_with_extensions(...) tralloc_zero_with_extensions (__FILE__, __LINE__, __VA_ARGS__)
+#   define tralloc_zero(...)                 tralloc_zero                 (__FILE__, __LINE__, __VA_ARGS__)
+#   define tralloc_new(...)                  tralloc_new                  (__FILE__, __LINE__, __VA_ARGS__)
+#   define tralloc_with_extensions_new(...)  tralloc_with_extensions_new  (__FILE__, __LINE__, __VA_ARGS__)
 #endif
 
 #else

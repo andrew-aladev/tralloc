@@ -1,6 +1,7 @@
 cmake_minimum_required (VERSION 2.8)
 project (tralloc C)
 
+
 set (TRALLOC_VERSION "0.7.0")
 
 set (TRALLOC_DEBUG        true CACHE BOOL "debug features")
@@ -20,6 +21,7 @@ set (TRALLOC_DEBUG_LOG                              true       CACHE BOOL "debug
 set (TRALLOC_DEBUG_THREADS_LENGTH                   "spinlock" CACHE BOOL "lock type of length variable in chunk")
 set (TRALLOC_DEBUG_THREADS_USED_BY_MULTIPLE_THREADS "spinlock" CACHE BOOL "lock type of used_by_multiple_threads_lock variable in chunk")
 
+
 if (NOT DEFINED CMAKE_INSTALL_LIBDIR)
     set (CMAKE_INSTALL_LIBDIR "lib" CACHE PATH "Output directory for libraries")
 endif ()
@@ -30,25 +32,10 @@ if (NOT DEFINED CMAKE_INSTALL_MANDIR)
   set (CMAKE_INSTALL_MANDIR "share/man/man3" CACHE PATH "Output directory for include files")
 endif ()
 
-if (${TRALLOC_UTILS_BUFFER})
-    set (TRALLOC_UTILS true)
-endif ()
-if (${TRALLOC_LENGTH} OR ${TRALLOC_DESTRUCTOR} OR ${TRALLOC_REFERENCE} OR ${TRALLOC_POOL} OR ${TRALLOC_THREADS})
-    set (TRALLOC_EXTENSIONS true)
-endif ()
-
-if (NOT ${TRALLOC_STATIC} AND NOT ${TRALLOC_SHARED})
-    message (FATAL_ERROR "Tralloc can not be compiled. Please enable building of shared or static libraries")
-endif ()
 
 if (NOT DEFINED TRALLOC_TARGET)
     set (TRALLOC_TARGET ${PROJECT_NAME})
 endif ()
-
-if (NOT DEFINED CMAKE_BUILD_TYPE OR CMAKE_BUILD_TYPE STREQUAL "")
-    set (CMAKE_BUILD_TYPE DEBUG)
-endif ()
-
 
 set (CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
 include (CheckBool)
@@ -67,14 +54,31 @@ if (${TRALLOC_DESTRUCTOR} AND ${TRALLOC_HAVE_FILE})
 endif ()
 if (NOT ${TRALLOC_HAVE_PTHREAD} AND ${TRALLOC_THREADS})
     set (TRALLOC_THREADS false)
-    message(SEND_ERROR "TRALLOC_THREADS is disabled, because you have no pthread.")
+    message(WARNING "TRALLOC_THREADS is disabled, because you have no pthread.")
 endif ()
 
-set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -Winline -pedantic ${C99_CFLAGS} ${PTHREAD_CFLAGS}")
+if (${TRALLOC_UTILS_BUFFER})
+    set (TRALLOC_UTILS true)
+endif ()
+if (${TRALLOC_LENGTH} OR ${TRALLOC_DESTRUCTOR} OR ${TRALLOC_REFERENCE} OR ${TRALLOC_POOL} OR ${TRALLOC_THREADS})
+    set (TRALLOC_EXTENSIONS true)
+endif ()
+
+if (NOT ${TRALLOC_STATIC} AND NOT ${TRALLOC_SHARED})
+    message (FATAL_ERROR "Tralloc can not be compiled. Please enable building of shared or static libraries")
+endif ()
+
+
+if (NOT DEFINED CMAKE_BUILD_TYPE OR CMAKE_BUILD_TYPE STREQUAL "")
+    set (CMAKE_BUILD_TYPE DEBUG)
+endif ()
+
+set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -pedantic -Wall -Wextra ${C99_CFLAGS} ${PTHREAD_CFLAGS}")
 set (CMAKE_LD_FLAGS "${CMAKE_LD_FLAGS} ${PTHREAD_LDLAGS}")
 set (CMAKE_C_FLAGS_DEBUG    "-pipe -O0 -g")
-set (CMAKE_C_FLAGS_RELEASE  "-pipe -O2 ${LTO_CFLAGS}")
+set (CMAKE_C_FLAGS_RELEASE  "-pipe -O2 -Werror -Wno-unused-parameter -Wno-unused-variable ${LTO_CFLAGS}")
 set (CMAKE_LD_FLAGS_RELEASE ${LTO_LDLAGS})
+
 
 add_subdirectory ("src")
 include_directories ("src")
@@ -92,6 +96,7 @@ endif ()
 if (${TRALLOC_MAN})
     add_subdirectory ("man")
 endif ()
+
 
 include (CPackConfig.cmake)
 include (CPack)

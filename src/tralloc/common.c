@@ -104,9 +104,10 @@ const char * tralloc_get_string_for_error ( tralloc_error error )
         return _TRALLOC_ERROR_NO_PREV_LOCK;
     case TRALLOC_ERROR_NO_NEXT_LOCK:
         return _TRALLOC_ERROR_NO_NEXT_LOCK;
+#   endif
+
     default:
         return NULL;
-#   endif
     }
 }
 
