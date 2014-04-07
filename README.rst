@@ -65,7 +65,7 @@ Multilib
 
     ::
     
-     $ CFLAGS="-m32" ../combinations.sh
+     $ CFLAGS="-m32" ../combinations.sh -DCMAKE_BUILD_TYPE="RELEASE"
      
      
 Supported compilers
@@ -73,12 +73,11 @@ Supported compilers
     
     ::
 
-     $ CC="gcc-3.4.6" ../combinations.sh
-     $ CC="gcc-4.7.3" ../combinations.sh
-     $ CC="gcc-4.8.2" ../combinations.sh
-     $ NO_TESTS=1 ../combinations.sh -DCMAKE_TOOLCHAIN_FILE=../cmake/toolchains/arduino.cmake -DTRALLOC_SHARED=0
-     $ CC="tcc" ../combinations.sh -DTRALLOC_SHARED=0
-     $ CC="clang" ../combinations.sh
+     $ CC="gcc-3.4.6" ../combinations.sh -DCMAKE_BUILD_TYPE="RELEASE"
+     $ CC="gcc-4.8.2" ../combinations.sh -DCMAKE_BUILD_TYPE="RELEASE"
+     $ NO_TESTS=1 ../combinations.sh -DCMAKE_TOOLCHAIN_FILE=../cmake/toolchains/arduino.cmake -DTRALLOC_SHARED=0 -DCMAKE_BUILD_TYPE="RELEASE"
+     $ CC="tcc" ../combinations.sh -DTRALLOC_SHARED=0 -DCMAKE_BUILD_TYPE="RELEASE"
+     $ CC="clang" ../combinations.sh -DCMAKE_BUILD_TYPE="RELEASE"
 
 
 Gentoo
