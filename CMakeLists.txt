@@ -76,7 +76,7 @@ endif ()
 set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -pedantic -Wall -Wextra ${C99_CFLAGS} ${PTHREAD_CFLAGS}")
 set (CMAKE_LD_FLAGS "${CMAKE_LD_FLAGS} ${PTHREAD_LDLAGS}")
 set (CMAKE_C_FLAGS_DEBUG    "-pipe -O0 -g")
-set (CMAKE_C_FLAGS_RELEASE  "-pipe -O2 -Werror -Wno-unused-parameter -Wno-unused-variable ${LTO_CFLAGS}")
+set (CMAKE_C_FLAGS_RELEASE  "-pipe -O2 -Werror -Wno-unused-parameter -Wno-unused-variable -fno-strict-aliasing -Wno-uninitialized ${LTO_CFLAGS}")
 set (CMAKE_LD_FLAGS_RELEASE ${LTO_LDLAGS})
 
 
