@@ -9,7 +9,8 @@
 #include <tralloc/types.h>
 
 
-tralloc_bool test_debug_threads_test_add ( tralloc_context * ctx );
+tralloc_bool test_debug_threads_add    ( tralloc_context * ctx );
+tralloc_bool test_debug_threads_resize ( tralloc_context * ctx );
 
 tralloc_bool test_debug_threads ( tralloc_context * ctx );
 

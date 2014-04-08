@@ -9,7 +9,8 @@
 tralloc_bool test_debug_threads ( tralloc_context * ctx )
 {
     if (
-        ! test_debug_threads_test_add ( ctx )
+        ! test_debug_threads_add    ( ctx ) ||
+        ! test_debug_threads_resize ( ctx )
     ) {
         return TRALLOC_FALSE;
     }

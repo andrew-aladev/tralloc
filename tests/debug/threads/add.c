@@ -127,10 +127,14 @@ tralloc_bool test_prev_and_next ( tralloc_context * ctx )
         return TRALLOC_FALSE;
     }
 
+    if ( tralloc_free ( parent ) != 0 ) {
+        return TRALLOC_FALSE;
+    }
+
     return TRALLOC_TRUE;
 }
 
-tralloc_bool test_debug_threads_test_add ( tralloc_context * ctx )
+tralloc_bool test_debug_threads_add ( tralloc_context * ctx )
 {
     if (
         !test_parent_and_first_child ( ctx ) ||

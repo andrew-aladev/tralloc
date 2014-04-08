@@ -55,12 +55,14 @@ tralloc_error _tralloc_debug_resize_chunk ( _tralloc_chunk * chunk, size_t old_l
 #   if defined(TRALLOC_THREADS)
     result = _tralloc_debug_threads_resize_chunk ( chunk );
     if ( result != 0 ) {
+        _tralloc_debug_set_length ( chunk, old_length );
         return result;
     }
 #   endif
 
     result = _tralloc_debug_resize_event ( chunk, old_length, length );
     if ( result != 0 ) {
+        _tralloc_debug_set_length ( chunk, old_length );
         return result;
     }
 
@@ -92,19 +94,19 @@ tralloc_error _tralloc_debug_free_chunk ( _tralloc_chunk * chunk )
         free ( chunk->initialized_in_file );
     }
 
-    tralloc_error result;
+    tralloc_error result, error = 0;
 
 #   if defined(TRALLOC_THREADS)
     result = _tralloc_debug_threads_free_chunk ( chunk );
     if ( result != 0 ) {
-        return result;
+        error = result;
     }
 #   endif
 
     result = _tralloc_debug_free_event ( chunk );
     if ( result != 0 ) {
-        return result;
+        error = result;
     }
 
-    return 0;
+    return error;
 }
