@@ -78,6 +78,7 @@ Supported compilers
      $ NO_TESTS=1 ../combinations.sh -DCMAKE_TOOLCHAIN_FILE=../cmake/toolchains/arduino.cmake -DTRALLOC_SHARED=0 -DCMAKE_BUILD_TYPE="RELEASE"
      $ CC="tcc" ../combinations.sh -DTRALLOC_SHARED=0 -DCMAKE_BUILD_TYPE="RELEASE"
      $ CC="clang" ../combinations.sh -DCMAKE_BUILD_TYPE="RELEASE"
+     $ CC="ccc-analyzer" ../combinations.sh -DCMAKE_BUILD_TYPE="RELEASE"
 
 
 Gentoo
