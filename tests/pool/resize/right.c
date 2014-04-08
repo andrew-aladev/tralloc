@@ -240,8 +240,6 @@ tralloc_bool test_strict ( tralloc_context * ctx )
         return TRALLOC_FALSE;
     }
 
-    fragment = ( _tralloc_pool_fragment * ) ( ( uintptr_t ) data_2_child + data_2_child->length );
-
     // [ data_2 ]
     if (
         pool->first_child  != data_2_child     ||
