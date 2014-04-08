@@ -26,14 +26,23 @@ tralloc_error _tralloc_debug_new_chunk ( _tralloc_chunk * chunk, size_t chunk_le
     }
     chunk->initialized_at_line = line;
 
+    tralloc_error result;
+
 #   if defined(TRALLOC_THREADS)
-    tralloc_error result = _tralloc_debug_threads_new_chunk ( chunk );
+    result = _tralloc_debug_threads_new_chunk ( chunk );
     if ( result != 0 ) {
+        free ( chunk->initialized_in_file );
         return result;
     }
 #   endif
 
-    return _tralloc_debug_add_event ( chunk, chunk_length, length );
+    result = _tralloc_debug_add_event ( chunk, chunk_length, length );
+    if ( result != 0 ) {
+        free ( chunk->initialized_in_file );
+        return result;
+    }
+
+    return 0;
 }
 
 tralloc_error _tralloc_debug_resize_chunk ( _tralloc_chunk * chunk, size_t old_length, size_t length )
@@ -50,20 +59,31 @@ tralloc_error _tralloc_debug_resize_chunk ( _tralloc_chunk * chunk, size_t old_l
     }
 #   endif
 
-    return _tralloc_debug_resize_event ( chunk, old_length, length );
+    result = _tralloc_debug_resize_event ( chunk, old_length, length );
+    if ( result != 0 ) {
+        return result;
+    }
+
+    return 0;
 }
 
 tralloc_error _tralloc_debug_move_chunk ( _tralloc_chunk * chunk, _tralloc_chunk * old_parent_chunk )
 {
+    tralloc_error result;
 
 #   if defined(TRALLOC_THREADS)
-    tralloc_error result = _tralloc_debug_threads_move_chunk ( chunk );
+    result = _tralloc_debug_threads_move_chunk ( chunk );
     if ( result != 0 ) {
         return result;
     }
 #   endif
 
-    return _tralloc_debug_move_event ( chunk, old_parent_chunk );
+    result = _tralloc_debug_move_event ( chunk, old_parent_chunk );
+    if ( result != 0 ) {
+        return result;
+    }
+
+    return 0;
 }
 
 tralloc_error _tralloc_debug_free_chunk ( _tralloc_chunk * chunk )
@@ -72,12 +92,19 @@ tralloc_error _tralloc_debug_free_chunk ( _tralloc_chunk * chunk )
         free ( chunk->initialized_in_file );
     }
 
+    tralloc_error result;
+
 #   if defined(TRALLOC_THREADS)
-    tralloc_error result = _tralloc_debug_threads_free_chunk ( chunk );
+    result = _tralloc_debug_threads_free_chunk ( chunk );
     if ( result != 0 ) {
         return result;
     }
 #   endif
 
-    return _tralloc_debug_free_event ( chunk );
+    result = _tralloc_debug_free_event ( chunk );
+    if ( result != 0 ) {
+        return result;
+    }
+
+    return 0;
 }
