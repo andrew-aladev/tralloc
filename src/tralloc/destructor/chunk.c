@@ -14,7 +14,7 @@
 #include <stdlib.h>
 
 
-tralloc_error _tralloc_destructor_free_chunk ( _tralloc_chunk * chunk )
+tralloc_error _tralloc_destructors_free_chunk ( _tralloc_chunk * chunk )
 {
     _tralloc_destructors * destructors = _tralloc_get_destructors_from_chunk ( chunk );
     if ( destructors == NULL ) {

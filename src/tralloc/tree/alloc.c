@@ -208,10 +208,26 @@ tralloc_error _tralloc_with_extensions_with_allocator ( tralloc_context * parent
             _tralloc_detach_chunk ( chunk );
         }
 
+#       if defined(TRALLOC_DESTRUCTOR)
+        if ( have_destructors ) {
+            _tralloc_destructors_free_chunk ( chunk );
+        }
+#       endif
+
+#       if defined(TRALLOC_REFERENCE)
+        if ( have_reference ) {
+            _tralloc_reference_free_chunk ( chunk );
+        }
+#       endif
+
 #       if defined(TRALLOC_POOL)
         if ( have_pool_child ) {
             _tralloc_pool_child_free_chunk ( chunk );
-        } else {
+        }
+#       endif
+
+#       if defined(TRALLOC_POOL)
+        if ( !have_pool_child ) {
             free ( memory );
         }
 #       else

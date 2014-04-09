@@ -88,7 +88,7 @@ tralloc_error _tralloc_free_chunk ( _tralloc_chunk * chunk )
 
 #   if defined(TRALLOC_DESTRUCTOR)
     if ( chunk->extensions & TRALLOC_EXTENSION_DESTRUCTORS ) {
-        result = _tralloc_destructor_free_chunk ( chunk );
+        result = _tralloc_destructors_free_chunk ( chunk );
         if ( result != 0 ) {
             error = result;
         }

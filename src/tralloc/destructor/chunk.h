@@ -39,7 +39,7 @@ void _tralloc_destructors_new_chunk ( _tralloc_chunk * chunk )
     destructors->last_destructor       = NULL;
 }
 
-tralloc_error _tralloc_destructor_free_chunk ( _tralloc_chunk * chunk );
+tralloc_error _tralloc_destructors_free_chunk ( _tralloc_chunk * chunk );
 
 
 #endif
