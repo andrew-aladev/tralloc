@@ -121,7 +121,7 @@ tralloc_error _tralloc_free_chunk ( _tralloc_chunk * chunk )
 #   endif
 
 #   if defined(TRALLOC_DEBUG)
-    result = _tralloc_debug_free_chunk ( chunk );
+    result = _tralloc_debug_after_free_chunk ( chunk );
     if ( result != 0 ) {
         error = result;
     }
@@ -146,6 +146,7 @@ void _tralloc_silent_detach_chunk ( _tralloc_chunk * chunk )
     chunk->next   = NULL;
 }
 
+// find first chunk in subtree, that can be deleted
 static inline
 _tralloc_chunk * _tralloc_get_vertical_list_root ( _tralloc_chunk * root_chunk )
 {
@@ -178,6 +179,7 @@ _tralloc_chunk * _tralloc_get_vertical_list_root ( _tralloc_chunk * root_chunk )
     return chunk;
 }
 
+// create vertical list starting from the existing first chunk in subtree, that can be deleted
 static inline
 void _tralloc_subtree_to_vertical_list ( _tralloc_chunk * list_root_chunk, _tralloc_chunk * root_chunk )
 {
@@ -221,6 +223,7 @@ tralloc_error _tralloc_free_subtree ( _tralloc_chunk * root_chunk )
 
     _tralloc_chunk * chunk = _tralloc_get_vertical_list_root ( root_chunk );
     if ( chunk == NULL ) {
+        // there are no chunks, that can be deleted
         return 0;
     }
     _tralloc_subtree_to_vertical_list ( chunk, root_chunk );
@@ -246,4 +249,3 @@ tralloc_error _tralloc_free_single ( _tralloc_chunk * chunk )
     _tralloc_detach_chunk ( chunk );
     return _tralloc_free_chunk ( chunk );
 }
-

@@ -72,6 +72,13 @@ tralloc_error _tralloc_with_extensions_with_allocator ( tralloc_context * parent
         return TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL;
     }
 
+    _tralloc_chunk * parent_chunk;
+    if ( parent_context == NULL ) {
+        parent_chunk = NULL;
+    } else {
+        parent_chunk = _tralloc_get_chunk_from_context ( parent_context );
+    }
+
     tralloc_error result;
     size_t extensions_length = 0;
 
@@ -123,6 +130,17 @@ tralloc_error _tralloc_with_extensions_with_allocator ( tralloc_context * parent
     }
 #   endif
 
+#   if defined(TRALLOC_THREADS)
+    if ( parent_chunk != NULL ) {
+        if ( parent_chunk->extensions & TRALLOC_EXTENSION_LOCK_CHILDREN ) {
+            extensions |= TRALLOC_EXTENSION_LOCK_PARENT | TRALLOC_EXTENSION_LOCK_PREV | TRALLOC_EXTENSION_LOCK_NEXT;
+        }
+        if ( extensions & TRALLOC_EXTENSION_LOCK_CHILDREN ) {
+            extensions |= TRALLOC_EXTENSION_LOCK_FIRST_CHILD;
+        }
+    }
+#   endif
+
     size_t chunk_length = sizeof ( _tralloc_chunk ) + extensions_length;
     size_t total_length = chunk_length + length;
 
@@ -136,6 +154,13 @@ tralloc_error _tralloc_with_extensions_with_allocator ( tralloc_context * parent
             chunk_length      -= sizeof ( _tralloc_pool_child );
             total_length      -= sizeof ( _tralloc_pool_child );
         }
+    }
+#   endif
+
+#   if defined(TRALLOC_DEBUG)
+    result = _tralloc_debug_before_add_chunk ( parent_chunk, extensions, chunk_length, length );
+    if ( result != 0 ) {
+        return result;
     }
 #   endif
 
@@ -197,14 +222,14 @@ tralloc_error _tralloc_with_extensions_with_allocator ( tralloc_context * parent
     chunk->prev        = NULL;
     chunk->next        = NULL;
 
-    if ( parent_context != NULL ) {
-        _tralloc_attach_chunk ( chunk, _tralloc_get_chunk_from_context ( parent_context ) );
+    if ( parent_chunk != NULL ) {
+        _tralloc_attach_chunk ( chunk, parent_chunk );
     }
 
 #   if defined(TRALLOC_DEBUG)
-    result = _tralloc_debug_new_chunk ( chunk, chunk_length, length, file, line );
+    result = _tralloc_debug_after_add_chunk ( chunk, chunk_length, length, file, line );
     if ( result != 0 ) {
-        if ( parent_context != NULL ) {
+        if ( parent_chunk != NULL ) {
             _tralloc_detach_chunk ( chunk );
         }
 

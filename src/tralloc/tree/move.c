@@ -24,6 +24,10 @@ tralloc_error tralloc_move ( tralloc_context * child_context, tralloc_context * 
 
 #   if defined(TRALLOC_DEBUG)
     _tralloc_chunk * old_parent_chunk;
+    tralloc_error result = _tralloc_debug_before_move_chunk ( child_chunk );
+    if ( result != 0 ) {
+        return result;
+    }
 #   endif
 
     if ( parent_context == NULL ) {
@@ -50,7 +54,7 @@ tralloc_error tralloc_move ( tralloc_context * child_context, tralloc_context * 
     }
 
 #   if defined(TRALLOC_DEBUG)
-    return _tralloc_debug_move_chunk ( child_chunk, old_parent_chunk );
+    return _tralloc_debug_after_move_chunk ( child_chunk, old_parent_chunk );
 #   else
     return 0;
 #   endif

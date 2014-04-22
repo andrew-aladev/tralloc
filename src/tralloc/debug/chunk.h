@@ -9,10 +9,17 @@
 #include "../types.h"
 
 
-tralloc_error _tralloc_debug_new_chunk    ( _tralloc_chunk * chunk, size_t chunk_length, size_t length, const char * file, size_t line );
-tralloc_error _tralloc_debug_resize_chunk ( _tralloc_chunk * chunk, size_t old_length, size_t length );
-tralloc_error _tralloc_debug_move_chunk   ( _tralloc_chunk * chunk, _tralloc_chunk * old_parent_chunk );
-tralloc_error _tralloc_debug_free_chunk   ( _tralloc_chunk * chunk );
+tralloc_error _tralloc_debug_before_add_chunk ( _tralloc_chunk * parent_chunk, tralloc_extensions extensions, size_t chunk_length, size_t length );
+tralloc_error _tralloc_debug_after_add_chunk  ( _tralloc_chunk * chunk, size_t chunk_length, size_t length, const char * file, size_t line );
+
+tralloc_error _tralloc_debug_before_resize_chunk ( _tralloc_chunk * chunk );
+tralloc_error _tralloc_debug_after_resize_chunk  ( _tralloc_chunk * chunk, size_t old_length, size_t length );
+
+tralloc_error _tralloc_debug_before_move_chunk ( _tralloc_chunk * chunk );
+tralloc_error _tralloc_debug_after_move_chunk  ( _tralloc_chunk * chunk, _tralloc_chunk * old_parent_chunk );
+
+tralloc_error _tralloc_debug_before_free_chunk ( _tralloc_chunk * chunk );
+tralloc_error _tralloc_debug_after_free_chunk  ( _tralloc_chunk * chunk );
 
 
 #endif

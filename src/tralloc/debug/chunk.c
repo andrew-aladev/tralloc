@@ -15,7 +15,26 @@
 #include <string.h>
 
 
-tralloc_error _tralloc_debug_new_chunk ( _tralloc_chunk * chunk, size_t chunk_length, size_t length, const char * file, size_t line )
+tralloc_error _tralloc_debug_before_add_chunk ( _tralloc_chunk * parent_chunk, tralloc_extensions extensions, size_t chunk_length, size_t length )
+{
+    tralloc_error result;
+
+#   if defined(TRALLOC_THREADS)
+    result = _tralloc_debug_threads_before_add_chunk ( parent_chunk, extensions );
+    if ( result != 0 ) {
+        return result;
+    }
+#   endif
+
+    result = _tralloc_debug_event_before_add_chunk ( parent_chunk, extensions, chunk_length, length );
+    if ( result != 0 ) {
+        return result;
+    }
+
+    return 0;
+}
+
+tralloc_error _tralloc_debug_after_add_chunk ( _tralloc_chunk * chunk, size_t chunk_length, size_t length, const char * file, size_t line )
 {
     chunk->chunk_length = chunk_length;
     chunk->length       = length;
@@ -29,14 +48,14 @@ tralloc_error _tralloc_debug_new_chunk ( _tralloc_chunk * chunk, size_t chunk_le
     tralloc_error result;
 
 #   if defined(TRALLOC_THREADS)
-    result = _tralloc_debug_threads_new_chunk ( chunk );
+    result = _tralloc_debug_threads_after_add_chunk ( chunk );
     if ( result != 0 ) {
         free ( chunk->initialized_in_file );
         return result;
     }
 #   endif
 
-    result = _tralloc_debug_add_event ( chunk, chunk_length, length );
+    result = _tralloc_debug_event_after_add_chunk ( chunk, chunk_length, length );
     if ( result != 0 ) {
         free ( chunk->initialized_in_file );
         return result;
@@ -45,7 +64,26 @@ tralloc_error _tralloc_debug_new_chunk ( _tralloc_chunk * chunk, size_t chunk_le
     return 0;
 }
 
-tralloc_error _tralloc_debug_resize_chunk ( _tralloc_chunk * chunk, size_t old_length, size_t length )
+tralloc_error _tralloc_debug_before_resize_chunk ( _tralloc_chunk * chunk )
+{
+    tralloc_error result;
+
+#   if defined(TRALLOC_THREADS)
+    result = _tralloc_debug_threads_before_resize_chunk ( chunk );
+    if ( result != 0 ) {
+        return result;
+    }
+#   endif
+
+    result = _tralloc_debug_event_before_resize_chunk ( chunk );
+    if ( result != 0 ) {
+        return result;
+    }
+
+    return 0;
+}
+
+tralloc_error _tralloc_debug_after_resize_chunk ( _tralloc_chunk * chunk, size_t old_length, size_t length )
 {
     tralloc_error result = _tralloc_debug_set_length ( chunk, length );
     if ( result != 0 ) {
@@ -53,14 +91,14 @@ tralloc_error _tralloc_debug_resize_chunk ( _tralloc_chunk * chunk, size_t old_l
     }
 
 #   if defined(TRALLOC_THREADS)
-    result = _tralloc_debug_threads_resize_chunk ( chunk );
+    result = _tralloc_debug_threads_after_resize_chunk ( chunk );
     if ( result != 0 ) {
         _tralloc_debug_set_length ( chunk, old_length );
         return result;
     }
 #   endif
 
-    result = _tralloc_debug_resize_event ( chunk, old_length, length );
+    result = _tralloc_debug_event_after_resize_chunk ( chunk, old_length, length );
     if ( result != 0 ) {
         _tralloc_debug_set_length ( chunk, old_length );
         return result;
@@ -69,18 +107,18 @@ tralloc_error _tralloc_debug_resize_chunk ( _tralloc_chunk * chunk, size_t old_l
     return 0;
 }
 
-tralloc_error _tralloc_debug_move_chunk ( _tralloc_chunk * chunk, _tralloc_chunk * old_parent_chunk )
+tralloc_error _tralloc_debug_before_move_chunk ( _tralloc_chunk * chunk )
 {
     tralloc_error result;
 
 #   if defined(TRALLOC_THREADS)
-    result = _tralloc_debug_threads_move_chunk ( chunk );
+    result = _tralloc_debug_threads_before_move_chunk ( chunk );
     if ( result != 0 ) {
         return result;
     }
 #   endif
 
-    result = _tralloc_debug_move_event ( chunk, old_parent_chunk );
+    result = _tralloc_debug_event_before_move_chunk ( chunk );
     if ( result != 0 ) {
         return result;
     }
@@ -88,7 +126,45 @@ tralloc_error _tralloc_debug_move_chunk ( _tralloc_chunk * chunk, _tralloc_chunk
     return 0;
 }
 
-tralloc_error _tralloc_debug_free_chunk ( _tralloc_chunk * chunk )
+tralloc_error _tralloc_debug_after_move_chunk ( _tralloc_chunk * chunk, _tralloc_chunk * old_parent_chunk )
+{
+    tralloc_error result;
+
+#   if defined(TRALLOC_THREADS)
+    result = _tralloc_debug_threads_after_move_chunk ( chunk );
+    if ( result != 0 ) {
+        return result;
+    }
+#   endif
+
+    result = _tralloc_debug_event_after_move_chunk ( chunk, old_parent_chunk );
+    if ( result != 0 ) {
+        return result;
+    }
+
+    return 0;
+}
+
+tralloc_error _tralloc_debug_before_free_chunk ( _tralloc_chunk * chunk )
+{
+    tralloc_error result, error = 0;
+
+#   if defined(TRALLOC_THREADS)
+    result = _tralloc_debug_threads_before_free_chunk ( chunk );
+    if ( result != 0 ) {
+        error = result;
+    }
+#   endif
+
+    result = _tralloc_debug_event_before_free_chunk ( chunk );
+    if ( result != 0 ) {
+        error = result;
+    }
+
+    return error;
+}
+
+tralloc_error _tralloc_debug_after_free_chunk ( _tralloc_chunk * chunk )
 {
     if ( chunk->initialized_in_file != NULL ) {
         free ( chunk->initialized_in_file );
@@ -97,13 +173,13 @@ tralloc_error _tralloc_debug_free_chunk ( _tralloc_chunk * chunk )
     tralloc_error result, error = 0;
 
 #   if defined(TRALLOC_THREADS)
-    result = _tralloc_debug_threads_free_chunk ( chunk );
+    result = _tralloc_debug_threads_after_free_chunk ( chunk );
     if ( result != 0 ) {
         error = result;
     }
 #   endif
 
-    result = _tralloc_debug_free_event ( chunk );
+    result = _tralloc_debug_event_after_free_chunk ( chunk );
     if ( result != 0 ) {
         error = result;
     }

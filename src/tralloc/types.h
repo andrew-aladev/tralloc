@@ -94,9 +94,10 @@ enum {
 
 #   if defined(TRALLOC_THREADS)
     TRALLOC_EXTENSION_LOCK_PARENT      = 1 << 6,
-    TRALLOC_EXTENSION_LOCK_FIRST_CHILD = 1 << 7,
-    TRALLOC_EXTENSION_LOCK_PREV        = 1 << 8,
-    TRALLOC_EXTENSION_LOCK_NEXT        = 1 << 9,
+    TRALLOC_EXTENSION_LOCK_PREV        = 1 << 7,
+    TRALLOC_EXTENSION_LOCK_NEXT        = 1 << 8,
+    TRALLOC_EXTENSION_LOCK_FIRST_CHILD = 1 << 9,
+    TRALLOC_EXTENSION_LOCK_CHILDREN    = 1 << 10,
 #   endif
 
 };
@@ -185,22 +186,7 @@ typedef struct _tralloc_chunk_type {
     // length should be locked for thread safety.
     size_t length;
 
-    // initialized_in_file and initialized_at_line should not be locked for thread safety. It will be written only in alloc function. Other functions will read it.
-    char * initialized_in_file;
-    size_t initialized_at_line;
-
 #   if defined(TRALLOC_THREADS)
-    // initialized_by_thread should not be locked for thread safety. It will be written only in alloc function. Other functions will read it.
-    pthread_t initialized_by_thread;
-
-    // used_in_multiple_threads should be locked for thread safety.
-    bool used_by_multiple_threads;
-
-#   if TRALLOC_DEBUG_THREADS_USED_BY_MULTIPLE_THREADS == TRALLOC_SPINLOCK
-    pthread_spinlock_t used_by_multiple_threads_lock;
-#   elif TRALLOC_DEBUG_THREADS_USED_BY_MULTIPLE_THREADS == TRALLOC_MUTEX
-    pthread_mutex_t used_by_multiple_threads_lock;
-#   endif
 
 #   if TRALLOC_DEBUG_THREADS_LENGTH == TRALLOC_SPINLOCK
     pthread_spinlock_t length_lock;
@@ -209,6 +195,27 @@ typedef struct _tralloc_chunk_type {
 #   endif
 
 #   endif
+
+    // initialized_in_file and initialized_at_line should not be locked for thread safety. It will be written only in alloc function. Other functions will read it.
+    char * initialized_in_file;
+    size_t initialized_at_line;
+
+    /*
+    #   if defined(TRALLOC_THREADS)
+        // initialized_by_thread should not be locked for thread safety. It will be written only in alloc function. Other functions will read it.
+        pthread_t initialized_by_thread;
+
+        // used_in_multiple_threads should be locked for thread safety.
+        bool used_by_multiple_threads;
+
+    #   if TRALLOC_DEBUG_THREADS_USED_BY_MULTIPLE_THREADS == TRALLOC_SPINLOCK
+        pthread_spinlock_t used_by_multiple_threads_lock;
+    #   elif TRALLOC_DEBUG_THREADS_USED_BY_MULTIPLE_THREADS == TRALLOC_MUTEX
+        pthread_mutex_t used_by_multiple_threads_lock;
+    #   endif
+
+    #   endif
+    */
 
 #   endif
 
