@@ -35,7 +35,7 @@ void free_history ( malloc_dynarr * tralloc_history )
 }
 
 static
-tralloc_error on_move ( void * user_data, _tralloc_chunk * chunk, _tralloc_chunk * old_parent )
+tralloc_error after_move ( void * user_data, _tralloc_chunk * chunk, _tralloc_chunk * old_parent )
 {
     malloc_dynarr * tralloc_history = ( malloc_dynarr * ) user_data;
     move_info * info = malloc ( sizeof ( move_info ) );
@@ -56,7 +56,7 @@ tralloc_bool test_debug_move ( tralloc_context * ctx )
     malloc_dynarr * tralloc_history = malloc_history();
     if (
         tralloc_history == NULL ||
-        _tralloc_debug_set_callbacks ( NULL, NULL, on_move, NULL ) != 0
+        _tralloc_debug_set_callbacks ( NULL, NULL, NULL, NULL, NULL, after_move, NULL, NULL ) != 0
     ) {
         return TRALLOC_FALSE;
     }
@@ -70,7 +70,7 @@ tralloc_bool test_debug_move ( tralloc_context * ctx )
         tralloc ( a,   ( tralloc_context ** ) &c, sizeof ( float ) * 4 ) != 0
     ) {
         free_history ( tralloc_history );
-        _tralloc_debug_set_callbacks ( NULL, NULL, NULL, NULL );
+        _tralloc_debug_set_callbacks ( NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL );
         return TRALLOC_FALSE;
     }
 
@@ -83,7 +83,7 @@ tralloc_bool test_debug_move ( tralloc_context * ctx )
         tralloc_free ( a );
         tralloc_free ( b );
         free_history ( tralloc_history );
-        _tralloc_debug_set_callbacks ( NULL, NULL, NULL, NULL );
+        _tralloc_debug_set_callbacks ( NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL );
         return TRALLOC_FALSE;
     }
 
@@ -106,13 +106,13 @@ tralloc_bool test_debug_move ( tralloc_context * ctx )
         info->chunk != c_chunk || info->old_parent != root_chunk || info->chunk->parent != a_chunk
     ) {
         free_history ( tralloc_history );
-        _tralloc_debug_set_callbacks ( NULL, NULL, NULL, NULL );
+        _tralloc_debug_set_callbacks ( NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL );
         return TRALLOC_FALSE;
     }
 
     if (
         tralloc_free ( a ) != 0 ||
-        _tralloc_debug_set_callbacks ( NULL, NULL, NULL, NULL ) != 0
+        _tralloc_debug_set_callbacks ( NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL ) != 0
     ) {
         free_history ( tralloc_history );
         return TRALLOC_FALSE;

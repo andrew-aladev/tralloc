@@ -29,7 +29,7 @@ void free_history ( malloc_dynarr * tralloc_history )
 }
 
 static
-tralloc_error on_add ( void * user_data, _tralloc_chunk * chunk )
+tralloc_error after_add ( void * user_data, _tralloc_chunk * chunk, size_t chunk_length, size_t length )
 {
     malloc_dynarr * tralloc_history = ( malloc_dynarr * ) user_data;
     if ( malloc_dynarr_append ( tralloc_history, chunk ) != 0 ) {
@@ -43,7 +43,7 @@ tralloc_bool test_debug_add ( tralloc_context * ctx )
     malloc_dynarr * tralloc_history = malloc_history();
     if (
         tralloc_history == NULL ||
-        _tralloc_debug_set_callbacks ( on_add, NULL, NULL, NULL ) != 0
+        _tralloc_debug_set_callbacks ( NULL, after_add, NULL, NULL, NULL, NULL, NULL, NULL ) != 0
     ) {
         return TRALLOC_FALSE;
     }
@@ -57,7 +57,7 @@ tralloc_bool test_debug_add ( tralloc_context * ctx )
         tralloc ( a,   ( tralloc_context ** ) &c, sizeof ( float ) * 4 ) != 0
     ) {
         free_history ( tralloc_history );
-        _tralloc_debug_set_callbacks ( NULL, NULL, NULL, NULL );
+        _tralloc_debug_set_callbacks ( NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL );
         return TRALLOC_FALSE;
     }
 
@@ -76,14 +76,14 @@ tralloc_bool test_debug_add ( tralloc_context * ctx )
         chunk != c_chunk || chunk->length != sizeof ( float ) * 4
     ) {
         free_history ( tralloc_history );
-        _tralloc_debug_set_callbacks ( NULL, NULL, NULL, NULL );
+        _tralloc_debug_set_callbacks ( NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL );
         return TRALLOC_FALSE;
     }
 
     if (
         tralloc_free ( a ) != 0 ||
         tralloc_free ( b ) != 0 ||
-        _tralloc_debug_set_callbacks ( NULL, NULL, NULL, NULL ) != 0
+        _tralloc_debug_set_callbacks ( NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL ) != 0
     ) {
         return TRALLOC_FALSE;
     }
