@@ -137,121 +137,9 @@ tralloc_error _tralloc_free_chunk ( _tralloc_chunk * chunk )
     return error;
 }
 
-static inline
-void _tralloc_silent_detach_chunk ( _tralloc_chunk * chunk )
-{
-    chunk->parent = NULL;
-    chunk->prev   = NULL;
-    chunk->next   = NULL;
-}
-
-// find first chunk in subtree, that can be deleted.
-static inline
-_tralloc_chunk * _tralloc_get_vertical_list_root ( _tralloc_chunk * root_chunk )
-{
-    _tralloc_chunk * chunk_to_detach;
-    _tralloc_chunk * chunk = root_chunk;
-
-    while ( ! _tralloc_can_free_chunk ( chunk ) ) {
-        if ( _tralloc_can_free_chunk_children ( chunk ) && chunk->first_child != NULL ) {
-            chunk = chunk->first_child;
-        } else {
-            if ( chunk == root_chunk ) {
-                return NULL;
-            }
-
-            while ( chunk->next == NULL ) {
-                chunk_to_detach = chunk;
-                chunk = chunk->parent;
-                _tralloc_silent_detach_chunk ( chunk_to_detach );
-
-                if ( chunk == root_chunk ) {
-                    return NULL;
-                }
-            }
-            chunk_to_detach = chunk;
-            chunk = chunk->next;
-            _tralloc_silent_detach_chunk ( chunk_to_detach );
-        }
-    }
-
-    return chunk;
-}
-
-// create vertical list starting from the existing first chunk in subtree, that can be deleted.
-static inline
-void _tralloc_subtree_to_vertical_list ( _tralloc_chunk * list_root_chunk, _tralloc_chunk * root_chunk )
-{
-    _tralloc_chunk * prev_chunk, * next_chunk, * chunk_to_detach;
-    prev_chunk = next_chunk = list_root_chunk;
-
-    while ( TRALLOC_TRUE ) {
-        do {
-            if ( _tralloc_can_free_chunk_children ( next_chunk ) && next_chunk->first_child != NULL ) {
-                next_chunk = next_chunk->first_child;
-            } else {
-                if ( next_chunk == root_chunk ) {
-                    prev_chunk->first_child = NULL;
-                    return;
-                }
-
-                while ( next_chunk->next == NULL ) {
-                    chunk_to_detach = next_chunk;
-                    next_chunk = next_chunk->parent;
-                    _tralloc_silent_detach_chunk ( chunk_to_detach );
-
-                    if ( next_chunk == root_chunk ) {
-                        prev_chunk->first_child = NULL;
-                        return;
-                    }
-                }
-                chunk_to_detach = next_chunk;
-                next_chunk = next_chunk->next;
-                _tralloc_silent_detach_chunk ( chunk_to_detach );
-            }
-        } while ( ! _tralloc_can_free_chunk ( next_chunk ) );
-
-        prev_chunk->first_child = next_chunk;
-        prev_chunk = next_chunk;
-    }
-}
-
-#if defined(TRALLOC_DEBUG)
-static inline
-tralloc_error _before_free_subtree ( _tralloc_chunk * root_chunk )
-{
-    tralloc_error result, error = 0;
-    _tralloc_chunk * chunk = root_chunk;
-
-    while ( TRALLOC_TRUE ) {
-        if ( _tralloc_can_free_chunk ( chunk ) ) {
-            result = _tralloc_debug_before_free_chunk ( chunk );
-            if ( result != 0 ) {
-                error = result;
-            }
-        }
-
-        if ( _tralloc_can_free_chunk_children ( chunk ) && chunk->first_child != NULL ) {
-            chunk = chunk->first_child;
-        } else {
-            if ( chunk == root_chunk ) {
-                return error;
-            }
-
-            while ( chunk->next == NULL ) {
-                chunk = chunk->parent;
-                if ( chunk == root_chunk ) {
-                    return error;
-                }
-            }
-            chunk = chunk->next;
-        }
-    }
-}
-#endif
-
 /*
 The algorithm of subtree traversal.
+Chunk numbers is the order of traversal.
 
         1
        / \
@@ -272,19 +160,165 @@ For example:
 
 But you can "straighten" the tree.
 The idea is simple : you are accessing "first_child" pointer only when you are going slightly lower,
-you don't care about "first_child" when you are going slightly higher.
+you don't care about "first_child" when you are going slightly higher and to the right.
 
 So you can create vertical list linked by "first_child" pointer and than free each chunk from this list.
-All subtrees and single chunks, that can't be freed should be detached.
+
+Each single chunk, that can't be freed should be detached. (it should have NULL "parent", "prev", "next" and "first_child" pointers)
+Each subtree, that can't be freed should be detached. (the root chunk of subtree should have NULL "parent", "prev", "next" pointers)
 
 */
+
+#if defined(TRALLOC_DEBUG)
+
+// Function goes through subtree and call _tralloc_debug_before_free_chunk for each chunk.
+// This is vanilla version of the algorithm.
+static inline
+tralloc_error _before_free_subtree ( _tralloc_chunk * root_chunk )
+{
+    tralloc_error result, error = 0;
+    _tralloc_chunk * chunk = root_chunk;
+
+    while ( TRALLOC_TRUE ) {
+        if ( _tralloc_can_free_chunk ( chunk ) ) {
+            result = _tralloc_debug_before_free_chunk ( chunk );
+            if ( result != 0 ) {
+                error = result;
+            }
+        }
+
+        if ( _tralloc_can_free_chunk_children ( chunk ) && chunk->first_child != NULL ) {
+            chunk = chunk->first_child;
+        } else {
+            // if root_chunk is the only chunk, that algorithm can process - it should stops here.
+            if ( chunk == root_chunk ) {
+                return error;
+            }
+
+            while ( chunk->next == NULL ) {
+                chunk = chunk->parent;
+                if ( chunk == root_chunk ) {
+                    return error;
+                }
+            }
+            chunk = chunk->next;
+        }
+    }
+}
+#endif
+
+// Chunk's neighbor should not know that it has been detached.
+static inline
+void _tralloc_detach_chunk_silent ( _tralloc_chunk * chunk )
+{
+    chunk->parent = NULL;
+    chunk->prev   = NULL;
+    chunk->next   = NULL;
+}
+
+// Function returns root chunk of vertical list.
+// It can be NULL.
+static inline
+_tralloc_chunk * _tralloc_subtree_to_vertical_list ( _tralloc_chunk * root_chunk )
+{
+    tralloc_bool can_free_chunk;
+    _tralloc_chunk * list_root_chunk = NULL;
+    _tralloc_chunk * list_chunk      = NULL;
+    _tralloc_chunk * prev_chunk, * next_chunk;
+    _tralloc_chunk * chunk = root_chunk;
+
+    while ( TRALLOC_TRUE ) {
+        can_free_chunk = _tralloc_can_free_chunk ( chunk );
+        if ( can_free_chunk ) {
+            // current chunk can be added to vertical list.
+            if ( list_chunk == NULL ) {
+                // list_root_chunk can be defined now.
+                list_root_chunk = chunk;
+            } else {
+                list_chunk->first_child = chunk;
+            }
+            list_chunk = chunk;
+        }
+
+        if ( _tralloc_can_free_chunk_children ( chunk ) ) {
+            if ( chunk->first_child != NULL ) {
+                // algorithm can go slightly lower.
+                prev_chunk = chunk;
+                chunk = chunk->first_child;
+                // "prev_chunk->first_child" is not needed now.
+
+                if ( !can_free_chunk ) {
+                    // if prev_chunk can't be freed - it is definetely single chunk.
+                    // it should have NULL "first_child" pointer.
+                    prev_chunk->first_child = NULL;
+                }
+
+                // next chunk is ready.
+                continue;
+            }
+        } else if ( can_free_chunk ) {
+            // chunk can be freed and it can have children, but algorithm can't free them.
+            // these children chunks should be detached.
+            next_chunk = chunk->first_child;
+            while ( next_chunk != NULL ) {
+                prev_chunk = next_chunk;
+                next_chunk = next_chunk->next;
+                _tralloc_detach_chunk_silent ( prev_chunk );
+            }
+        }
+        // algorithm can't go slightly lower.
+
+        // if root_chunk is the only chunk, that algorithm can process - it should stops here.
+        if ( chunk == root_chunk ) {
+            // vertical list should be closed now.
+            if ( list_chunk != NULL ) {
+                list_chunk->first_child = NULL;
+            }
+            return list_root_chunk;
+        }
+
+        while ( chunk->next == NULL ) {
+            // algorithm can go slightly higher.
+            prev_chunk = chunk;
+            chunk = chunk->parent;
+            // "prev_chunk->parent", "prev_chunk->prev" and "prev_chunk->next" is not needed now.
+
+            if ( !can_free_chunk ) {
+                // if prev_chunk can't be freed - it is subtree or single chunk.
+                // it should be detached.
+                _tralloc_detach_chunk_silent ( prev_chunk );
+            }
+
+            if ( chunk == root_chunk ) {
+                // vertical list should be closed now.
+                if ( list_chunk != NULL ) {
+                    list_chunk->first_child = NULL;
+                }
+                return list_root_chunk;
+            }
+        }
+        // algorithm can't go slightly higher.
+        
+        // algorithm can go to the right.
+        prev_chunk = chunk;
+        chunk = chunk->next;
+        // "prev_chunk->parent", "prev_chunk->prev" and "prev_chunk->next" is not needed now.
+
+        if ( !can_free_chunk ) {
+            // if prev_chunk can't be freed - it is subtree or single chunk.
+            // it should be detached.
+            _tralloc_detach_chunk_silent ( prev_chunk );
+        }
+
+        // next chunk is ready.
+    }
+}
 
 tralloc_error _tralloc_free_subtree ( _tralloc_chunk * root_chunk )
 {
     tralloc_error result, error = 0;
 
 #   if defined(TRALLOC_DEBUG)
-    // go through subtree and call _tralloc_debug_before_free_chunk for each chunk
     result = _before_free_subtree ( root_chunk );
     if ( result != 0 ) {
         error = result;
@@ -293,29 +327,24 @@ tralloc_error _tralloc_free_subtree ( _tralloc_chunk * root_chunk )
 
     _tralloc_detach_chunk ( root_chunk );
 
-    _tralloc_chunk * chunk = _tralloc_get_vertical_list_root ( root_chunk );
-    if ( chunk == NULL ) {
-        // there are no chunks, that can be deleted
-        return 0;
-    }
-    _tralloc_subtree_to_vertical_list ( chunk, root_chunk );
-
+    _tralloc_chunk * prev_chunk = _tralloc_subtree_to_vertical_list ( root_chunk );
     _tralloc_chunk * next_chunk;
-    while ( chunk != NULL ) {
-        next_chunk = chunk->first_child;
 
-        result = _tralloc_free_chunk ( chunk );
+    while ( prev_chunk != NULL ) {
+        next_chunk = prev_chunk->first_child;
+
+        result = _tralloc_free_chunk ( prev_chunk );
         if ( result != 0 ) {
             error = result;
         }
 
-        chunk = next_chunk;
+        prev_chunk = next_chunk;
     }
 
     return error;
 }
 
-// call this function to delete single chunk only if you know, that chunk can be deleted.
+// Call this function to delete single chunk only if you know, that chunk can be deleted.
 tralloc_error _tralloc_free_single ( _tralloc_chunk * chunk )
 {
     tralloc_error result, error = 0;
