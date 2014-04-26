@@ -19,6 +19,7 @@ void _tralloc_reference_update_chunk ( _tralloc_chunk * chunk )
     } else {
         _tralloc_references * references = reference->references;
         if ( references != NULL ) {
+            // "reference" is the "first_reference" in "reference->references".
             references->first_reference = reference;
         }
     }
@@ -38,6 +39,7 @@ tralloc_error _tralloc_reference_free_chunk ( _tralloc_chunk * chunk )
         if ( references != NULL ) {
             references->first_reference = next;
             if ( next == NULL ) {
+                // "reference" is the last reference of "reference->references".
                 if ( references->autofree ) {
                     return _tralloc_free_subtree ( _tralloc_get_chunk_from_references ( references ) );
                 }

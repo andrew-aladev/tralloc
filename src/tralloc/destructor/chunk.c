@@ -21,13 +21,17 @@ tralloc_error _tralloc_destructors_free_chunk ( _tralloc_chunk * chunk )
         return 0;
     }
 
+    tralloc_context * chunk_context  = _tralloc_get_context_from_chunk ( chunk );
+    _tralloc_destructor * destructor = destructors->first_destructor;
+    if ( destructor == NULL ) {
+        return 0;
+    }
+
 #   if defined(TRALLOC_DEBUG)
     size_t destructors_count = 0;
 #   endif
 
     tralloc_error result, error = 0;
-    tralloc_context * chunk_context  = _tralloc_get_context_from_chunk ( chunk );
-    _tralloc_destructor * destructor = destructors->first_destructor;
     _tralloc_destructor * next_destructor;
     tralloc_destructor_function function;
 

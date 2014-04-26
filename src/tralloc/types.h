@@ -46,10 +46,6 @@ enum {
     TRALLOC_ERROR_NO_SUCH_EXTENSION,
 #   endif
 
-#   if defined(TRALLOC_REFERENCE)
-    TRALLOC_ERROR_BOTH_REFERENCES_AND_REFERENSE,
-#   endif
-
 #   if defined(TRALLOC_POOL)
     TRALLOC_ERROR_POOL_CANT_BE_REALLOCATED,
 #   endif
@@ -63,9 +59,9 @@ enum {
     TRALLOC_ERROR_SPINLOCK_FAILED,
 
     TRALLOC_ERROR_NO_PARENT_LOCK,
-    TRALLOC_ERROR_NO_FIRST_CHILD_LOCK,
     TRALLOC_ERROR_NO_PREV_LOCK,
     TRALLOC_ERROR_NO_NEXT_LOCK,
+    TRALLOC_ERROR_NO_FIRST_CHILD_LOCK,
 #   endif
 
 };
@@ -88,8 +84,8 @@ enum {
 #   endif
 
 #   if defined(TRALLOC_POOL)
-    TRALLOC_EXTENSION_POOL_CHILD = 1 << 4,
-    TRALLOC_EXTENSION_POOL       = 1 << 5,
+    TRALLOC_EXTENSION_POOL       = 1 << 4,
+    TRALLOC_EXTENSION_POOL_CHILD = 1 << 5,
 #   endif
 
 #   if defined(TRALLOC_THREADS)
@@ -97,6 +93,7 @@ enum {
     TRALLOC_EXTENSION_LOCK_PREV        = 1 << 7,
     TRALLOC_EXTENSION_LOCK_NEXT        = 1 << 8,
     TRALLOC_EXTENSION_LOCK_FIRST_CHILD = 1 << 9,
+    
     TRALLOC_EXTENSION_LOCK_CHILDREN    = 1 << 10,
 #   endif
 
@@ -141,7 +138,8 @@ typedef struct _tralloc_references_type {
 #endif
 
 #if defined(TRALLOC_POOL)
-// pool_child should be the first in the stack of extensions
+// "pool_child" should be the first in the stack of extensions.
+// This slight limitation makes fragment's calculation much easier and descreases the total amount of pool's memory overhead.
 typedef struct _tralloc_pool_child_type {
     struct _tralloc_pool_type * pool;
     struct _tralloc_pool_child_type * prev;

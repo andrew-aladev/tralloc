@@ -37,7 +37,8 @@ size_t _tralloc_get_pool_offset ( _tralloc_chunk * chunk )
 #   if defined(TRALLOC_REFERENCE)
     if ( chunk->extensions & TRALLOC_EXTENSION_REFERENCES ) {
         offset += sizeof ( _tralloc_references );
-    } else if ( chunk->extensions & TRALLOC_EXTENSION_REFERENCE ) {
+    }
+    if ( chunk->extensions & TRALLOC_EXTENSION_REFERENCE ) {
         offset += sizeof ( _tralloc_reference );
     }
 #   endif
@@ -77,7 +78,8 @@ _tralloc_chunk * _tralloc_get_chunk_from_pool ( _tralloc_pool * pool )
 #   if defined(TRALLOC_REFERENCE)
     if ( pool->extensions & TRALLOC_EXTENSION_REFERENCES ) {
         offset += sizeof ( _tralloc_references );
-    } else if ( pool->extensions & TRALLOC_EXTENSION_REFERENCE ) {
+    }
+    if ( pool->extensions & TRALLOC_EXTENSION_REFERENCE ) {
         offset += sizeof ( _tralloc_reference );
     }
 #   endif

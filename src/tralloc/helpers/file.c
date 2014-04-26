@@ -13,7 +13,7 @@
 
 
 static
-tralloc_error _tralloc_close ( tralloc_context * chunk_context, void * _TRALLOC_UNUSED ( user_data ) )
+tralloc_error _close ( tralloc_context * chunk_context, void * _TRALLOC_UNUSED ( user_data ) )
 {
     int * descriptor_ptr = chunk_context;
     if ( close ( * descriptor_ptr ) != 0 ) {
@@ -23,7 +23,7 @@ tralloc_error _tralloc_close ( tralloc_context * chunk_context, void * _TRALLOC_
 }
 
 static inline
-tralloc_error _tralloc_process_descriptor ( tralloc_context * parent_context, int ** descriptor_ptr, int descriptor, tralloc_extensions extensions )
+tralloc_error _process_descriptor ( tralloc_context * parent_context, int ** descriptor_ptr, int descriptor, tralloc_extensions extensions )
 {
     tralloc_error result = tralloc_with_extensions ( parent_context, ( tralloc_context ** ) descriptor_ptr, extensions | TRALLOC_EXTENSION_DESTRUCTORS, sizeof ( int ) );
     if ( result != 0 ) {
@@ -31,7 +31,7 @@ tralloc_error _tralloc_process_descriptor ( tralloc_context * parent_context, in
         return result;
     }
     ** descriptor_ptr = descriptor;
-    result = tralloc_append_destructor ( * descriptor_ptr, _tralloc_close, NULL );
+    result = tralloc_append_destructor ( * descriptor_ptr, _close, NULL );
     if ( result != 0 ) {
         tralloc_free ( * descriptor_ptr );
         close ( descriptor );
@@ -49,7 +49,7 @@ tralloc_error tralloc_open_with_extensions ( tralloc_context * parent_context, i
     if ( descriptor == -1 ) {
         return TRALLOC_ERROR_OPEN_DESCRIPTOR_FAILED;
     }
-    return _tralloc_process_descriptor ( parent_context, descriptor_ptr, descriptor, extensions );
+    return _process_descriptor ( parent_context, descriptor_ptr, descriptor, extensions );
 }
 
 tralloc_error tralloc_open_mode_with_extensions ( tralloc_context * parent_context, int ** descriptor_ptr, tralloc_extensions extensions, const char * path_name, int flags, mode_t mode )
@@ -61,5 +61,5 @@ tralloc_error tralloc_open_mode_with_extensions ( tralloc_context * parent_conte
     if ( descriptor == -1 ) {
         return TRALLOC_ERROR_OPEN_DESCRIPTOR_FAILED;
     }
-    return _tralloc_process_descriptor ( parent_context, descriptor_ptr, descriptor, extensions );
+    return _process_descriptor ( parent_context, descriptor_ptr, descriptor, extensions );
 }

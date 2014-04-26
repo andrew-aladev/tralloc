@@ -36,8 +36,8 @@ tralloc_error _tralloc_delete_destructors_by_comparator ( tralloc_context * chun
     size_t destructors_count = 0;
 #   endif
 
-    _tralloc_destructor * last_destructor = NULL;
-    _tralloc_destructor * destructor      = first_destructor;
+    _tralloc_destructor * last_destructor  = NULL;
+    _tralloc_destructor * destructor       = first_destructor;
     _tralloc_destructor * next_destructor;
 
     while ( destructor != NULL ) {

@@ -33,16 +33,15 @@ tralloc_error tralloc_vasprintf_with_extensions ( tralloc_context * parent_conte
     if ( predicted_length <= 0 ) {
         return TRALLOC_ERROR_PRINTF_FAILED;
     }
-    predicted_length++;
 
-    tralloc_error result = tralloc_with_extensions ( parent_context, ( tralloc_context ** ) child_context, extensions, sizeof ( char ) * predicted_length );
+    tralloc_error result = tralloc_with_extensions ( parent_context, ( tralloc_context ** ) child_context, extensions, sizeof ( char ) * ( predicted_length + 1 ) );
     if ( result != 0 ) {
         return result;
     }
     va_copy ( arguments_copy, arguments );
-    int length = vsnprintf ( * child_context, predicted_length, format, arguments_copy );
+    int length = vsnprintf ( * child_context, predicted_length + 1, format, arguments_copy );
     va_end ( arguments_copy );
-    if ( length + 1 != predicted_length ) {
+    if ( length != predicted_length ) {
         tralloc_free ( * child_context );
         return TRALLOC_ERROR_PRINTF_FAILED;
     }

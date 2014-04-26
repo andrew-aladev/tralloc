@@ -43,7 +43,9 @@ tralloc_bool _tralloc_references_can_free_chunk ( _tralloc_chunk * chunk )
     if ( references->first_reference == NULL ) {
         return TRALLOC_TRUE;
     } else {
-        references->autofree = TRALLOC_TRUE;
+        if ( !references->autofree ) {
+            references->autofree = TRALLOC_TRUE;
+        }
         return TRALLOC_FALSE;
     }
 }

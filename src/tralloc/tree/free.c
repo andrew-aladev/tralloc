@@ -29,7 +29,7 @@
 
 
 static inline
-tralloc_bool _tralloc_can_free_chunk ( _tralloc_chunk * chunk )
+tralloc_bool _can_free_chunk ( _tralloc_chunk * chunk )
 {
 
 #   if defined(TRALLOC_REFERENCE)
@@ -52,7 +52,7 @@ tralloc_bool _tralloc_can_free_chunk ( _tralloc_chunk * chunk )
 }
 
 static inline
-tralloc_bool _tralloc_can_free_chunk_children ( _tralloc_chunk * chunk )
+tralloc_bool _can_free_chunk_children ( _tralloc_chunk * chunk )
 {
 
 #   if defined(TRALLOC_REFERENCE)
@@ -75,7 +75,7 @@ tralloc_bool _tralloc_can_free_chunk_children ( _tralloc_chunk * chunk )
 }
 
 static inline
-tralloc_error _tralloc_free_chunk ( _tralloc_chunk * chunk )
+tralloc_error _free_chunk ( _tralloc_chunk * chunk )
 {
     tralloc_error error = 0, result;
     size_t extensions_length = 0;
@@ -99,7 +99,8 @@ tralloc_error _tralloc_free_chunk ( _tralloc_chunk * chunk )
 #   if defined(TRALLOC_REFERENCE)
     if ( chunk->extensions & TRALLOC_EXTENSION_REFERENCES ) {
         extensions_length += sizeof ( _tralloc_references );
-    } else if ( chunk->extensions & TRALLOC_EXTENSION_REFERENCE ) {
+    }
+    if ( chunk->extensions & TRALLOC_EXTENSION_REFERENCE ) {
         result = _tralloc_reference_free_chunk ( chunk );
         if ( result != 0 ) {
             error = result;
@@ -180,14 +181,14 @@ tralloc_error _before_free_subtree ( _tralloc_chunk * root_chunk )
     _tralloc_chunk * chunk = root_chunk;
 
     while ( TRALLOC_TRUE ) {
-        if ( _tralloc_can_free_chunk ( chunk ) ) {
+        if ( _can_free_chunk ( chunk ) ) {
             result = _tralloc_debug_before_free_chunk ( chunk );
             if ( result != 0 ) {
                 error = result;
             }
         }
 
-        if ( _tralloc_can_free_chunk_children ( chunk ) && chunk->first_child != NULL ) {
+        if ( _can_free_chunk_children ( chunk ) && chunk->first_child != NULL ) {
             chunk = chunk->first_child;
         } else {
             // if root_chunk is the only chunk, that algorithm can process - it should stops here.
@@ -209,7 +210,7 @@ tralloc_error _before_free_subtree ( _tralloc_chunk * root_chunk )
 
 // Chunk's neighbor should not know that it has been detached.
 static inline
-void _tralloc_detach_chunk_silent ( _tralloc_chunk * chunk )
+void _detach_chunk_silent ( _tralloc_chunk * chunk )
 {
     chunk->parent = NULL;
     chunk->prev   = NULL;
@@ -219,7 +220,7 @@ void _tralloc_detach_chunk_silent ( _tralloc_chunk * chunk )
 // Function returns root chunk of vertical list.
 // It can be NULL.
 static inline
-_tralloc_chunk * _tralloc_subtree_to_vertical_list ( _tralloc_chunk * root_chunk )
+_tralloc_chunk * _subtree_to_vertical_list ( _tralloc_chunk * root_chunk )
 {
     tralloc_bool can_free_chunk;
     _tralloc_chunk * list_root_chunk = NULL;
@@ -228,7 +229,7 @@ _tralloc_chunk * _tralloc_subtree_to_vertical_list ( _tralloc_chunk * root_chunk
     _tralloc_chunk * chunk = root_chunk;
 
     while ( TRALLOC_TRUE ) {
-        can_free_chunk = _tralloc_can_free_chunk ( chunk );
+        can_free_chunk = _can_free_chunk ( chunk );
         if ( can_free_chunk ) {
             // current chunk can be added to vertical list.
             if ( list_chunk == NULL ) {
@@ -240,7 +241,7 @@ _tralloc_chunk * _tralloc_subtree_to_vertical_list ( _tralloc_chunk * root_chunk
             list_chunk = chunk;
         }
 
-        if ( _tralloc_can_free_chunk_children ( chunk ) ) {
+        if ( _can_free_chunk_children ( chunk ) ) {
             if ( chunk->first_child != NULL ) {
                 // algorithm can go slightly lower.
                 prev_chunk = chunk;
@@ -263,7 +264,7 @@ _tralloc_chunk * _tralloc_subtree_to_vertical_list ( _tralloc_chunk * root_chunk
             while ( next_chunk != NULL ) {
                 prev_chunk = next_chunk;
                 next_chunk = next_chunk->next;
-                _tralloc_detach_chunk_silent ( prev_chunk );
+                _detach_chunk_silent ( prev_chunk );
             }
         }
         // algorithm can't go slightly lower.
@@ -286,7 +287,7 @@ _tralloc_chunk * _tralloc_subtree_to_vertical_list ( _tralloc_chunk * root_chunk
             if ( !can_free_chunk ) {
                 // if prev_chunk can't be freed - it is subtree or single chunk.
                 // it should be detached.
-                _tralloc_detach_chunk_silent ( prev_chunk );
+                _detach_chunk_silent ( prev_chunk );
             }
 
             if ( chunk == root_chunk ) {
@@ -298,7 +299,7 @@ _tralloc_chunk * _tralloc_subtree_to_vertical_list ( _tralloc_chunk * root_chunk
             }
         }
         // algorithm can't go slightly higher.
-        
+
         // algorithm can go to the right.
         prev_chunk = chunk;
         chunk = chunk->next;
@@ -307,7 +308,7 @@ _tralloc_chunk * _tralloc_subtree_to_vertical_list ( _tralloc_chunk * root_chunk
         if ( !can_free_chunk ) {
             // if prev_chunk can't be freed - it is subtree or single chunk.
             // it should be detached.
-            _tralloc_detach_chunk_silent ( prev_chunk );
+            _detach_chunk_silent ( prev_chunk );
         }
 
         // next chunk is ready.
@@ -327,39 +328,18 @@ tralloc_error _tralloc_free_subtree ( _tralloc_chunk * root_chunk )
 
     _tralloc_detach_chunk ( root_chunk );
 
-    _tralloc_chunk * prev_chunk = _tralloc_subtree_to_vertical_list ( root_chunk );
+    _tralloc_chunk * prev_chunk = _subtree_to_vertical_list ( root_chunk );
     _tralloc_chunk * next_chunk;
 
     while ( prev_chunk != NULL ) {
         next_chunk = prev_chunk->first_child;
 
-        result = _tralloc_free_chunk ( prev_chunk );
+        result = _free_chunk ( prev_chunk );
         if ( result != 0 ) {
             error = result;
         }
 
         prev_chunk = next_chunk;
-    }
-
-    return error;
-}
-
-// Call this function to delete single chunk only if you know, that chunk can be deleted.
-tralloc_error _tralloc_free_single ( _tralloc_chunk * chunk )
-{
-    tralloc_error result, error = 0;
-
-#   if defined(TRALLOC_DEBUG)
-    result = _tralloc_debug_before_free_chunk ( chunk );
-    if ( result != 0 ) {
-        error = result;
-    }
-#   endif
-
-    _tralloc_detach_chunk ( chunk );
-    result = _tralloc_free_chunk ( chunk );
-    if ( result != 0 ) {
-        error = result;
     }
 
     return error;

@@ -36,13 +36,11 @@
 
 tralloc_error tralloc_realloc ( tralloc_context ** chunk_context, size_t length )
 {
-    if ( chunk_context == NULL ) {
+    tralloc_context * context;
+    if ( chunk_context == NULL || ( context = * chunk_context ) == NULL ) {
         return TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL;
     }
-    tralloc_context * context = * chunk_context;
-    if ( context == NULL ) {
-        return TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL;
-    }
+
     _tralloc_chunk * old_chunk = _tralloc_get_chunk_from_context ( context );
     tralloc_error result;
 
@@ -73,21 +71,22 @@ tralloc_error tralloc_realloc ( tralloc_context ** chunk_context, size_t length 
 
 #   if defined(TRALLOC_REFERENCE)
     tralloc_bool have_references = old_chunk->extensions & TRALLOC_EXTENSION_REFERENCES;
-    tralloc_bool have_reference  = old_chunk->extensions & TRALLOC_EXTENSION_REFERENCE;
     if ( have_references ) {
         extensions_length += sizeof ( _tralloc_references );
-    } else if ( have_reference ) {
+    }
+    tralloc_bool have_reference = old_chunk->extensions & TRALLOC_EXTENSION_REFERENCE;
+    if ( have_reference ) {
         extensions_length += sizeof ( _tralloc_reference );
     }
 #   endif
 
 #   if defined(TRALLOC_POOL)
-    if ( old_chunk->extensions & TRALLOC_EXTENSION_POOL ) {
-        return TRALLOC_ERROR_POOL_CANT_BE_REALLOCATED;
-    }
-
     tralloc_bool have_pool_child = old_chunk->extensions & TRALLOC_EXTENSION_POOL_CHILD;
-    if ( have_pool_child ) {
+    if ( old_chunk->extensions & TRALLOC_EXTENSION_POOL ) {
+        // Realloc function can change pool's pointer, so all pool children's pointers should be changed.
+        // But this is not possible, so pool should not be resized.
+        return TRALLOC_ERROR_POOL_CANT_BE_REALLOCATED;
+    } else if ( have_pool_child ) {
         extensions_length += sizeof ( _tralloc_pool_child );
     }
 #   endif
@@ -98,18 +97,23 @@ tralloc_error tralloc_realloc ( tralloc_context ** chunk_context, size_t length 
 
 #   if defined(TRALLOC_POOL)
     if ( have_pool_child ) {
-        new_memory = _tralloc_pool_child_resize ( old_memory, total_length );
+        // "pool_child" should be the first in the stack of extensions.
+        _tralloc_pool_child * old_pool_child = old_memory;
+        new_memory = _tralloc_pool_child_resize ( old_pool_child, total_length );
         if ( new_memory == NULL ) {
-            // pool_child should be deleted
-            _tralloc_pool_child * pool_child = _tralloc_get_pool_child_from_chunk ( old_chunk );
-            size_t old_total_length = pool_child->length;
+            // "old_chunk" can't be resized, because there is not enough memory in pool.
+            // "old_chunk"'s data is still valid.
+            
+            size_t old_total_length = old_pool_child->length;
 
+            // TRALLOC_EXTENSION_POOL_CHILD should be disabled in "old_chunk".
             old_chunk->extensions &= ~ ( TRALLOC_EXTENSION_POOL_CHILD );
             extensions_length -= sizeof ( _tralloc_pool_child );
             old_total_length  -= sizeof ( _tralloc_pool_child );
             total_length      -= sizeof ( _tralloc_pool_child );
-            old_memory        = ( void * ) ( ( uintptr_t ) old_memory + sizeof ( _tralloc_pool_child ) );
-
+            
+            // "old_chunk" should be copied to new location with enough memory.
+            old_memory = ( void * ) ( ( uintptr_t ) old_memory + sizeof ( _tralloc_pool_child ) );
             new_memory = malloc ( total_length );
             if ( new_memory == NULL ) {
                 return TRALLOC_ERROR_MALLOC_FAILED;
@@ -149,6 +153,7 @@ tralloc_error tralloc_realloc ( tralloc_context ** chunk_context, size_t length 
 
     } else {
         _tralloc_chunk * new_chunk = ( _tralloc_chunk * ) ( ( uintptr_t ) new_memory + extensions_length );
+        
         _tralloc_update_chunk ( new_chunk );
 
 #       if defined(TRALLOC_LENGTH)
@@ -160,7 +165,8 @@ tralloc_error tralloc_realloc ( tralloc_context ** chunk_context, size_t length 
 #       if defined(TRALLOC_REFERENCE)
         if ( have_references ) {
             _tralloc_references_update_chunk ( new_chunk );
-        } else if ( have_reference ) {
+        }
+        if ( have_reference ) {
             _tralloc_reference_update_chunk ( new_chunk );
         }
 #       endif
@@ -172,5 +178,6 @@ tralloc_error tralloc_realloc ( tralloc_context ** chunk_context, size_t length 
 #       endif
 
     }
+    
     return 0;
 }

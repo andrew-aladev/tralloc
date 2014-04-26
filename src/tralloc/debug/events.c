@@ -4,7 +4,7 @@
 // You should have received a copy of the GNU General Lesser Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
 #include "events.h"
-#include "main.h"
+#include "chunk.h"
 
 
 #if defined(TRALLOC_THREADS)

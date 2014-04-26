@@ -16,7 +16,6 @@
 #endif
 
 
-tralloc_error _tralloc_free_single  ( _tralloc_chunk * chunk );
 tralloc_error _tralloc_free_subtree ( _tralloc_chunk * chunk );
 
 _TRALLOC_INLINE

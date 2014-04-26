@@ -30,35 +30,32 @@ _tralloc_pool * _tralloc_pool_child_get_pool_from_chunk ( _tralloc_chunk * chunk
     }
 }
 
-_TRALLOC_INLINE
-_tralloc_pool * _tralloc_pool_child_get_pool_from_context ( tralloc_context * parent_context )
-{
-    if ( parent_context == NULL ) {
-        return NULL;
-    } else {
-        return _tralloc_pool_child_get_pool_from_chunk ( _tralloc_get_chunk_from_context ( parent_context ) );
-    }
-}
-
+// Function returns size of empty space ( >= 0 ).
+// There is no warranty, that this size will be enough for "_tralloc_pool_fragment".
 _TRALLOC_INLINE
 size_t _tralloc_pool_child_get_prev_fragment_length ( _tralloc_pool_child * pool_child )
 {
     _tralloc_pool_child * prev = pool_child->prev;
     if ( prev == NULL ) {
+        // Returning size of empty space between pool memory's start and first "pool_child".
         return ( uintptr_t ) pool_child - ( uintptr_t ) pool_child->pool->memory;
     } else {
+        // Returning size of empty space between prev and current pool_childs.
         return ( uintptr_t ) pool_child - ( uintptr_t ) prev - prev->length;
     }
 }
 
+// Function returns size of empty space ( >= 0 ).
+// There is no warranty, that this size will be enough for "_tralloc_pool_fragment".
 _TRALLOC_INLINE
 size_t _tralloc_pool_child_get_next_fragment_length ( _tralloc_pool_child * pool_child )
 {
     _tralloc_pool_child * next = pool_child->next;
     if ( next == NULL ) {
-        _tralloc_pool * pool = pool_child->pool;
-        return ( uintptr_t ) pool->memory + pool->length - ( uintptr_t ) pool_child - pool_child->length;
+        // Returning size of empty space between last "pool_child" and pool memory's end.
+        return ( uintptr_t ) pool_child->pool->memory + pool_child->pool->length - ( uintptr_t ) pool_child - pool_child->length;
     } else {
+        // Returning size of empty space between current and next "pool_child"s.
         return ( uintptr_t ) next - ( uintptr_t ) pool_child - pool_child->length;
     }
 }

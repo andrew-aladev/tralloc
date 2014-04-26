@@ -3,13 +3,11 @@ Hierarchical memory allocator Tralloc
 
 Tralloc (tree alloc) is a hierarchical memory allocator with extensions. It is an alternative implementation of simplified `talloc`_ api.
 
-The main goal of the project is to minimize memory overhead.
-Size of chunk is 32-88 bytes on x86_64 system (depends on compiled and runtime features).
-Debug features will increase size of each chunk by 16 bytes.
+The main goals of the project are to minimize memory overhead and provide thread safety.
 
 
-TODO
-----
+WIP
+---
 Thread safety.
 
 
@@ -52,7 +50,7 @@ Extensions and features enable/disable
         -DTRALLOC_TEST=0         \
         -DTRALLOC_EXAMPLES=0
 
-You can test all possible combinations of extensions and features : debug, length, destructor, reference, pool, utils_buffer
+You can test all possible combinations of extensions and features : debug, length, destructor, reference, pool, utils_buffer.
 
     ::
     
@@ -101,7 +99,25 @@ LICENSE
 LGPL v3+ + SLE ( static link exception )
 
 
-.. _talloc:  http://talloc.samba.org/talloc/doc/html/group__talloc.html
-.. _man:     https://github.com/andrew-aladev/tralloc/blob/master/man/tralloc.txt
-.. _overlay: https://github.com/andrew-aladev/puchuu-overlay
-.. _gentoo:  https://github.com/andrew-aladev/tralloc/tree/master/gentoo
+
+Reformatting Source Code
+------------------------
+I prefer to use command:
+
+    ::
+
+     $ astyle --mode=c --style=kr --pad-oper --pad-paren --pad-header original.c beautifull.c
+     
+Source tree includes `format_sources`_ file for Kdevelop IDE.
+
+
+Language
+--------
+My English is not perfect, my native language is Belarusian. Feel free to ask me about meaning of any comment in code or sentence in documentation.
+
+
+.. _talloc:         http://talloc.samba.org/talloc/doc/html/group__talloc.html
+.. _man:            https://github.com/andrew-aladev/tralloc/blob/master/man/tralloc.txt
+.. _overlay:        https://github.com/andrew-aladev/puchuu-overlay
+.. _gentoo:         https://github.com/andrew-aladev/tralloc/tree/master/gentoo
+.. _format_sources: https://github.com/andrew-aladev/tralloc/blob/master/format_sources

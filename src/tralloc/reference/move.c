@@ -73,7 +73,7 @@ tralloc_error tralloc_move_reference ( tralloc_context * child_context, tralloc_
     }
 
     if ( parent_context == NULL ) {
-        _tralloc_reference * reference   = _tralloc_get_reference_from_chunk ( child_chunk );
+        _tralloc_reference * reference = _tralloc_get_reference_from_chunk ( child_chunk );
         if ( reference->references == NULL ) {
             return TRALLOC_ERROR_CHILD_HAS_SAME_PARENT;
         }

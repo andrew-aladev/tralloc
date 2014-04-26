@@ -35,7 +35,9 @@ tralloc_bool _tralloc_pool_can_free_chunk ( _tralloc_chunk * chunk )
     if ( pool->first_child == NULL ) {
         return TRALLOC_TRUE;
     } else {
-        pool->autofree = TRALLOC_TRUE;
+        if ( !pool->autofree ) {
+            pool->autofree = TRALLOC_TRUE;
+        }
         return TRALLOC_FALSE;
     }
 }
