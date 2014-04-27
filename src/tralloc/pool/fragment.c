@@ -38,6 +38,8 @@ void _tralloc_pool_fragment_detach ( _tralloc_pool * pool, _tralloc_pool_fragmen
     }
 }
 
+// Function inserts "fragment" to the fragment's list if it has been increased.
+// "fragment" should not belong to the fragment's list.
 void _tralloc_pool_fragment_increased ( _tralloc_pool * pool, _tralloc_pool_fragment * fragment )
 {
     _tralloc_pool_fragment * prev_fragment = fragment->prev;
@@ -51,6 +53,8 @@ void _tralloc_pool_fragment_increased ( _tralloc_pool * pool, _tralloc_pool_frag
     _tralloc_pool_fragment_attach ( pool, fragment, prev_fragment, next_fragment );
 }
 
+// Function inserts "fragment" to the fragment's list if it has been decreased.
+// "fragment" should not belong to the fragment's list.
 void _tralloc_pool_fragment_decreased ( _tralloc_pool * pool, _tralloc_pool_fragment * fragment )
 {
     _tralloc_pool_fragment * prev_fragment = fragment->prev;
@@ -68,13 +72,15 @@ _tralloc_pool_child * _tralloc_pool_fragment_alloc ( _tralloc_pool * pool, _tral
 {
     _tralloc_pool_fragment_detach ( pool, fragment );
 
-    size_t new_fragment_length       = fragment->length - length;
+    size_t new_fragment_length = fragment->length - length;
+
+    // Free space will be [ "fragment", "next_child" ].
+    // "fragment" may have 0 length.
     _tralloc_pool_child * next_child = ( _tralloc_pool_child * ) ( ( uintptr_t ) fragment + new_fragment_length );
 
     if ( new_fragment_length >= sizeof ( _tralloc_pool_fragment ) ) {
         fragment->next_child = next_child;
         fragment->length     = new_fragment_length;
-
         _tralloc_pool_fragment_decreased ( pool, fragment );
     }
 
@@ -82,123 +88,139 @@ _tralloc_pool_child * _tralloc_pool_fragment_alloc ( _tralloc_pool * pool, _tral
 }
 
 
-// before : [ 200 bytes fragment ]
-// after  : [ 100 bytes not used ] [ 100 bytes fragment ]
-// or
-// before : [ 100 bytes not used ] [ 100 bytes fragment ]
-// after  : [ 200 bytes fragment ]
-
-void _tralloc_pool_fragment_resize_next_child ( _tralloc_pool_child * pool_child, size_t target_length, size_t next_length )
+// There are [ "pool_child", "fragment" ] in memory.
+// "pool_child" reports, that it wants to obtain "pool_child_target_length" size.
+// Function expands, reduces or frees "fragment" to fit the remaining free space.
+// Fragment is aligned to the right of memory block.
+void _tralloc_pool_fragment_resize_by_prev_child ( _tralloc_pool_child * pool_child, size_t pool_child_target_length, size_t fragment_length )
 {
-    _tralloc_pool          * pool       = pool_child->pool;
-    _tralloc_pool_child    * next_child = pool_child->next;
-    _tralloc_pool_fragment * next       = ( _tralloc_pool_fragment * ) ( ( uintptr_t ) pool_child + pool_child->length );
-    _tralloc_pool_fragment * new_next   = ( _tralloc_pool_fragment * ) ( ( uintptr_t ) pool_child + target_length );
+    _tralloc_pool       * pool            = pool_child->pool;
+    _tralloc_pool_child * next_pool_child = pool_child->next;
 
-    size_t new_next_length = pool_child->length + next_length - target_length;
+    _tralloc_pool_fragment * fragment     = ( _tralloc_pool_fragment * ) ( ( uintptr_t ) pool_child + pool_child->length );
+    _tralloc_pool_fragment * new_fragment = ( _tralloc_pool_fragment * ) ( ( uintptr_t ) pool_child + pool_child_target_length );
 
-    if ( next_length < sizeof ( _tralloc_pool_fragment ) ) {
-        if ( new_next_length < sizeof ( _tralloc_pool_fragment ) ) {
-            // no registered next fragment.
-            // no enough length to create new registered next fragment.
+    size_t new_fragment_length = pool_child->length + fragment_length - pool_child_target_length;
+
+    if ( fragment_length < sizeof ( _tralloc_pool_fragment ) ) {
+        // There is free space with size "fragment_length".
+        // But it is not registered as a fragment, because it is too small.
+
+        if ( new_fragment_length < sizeof ( _tralloc_pool_fragment ) ) {
+            // Anyway the free space is too small to act as registered fragment.
             return;
         } else {
-            // no registered next fragment.
-            // creating new registered next fragment.
+            // Creating new registered fragment.
 
-            new_next->length     = new_next_length;
-            new_next->prev_child = pool_child;
-            new_next->next_child = next_child;
-            new_next->prev       = NULL;
-            new_next->next       = pool->max_fragment;
-            _tralloc_pool_fragment_decreased ( pool, new_next );
+            new_fragment->length     = new_fragment_length;
+            new_fragment->prev_child = pool_child;
+            new_fragment->next_child = next_pool_child;
+
+            // Let "new_fragment" is the longest fragment in fragment's list.
+            new_fragment->prev = NULL;
+            new_fragment->next = pool->max_fragment;
+
+            // Fixing the guess.
+            _tralloc_pool_fragment_decreased ( pool, new_fragment );
         }
     } else {
-        // next fragment is registered.
+        // There is a registered "fragment".
 
-        _tralloc_pool_fragment_detach ( pool, next );
+        _tralloc_pool_fragment_detach ( pool, fragment );
 
-        if ( new_next_length < sizeof ( _tralloc_pool_fragment ) ) {
-            // no enough length to store new registered next fragment.
-
+        if ( new_fragment_length < sizeof ( _tralloc_pool_fragment ) ) {
+            // The free space is too small to act as registered fragment.
             return;
         } else {
-            // enough length to resize registered next fragment.
+            // Copying existing registered fragment to new location.
 
-            memmove ( new_next, next, sizeof ( _tralloc_pool_fragment ) );
-            new_next->length = new_next_length;
+            memmove ( new_fragment, fragment, sizeof ( _tralloc_pool_fragment ) );
+            new_fragment->length = new_fragment_length;
 
-            if ( new_next_length > next_length ) {
-                _tralloc_pool_fragment_increased ( pool, new_next );
+            if ( new_fragment_length > fragment_length ) {
+                _tralloc_pool_fragment_increased ( pool, new_fragment );
             } else {
-                _tralloc_pool_fragment_decreased ( pool, new_next );
+                _tralloc_pool_fragment_decreased ( pool, new_fragment );
             }
         }
     }
 }
 
-void _tralloc_pool_fragment_free_child ( _tralloc_pool_child * pool_child, size_t prev_length, size_t next_length )
+// There are [ "prev_fragment", "pool_child", "next_fragment" ] in memory.
+// "pool_child" reports, that it will be freed.
+// Function expands "prev_fragment" to occupy all memory block.
+void _tralloc_pool_fragment_free_child ( _tralloc_pool_child * pool_child, size_t prev_fragment_length, size_t next_fragment_length )
 {
-    size_t length = prev_length + pool_child->length + next_length;
-    if ( length < sizeof ( _tralloc_pool_fragment ) ) {
-        return;
-    }
+    size_t length = prev_fragment_length + pool_child->length + next_fragment_length;
 
-    _tralloc_pool_fragment * prev = ( _tralloc_pool_fragment * ) ( ( uintptr_t ) pool_child - prev_length );
-    _tralloc_pool_fragment * next = ( _tralloc_pool_fragment * ) ( ( uintptr_t ) pool_child + pool_child->length );
+    _tralloc_pool_fragment * prev_fragment = ( _tralloc_pool_fragment * ) ( ( uintptr_t ) pool_child - prev_fragment_length );
+    _tralloc_pool_fragment * next_fragment = ( _tralloc_pool_fragment * ) ( ( uintptr_t ) pool_child + pool_child->length );
 
     _tralloc_pool       * pool       = pool_child->pool;
     _tralloc_pool_child * prev_child = pool_child->prev;
     _tralloc_pool_child * next_child = pool_child->next;
 
-    if ( prev_length < sizeof ( _tralloc_pool_fragment ) ) {
-        if ( next_length < sizeof ( _tralloc_pool_fragment ) ) {
-            // no registered prev and next fragments.
-            // creating new registered fragment.
+    if ( prev_fragment_length < sizeof ( _tralloc_pool_fragment ) ) {
+        // There is free space with size "prev_fragment_length".
+        // But it is not registered as a fragment, because it is too small.
 
-            prev->length     = length;
-            prev->prev_child = prev_child;
-            prev->next_child = next_child;
-            prev->prev       = NULL;
-            prev->next       = pool->max_fragment;
-            _tralloc_pool_fragment_decreased ( pool, prev );
+        if ( next_fragment_length < sizeof ( _tralloc_pool_fragment ) ) {
+            // There is no registered "prev_fragment" and "next_fragment".
+
+            if ( length < sizeof ( _tralloc_pool_fragment ) ) {
+                // There is not enough space to create new registered fragment.
+            } else {
+                // Creating new registered fragment.
+                prev_fragment->length     = length;
+                prev_fragment->prev_child = prev_child;
+                prev_fragment->next_child = next_child;
+
+                // Let "prev_fragment" is the longest fragment in fragment's list.
+                prev_fragment->prev = NULL;
+                prev_fragment->next = pool->max_fragment;
+
+                // Fixing the guess.
+                _tralloc_pool_fragment_decreased ( pool, prev_fragment );
+            }
         } else {
-            // no registered prev fragment.
-            // next fragment is registered.
-            // increasing length of next fragment.
+            // There is a registered "next_fragment".
+            // Moving "next_fragment" to "prev_fragment" location.
 
-            _tralloc_pool_fragment_detach ( pool, next );
+            _tralloc_pool_fragment_detach ( pool, next_fragment );
 
-            next->length     = length;
-            next->prev_child = prev_child;
+            next_fragment->length     = length;
+            next_fragment->prev_child = prev_child;
 
-            memmove ( prev, next, sizeof ( _tralloc_pool_fragment ) );
-            _tralloc_pool_fragment_increased ( pool, prev );
+            memmove ( prev_fragment, next_fragment, sizeof ( _tralloc_pool_fragment ) );
+
+            // Increasing length of "prev_fragment".
+            _tralloc_pool_fragment_increased ( pool, prev_fragment );
         }
     } else {
-        if ( next_length < sizeof ( _tralloc_pool_fragment ) ) {
-            // no registered next fragment.
-            // prev fragment is registered.
-            // increasing length of prev fragment.
+        // There is a registered "prev_fragment".
 
-            _tralloc_pool_fragment_detach ( pool, prev );
+        if ( next_fragment_length < sizeof ( _tralloc_pool_fragment ) ) {
+            // There is no registered "next_fragment".
+            // Increasing length of "prev_fragment".
 
-            prev->length     = length;
-            prev->next_child = next_child;
+            _tralloc_pool_fragment_detach ( pool, prev_fragment );
 
-            _tralloc_pool_fragment_increased ( pool, prev );
+            prev_fragment->length     = length;
+            prev_fragment->next_child = next_child;
+
+            _tralloc_pool_fragment_increased ( pool, prev_fragment );
         } else {
-            // both registered prev and next fragments.
-            // increasing length of prev fragment.
-            // detaching next fragment.
+            // There are both registered "prev_fragment" and "next_fragment".
+            // Detaching "next_fragment".
+            // Increasing length of prev fragment.
 
-            _tralloc_pool_fragment_detach ( pool, next );
-            _tralloc_pool_fragment_detach ( pool, prev );
+            _tralloc_pool_fragment_detach ( pool, next_fragment );
+            _tralloc_pool_fragment_detach ( pool, prev_fragment );
 
-            prev->length     = length;
-            prev->next_child = next_child;
+            prev_fragment->length     = length;
+            prev_fragment->next_child = next_child;
 
-            _tralloc_pool_fragment_increased ( pool, prev );
+            _tralloc_pool_fragment_increased ( pool, prev_fragment );
         }
     }
 }

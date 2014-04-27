@@ -60,11 +60,9 @@ size_t _tralloc_pool_child_get_next_fragment_length ( _tralloc_pool_child * pool
     }
 }
 
-void _tralloc_pool_child_new_chunk ( _tralloc_chunk * chunk, _tralloc_pool * pool, size_t length, _tralloc_pool_child * prev, _tralloc_pool_child * next );
-
-_tralloc_pool_child * _tralloc_pool_child_resize ( _tralloc_pool_child * pool_child, size_t target_length );
-
-tralloc_error _tralloc_pool_child_free_chunk ( _tralloc_chunk * chunk );
+void                  _tralloc_pool_child_new_chunk  ( _tralloc_chunk * chunk, _tralloc_pool * pool, size_t length, _tralloc_pool_child * prev, _tralloc_pool_child * next );
+_tralloc_pool_child * _tralloc_pool_child_resize     ( _tralloc_pool_child * pool_child, size_t target_length );
+tralloc_error         _tralloc_pool_child_free_chunk ( _tralloc_chunk * chunk );
 
 
 #endif

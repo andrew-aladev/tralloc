@@ -29,7 +29,7 @@ void free_history ( malloc_dynarr * tralloc_history )
 }
 
 static
-tralloc_error after_add ( void * user_data, _tralloc_chunk * chunk, size_t chunk_length, size_t length )
+tralloc_error after_add ( void * user_data, _tralloc_chunk * chunk, size_t _TRALLOC_UNUSED ( chunk_length ), size_t _TRALLOC_UNUSED ( length ) )
 {
     malloc_dynarr * tralloc_history = ( malloc_dynarr * ) user_data;
     if ( malloc_dynarr_append ( tralloc_history, chunk ) != 0 ) {

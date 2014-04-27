@@ -231,9 +231,8 @@ _tralloc_chunk * _subtree_to_vertical_list ( _tralloc_chunk * root_chunk )
     while ( TRALLOC_TRUE ) {
         can_free_chunk = _can_free_chunk ( chunk );
         if ( can_free_chunk ) {
-            // current chunk can be added to vertical list.
+            // current "chunk" can be added to vertical list.
             if ( list_chunk == NULL ) {
-                // list_root_chunk can be defined now.
                 list_root_chunk = chunk;
             } else {
                 list_chunk->first_child = chunk;
@@ -249,17 +248,17 @@ _tralloc_chunk * _subtree_to_vertical_list ( _tralloc_chunk * root_chunk )
                 // "prev_chunk->first_child" is not needed now.
 
                 if ( !can_free_chunk ) {
-                    // if prev_chunk can't be freed - it is definetely single chunk.
+                    // if "prev_chunk" can't be freed - it is definetely single chunk.
                     // it should have NULL "first_child" pointer.
                     prev_chunk->first_child = NULL;
                 }
 
-                // next chunk is ready.
+                // next "chunk" is ready.
                 continue;
             }
         } else if ( can_free_chunk ) {
-            // chunk can be freed and it can have children, but algorithm can't free them.
-            // these children chunks should be detached.
+            // "chunk" can be freed and it can have children, but algorithm can't free them.
+            // These children chunks should be detached.
             next_chunk = chunk->first_child;
             while ( next_chunk != NULL ) {
                 prev_chunk = next_chunk;
@@ -269,7 +268,7 @@ _tralloc_chunk * _subtree_to_vertical_list ( _tralloc_chunk * root_chunk )
         }
         // algorithm can't go slightly lower.
 
-        // if root_chunk is the only chunk, that algorithm can process - it should stops here.
+        // if "root_chunk" is the only chunk, that algorithm can process - it should stops here.
         if ( chunk == root_chunk ) {
             // vertical list should be closed now.
             if ( list_chunk != NULL ) {
@@ -285,7 +284,7 @@ _tralloc_chunk * _subtree_to_vertical_list ( _tralloc_chunk * root_chunk )
             // "prev_chunk->parent", "prev_chunk->prev" and "prev_chunk->next" is not needed now.
 
             if ( !can_free_chunk ) {
-                // if prev_chunk can't be freed - it is subtree or single chunk.
+                // if "prev_chunk" can't be freed - it is subtree or single chunk.
                 // it should be detached.
                 _detach_chunk_silent ( prev_chunk );
             }
@@ -306,12 +305,12 @@ _tralloc_chunk * _subtree_to_vertical_list ( _tralloc_chunk * root_chunk )
         // "prev_chunk->parent", "prev_chunk->prev" and "prev_chunk->next" is not needed now.
 
         if ( !can_free_chunk ) {
-            // if prev_chunk can't be freed - it is subtree or single chunk.
+            // if "prev_chunk" can't be freed - it is subtree or single chunk.
             // it should be detached.
             _detach_chunk_silent ( prev_chunk );
         }
 
-        // next chunk is ready.
+        // next "chunk" is ready.
     }
 }
 

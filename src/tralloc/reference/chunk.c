@@ -19,7 +19,7 @@ void _tralloc_reference_update_chunk ( _tralloc_chunk * chunk )
     } else {
         _tralloc_references * references = reference->references;
         if ( references != NULL ) {
-            // "reference" is the "first_reference" in "reference->references".
+            // "reference" is the first reference in "reference->references".
             references->first_reference = reference;
         }
     }

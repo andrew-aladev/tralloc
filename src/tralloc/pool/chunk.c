@@ -90,7 +90,7 @@ _tralloc_pool_child * _tralloc_pool_child_resize ( _tralloc_pool_child * pool_ch
         // "pool_child"'s pointer will not be changed.
 
         // Resizing pool child by next fragment.
-        _tralloc_pool_fragment_resize_next_child ( pool_child, target_length, next_fragment_length );
+        _tralloc_pool_fragment_resize_by_prev_child ( pool_child, target_length, next_fragment_length );
 
         pool_child->length = target_length;
         return pool_child;
@@ -123,7 +123,7 @@ _tralloc_pool_child * _tralloc_pool_child_resize ( _tralloc_pool_child * pool_ch
         }
 
         // Resizing pool child by next fragment.
-        _tralloc_pool_fragment_resize_next_child ( new_pool_child, target_length, next_fragment_length );
+        _tralloc_pool_fragment_resize_by_prev_child ( new_pool_child, target_length, next_fragment_length );
 
         new_pool_child->length = target_length;
         return new_pool_child;
@@ -132,7 +132,6 @@ _tralloc_pool_child * _tralloc_pool_child_resize ( _tralloc_pool_child * pool_ch
     // Amount of empty space around "pool_child" is not enough to meet "target_length" requirement.
     // Checking whether pool have "target_length" free space.
 
-    /*
     _tralloc_pool * pool = pool_child->pool;
     if ( _tralloc_pool_can_alloc ( pool, target_length ) ) {
         // "pool_child"'s pointer will be changed.
@@ -142,10 +141,19 @@ _tralloc_pool_child * _tralloc_pool_child_resize ( _tralloc_pool_child * pool_ch
         _tralloc_pool_alloc ( pool, ( void ** ) &new_pool_child, target_length, false, &new_prev_pool_child, &new_next_pool_child );
 
         // Moving "pool_child" to the new position.
-        // memmove ( new_pool_child, pool_child, pool_child->length );
-        // new_pool_child->length = target_length;
+        memmove ( new_pool_child, pool_child, pool_child->length );
+
+        // If "new_prev_pool_child" or "new_next_pool_child" equals current "pool_child" -
+        // the free space with length >= "target_length" should act as prev or next fragment to current "pool_child".
+        // But this is impossible, because function have checked that "prev_fragment_length" + "pool_child->length" + "next_fragment_length" < target_length.
+        // So "pool_child" can be freed without risk to broke "new_prev_pool_child" or "new_next_pool_child".
+        _free_pool_child ( pool_child );
+
+        new_pool_child->length = target_length;
+        _pool_child_attach ( new_pool_child, new_prev_pool_child, new_next_pool_child );
+
+        return new_pool_child;
     }
-    */
 
     return NULL;
 }
