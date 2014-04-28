@@ -13,31 +13,31 @@
 
 
 static inline
-void _pool_child_attach ( _tralloc_pool_child * pool_child, _tralloc_pool_child * prev, _tralloc_pool_child * next )
+void _pool_child_attach ( _tralloc_pool_child * current, _tralloc_pool_child * prev, _tralloc_pool_child * next )
 {
-    pool_child->prev = prev;
-    pool_child->next = next;
+    current->prev = prev;
+    current->next = next;
 
     if ( prev != NULL ) {
-        prev->next = pool_child;
+        prev->next = current;
     } else {
-        pool_child->pool->first_child = pool_child;
+        current->pool->first_child = current;
     }
     if ( next != NULL ) {
-        next->prev = pool_child;
+        next->prev = current;
     }
 }
 
 static inline
-void _pool_child_detach ( _tralloc_pool_child * pool_child )
+void _pool_child_detach ( _tralloc_pool_child * current )
 {
-    _tralloc_pool_child * prev = pool_child->prev;
-    _tralloc_pool_child * next = pool_child->next;
+    _tralloc_pool_child * prev = current->prev;
+    _tralloc_pool_child * next = current->next;
 
     if ( prev != NULL ) {
         prev->next = next;
     } else {
-        pool_child->pool->first_child = next;
+        current->pool->first_child = next;
     }
     if ( next != NULL ) {
         next->prev = prev;
@@ -45,18 +45,18 @@ void _pool_child_detach ( _tralloc_pool_child * pool_child )
 }
 
 static inline
-void _pool_child_update ( _tralloc_pool_child * pool_child )
+void _pool_child_update ( _tralloc_pool_child * current )
 {
-    _tralloc_pool_child * prev = pool_child->prev;
-    _tralloc_pool_child * next = pool_child->next;
+    _tralloc_pool_child * prev = current->prev;
+    _tralloc_pool_child * next = current->next;
 
     if ( prev != NULL ) {
-        prev->next = pool_child;
+        prev->next = current;
     } else {
-        pool_child->pool->first_child = pool_child;
+        current->pool->first_child = current;
     }
     if ( next != NULL ) {
-        next->prev = pool_child;
+        next->prev = current;
     }
 }
 

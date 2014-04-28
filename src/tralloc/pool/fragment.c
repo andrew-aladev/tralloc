@@ -8,25 +8,25 @@
 #include <string.h>
 
 
-void _tralloc_pool_fragment_attach ( _tralloc_pool * pool, _tralloc_pool_fragment * fragment, _tralloc_pool_fragment * prev, _tralloc_pool_fragment * next )
+void _tralloc_pool_fragment_attach ( _tralloc_pool * pool, _tralloc_pool_fragment * current, _tralloc_pool_fragment * prev, _tralloc_pool_fragment * next )
 {
-    fragment->prev = prev;
-    fragment->next = next;
+    current->prev = prev;
+    current->next = next;
 
     if ( prev != NULL ) {
-        prev->next = fragment;
+        prev->next = current;
     } else {
-        pool->max_fragment = fragment;
+        pool->max_fragment = current;
     }
     if ( next != NULL ) {
-        next->prev = fragment;
+        next->prev = current;
     }
 }
 
-void _tralloc_pool_fragment_detach ( _tralloc_pool * pool, _tralloc_pool_fragment * fragment )
+void _tralloc_pool_fragment_detach ( _tralloc_pool * pool, _tralloc_pool_fragment * current )
 {
-    _tralloc_pool_fragment * prev = fragment->prev;
-    _tralloc_pool_fragment * next = fragment->next;
+    _tralloc_pool_fragment * prev = current->prev;
+    _tralloc_pool_fragment * next = current->next;
 
     if ( prev != NULL ) {
         prev->next = next;
@@ -38,40 +38,57 @@ void _tralloc_pool_fragment_detach ( _tralloc_pool * pool, _tralloc_pool_fragmen
     }
 }
 
-// Function inserts "fragment" to the fragment's list if it has been increased.
-// "fragment" should not belong to the fragment's list.
-void _tralloc_pool_fragment_increased ( _tralloc_pool * pool, _tralloc_pool_fragment * fragment )
+void _tralloc_pool_fragment_update ( _tralloc_pool * pool, _tralloc_pool_fragment * current )
 {
-    _tralloc_pool_fragment * prev_fragment = fragment->prev;
-    _tralloc_pool_fragment * next_fragment = fragment->next;
+    _tralloc_pool_fragment * prev = current->prev;
+    _tralloc_pool_fragment * next = current->next;
 
-    while ( prev_fragment != NULL && fragment->length > prev_fragment->length ) {
-        next_fragment = prev_fragment;
-        prev_fragment = prev_fragment->prev;
+    if ( prev != NULL ) {
+        prev->next = current;
+    } else {
+        pool->max_fragment = current;
+    }
+    if ( next != NULL ) {
+        next->prev = current;
+    }
+}
+
+// Function inserts "fragment" to the fragment's list if it has been increased.
+void _tralloc_pool_fragment_increased ( _tralloc_pool * pool, _tralloc_pool_fragment * current )
+{
+    _tralloc_pool_fragment * prev = current->prev;
+    _tralloc_pool_fragment * next = current->next;
+
+    while ( prev != NULL && current->length > prev->length ) {
+        next = prev;
+        prev = prev->prev;
     }
 
-    _tralloc_pool_fragment_attach ( pool, fragment, prev_fragment, next_fragment );
+    if ( prev != current->prev ) {
+        _tralloc_pool_fragment_detach ( pool, current );
+        _tralloc_pool_fragment_attach ( pool, current, prev, next );
+    }
 }
 
 // Function inserts "fragment" to the fragment's list if it has been decreased.
-// "fragment" should not belong to the fragment's list.
-void _tralloc_pool_fragment_decreased ( _tralloc_pool * pool, _tralloc_pool_fragment * fragment )
+void _tralloc_pool_fragment_decreased ( _tralloc_pool * pool, _tralloc_pool_fragment * current )
 {
-    _tralloc_pool_fragment * prev_fragment = fragment->prev;
-    _tralloc_pool_fragment * next_fragment = fragment->next;
+    _tralloc_pool_fragment * prev = current->prev;
+    _tralloc_pool_fragment * next = current->next;
 
-    while ( next_fragment != NULL && fragment->length < next_fragment->length ) {
-        prev_fragment = next_fragment;
-        next_fragment = next_fragment->next;
+    while ( next != NULL && current->length < next->length ) {
+        prev = next;
+        next = next->next;
     }
 
-    _tralloc_pool_fragment_attach ( pool, fragment, prev_fragment, next_fragment );
+    if ( prev != current->prev ) {
+        _tralloc_pool_fragment_detach ( pool, current );
+        _tralloc_pool_fragment_attach ( pool, current, prev, next );
+    }
 }
 
 _tralloc_pool_child * _tralloc_pool_fragment_alloc ( _tralloc_pool * pool, _tralloc_pool_fragment * fragment, size_t length )
 {
-    _tralloc_pool_fragment_detach ( pool, fragment );
-
     size_t new_fragment_length = fragment->length - length;
 
     // Free space will be [ "fragment", "next_child" ].
@@ -82,6 +99,8 @@ _tralloc_pool_child * _tralloc_pool_fragment_alloc ( _tralloc_pool * pool, _tral
         fragment->next_child = next_child;
         fragment->length     = new_fragment_length;
         _tralloc_pool_fragment_decreased ( pool, fragment );
+    } else {
+        _tralloc_pool_fragment_detach ( pool, fragment );
     }
 
     return next_child;
@@ -117,8 +136,7 @@ void _tralloc_pool_fragment_resize_by_prev_child ( _tralloc_pool_child * pool_ch
             new_fragment->next_child = next_pool_child;
 
             // Let "new_fragment" is the longest fragment in fragment's list.
-            new_fragment->prev = NULL;
-            new_fragment->next = pool->max_fragment;
+            _tralloc_pool_fragment_attach ( pool, new_fragment, NULL, pool->max_fragment );
 
             // Fixing the guess.
             _tralloc_pool_fragment_decreased ( pool, new_fragment );
@@ -126,15 +144,16 @@ void _tralloc_pool_fragment_resize_by_prev_child ( _tralloc_pool_child * pool_ch
     } else {
         // There is a registered "fragment".
 
-        _tralloc_pool_fragment_detach ( pool, fragment );
-
         if ( new_fragment_length < sizeof ( _tralloc_pool_fragment ) ) {
             // The free space is too small to act as registered fragment.
+            _tralloc_pool_fragment_detach ( pool, fragment );
             return;
         } else {
             // Copying existing registered fragment to new location.
 
             memmove ( new_fragment, fragment, sizeof ( _tralloc_pool_fragment ) );
+            _tralloc_pool_fragment_update ( pool, new_fragment );
+
             new_fragment->length = new_fragment_length;
 
             if ( new_fragment_length > fragment_length ) {
@@ -171,13 +190,12 @@ void _tralloc_pool_fragment_free_child ( _tralloc_pool_child * pool_child, size_
                 // There is not enough space to create new registered fragment.
             } else {
                 // Creating new registered fragment.
-                prev_fragment->length     = length;
                 prev_fragment->prev_child = prev_child;
                 prev_fragment->next_child = next_child;
+                prev_fragment->length     = length;
 
                 // Let "prev_fragment" is the longest fragment in fragment's list.
-                prev_fragment->prev = NULL;
-                prev_fragment->next = pool->max_fragment;
+                _tralloc_pool_fragment_attach ( pool, prev_fragment, NULL, pool->max_fragment );
 
                 // Fixing the guess.
                 _tralloc_pool_fragment_decreased ( pool, prev_fragment );
@@ -186,12 +204,11 @@ void _tralloc_pool_fragment_free_child ( _tralloc_pool_child * pool_child, size_
             // There is a registered "next_fragment".
             // Moving "next_fragment" to "prev_fragment" location.
 
-            _tralloc_pool_fragment_detach ( pool, next_fragment );
-
-            next_fragment->length     = length;
-            next_fragment->prev_child = prev_child;
-
             memmove ( prev_fragment, next_fragment, sizeof ( _tralloc_pool_fragment ) );
+            prev_fragment->prev_child = prev_child;
+            prev_fragment->length     = length;
+
+            _tralloc_pool_fragment_update ( pool, prev_fragment );
 
             // Increasing length of "prev_fragment".
             _tralloc_pool_fragment_increased ( pool, prev_fragment );
@@ -203,8 +220,6 @@ void _tralloc_pool_fragment_free_child ( _tralloc_pool_child * pool_child, size_
             // There is no registered "next_fragment".
             // Increasing length of "prev_fragment".
 
-            _tralloc_pool_fragment_detach ( pool, prev_fragment );
-
             prev_fragment->length     = length;
             prev_fragment->next_child = next_child;
 
@@ -215,7 +230,6 @@ void _tralloc_pool_fragment_free_child ( _tralloc_pool_child * pool_child, size_
             // Increasing length of prev fragment.
 
             _tralloc_pool_fragment_detach ( pool, next_fragment );
-            _tralloc_pool_fragment_detach ( pool, prev_fragment );
 
             prev_fragment->length     = length;
             prev_fragment->next_child = next_child;
