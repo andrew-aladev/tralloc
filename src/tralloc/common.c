@@ -36,10 +36,7 @@ static const char _ERROR_UTILS_BUFFER_OVERFLOW [] = "TRALLOC_ERROR_UTILS_BUFFER_
 static const char _ERROR_MUTEX_FAILED    [] = "TRALLOC_ERROR_MUTEX_FAILED";
 static const char _ERROR_SPINLOCK_FAILED [] = "TRALLOC_ERROR_SPINLOCK_FAILED";
 
-static const char _ERROR_NO_PARENT_LOCK      [] = "TRALLOC_ERROR_NO_PARENT_LOCK";
-static const char _ERROR_NO_PREV_LOCK        [] = "TRALLOC_ERROR_NO_PREV_LOCK";
-static const char _ERROR_NO_NEXT_LOCK        [] = "TRALLOC_ERROR_NO_NEXT_LOCK";
-static const char _ERROR_NO_FIRST_CHILD_LOCK [] = "TRALLOC_ERROR_NO_FIRST_CHILD_LOCK";
+static const char _ERROR_NO_CHILDREN_LOCK [] = "TRALLOC_ERROR_NO_CHILDREN_LOCK";
 
 #endif
 
@@ -87,14 +84,8 @@ const char * tralloc_get_string_for_error ( tralloc_error error )
     case TRALLOC_ERROR_SPINLOCK_FAILED:
         return _ERROR_SPINLOCK_FAILED;
 
-    case TRALLOC_ERROR_NO_PARENT_LOCK:
-        return _ERROR_NO_PARENT_LOCK;
-    case TRALLOC_ERROR_NO_PREV_LOCK:
-        return _ERROR_NO_PREV_LOCK;
-    case TRALLOC_ERROR_NO_NEXT_LOCK:
-        return _ERROR_NO_NEXT_LOCK;
-    case TRALLOC_ERROR_NO_FIRST_CHILD_LOCK:
-        return _ERROR_NO_FIRST_CHILD_LOCK;
+    case TRALLOC_ERROR_NO_CHILDREN_LOCK:
+        return _ERROR_NO_CHILDREN_LOCK;
 #   endif
 
     default:

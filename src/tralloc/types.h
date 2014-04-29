@@ -58,10 +58,7 @@ enum {
     TRALLOC_ERROR_MUTEX_FAILED,
     TRALLOC_ERROR_SPINLOCK_FAILED,
 
-    TRALLOC_ERROR_NO_PARENT_LOCK,
-    TRALLOC_ERROR_NO_PREV_LOCK,
-    TRALLOC_ERROR_NO_NEXT_LOCK,
-    TRALLOC_ERROR_NO_FIRST_CHILD_LOCK,
+    TRALLOC_ERROR_NO_CHILDREN_LOCK,
 #   endif
 
 };
@@ -93,7 +90,7 @@ enum {
     TRALLOC_EXTENSION_LOCK_PREV        = 1 << 7,
     TRALLOC_EXTENSION_LOCK_NEXT        = 1 << 8,
     TRALLOC_EXTENSION_LOCK_FIRST_CHILD = 1 << 9,
-    
+
     TRALLOC_EXTENSION_LOCK_CHILDREN    = 1 << 10,
 #   endif
 
@@ -117,6 +114,9 @@ typedef struct _tralloc_destructor_type {
     void * user_data;
 } _tralloc_destructor;
 
+// Destructors represent single linked.
+// "first_destructor" is the start of this list, "last_destructor" - end.
+// Order of destructors is given by user (append and prepend functions).
 typedef struct _tralloc_destructors_type {
     _tralloc_destructor * first_destructor;
     _tralloc_destructor * last_destructor;
@@ -130,6 +130,9 @@ typedef struct _tralloc_reference_type {
     struct _tralloc_reference_type * next;
 } _tralloc_reference;
 
+// References represent double linked list.
+// "first_reference" is the start of this list.
+// Order of references is given by user (move_reference function).
 typedef struct _tralloc_references_type {
     _tralloc_reference * first_reference;
     tralloc_extensions extensions;
@@ -155,6 +158,13 @@ typedef struct _tralloc_pool_fragment_type {
     size_t length;
 } _tralloc_pool_fragment;
 
+// Fragments represent double linked ordered list.
+// "max_fragment" is the start of this list.
+// It is the longest fragment available.
+
+// Pool child represent double linked list.
+// "first_child" is the start of this list.
+// Order of pool childs is given by user (the order of chunks allocation and movement).
 typedef struct _tralloc_pool_type {
     _tralloc_pool_child    * first_child;
     _tralloc_pool_fragment * max_fragment;
@@ -165,27 +175,41 @@ typedef struct _tralloc_pool_type {
 } _tralloc_pool;
 #endif
 
+#if defined(TRALLOC_DEBUG) && defined(TRALLOC_THREADS)
+enum {
+    _TRALLOC_CHILDREN_NOT_USED,
+    _TRALLOC_CHILDREN_USED_BY_SINGLE_THREAD,
+    _TRALLOC_CHILDREN_USED_BY_MULTIPLE_THREADS
+};
+
+typedef uint8_t _tralloc_children_status;
+#endif
+
 typedef struct _tralloc_chunk_type {
-    // parent, prev, next, first_child should be locked for thread safety.
+    // "parent", "prev", "next", "first_child" should be locked for thread safety.
     struct _tralloc_chunk_type * parent;
     struct _tralloc_chunk_type * prev;
     struct _tralloc_chunk_type * next;
     struct _tralloc_chunk_type * first_child;
 
 #   if defined(TRALLOC_EXTENSIONS)
-    // extensions should not be locked for thread safety. It will be written only in alloc function. Other functions will read it.
+    // "extensions" should not be locked for thread safety.
+    // It will be written only in alloc function. Other functions will read it.
     tralloc_extensions extensions;
 #   endif
 
 #   if defined(TRALLOC_DEBUG)
-    // chunk_length should not be locked for thread safety. It will be written only in alloc function. Other functions will read it.
+    // "chunk_length" should not be locked for thread safety.
+    // It will be written only in alloc function. Other functions will read it.
     size_t chunk_length;
 
-    // length should be locked for thread safety.
+    // "length" will be locked for thread safety by "length_lock".
     size_t length;
 
 #   if defined(TRALLOC_THREADS)
 
+    // "length_lock" should not be locked for thread safety.
+    // It will be written only in alloc function. Other functions will read it.
 #   if TRALLOC_DEBUG_THREADS_LENGTH == TRALLOC_SPINLOCK
     pthread_spinlock_t length_lock;
 #   elif TRALLOC_DEBUG_THREADS_LENGTH == TRALLOC_MUTEX
@@ -194,26 +218,26 @@ typedef struct _tralloc_chunk_type {
 
 #   endif
 
-    // initialized_in_file and initialized_at_line should not be locked for thread safety. It will be written only in alloc function. Other functions will read it.
+    // "initialized_in_file" and "initialized_at_line" should not be locked for thread safety.
+    // It will be written only in alloc function. Other functions will read it.
     char * initialized_in_file;
     size_t initialized_at_line;
 
-    /*
-    #   if defined(TRALLOC_THREADS)
-        // initialized_by_thread should not be locked for thread safety. It will be written only in alloc function. Other functions will read it.
-        pthread_t initialized_by_thread;
+#   if defined(TRALLOC_THREADS)
 
-        // used_in_multiple_threads should be locked for thread safety.
-        bool used_by_multiple_threads;
+    // "children_touched_by_thread" and "children_touched_by_multiple_threads" will be locked for thread safety by "children_lock".
+    pthread_t children_status_thread;
+    _tralloc_children_status children_status;
 
-    #   if TRALLOC_DEBUG_THREADS_USED_BY_MULTIPLE_THREADS == TRALLOC_SPINLOCK
-        pthread_spinlock_t used_by_multiple_threads_lock;
-    #   elif TRALLOC_DEBUG_THREADS_USED_BY_MULTIPLE_THREADS == TRALLOC_MUTEX
-        pthread_mutex_t used_by_multiple_threads_lock;
-    #   endif
+    // "children_status_lock" should not be locked for thread safety.
+    // It will be written only in alloc function. Other functions will read it.
+#   if TRALLOC_DEBUG_THREADS_CHILDREN == TRALLOC_SPINLOCK
+    pthread_spinlock_t children_status_lock;
+#   elif TRALLOC_DEBUG_THREADS_CHILDREN == TRALLOC_MUTEX
+    pthread_mutex_t children_status_lock;
+#   endif
 
-    #   endif
-    */
+#   endif
 
 #   endif
 
