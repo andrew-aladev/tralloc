@@ -17,9 +17,8 @@
 #endif
 
 
-const char * tralloc_get_string_for_extension ( tralloc_extensions extension );
-const char * tralloc_get_string_for_error     ( tralloc_error error );
-size_t       tralloc_predict_chunk_length     ( tralloc_extensions extensions );
+const char * tralloc_get_string_for_error ( tralloc_error error );
+size_t       tralloc_predict_chunk_length ( tralloc_extensions extensions );
 
 _TRALLOC_INLINE
 tralloc_context * _tralloc_get_context_from_chunk ( _tralloc_chunk * chunk )

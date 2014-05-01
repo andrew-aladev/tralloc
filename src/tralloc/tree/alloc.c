@@ -98,7 +98,7 @@ tralloc_error _tralloc_with_extensions_with_allocator ( tralloc_context * parent
 
 #   if defined(TRALLOC_REFERENCE)
     // Chunk can have both "TRALLOC_EXTENSION_REFERENCES" and "TRALLOC_EXTENSION_REFERENCE".
-    
+
     tralloc_bool have_references = extensions & TRALLOC_EXTENSION_REFERENCES;
     if ( have_references ) {
         extensions_length += sizeof ( _tralloc_references );
@@ -136,17 +136,6 @@ tralloc_error _tralloc_with_extensions_with_allocator ( tralloc_context * parent
     }
 #   endif
 
-#   if defined(TRALLOC_THREADS)
-    if ( parent_chunk != NULL ) {
-        if ( parent_chunk->extensions & TRALLOC_EXTENSION_LOCK_CHILDREN ) {
-            extensions |= TRALLOC_EXTENSION_LOCK_PARENT | TRALLOC_EXTENSION_LOCK_PREV | TRALLOC_EXTENSION_LOCK_NEXT;
-        }
-        if ( extensions & TRALLOC_EXTENSION_LOCK_CHILDREN ) {
-            extensions |= TRALLOC_EXTENSION_LOCK_FIRST_CHILD;
-        }
-    }
-#   endif
-
     size_t chunk_length = sizeof ( _tralloc_chunk ) + extensions_length;
     size_t total_length = chunk_length + length;
 
@@ -154,7 +143,7 @@ tralloc_error _tralloc_with_extensions_with_allocator ( tralloc_context * parent
     if ( have_pool_child ) {
         if ( !_tralloc_pool_can_alloc ( parent_pool, total_length ) ) {
             // "TRALLOC_EXTENSION_POOL_CHILD" should be disabled.
-            
+
             have_pool_child = TRALLOC_FALSE;
             extensions      &= ~ ( TRALLOC_EXTENSION_POOL_CHILD );
 

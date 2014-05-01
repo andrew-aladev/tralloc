@@ -59,6 +59,7 @@ enum {
     TRALLOC_ERROR_SPINLOCK_FAILED,
 
     TRALLOC_ERROR_NO_CHILDREN_LOCK,
+    TRALLOC_ERROR_NO_SUBTREE_LOCK,
 #   endif
 
 };
@@ -86,18 +87,14 @@ enum {
 #   endif
 
 #   if defined(TRALLOC_THREADS)
-    TRALLOC_EXTENSION_LOCK_PARENT      = 1 << 6,
-    TRALLOC_EXTENSION_LOCK_PREV        = 1 << 7,
-    TRALLOC_EXTENSION_LOCK_NEXT        = 1 << 8,
-    TRALLOC_EXTENSION_LOCK_FIRST_CHILD = 1 << 9,
-
-    TRALLOC_EXTENSION_LOCK_CHILDREN    = 1 << 10,
+    TRALLOC_EXTENSION_LOCK_SUBTREE  = 1 << 6,
+    TRALLOC_EXTENSION_LOCK_CHILDREN = 1 << 7,
 #   endif
 
 };
 #endif
 
-typedef uint16_t tralloc_extensions;
+typedef uint8_t tralloc_extensions;
 
 #if defined(TRALLOC_LENGTH)
 typedef struct _tralloc_length_type {
@@ -177,12 +174,12 @@ typedef struct _tralloc_pool_type {
 
 #if defined(TRALLOC_DEBUG) && defined(TRALLOC_THREADS)
 enum {
-    _TRALLOC_CHILDREN_NOT_USED,
-    _TRALLOC_CHILDREN_USED_BY_SINGLE_THREAD,
-    _TRALLOC_CHILDREN_USED_BY_MULTIPLE_THREADS
+    _TRALLOC_NOT_USED_BY_THREADS,
+    _TRALLOC_USED_BY_SINGLE_THREAD,
+    _TRALLOC_USED_BY_MULTIPLE_THREADS
 };
 
-typedef uint8_t _tralloc_children_status;
+typedef uint8_t _tralloc_thread_usage_status;
 #endif
 
 typedef struct _tralloc_chunk_type {
@@ -225,16 +222,19 @@ typedef struct _tralloc_chunk_type {
 
 #   if defined(TRALLOC_THREADS)
 
-    // "children_touched_by_thread" and "children_touched_by_multiple_threads" will be locked for thread safety by "children_lock".
-    pthread_t children_status_thread;
-    _tralloc_children_status children_status;
+    // "subtree_used_by_thread", "subtree_usage_status", "children_used_by_thread" and "children_usage_status" will be locked for thread safety by "thread_usage_lock".
+    pthread_t subtree_used_by_thread;
+    _tralloc_thread_usage_status subtree_usage_status;
+
+    pthread_t children_used_by_thread;
+    _tralloc_thread_usage_status children_usage_status;
 
     // "children_status_lock" should not be locked for thread safety.
     // It will be written only in alloc function. Other functions will read it.
 #   if TRALLOC_DEBUG_THREADS_CHILDREN == TRALLOC_SPINLOCK
-    pthread_spinlock_t children_status_lock;
+    pthread_spinlock_t thread_usage_lock;
 #   elif TRALLOC_DEBUG_THREADS_CHILDREN == TRALLOC_MUTEX
-    pthread_mutex_t children_status_lock;
+    pthread_mutex_t thread_usage_lock;
 #   endif
 
 #   endif

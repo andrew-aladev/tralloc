@@ -15,184 +15,184 @@ void * thread ( tralloc_context * current )
 
 tralloc_bool test_debug_threads_resize ( tralloc_context * ctx )
 {
-    tralloc_context * parent;
-    tralloc_context * next;
-    tralloc_context * current;
-    tralloc_context * prev;
-    tralloc_context * first_child;
-    if (
-        tralloc_new ( ctx, &parent )          != 0 ||
-        tralloc_new ( parent, &next )         != 0 ||
-        tralloc_new ( parent, &current )      != 0 ||
-        tralloc_new ( parent, &prev )         != 0 ||
-        tralloc_new ( current, &first_child ) != 0
-    ) {
-        return TRALLOC_FALSE;
-    }
-
-    void * result;
-    pthread_t thread_1;
-
-    if (
-        pthread_create ( &thread_1, NULL, &thread, current ) != 0 ||
-        pthread_join   ( thread_1, &result ) != 0 ||
+//     tralloc_context * parent;
+//     tralloc_context * next;
+//     tralloc_context * current;
+//     tralloc_context * prev;
+//     tralloc_context * first_child;
+//     if (
+//         tralloc_new ( ctx, &parent )          != 0 ||
+//         tralloc_new ( parent, &next )         != 0 ||
+//         tralloc_new ( parent, &current )      != 0 ||
+//         tralloc_new ( parent, &prev )         != 0 ||
+//         tralloc_new ( current, &first_child ) != 0
+//     ) {
+//         return TRALLOC_FALSE;
+//     }
+// 
+//     void * result;
+//     pthread_t thread_1;
+// 
+//     if (
+//         pthread_create ( &thread_1, NULL, &thread, current ) != 0 ||
+//         pthread_join   ( thread_1, &result ) != 0 ||
 //         ( tralloc_error ) ( ( uintptr_t ) result ) != TRALLOC_ERROR_NO_PARENT_LOCK ||
-        tralloc_free ( parent ) != 0
-    ) {
-        return TRALLOC_FALSE;
-    }
-
-    if (
-        tralloc_new ( ctx, &parent )  != 0 ||
-        tralloc_new ( parent, &next ) != 0 ||
-        tralloc_with_extensions_new ( parent, &current, TRALLOC_EXTENSION_LOCK_PARENT ) != 0 ||
-        tralloc_new ( parent, &prev )         != 0 ||
-        tralloc_new ( current, &first_child ) != 0
-    ) {
-        return TRALLOC_FALSE;
-    }
-
-    if (
-        pthread_create ( &thread_1, NULL, &thread, current ) != 0 ||
-        pthread_join   ( thread_1, &result ) != 0 ||
+//         tralloc_free ( parent ) != 0
+//     ) {
+//         return TRALLOC_FALSE;
+//     }
+// 
+//     if (
+//         tralloc_new ( ctx, &parent )  != 0 ||
+//         tralloc_new ( parent, &next ) != 0 ||
+//         tralloc_with_extensions_new ( parent, &current, TRALLOC_EXTENSION_LOCK_PARENT ) != 0 ||
+//         tralloc_new ( parent, &prev )         != 0 ||
+//         tralloc_new ( current, &first_child ) != 0
+//     ) {
+//         return TRALLOC_FALSE;
+//     }
+// 
+//     if (
+//         pthread_create ( &thread_1, NULL, &thread, current ) != 0 ||
+//         pthread_join   ( thread_1, &result ) != 0 ||
 //         ( tralloc_error ) ( ( uintptr_t ) result ) != TRALLOC_ERROR_NO_FIRST_CHILD_LOCK ||
-        tralloc_free ( parent ) != 0
-    ) {
-        return TRALLOC_FALSE;
-    }
-
-    if (
-        tralloc_with_extensions_new ( ctx, &parent, TRALLOC_EXTENSION_LOCK_FIRST_CHILD ) != 0 ||
-        tralloc_new ( parent, &next ) != 0 ||
-        tralloc_with_extensions_new ( parent, &current, TRALLOC_EXTENSION_LOCK_PARENT ) != 0 ||
-        tralloc_new ( parent, &prev )         != 0 ||
-        tralloc_new ( current, &first_child ) != 0
-    ) {
-        return TRALLOC_FALSE;
-    }
-
-    if (
-        pthread_create ( &thread_1, NULL, &thread, current ) != 0 ||
-        pthread_join   ( thread_1, &result ) != 0 ||
+//         tralloc_free ( parent ) != 0
+//     ) {
+//         return TRALLOC_FALSE;
+//     }
+// 
+//     if (
+//         tralloc_with_extensions_new ( ctx, &parent, TRALLOC_EXTENSION_LOCK_FIRST_CHILD ) != 0 ||
+//         tralloc_new ( parent, &next ) != 0 ||
+//         tralloc_with_extensions_new ( parent, &current, TRALLOC_EXTENSION_LOCK_PARENT ) != 0 ||
+//         tralloc_new ( parent, &prev )         != 0 ||
+//         tralloc_new ( current, &first_child ) != 0
+//     ) {
+//         return TRALLOC_FALSE;
+//     }
+// 
+//     if (
+//         pthread_create ( &thread_1, NULL, &thread, current ) != 0 ||
+//         pthread_join   ( thread_1, &result ) != 0 ||
 //         ( tralloc_error ) ( ( uintptr_t ) result ) != TRALLOC_ERROR_NO_PREV_LOCK ||
-        tralloc_free ( parent ) != 0
-    ) {
-        return TRALLOC_FALSE;
-    }
-
-    if (
-        tralloc_with_extensions_new ( ctx, &parent, TRALLOC_EXTENSION_LOCK_FIRST_CHILD ) != 0 ||
-        tralloc_new ( parent, &next ) != 0 ||
-        tralloc_with_extensions_new ( parent, &current, TRALLOC_EXTENSION_LOCK_PARENT | TRALLOC_EXTENSION_LOCK_PREV ) != 0 ||
-        tralloc_new ( parent, &prev )         != 0 ||
-        tralloc_new ( current, &first_child ) != 0
-    ) {
-        return TRALLOC_FALSE;
-    }
-
-    if (
-        pthread_create ( &thread_1, NULL, &thread, current ) != 0 ||
-        pthread_join   ( thread_1, &result ) != 0 ||
+//         tralloc_free ( parent ) != 0
+//     ) {
+//         return TRALLOC_FALSE;
+//     }
+// 
+//     if (
+//         tralloc_with_extensions_new ( ctx, &parent, TRALLOC_EXTENSION_LOCK_FIRST_CHILD ) != 0 ||
+//         tralloc_new ( parent, &next ) != 0 ||
+//         tralloc_with_extensions_new ( parent, &current, TRALLOC_EXTENSION_LOCK_PARENT | TRALLOC_EXTENSION_LOCK_PREV ) != 0 ||
+//         tralloc_new ( parent, &prev )         != 0 ||
+//         tralloc_new ( current, &first_child ) != 0
+//     ) {
+//         return TRALLOC_FALSE;
+//     }
+// 
+//     if (
+//         pthread_create ( &thread_1, NULL, &thread, current ) != 0 ||
+//         pthread_join   ( thread_1, &result ) != 0 ||
 //         ( tralloc_error ) ( ( uintptr_t ) result ) != TRALLOC_ERROR_NO_NEXT_LOCK ||
-        tralloc_free ( parent ) != 0
-    ) {
-        return TRALLOC_FALSE;
-    }
-
-    if (
-        tralloc_with_extensions_new ( ctx, &parent, TRALLOC_EXTENSION_LOCK_FIRST_CHILD ) != 0 ||
-        tralloc_new ( parent, &next ) != 0 ||
-        tralloc_with_extensions_new ( parent, &current, TRALLOC_EXTENSION_LOCK_PARENT | TRALLOC_EXTENSION_LOCK_PREV ) != 0 ||
-        tralloc_with_extensions_new ( parent, &prev, TRALLOC_EXTENSION_LOCK_NEXT ) != 0 ||
-        tralloc_new ( current, &first_child ) != 0
-    ) {
-        return TRALLOC_FALSE;
-    }
-
-    if (
-        pthread_create ( &thread_1, NULL, &thread, current ) != 0 ||
-        pthread_join   ( thread_1, &result ) != 0 ||
+//         tralloc_free ( parent ) != 0
+//     ) {
+//         return TRALLOC_FALSE;
+//     }
+// 
+//     if (
+//         tralloc_with_extensions_new ( ctx, &parent, TRALLOC_EXTENSION_LOCK_FIRST_CHILD ) != 0 ||
+//         tralloc_new ( parent, &next ) != 0 ||
+//         tralloc_with_extensions_new ( parent, &current, TRALLOC_EXTENSION_LOCK_PARENT | TRALLOC_EXTENSION_LOCK_PREV ) != 0 ||
+//         tralloc_with_extensions_new ( parent, &prev, TRALLOC_EXTENSION_LOCK_NEXT ) != 0 ||
+//         tralloc_new ( current, &first_child ) != 0
+//     ) {
+//         return TRALLOC_FALSE;
+//     }
+// 
+//     if (
+//         pthread_create ( &thread_1, NULL, &thread, current ) != 0 ||
+//         pthread_join   ( thread_1, &result ) != 0 ||
 //         ( tralloc_error ) ( ( uintptr_t ) result ) != TRALLOC_ERROR_NO_NEXT_LOCK ||
-        tralloc_free ( parent ) != 0
-    ) {
-        return TRALLOC_FALSE;
-    }
-
-    if (
-        tralloc_with_extensions_new ( ctx, &parent, TRALLOC_EXTENSION_LOCK_FIRST_CHILD ) != 0 ||
-        tralloc_new ( parent, &next ) != 0 ||
-        tralloc_with_extensions_new ( parent, &current, TRALLOC_EXTENSION_LOCK_PARENT | TRALLOC_EXTENSION_LOCK_PREV | TRALLOC_EXTENSION_LOCK_NEXT ) != 0 ||
-        tralloc_with_extensions_new ( parent, &prev, TRALLOC_EXTENSION_LOCK_NEXT ) != 0 ||
-        tralloc_new ( current, &first_child ) != 0
-    ) {
-        return TRALLOC_FALSE;
-    }
-
-    if (
-        pthread_create ( &thread_1, NULL, &thread, current ) != 0 ||
-        pthread_join   ( thread_1, &result ) != 0 ||
+//         tralloc_free ( parent ) != 0
+//     ) {
+//         return TRALLOC_FALSE;
+//     }
+// 
+//     if (
+//         tralloc_with_extensions_new ( ctx, &parent, TRALLOC_EXTENSION_LOCK_FIRST_CHILD ) != 0 ||
+//         tralloc_new ( parent, &next ) != 0 ||
+//         tralloc_with_extensions_new ( parent, &current, TRALLOC_EXTENSION_LOCK_PARENT | TRALLOC_EXTENSION_LOCK_PREV | TRALLOC_EXTENSION_LOCK_NEXT ) != 0 ||
+//         tralloc_with_extensions_new ( parent, &prev, TRALLOC_EXTENSION_LOCK_NEXT ) != 0 ||
+//         tralloc_new ( current, &first_child ) != 0
+//     ) {
+//         return TRALLOC_FALSE;
+//     }
+// 
+//     if (
+//         pthread_create ( &thread_1, NULL, &thread, current ) != 0 ||
+//         pthread_join   ( thread_1, &result ) != 0 ||
 //         ( tralloc_error ) ( ( uintptr_t ) result ) != TRALLOC_ERROR_NO_PREV_LOCK ||
-        tralloc_free ( parent ) != 0
-    ) {
-        return TRALLOC_FALSE;
-    }
-
-    if (
-        tralloc_with_extensions_new ( ctx, &parent, TRALLOC_EXTENSION_LOCK_FIRST_CHILD ) != 0 ||
-        tralloc_with_extensions_new ( parent, &next, TRALLOC_EXTENSION_LOCK_PREV ) != 0 ||
-        tralloc_with_extensions_new ( parent, &current, TRALLOC_EXTENSION_LOCK_PARENT | TRALLOC_EXTENSION_LOCK_PREV | TRALLOC_EXTENSION_LOCK_NEXT ) != 0 ||
-        tralloc_with_extensions_new ( parent, &prev, TRALLOC_EXTENSION_LOCK_NEXT ) != 0 ||
-        tralloc_new ( current, &first_child ) != 0
-    ) {
-        return TRALLOC_FALSE;
-    }
-
-    if (
-        pthread_create ( &thread_1, NULL, &thread, current ) != 0 ||
-        pthread_join   ( thread_1, &result ) != 0 ||
+//         tralloc_free ( parent ) != 0
+//     ) {
+//         return TRALLOC_FALSE;
+//     }
+// 
+//     if (
+//         tralloc_with_extensions_new ( ctx, &parent, TRALLOC_EXTENSION_LOCK_FIRST_CHILD ) != 0 ||
+//         tralloc_with_extensions_new ( parent, &next, TRALLOC_EXTENSION_LOCK_PREV ) != 0 ||
+//         tralloc_with_extensions_new ( parent, &current, TRALLOC_EXTENSION_LOCK_PARENT | TRALLOC_EXTENSION_LOCK_PREV | TRALLOC_EXTENSION_LOCK_NEXT ) != 0 ||
+//         tralloc_with_extensions_new ( parent, &prev, TRALLOC_EXTENSION_LOCK_NEXT ) != 0 ||
+//         tralloc_new ( current, &first_child ) != 0
+//     ) {
+//         return TRALLOC_FALSE;
+//     }
+// 
+//     if (
+//         pthread_create ( &thread_1, NULL, &thread, current ) != 0 ||
+//         pthread_join   ( thread_1, &result ) != 0 ||
 //         ( tralloc_error ) ( ( uintptr_t ) result ) != TRALLOC_ERROR_NO_FIRST_CHILD_LOCK ||
-        tralloc_free ( parent ) != 0
-    ) {
-        return TRALLOC_FALSE;
-    }
-
-    if (
-        tralloc_with_extensions_new ( ctx, &parent, TRALLOC_EXTENSION_LOCK_FIRST_CHILD ) != 0 ||
-        tralloc_with_extensions_new ( parent, &next, TRALLOC_EXTENSION_LOCK_PREV ) != 0 ||
-        tralloc_with_extensions_new ( parent, &current, TRALLOC_EXTENSION_LOCK_PARENT | TRALLOC_EXTENSION_LOCK_PREV | TRALLOC_EXTENSION_LOCK_NEXT | TRALLOC_EXTENSION_LOCK_FIRST_CHILD ) != 0 ||
-        tralloc_with_extensions_new ( parent, &prev, TRALLOC_EXTENSION_LOCK_NEXT ) != 0 ||
-        tralloc_new ( current, &first_child ) != 0
-    ) {
-        return TRALLOC_FALSE;
-    }
-
-    if (
-        pthread_create ( &thread_1, NULL, &thread, current ) != 0 ||
-        pthread_join   ( thread_1, &result ) != 0 ||
+//         tralloc_free ( parent ) != 0
+//     ) {
+//         return TRALLOC_FALSE;
+//     }
+// 
+//     if (
+//         tralloc_with_extensions_new ( ctx, &parent, TRALLOC_EXTENSION_LOCK_FIRST_CHILD ) != 0 ||
+//         tralloc_with_extensions_new ( parent, &next, TRALLOC_EXTENSION_LOCK_PREV ) != 0 ||
+//         tralloc_with_extensions_new ( parent, &current, TRALLOC_EXTENSION_LOCK_PARENT | TRALLOC_EXTENSION_LOCK_PREV | TRALLOC_EXTENSION_LOCK_NEXT | TRALLOC_EXTENSION_LOCK_FIRST_CHILD ) != 0 ||
+//         tralloc_with_extensions_new ( parent, &prev, TRALLOC_EXTENSION_LOCK_NEXT ) != 0 ||
+//         tralloc_new ( current, &first_child ) != 0
+//     ) {
+//         return TRALLOC_FALSE;
+//     }
+// 
+//     if (
+//         pthread_create ( &thread_1, NULL, &thread, current ) != 0 ||
+//         pthread_join   ( thread_1, &result ) != 0 ||
 //         ( tralloc_error ) ( ( uintptr_t ) result ) != TRALLOC_ERROR_NO_PARENT_LOCK ||
-        tralloc_free ( parent ) != 0
-    ) {
-        return TRALLOC_FALSE;
-    }
-
-    if (
-        tralloc_with_extensions_new ( ctx, &parent, TRALLOC_EXTENSION_LOCK_FIRST_CHILD ) != 0 ||
-        tralloc_with_extensions_new ( parent, &next, TRALLOC_EXTENSION_LOCK_PREV ) != 0 ||
-        tralloc_with_extensions_new ( parent, &current, TRALLOC_EXTENSION_LOCK_PARENT | TRALLOC_EXTENSION_LOCK_PREV | TRALLOC_EXTENSION_LOCK_NEXT | TRALLOC_EXTENSION_LOCK_FIRST_CHILD ) != 0 ||
-        tralloc_with_extensions_new ( parent, &prev, TRALLOC_EXTENSION_LOCK_NEXT ) != 0 ||
-        tralloc_with_extensions_new ( current, &first_child, TRALLOC_EXTENSION_LOCK_PARENT ) != 0
-    ) {
-        return TRALLOC_FALSE;
-    }
-
-    if (
-        pthread_create ( &thread_1, NULL, &thread, current ) != 0 ||
-        pthread_join   ( thread_1, &result ) != 0 ||
-        ( tralloc_error ) ( ( uintptr_t ) result ) != 0 ||
-        tralloc_free ( parent ) != 0
-    ) {
-        return TRALLOC_FALSE;
-    }
+//         tralloc_free ( parent ) != 0
+//     ) {
+//         return TRALLOC_FALSE;
+//     }
+// 
+//     if (
+//         tralloc_with_extensions_new ( ctx, &parent, TRALLOC_EXTENSION_LOCK_FIRST_CHILD ) != 0 ||
+//         tralloc_with_extensions_new ( parent, &next, TRALLOC_EXTENSION_LOCK_PREV ) != 0 ||
+//         tralloc_with_extensions_new ( parent, &current, TRALLOC_EXTENSION_LOCK_PARENT | TRALLOC_EXTENSION_LOCK_PREV | TRALLOC_EXTENSION_LOCK_NEXT | TRALLOC_EXTENSION_LOCK_FIRST_CHILD ) != 0 ||
+//         tralloc_with_extensions_new ( parent, &prev, TRALLOC_EXTENSION_LOCK_NEXT ) != 0 ||
+//         tralloc_with_extensions_new ( current, &first_child, TRALLOC_EXTENSION_LOCK_PARENT ) != 0
+//     ) {
+//         return TRALLOC_FALSE;
+//     }
+// 
+//     if (
+//         pthread_create ( &thread_1, NULL, &thread, current ) != 0 ||
+//         pthread_join   ( thread_1, &result ) != 0 ||
+//         ( tralloc_error ) ( ( uintptr_t ) result ) != 0 ||
+//         tralloc_free ( parent ) != 0
+//     ) {
+//         return TRALLOC_FALSE;
+//     }
 
     return TRALLOC_TRUE;
 }

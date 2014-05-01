@@ -36,7 +36,8 @@ static const char _ERROR_UTILS_BUFFER_OVERFLOW [] = "TRALLOC_ERROR_UTILS_BUFFER_
 static const char _ERROR_MUTEX_FAILED    [] = "TRALLOC_ERROR_MUTEX_FAILED";
 static const char _ERROR_SPINLOCK_FAILED [] = "TRALLOC_ERROR_SPINLOCK_FAILED";
 
-static const char _ERROR_NO_CHILDREN_LOCK [] = "TRALLOC_ERROR_NO_CHILDREN_LOCK";
+static const char _ERROR_NO_SUBTREE_LOCK  [] = "chunk should have TRALLOC_EXTENSION_LOCK_SUBTREE";
+static const char _ERROR_NO_CHILDREN_LOCK [] = "chunk should have TRALLOC_EXTENSION_LOCK_CHILDREN";
 
 #endif
 
@@ -86,83 +87,13 @@ const char * tralloc_get_string_for_error ( tralloc_error error )
 
     case TRALLOC_ERROR_NO_CHILDREN_LOCK:
         return _ERROR_NO_CHILDREN_LOCK;
+    case TRALLOC_ERROR_NO_SUBTREE_LOCK:
+        return _ERROR_NO_SUBTREE_LOCK;
 #   endif
 
     default:
         return NULL;
     }
-}
-
-#if defined(TRALLOC_LENGTH)
-static const char _EXTENSION_LENGTH [] = "TRALLOC_EXTENSION_LENGTH";
-#endif
-
-#if defined(TRALLOC_DESTRUCTOR)
-static const char _EXTENSION_DESTRUCTORS [] = "TRALLOC_EXTENSION_DESTRUCTORS";
-#endif
-
-#if defined(TRALLOC_REFERENCE)
-static const char _EXTENSION_REFERENCES [] = "TRALLOC_EXTENSION_REFERENCES";
-static const char _EXTENSION_REFERENCE  [] = "TRALLOC_EXTENSION_REFERENCE";
-#endif
-
-#if defined(TRALLOC_POOL)
-static const char _EXTENSION_POOL       [] = "TRALLOC_EXTENSION_POOL";
-static const char _EXTENSION_POOL_CHILD [] = "TRALLOC_EXTENSION_POOL_CHILD";
-#endif
-
-#if defined(TRALLOC_THREADS)
-static const char _EXTENSION_LOCK_PARENT      [] = "TRALLOC_EXTENSION_LOCK_PARENT";
-static const char _EXTENSION_LOCK_PREV        [] = "TRALLOC_EXTENSION_LOCK_PREV";
-static const char _EXTENSION_LOCK_NEXT        [] = "TRALLOC_EXTENSION_LOCK_NEXT";
-static const char _EXTENSION_LOCK_FIRST_CHILD [] = "TRALLOC_EXTENSION_LOCK_FIRST_CHILD";
-#endif
-
-const char * tralloc_get_string_for_extension ( tralloc_extensions extension )
-{
-
-#if defined(TRALLOC_LENGTH)
-    if ( extension & TRALLOC_EXTENSION_LENGTH ) {
-        return _EXTENSION_LENGTH;
-    }
-#endif
-
-#if defined(TRALLOC_DESTRUCTOR)
-    if ( extension & TRALLOC_EXTENSION_DESTRUCTORS ) {
-        return _EXTENSION_DESTRUCTORS;
-    }
-#endif
-
-#if defined(TRALLOC_REFERENCE)
-    if ( extension & TRALLOC_EXTENSION_REFERENCE ) {
-        return _EXTENSION_REFERENCE;
-    }
-    if ( extension & TRALLOC_EXTENSION_REFERENCES ) {
-        return _EXTENSION_REFERENCES;
-    }
-#endif
-
-#if defined(TRALLOC_POOL)
-    if ( extension & TRALLOC_EXTENSION_POOL ) {
-        return _EXTENSION_POOL;
-    } else if ( extension & TRALLOC_EXTENSION_POOL_CHILD ) {
-        return _EXTENSION_POOL_CHILD;
-    }
-#endif
-
-#if defined(TRALLOC_THREADS)
-    if ( extension & TRALLOC_EXTENSION_LOCK_PARENT ) {
-        return _EXTENSION_LOCK_PARENT;
-    } else if ( extension & TRALLOC_EXTENSION_LOCK_PREV ) {
-        return _EXTENSION_LOCK_PREV;
-    } else if ( extension & TRALLOC_EXTENSION_LOCK_NEXT ) {
-        return _EXTENSION_LOCK_NEXT;
-    } else if ( extension & TRALLOC_EXTENSION_LOCK_FIRST_CHILD ) {
-        return _EXTENSION_LOCK_FIRST_CHILD;
-    }
-#endif
-
-    return NULL;
 }
 
 size_t tralloc_predict_chunk_length ( tralloc_extensions extensions )
