@@ -126,6 +126,9 @@ tralloc_error _check_parent_chunk ( _tralloc_chunk * parent_chunk )
 
 tralloc_error _tralloc_debug_threads_before_add_chunk ( _tralloc_chunk * parent_chunk, tralloc_extensions _TRALLOC_UNUSED ( extensions ) )
 {
+    // Add operation can not create threads competition at the same chunk, because it returns pointer after operation.
+    // So chunk should not be checked.
+
     if ( parent_chunk != NULL ) {
         // You can have chunk, that wants to attach to "chunk->parent" from thread_1.
         // Other chunk from "chunk->parent"'s list wants to process other operation from thread_2.
@@ -188,7 +191,7 @@ tralloc_error _tralloc_debug_threads_before_move_chunk ( _tralloc_chunk * chunk 
         // In this case "chunk->parent" should have children lock.
         return _check_parent_chunk ( chunk->parent );
     }
-    return 0;
+    return _check_chunk ( chunk );
 }
 
 tralloc_error _tralloc_debug_threads_after_move_chunk ( _tralloc_chunk * chunk )
