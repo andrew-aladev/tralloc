@@ -33,7 +33,7 @@ tralloc_error file_destructor ( tralloc_context * context, void * _TRALLOC_UNUSE
 int main ()
 {
     tralloc_context * ctx;
-    if ( tralloc_new ( NULL, &ctx ) != 0 ) {
+    if ( tralloc_empty ( NULL, &ctx ) != 0 ) {
         return 1;
     }
     int * number;

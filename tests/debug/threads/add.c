@@ -19,7 +19,7 @@ void * thread ( void * args )
     tralloc_context * test;
     tralloc_error result;
     if (
-        ( result = tralloc_with_extensions_new ( arguments->ctx, &test, arguments->extensions ) ) != 0 ||
+        ( result = tralloc_empty_with_extensions ( arguments->ctx, &test, arguments->extensions ) ) != 0 ||
         ( result = tralloc_free ( test ) ) != 0
     ) {
         return ( void * ) ( ( uintptr_t ) result );

@@ -138,7 +138,7 @@ tralloc_bool test_basic_add ( test_basic_tree * tr )
     tr->data_7[0] = 0.01234;
     tr->data_7[1] = 0.56789;
 
-    if ( tralloc_new ( tr->data_7, ( tralloc_context ** ) &tr->trivium ) != 0 ) {
+    if ( tralloc_empty ( tr->data_7, ( tralloc_context ** ) &tr->trivium ) != 0 ) {
         return TRALLOC_FALSE;
     }
 

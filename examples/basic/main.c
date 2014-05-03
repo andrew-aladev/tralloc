@@ -13,7 +13,7 @@
 int main ()
 {
     tralloc_context * ctx;
-    if ( tralloc_new ( NULL, &ctx ) != 0 ) {
+    if ( tralloc_empty ( NULL, &ctx ) != 0 ) {
         return 1;
     }
     int16_t * numbers;

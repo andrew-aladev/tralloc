@@ -130,7 +130,7 @@ tralloc_bool test_reference_add ( test_reference_tree * tr )
     tr->data_3[2] = 'e';
     tr->data_3[3] = 'r';
 
-    if ( tralloc_with_extensions_new ( tr->data_3, ( tralloc_context ** ) &tr->shared_1, TRALLOC_EXTENSION_REFERENCE ) != 0 ) {
+    if ( tralloc_empty_with_extensions ( tr->data_3, ( tralloc_context ** ) &tr->shared_1, TRALLOC_EXTENSION_REFERENCE ) != 0 ) {
         return TRALLOC_FALSE;
     }
 
@@ -143,7 +143,7 @@ tralloc_bool test_reference_add ( test_reference_tree * tr )
     tr->common_1[0] = -45;
     tr->common_1[1] = 56;
 
-    if ( tralloc_with_extensions_new ( tr->data_2, ( tralloc_context ** ) &tr->common_2, TRALLOC_EXTENSION_REFERENCE ) != 0 ) {
+    if ( tralloc_empty_with_extensions ( tr->data_2, ( tralloc_context ** ) &tr->common_2, TRALLOC_EXTENSION_REFERENCE ) != 0 ) {
         return TRALLOC_FALSE;
     }
 

@@ -30,7 +30,7 @@ tralloc_bool test_length_common ( tralloc_context * ctx )
     size_t length;
     tralloc_context * empty;
     if (
-        tralloc_with_extensions_new ( ctx, &empty, TRALLOC_EXTENSION_LENGTH ) != 0 ||
+        tralloc_empty_with_extensions ( ctx, &empty, TRALLOC_EXTENSION_LENGTH ) != 0 ||
         tralloc_get_length ( empty, &length ) != 0 ||
         length != 0
     ) {

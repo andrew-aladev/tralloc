@@ -41,24 +41,24 @@ tralloc_error tralloc_zero ( const char * file, size_t line, tralloc_context * p
 }
 
 _TRALLOC_INLINE
-tralloc_error tralloc_new ( const char * file, size_t line, tralloc_context * parent_context, tralloc_context ** child_context )
+tralloc_error tralloc_empty ( const char * file, size_t line, tralloc_context * parent_context, tralloc_context ** child_context )
 {
     return tralloc ( file, line, parent_context, child_context, 0 );
 }
 
 _TRALLOC_INLINE
-tralloc_error tralloc_with_extensions_new ( const char * file, size_t line, tralloc_context * parent_context, tralloc_context ** child_context, tralloc_extensions extensions )
+tralloc_error tralloc_empty_with_extensions ( const char * file, size_t line, tralloc_context * parent_context, tralloc_context ** child_context, tralloc_extensions extensions )
 {
     return tralloc_with_extensions ( file, line, parent_context, child_context, extensions, 0 );
 }
 
 #if !defined(_TRALLOC_TREE_ALLOC_INCLUDED_FROM_OBJECT)
-#   define tralloc_with_extensions(...)      tralloc_with_extensions      (__FILE__, __LINE__, __VA_ARGS__)
-#   define tralloc(...)                      tralloc                      (__FILE__, __LINE__, __VA_ARGS__)
-#   define tralloc_zero_with_extensions(...) tralloc_zero_with_extensions (__FILE__, __LINE__, __VA_ARGS__)
-#   define tralloc_zero(...)                 tralloc_zero                 (__FILE__, __LINE__, __VA_ARGS__)
-#   define tralloc_new(...)                  tralloc_new                  (__FILE__, __LINE__, __VA_ARGS__)
-#   define tralloc_with_extensions_new(...)  tralloc_with_extensions_new  (__FILE__, __LINE__, __VA_ARGS__)
+#   define tralloc_with_extensions(...)       tralloc_with_extensions       (__FILE__, __LINE__, __VA_ARGS__)
+#   define tralloc(...)                       tralloc                       (__FILE__, __LINE__, __VA_ARGS__)
+#   define tralloc_zero_with_extensions(...)  tralloc_zero_with_extensions  (__FILE__, __LINE__, __VA_ARGS__)
+#   define tralloc_zero(...)                  tralloc_zero                  (__FILE__, __LINE__, __VA_ARGS__)
+#   define tralloc_empty(...)                 tralloc_empty                 (__FILE__, __LINE__, __VA_ARGS__)
+#   define tralloc_empty_with_extensions(...) tralloc_empty_with_extensions (__FILE__, __LINE__, __VA_ARGS__)
 #endif
 
 #else
@@ -80,13 +80,13 @@ tralloc_error tralloc_zero ( tralloc_context * parent_context, tralloc_context *
 }
 
 _TRALLOC_INLINE
-tralloc_error tralloc_new ( tralloc_context * parent_context, tralloc_context ** child_context )
+tralloc_error tralloc_empty ( tralloc_context * parent_context, tralloc_context ** child_context )
 {
     return tralloc ( parent_context, child_context, 0 );
 }
 
 _TRALLOC_INLINE
-tralloc_error tralloc_with_extensions_new ( tralloc_context * parent_context, tralloc_context ** child_context, tralloc_extensions extensions )
+tralloc_error tralloc_empty_with_extensions ( tralloc_context * parent_context, tralloc_context ** child_context, tralloc_extensions extensions )
 {
     return tralloc_with_extensions ( parent_context, child_context, extensions, 0 );
 }

@@ -11,7 +11,7 @@ tralloc_bool test_pool_errors ( tralloc_context * ctx )
 {
     tralloc_context * pool;
     if (
-        tralloc_with_extensions_new ( ctx, &pool, TRALLOC_EXTENSION_POOL ) != 0 ||
+        tralloc_empty_with_extensions ( ctx, &pool, TRALLOC_EXTENSION_POOL ) != 0 ||
         tralloc_realloc ( &pool, 1 ) != TRALLOC_ERROR_POOL_CANT_BE_REALLOCATED ||
         tralloc_free ( pool ) != 0
     ) {

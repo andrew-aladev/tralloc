@@ -10,18 +10,18 @@
 tralloc_bool test_basic_errors ( tralloc_context * ctx )
 {
     if (
-        tralloc      ( NULL, NULL, 0 ) != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL ||
-        tralloc_zero ( NULL, NULL, 0 ) != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL ||
-        tralloc_new  ( NULL, NULL )    != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL
+        tralloc       ( NULL, NULL, 0 ) != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL ||
+        tralloc_zero  ( NULL, NULL, 0 ) != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL ||
+        tralloc_empty ( NULL, NULL )    != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL
     ) {
         return TRALLOC_FALSE;
     }
 
 #   if defined(TRALLOC_EXTENSIONS)
     if (
-        tralloc_with_extensions      ( NULL, NULL, 0, 0 ) != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL ||
-        tralloc_zero_with_extensions ( NULL, NULL, 0, 0 ) != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL ||
-        tralloc_with_extensions_new  ( NULL, NULL, 0 )    != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL
+        tralloc_with_extensions       ( NULL, NULL, 0, 0 ) != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL ||
+        tralloc_zero_with_extensions  ( NULL, NULL, 0, 0 ) != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL ||
+        tralloc_empty_with_extensions ( NULL, NULL, 0 )    != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL
     ) {
         return TRALLOC_FALSE;
     }
@@ -36,11 +36,11 @@ tralloc_bool test_basic_errors ( tralloc_context * ctx )
 
     tralloc_context * test;
     if (
-        tralloc_new  ( ctx, &test ) != 0 ||
-        tralloc_move ( test, ctx )  != TRALLOC_ERROR_CHILD_HAS_SAME_PARENT ||
-        tralloc_move ( test, NULL ) != 0 ||
-        tralloc_move ( test, NULL ) != TRALLOC_ERROR_CHILD_HAS_SAME_PARENT ||
-        tralloc_move ( test, ctx )  != 0
+        tralloc_empty ( ctx, &test ) != 0 ||
+        tralloc_move  ( test, ctx )  != TRALLOC_ERROR_CHILD_HAS_SAME_PARENT ||
+        tralloc_move  ( test, NULL ) != 0 ||
+        tralloc_move  ( test, NULL ) != TRALLOC_ERROR_CHILD_HAS_SAME_PARENT ||
+        tralloc_move  ( test, ctx )  != 0
     ) {
         return TRALLOC_FALSE;
     }

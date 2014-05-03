@@ -12,7 +12,7 @@ static
 tralloc_bool test_memory_overflow ( tralloc_context * ctx )
 {
     tralloc_context * empty_pool_data;
-    if ( tralloc_with_extensions_new ( ctx, &empty_pool_data, TRALLOC_EXTENSION_POOL ) != 0 ) {
+    if ( tralloc_empty_with_extensions ( ctx, &empty_pool_data, TRALLOC_EXTENSION_POOL ) != 0 ) {
         return TRALLOC_FALSE;
     }
     _tralloc_chunk * empty_pool_chunk = _tralloc_get_chunk_from_context ( empty_pool_data );
@@ -31,7 +31,7 @@ tralloc_bool test_memory_overflow ( tralloc_context * ctx )
     }
 
     tralloc_context * empty_data;
-    if ( tralloc_new ( empty_pool_data, &empty_data ) != 0 ) {
+    if ( tralloc_empty ( empty_pool_data, &empty_data ) != 0 ) {
         return TRALLOC_FALSE;
     }
     _tralloc_chunk * empty_data_chunk = _tralloc_get_chunk_from_context ( empty_data );
@@ -212,7 +212,7 @@ tralloc_bool test_normal ( tralloc_context * ctx )
     tralloc_context * new_ctx, * pool_data;
     uint8_t * data_1, * data_2;
     if (
-        tralloc_new ( ctx, &new_ctx ) != 0 ||
+        tralloc_empty ( ctx, &new_ctx ) != 0 ||
         tralloc_with_extensions ( new_ctx, &pool_data, TRALLOC_EXTENSION_POOL, pool_data_length ) != 0 ||
         tralloc ( pool_data, ( tralloc_context ** ) &data_1, sizeof ( uint8_t ) * 5 ) != 0 ||
         tralloc ( pool_data, ( tralloc_context ** ) &data_2, sizeof ( uint8_t ) * 3 ) != 0

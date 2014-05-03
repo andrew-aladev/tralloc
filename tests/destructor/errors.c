@@ -22,7 +22,7 @@ tralloc_bool test_destructor_errors ( tralloc_context * ctx )
     }
 
     tralloc_context * test;
-    if ( tralloc_new ( ctx, &test ) != 0 ) {
+    if ( tralloc_empty ( ctx, &test ) != 0 ) {
         return TRALLOC_FALSE;
     }
 

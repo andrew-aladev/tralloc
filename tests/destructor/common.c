@@ -80,7 +80,7 @@ tralloc_bool test_destructor_common ( tralloc_context * ctx )
     char * text_03;
     char * text_04;
     if (
-        tralloc_with_extensions_new    ( ctx,     &strings, TRALLOC_EXTENSION_DESTRUCTORS )                 != 0 ||
+        tralloc_empty_with_extensions  ( ctx,     &strings, TRALLOC_EXTENSION_DESTRUCTORS )                 != 0 ||
         tralloc_strdup_with_extensions ( strings, &text_01, TRALLOC_EXTENSION_DESTRUCTORS, "test text 01" ) != 0 ||
         tralloc_strdup_with_extensions ( strings, &text_02, TRALLOC_EXTENSION_DESTRUCTORS, "test text 02" ) != 0 ||
         tralloc_strdup_with_extensions ( strings, &text_03, TRALLOC_EXTENSION_DESTRUCTORS, "test text 03" ) != 0 ||

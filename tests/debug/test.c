@@ -14,7 +14,7 @@
 int test_debug ( tralloc_context * ctx )
 {
     tralloc_context * root;
-    if ( tralloc_new ( ctx, &root ) != 0 ) {
+    if ( tralloc_empty ( ctx, &root ) != 0 ) {
         return 1;
     }
     if ( !test_debug_add ( root ) ) {
