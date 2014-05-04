@@ -121,13 +121,6 @@ tralloc_error _free_chunk ( _tralloc_chunk * chunk )
     }
 #   endif
 
-#   if defined(TRALLOC_DEBUG)
-    result = _tralloc_debug_after_free_chunk ( chunk );
-    if ( result != 0 ) {
-        error = result;
-    }
-#   endif
-
 #   if defined(TRALLOC_POOL)
     if ( have_pool_child ) {
         return error;

@@ -147,6 +147,10 @@ tralloc_error _tralloc_debug_after_move_chunk ( _tralloc_chunk * chunk, _tralloc
 
 tralloc_error _tralloc_debug_before_free_chunk ( _tralloc_chunk * chunk )
 {
+    if ( chunk->initialized_in_file != NULL ) {
+        free ( chunk->initialized_in_file );
+    }
+
     tralloc_error result, error = 0;
 
 #   if defined(TRALLOC_THREADS)
@@ -157,29 +161,6 @@ tralloc_error _tralloc_debug_before_free_chunk ( _tralloc_chunk * chunk )
 #   endif
 
     result = _tralloc_debug_event_before_free_chunk ( chunk );
-    if ( result != 0 ) {
-        error = result;
-    }
-
-    return error;
-}
-
-tralloc_error _tralloc_debug_after_free_chunk ( _tralloc_chunk * chunk )
-{
-    if ( chunk->initialized_in_file != NULL ) {
-        free ( chunk->initialized_in_file );
-    }
-
-    tralloc_error result, error = 0;
-
-#   if defined(TRALLOC_THREADS)
-    result = _tralloc_debug_threads_after_free_chunk ( chunk );
-    if ( result != 0 ) {
-        error = result;
-    }
-#   endif
-
-    result = _tralloc_debug_event_after_free_chunk ( chunk );
     if ( result != 0 ) {
         error = result;
     }
@@ -258,6 +239,3 @@ tralloc_error _tralloc_debug_set_length ( _tralloc_chunk * chunk, size_t length 
 
     return 0;
 }
-
-
-

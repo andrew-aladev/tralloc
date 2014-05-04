@@ -56,7 +56,7 @@ tralloc_bool test_debug_resize ( tralloc_context * ctx )
     malloc_dynarr * tralloc_history = malloc_history();
     if (
         tralloc_history == NULL ||
-        _tralloc_debug_set_callbacks ( NULL, NULL, NULL, after_resize, NULL, NULL, NULL, NULL ) != 0
+        _tralloc_debug_set_callbacks ( NULL, NULL, NULL, after_resize, NULL, NULL, NULL ) != 0
     ) {
         return TRALLOC_FALSE;
     }
@@ -70,7 +70,7 @@ tralloc_bool test_debug_resize ( tralloc_context * ctx )
         tralloc ( a,   ( tralloc_context ** ) &c, sizeof ( float ) * 4 ) != 0
     ) {
         free_history ( tralloc_history );
-        _tralloc_debug_set_callbacks ( NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL );
+        _tralloc_debug_set_callbacks ( NULL, NULL, NULL, NULL, NULL, NULL, NULL );
         return TRALLOC_FALSE;
     }
 
@@ -80,7 +80,7 @@ tralloc_bool test_debug_resize ( tralloc_context * ctx )
         tralloc_realloc ( ( tralloc_context ** ) &c, sizeof ( float ) * 10 ) != 0
     ) {
         free_history ( tralloc_history );
-        _tralloc_debug_set_callbacks ( NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL );
+        _tralloc_debug_set_callbacks ( NULL, NULL, NULL, NULL, NULL, NULL, NULL );
         return TRALLOC_FALSE;
     }
 
@@ -99,14 +99,14 @@ tralloc_bool test_debug_resize ( tralloc_context * ctx )
         info->chunk != c_chunk || info->old_length != sizeof ( float ) * 4 || info->chunk->length != sizeof ( float ) * 10
     ) {
         free_history ( tralloc_history );
-        _tralloc_debug_set_callbacks ( NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL );
+        _tralloc_debug_set_callbacks ( NULL, NULL, NULL, NULL, NULL, NULL, NULL );
         return TRALLOC_FALSE;
     }
 
     if (
         tralloc_free ( a ) != 0 ||
         tralloc_free ( b ) != 0 ||
-        _tralloc_debug_set_callbacks ( NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL ) != 0
+        _tralloc_debug_set_callbacks ( NULL, NULL, NULL, NULL, NULL, NULL, NULL ) != 0
     ) {
         free_history ( tralloc_history );
         return TRALLOC_FALSE;

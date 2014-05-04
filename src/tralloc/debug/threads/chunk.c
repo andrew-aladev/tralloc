@@ -239,12 +239,7 @@ tralloc_error _tralloc_debug_threads_after_resize_chunk ( _tralloc_chunk * _TRAL
     return 0;
 }
 
-tralloc_error _tralloc_debug_threads_before_free_chunk ( _tralloc_chunk * _TRALLOC_UNUSED ( chunk ) )
-{
-    return 0;
-}
-
-tralloc_error _tralloc_debug_threads_after_free_chunk ( _tralloc_chunk * chunk )
+tralloc_error _tralloc_debug_threads_before_free_chunk ( _tralloc_chunk * chunk )
 {
 
 #   if TRALLOC_DEBUG_THREADS_LENGTH == TRALLOC_SPINLOCK

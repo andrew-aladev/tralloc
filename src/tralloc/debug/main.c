@@ -45,7 +45,6 @@ static pthread_mutex_t _before_move_chunk_mutex = PTHREAD_MUTEX_INITIALIZER;
 static pthread_mutex_t _after_move_chunk_mutex  = PTHREAD_MUTEX_INITIALIZER;
 
 static pthread_mutex_t _before_free_chunk_mutex = PTHREAD_MUTEX_INITIALIZER;
-static pthread_mutex_t _after_free_chunk_mutex  = PTHREAD_MUTEX_INITIALIZER;
 #endif
 
 static _tralloc_debug_callback_before_add_chunk _before_add_chunk;
@@ -58,7 +57,6 @@ static _tralloc_debug_callback_before_move_chunk _before_move_chunk;
 static _tralloc_debug_callback_after_move_chunk  _after_move_chunk;
 
 static _tralloc_debug_callback_before_free_chunk _before_free_chunk;
-static _tralloc_debug_callback_after_free_chunk  _after_free_chunk;
 
 tralloc_error _tralloc_debug_set_callbacks (
     _tralloc_debug_callback_before_add_chunk before_add_chunk,
@@ -70,8 +68,7 @@ tralloc_error _tralloc_debug_set_callbacks (
     _tralloc_debug_callback_before_move_chunk before_move_chunk,
     _tralloc_debug_callback_after_move_chunk  after_move_chunk,
 
-    _tralloc_debug_callback_before_free_chunk before_free_chunk,
-    _tralloc_debug_callback_after_free_chunk  after_free_chunk
+    _tralloc_debug_callback_before_free_chunk before_free_chunk
 )
 {
 
@@ -119,21 +116,16 @@ tralloc_error _tralloc_debug_set_callbacks (
     if (
         pthread_mutex_unlock ( &_before_move_chunk_mutex ) != 0 ||
         pthread_mutex_unlock ( &_after_move_chunk_mutex )  != 0 ||
-        pthread_mutex_lock   ( &_before_free_chunk_mutex ) != 0 ||
-        pthread_mutex_lock   ( &_after_free_chunk_mutex )  != 0
+        pthread_mutex_lock   ( &_before_free_chunk_mutex ) != 0
     ) {
         return TRALLOC_ERROR_MUTEX_FAILED;
     }
 #   endif
 
     _before_free_chunk = before_free_chunk;
-    _after_free_chunk  = after_free_chunk;
 
 #   if defined(TRALLOC_THREADS)
-    if (
-        pthread_mutex_unlock ( &_before_free_chunk_mutex ) != 0 ||
-        pthread_mutex_unlock ( &_after_free_chunk_mutex )  != 0
-    ) {
+    if ( pthread_mutex_unlock ( &_before_free_chunk_mutex ) != 0 ) {
         return TRALLOC_ERROR_MUTEX_FAILED;
     }
 #   endif
@@ -615,6 +607,16 @@ tralloc_error _tralloc_debug_event_after_move_chunk ( _tralloc_chunk * chunk, _t
 
 tralloc_error _tralloc_debug_event_before_free_chunk ( _tralloc_chunk * chunk )
 {
+    tralloc_error result;
+    size_t length;
+    if (
+        ( result = _subtract_chunks_count ( 1 ) ) != 0 ||
+        ( result = _tralloc_debug_subtract_chunks_overhead_length ( chunk->chunk_length ) ) != 0 ||
+        ( result = _tralloc_debug_get_length ( chunk, &length ) ) != 0 ||
+        ( result = _subtract_chunks_length ( length ) ) != 0
+    ) {
+        return result;
+    }
 
 #   if defined(TRALLOC_THREADS)
     if ( pthread_mutex_lock ( &_before_free_chunk_mutex ) != 0 ) {
@@ -646,57 +648,6 @@ tralloc_error _tralloc_debug_event_before_free_chunk ( _tralloc_chunk * chunk )
 
 #       if defined(TRALLOC_THREADS)
         if ( pthread_mutex_unlock ( &_before_free_chunk_mutex ) != 0 ) {
-            return TRALLOC_ERROR_MUTEX_FAILED;
-        }
-#       endif
-
-        return 0;
-    }
-}
-
-tralloc_error _tralloc_debug_event_after_free_chunk ( _tralloc_chunk * chunk )
-{
-    tralloc_error result;
-    size_t length;
-    if (
-        ( result = _subtract_chunks_count ( 1 ) ) != 0 ||
-        ( result = _tralloc_debug_subtract_chunks_overhead_length ( chunk->chunk_length ) ) != 0 ||
-        ( result = _tralloc_debug_get_length ( chunk, &length ) ) != 0 ||
-        ( result = _subtract_chunks_length ( length ) ) != 0
-    ) {
-        return result;
-    }
-
-#   if defined(TRALLOC_THREADS)
-    if ( pthread_mutex_lock ( &_after_free_chunk_mutex ) != 0 ) {
-        return TRALLOC_ERROR_MUTEX_FAILED;
-    }
-#   endif
-
-    if ( _after_free_chunk != NULL ) {
-
-#       if defined(TRALLOC_THREADS)
-        if ( pthread_mutex_lock ( &_user_data_mutex ) != 0 ) {
-            return TRALLOC_ERROR_MUTEX_FAILED;
-        }
-#       endif
-
-        result = _after_free_chunk ( _user_data, chunk );
-
-#       if defined(TRALLOC_THREADS)
-        if (
-            pthread_mutex_unlock ( &_user_data_mutex )        != 0 ||
-            pthread_mutex_unlock ( &_after_free_chunk_mutex ) != 0
-        ) {
-            return TRALLOC_ERROR_MUTEX_FAILED;
-        }
-#       endif
-
-        return result;
-    } else {
-
-#       if defined(TRALLOC_THREADS)
-        if ( pthread_mutex_unlock ( &_after_free_chunk_mutex ) != 0 ) {
             return TRALLOC_ERROR_MUTEX_FAILED;
         }
 #       endif

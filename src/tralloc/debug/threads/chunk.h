@@ -19,7 +19,6 @@ tralloc_error _tralloc_debug_threads_before_resize_chunk ( _tralloc_chunk * chun
 tralloc_error _tralloc_debug_threads_after_resize_chunk  ( _tralloc_chunk * chunk );
 
 tralloc_error _tralloc_debug_threads_before_free_chunk ( _tralloc_chunk * chunk );
-tralloc_error _tralloc_debug_threads_after_free_chunk  ( _tralloc_chunk * chunk );
 
 
 #endif
