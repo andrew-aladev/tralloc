@@ -5,7 +5,7 @@
 
 #include "chunk.h"
 #include "main.h"
-#include "events.h"
+#include "main.h"
 
 #if defined(TRALLOC_THREADS)
 #   include "threads/chunk.h"

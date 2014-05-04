@@ -269,4 +269,3 @@ tralloc_error _tralloc_debug_threads_after_free_chunk ( _tralloc_chunk * chunk )
 
     return 0;
 }
-
