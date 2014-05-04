@@ -145,6 +145,25 @@ tralloc_error _tralloc_debug_after_move_chunk ( _tralloc_chunk * chunk, _tralloc
     return 0;
 }
 
+tralloc_error _tralloc_debug_before_free_subtree ( _tralloc_chunk * chunk )
+{
+    tralloc_error result, error = 0;
+
+#   if defined(TRALLOC_THREADS)
+    result = _tralloc_debug_threads_before_free_subtree ( chunk );
+    if ( result != 0 ) {
+        error = result;
+    }
+#   endif
+
+    result = _tralloc_debug_event_before_free_subtree ( chunk );
+    if ( result != 0 ) {
+        error = result;
+    }
+
+    return error;
+}
+
 tralloc_error _tralloc_debug_before_free_chunk ( _tralloc_chunk * chunk )
 {
     if ( chunk->initialized_in_file != NULL ) {

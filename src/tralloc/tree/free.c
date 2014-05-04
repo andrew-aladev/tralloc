@@ -170,7 +170,12 @@ Each subtree, that can't be freed should be detached. (the root chunk of subtree
 static inline
 tralloc_error _before_free_subtree ( _tralloc_chunk * root_chunk )
 {
-    tralloc_error result, error = 0;
+    tralloc_error error  = 0;
+    tralloc_error result = _tralloc_debug_before_free_subtree ( root_chunk );
+    if ( result != 0 ) {
+        return result;
+    }
+
     _tralloc_chunk * chunk = root_chunk;
 
     while ( TRALLOC_TRUE ) {

@@ -239,6 +239,11 @@ tralloc_error _tralloc_debug_threads_after_resize_chunk ( _tralloc_chunk * _TRAL
     return 0;
 }
 
+tralloc_error _tralloc_debug_threads_before_free_subtree ( _tralloc_chunk * chunk )
+{
+    return 0;
+}
+
 tralloc_error _tralloc_debug_threads_before_free_chunk ( _tralloc_chunk * chunk )
 {
 
