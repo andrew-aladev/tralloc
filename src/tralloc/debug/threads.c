@@ -3,9 +3,9 @@
 // tralloc is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Lesser Public License for more details.
 // You should have received a copy of the GNU General Lesser Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
-#include "../../macro.h"
-#include "../../common.h"
-#include "chunk.h"
+#include "threads.h"
+#include "../macro.h"
+#include "../common.h"
 
 #if defined(TRALLOC_DEBUG_LOG)
 #   include <stdio.h>
@@ -127,13 +127,11 @@ tralloc_error _tralloc_debug_threads_before_add_chunk ( _tralloc_chunk * parent_
     // Add operation can not take part in threads competition, because it runs in single thread and returns pointer to data only after operation.
     // So chunk should not be checked.
 
-    pthread_t thread_id = pthread_self();
-
     if ( parent_chunk != NULL ) {
         // Some chunk wants to attach to "chunk->parent" from thread_1.
         // Other chunk from "chunk->parent"'s children list wants to process other operation from thread_2.
         // In this case "chunk->parent" should have children lock.
-        return _check_children_lock ( parent_chunk, thread_id );
+        return _check_children_lock ( parent_chunk, pthread_self() );
     }
     return 0;
 }
@@ -189,13 +187,11 @@ tralloc_error _tralloc_debug_threads_before_move_chunk ( _tralloc_chunk * chunk 
 
 tralloc_error _tralloc_debug_threads_after_move_chunk ( _tralloc_chunk * chunk )
 {
-    pthread_t thread_id = pthread_self();
-
     if ( chunk->parent != NULL ) {
         // "chunk" from new "chunk->parent"'s children list wants to end move operation from thread_1.
         // Other chunk from new "chunk->parent"'s children list wants to process other operation from thread_2.
         // In this case new "chunk->parent" should have children lock.
-        return _check_children_lock ( chunk->parent, thread_id );
+        return _check_children_lock ( chunk->parent, pthread_self() );
     }
     return 0;
 }
@@ -241,6 +237,15 @@ tralloc_error _tralloc_debug_threads_after_resize_chunk ( _tralloc_chunk * _TRAL
 
 tralloc_error _tralloc_debug_threads_before_free_subtree ( _tralloc_chunk * chunk )
 {
+    // Free operation can not take part in threads competition, because pointer will become invalid after this operation.
+    // So chunk should not be checked.
+
+    if ( chunk->parent != NULL ) {
+        // "chunk" from "chunk->parent"'s children will be freed from thread_1.
+        // Other chunk from "chunk->parent"'s children list wants to process other operation from thread_2.
+        // In this case "chunk->parent" should have children lock.
+        return _check_children_lock ( chunk->parent, pthread_self() );
+    }
     return 0;
 }
 

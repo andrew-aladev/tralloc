@@ -9,7 +9,7 @@
 
 #if defined(TRALLOC_DEBUG)
 #   include "../debug/chunk.h"
-#   include "../debug/main.h"
+#   include "../debug/events.h"
 #endif
 
 #if defined(TRALLOC_LENGTH)
@@ -47,8 +47,8 @@ tralloc_error tralloc_realloc ( tralloc_context ** chunk_context, size_t length 
 #   if defined(TRALLOC_DEBUG)
     size_t old_length;
     if (
-        ( result = _tralloc_debug_get_length ( old_chunk, &old_length ) )  != 0 ||
-        ( result = _tralloc_debug_before_resize_chunk ( old_chunk ) )      != 0
+        ( result = _tralloc_debug_get_length ( old_chunk, &old_length ) ) != 0 ||
+        ( result = _tralloc_debug_before_resize_chunk ( old_chunk ) )     != 0
     ) {
         return result;
     }

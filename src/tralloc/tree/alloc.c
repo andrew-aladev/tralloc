@@ -9,7 +9,7 @@
 #include "../common.h"
 
 #if defined(TRALLOC_DEBUG)
-#   include "../debug/chunk.h"
+#   include "../debug/events.h"
 #endif
 
 #if defined(TRALLOC_LENGTH)
