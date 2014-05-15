@@ -3,8 +3,8 @@
 // tralloc is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Lesser Public License for more details.
 // You should have received a copy of the GNU General Lesser Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TRALLOC_DEBUG_CALLBACK_H
-#define TRALLOC_DEBUG_CALLBACK_H
+#ifndef TRALLOC_DEBUG_CALLBACKS_H
+#define TRALLOC_DEBUG_CALLBACKS_H
 
 #include "../types.h"
 
@@ -24,12 +24,12 @@ typedef tralloc_error ( * tralloc_debug_callback_before_free_chunk )   ( void * 
 tralloc_error tralloc_debug_callback_set_add_data      ( void * before, void * after );
 tralloc_error tralloc_debug_callback_set_add_functions ( tralloc_debug_callback_before_add before, tralloc_debug_callback_after_add after );
 tralloc_error _tralloc_debug_callback_before_add_chunk ( _tralloc_chunk * parent_chunk, tralloc_extensions extensions, size_t chunk_length, size_t length );
-tralloc_error _tralloc_debug_callback_after_add_chunk  ( _tralloc_chunk * chunk, size_t chunk_length, size_t length, const char * file, size_t line );
+tralloc_error _tralloc_debug_callback_after_add_chunk  ( _tralloc_chunk * chunk, size_t chunk_length, size_t length );
 
 tralloc_error tralloc_debug_callback_set_resize_data      ( void * before, void * after );
 tralloc_error tralloc_debug_callback_set_resize_functions ( tralloc_debug_callback_before_resize before, tralloc_debug_callback_after_resize after );
 tralloc_error _tralloc_debug_callback_before_resize_chunk ( _tralloc_chunk * chunk );
-tralloc_error _tralloc_debug_callback_after_resize_chunk  ( _tralloc_chunk * chunk, size_t old_length, size_t length );
+tralloc_error _tralloc_debug_callback_after_resize_chunk  ( _tralloc_chunk * chunk, size_t old_length );
 
 tralloc_error tralloc_debug_callback_set_move_data      ( void * before, void * after );
 tralloc_error tralloc_debug_callback_set_move_functions ( tralloc_debug_callback_before_move before, tralloc_debug_callback_after_move after );

@@ -6,6 +6,7 @@
 #include "events.h"
 #include "stats.h"
 #include "chunk.h"
+#include "callbacks.h"
 
 #if defined(TRALLOC_THREADS)
 #   include "threads.h"
@@ -26,10 +27,10 @@ tralloc_error _tralloc_debug_before_add_chunk ( _tralloc_chunk * parent_chunk, t
     }
 #   endif
 
-//     result = _tralloc_debug_stats_before_add_chunk ( parent_chunk, extensions, chunk_length, length );
-//     if ( result != 0 ) {
-//         return result;
-//     }
+    result = _tralloc_debug_callback_before_add_chunk ( parent_chunk, extensions, chunk_length, length );
+    if ( result != 0 ) {
+        return result;
+    }
 
     return 0;
 }
@@ -61,11 +62,11 @@ tralloc_error _tralloc_debug_after_add_chunk ( _tralloc_chunk * chunk, size_t ch
         return result;
     }
 
-//     result = _tralloc_debug_stats_after_add_chunk ( chunk, chunk_length, length );
-//     if ( result != 0 ) {
-//         free ( chunk->initialized_in_file );
-//         return result;
-//     }
+    result = _tralloc_debug_callback_after_add_chunk ( chunk, chunk_length, length );
+    if ( result != 0 ) {
+        free ( chunk->initialized_in_file );
+        return result;
+    }
 
     return 0;
 }
@@ -81,10 +82,10 @@ tralloc_error _tralloc_debug_before_resize_chunk ( _tralloc_chunk * chunk )
     }
 #   endif
 
-//     result = _tralloc_debug_stats_before_resize_chunk ( chunk );
-//     if ( result != 0 ) {
-//         return result;
-//     }
+    result = _tralloc_debug_callback_before_resize_chunk ( chunk );
+    if ( result != 0 ) {
+        return result;
+    }
 
     return 0;
 }
@@ -110,11 +111,11 @@ tralloc_error _tralloc_debug_after_resize_chunk ( _tralloc_chunk * chunk, size_t
         return result;
     }
 
-//     result = _tralloc_debug_stats_after_resize_chunk ( chunk, old_length, length );
-//     if ( result != 0 ) {
-//         _tralloc_debug_set_length ( chunk, old_length );
-//         return result;
-//     }
+    result = _tralloc_debug_callback_after_resize_chunk ( chunk, old_length );
+    if ( result != 0 ) {
+        _tralloc_debug_set_length ( chunk, old_length );
+        return result;
+    }
 
     return 0;
 }
@@ -130,10 +131,10 @@ tralloc_error _tralloc_debug_before_move_chunk ( _tralloc_chunk * chunk )
     }
 #   endif
 
-//     result = _tralloc_debug_stats_before_move_chunk ( chunk );
-//     if ( result != 0 ) {
-//         return result;
-//     }
+    result = _tralloc_debug_callback_before_move_chunk ( chunk );
+    if ( result != 0 ) {
+        return result;
+    }
 
     return 0;
 }
@@ -149,10 +150,10 @@ tralloc_error _tralloc_debug_after_move_chunk ( _tralloc_chunk * chunk, _tralloc
     }
 #   endif
 
-//     result = _tralloc_debug_stats_after_move_chunk ( chunk, old_parent_chunk );
-//     if ( result != 0 ) {
-//         return result;
-//     }
+    result = _tralloc_debug_callback_after_move_chunk ( chunk, old_parent_chunk );
+    if ( result != 0 ) {
+        return result;
+    }
 
     return 0;
 }
@@ -168,10 +169,10 @@ tralloc_error _tralloc_debug_before_free_subtree ( _tralloc_chunk * chunk )
     }
 #   endif
 
-//     result = _tralloc_debug_stats_before_free_subtree ( chunk );
-//     if ( result != 0 ) {
-//         error = result;
-//     }
+    result = _tralloc_debug_callback_before_free_subtree ( chunk );
+    if ( result != 0 ) {
+        error = result;
+    }
 
     return error;
 }
@@ -196,10 +197,10 @@ tralloc_error _tralloc_debug_before_free_chunk ( _tralloc_chunk * chunk )
         error = result;
     }
 
-//     result = _tralloc_debug_stats_before_free_chunk ( chunk );
-//     if ( result != 0 ) {
-//         error = result;
-//     }
+    result = _tralloc_debug_callback_before_free_chunk ( chunk );
+    if ( result != 0 ) {
+        error = result;
+    }
 
     return error;
 }

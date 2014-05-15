@@ -3,7 +3,7 @@
 // tralloc is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Lesser Public License for more details.
 // You should have received a copy of the GNU General Lesser Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
-#include "callback.h"
+#include "callbacks.h"
 
 
 #if defined(TRALLOC_THREADS)
@@ -99,7 +99,7 @@ tralloc_error _tralloc_debug_callback_before_add_chunk ( _tralloc_chunk * parent
     return error;
 }
 
-tralloc_error _tralloc_debug_callback_after_add_chunk ( _tralloc_chunk * chunk, size_t chunk_length, size_t length, const char * file, size_t line )
+tralloc_error _tralloc_debug_callback_after_add_chunk ( _tralloc_chunk * chunk, size_t chunk_length, size_t length )
 {
 
 #   if defined(TRALLOC_THREADS)
@@ -111,7 +111,7 @@ tralloc_error _tralloc_debug_callback_after_add_chunk ( _tralloc_chunk * chunk, 
     tralloc_error error = 0;
 
     if ( _after_add != NULL ) {
-        tralloc_error result = _after_add ( _after_add_data, chunk, chunk_length, length, file, line );
+        tralloc_error result = _after_add ( _after_add_data, chunk, chunk_length, length );
         if ( result != 0 ) {
             error = result;
         }
@@ -220,7 +220,7 @@ tralloc_error _tralloc_debug_callback_before_resize_chunk ( _tralloc_chunk * chu
     return error;
 }
 
-tralloc_error _tralloc_debug_callback_after_resize_chunk ( _tralloc_chunk * chunk, size_t old_length, size_t length )
+tralloc_error _tralloc_debug_callback_after_resize_chunk ( _tralloc_chunk * chunk, size_t old_length )
 {
 
 #   if defined(TRALLOC_THREADS)
@@ -232,7 +232,7 @@ tralloc_error _tralloc_debug_callback_after_resize_chunk ( _tralloc_chunk * chun
     tralloc_error error = 0;
 
     if ( _after_resize != NULL ) {
-        tralloc_error result = _after_resize ( _after_resize_data, chunk, old_length, length );
+        tralloc_error result = _after_resize ( _after_resize_data, chunk, old_length );
         if ( result != 0 ) {
             error = result;
         }
@@ -353,7 +353,7 @@ tralloc_error _tralloc_debug_callback_after_move_chunk ( _tralloc_chunk * chunk,
     tralloc_error error = 0;
 
     if ( _after_move != NULL ) {
-        tralloc_error result = _after_move ( _after_move_data, chunk );
+        tralloc_error result = _after_move ( _after_move_data, chunk, old_parent_chunk );
         if ( result != 0 ) {
             error = result;
         }
@@ -435,4 +435,58 @@ tralloc_error tralloc_debug_callback_set_free_functions (
 #   endif
 
     return 0;
+}
+
+tralloc_error _tralloc_debug_callback_before_free_subtree ( _tralloc_chunk * chunk )
+{
+
+#   if defined(TRALLOC_THREADS)
+    if ( pthread_mutex_lock ( &_before_free_subtree_mutex ) != 0 ) {
+        return TRALLOC_ERROR_MUTEX_FAILED;
+    }
+#   endif
+
+    tralloc_error error = 0;
+
+    if ( _before_free_subtree != NULL ) {
+        tralloc_error result = _before_free_subtree ( _before_free_subtree_data, chunk );
+        if ( result != 0 ) {
+            error = result;
+        }
+    }
+
+#   if defined(TRALLOC_THREADS)
+    if ( pthread_mutex_unlock ( &_before_free_subtree_mutex ) != 0 ) {
+        return TRALLOC_ERROR_MUTEX_FAILED;
+    }
+#   endif
+
+    return error;
+}
+
+tralloc_error _tralloc_debug_callback_before_free_chunk ( _tralloc_chunk * chunk )
+{
+
+#   if defined(TRALLOC_THREADS)
+    if ( pthread_mutex_lock ( &_before_free_chunk_mutex ) != 0 ) {
+        return TRALLOC_ERROR_MUTEX_FAILED;
+    }
+#   endif
+
+    tralloc_error error = 0;
+
+    if ( _before_free_chunk != NULL ) {
+        tralloc_error result = _before_free_chunk ( _before_free_chunk_data, chunk );
+        if ( result != 0 ) {
+            error = result;
+        }
+    }
+
+#   if defined(TRALLOC_THREADS)
+    if ( pthread_mutex_unlock ( &_before_free_chunk_mutex ) != 0 ) {
+        return TRALLOC_ERROR_MUTEX_FAILED;
+    }
+#   endif
+
+    return error;
 }

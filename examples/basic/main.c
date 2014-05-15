@@ -42,7 +42,7 @@ int main ()
 
 #   if defined(TRALLOC_DEBUG)
     size_t length;
-    if ( tralloc_debug_get_chunks_count ( &length ) != 0 ) {
+    if ( tralloc_debug_stats_get_chunks_count ( &length ) != 0 ) {
         return 255;
     }
 #   endif

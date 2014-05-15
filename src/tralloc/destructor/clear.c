@@ -8,7 +8,7 @@
 #include "../common.h"
 
 #if defined(TRALLOC_DEBUG)
-#   include "../debug/main.h"
+#   include "../debug/stats.h"
 #endif
 
 #include <stdlib.h>
@@ -49,7 +49,7 @@ tralloc_error tralloc_clear_destructors ( tralloc_context * chunk_context )
     destructors->last_destructor  = NULL;
 
 #   if defined(TRALLOC_DEBUG)
-    tralloc_error result = _tralloc_debug_subtract_chunks_overhead_length ( sizeof ( _tralloc_destructor ) * destructors_count );
+    tralloc_error result = _tralloc_debug_stats_subtract_chunks_overhead_length ( sizeof ( _tralloc_destructor ) * destructors_count );
     if ( result != 0 ) {
         return result;
     }

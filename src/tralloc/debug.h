@@ -7,8 +7,9 @@
 #define TRALLOC_DEBUG_H
 
 
+#include "debug/callbacks.h"
 #include "debug/chunk.h"
-#include "debug/main.h"
+#include "debug/stats.h"
 
 
 #endif

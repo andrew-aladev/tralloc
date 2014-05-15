@@ -9,11 +9,6 @@
 #include "../macro.h"
 #include "../types.h"
 
-#if defined(TRALLOC_DEBUG)
-#   include "../common.h"
-#   include "../debug/main.h"
-#endif
-
 #undef _TRALLOC_INLINE
 #ifdef _TRALLOC_TREE_ALLOC_INCLUDED_FROM_OBJECT
 #    define _TRALLOC_INLINE _TRALLOC_INLINE_IN_OBJECT
