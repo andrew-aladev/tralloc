@@ -219,7 +219,7 @@ tralloc_error _before_free_subtree ( _tralloc_chunk * root_chunk )
             chunk = chunk->parent;
             // "prev_chunk->parent", "prev_chunk->prev" and "prev_chunk->next" is not needed now.
 
-            if ( !_can_free_chunk ( prev_chunk ) ) {
+            if ( !can_free_chunk ) {
                 // if "prev_chunk" can't be freed - it is subtree or single chunk.
                 // it should be detached.
                 // TODO detach prev_chunk
@@ -228,6 +228,8 @@ tralloc_error _before_free_subtree ( _tralloc_chunk * root_chunk )
             if ( chunk == root_chunk ) {
                 return error;
             }
+
+            can_free_chunk = _can_free_chunk ( chunk );
         }
 
         // algorithm can go to the right.
@@ -235,7 +237,7 @@ tralloc_error _before_free_subtree ( _tralloc_chunk * root_chunk )
         chunk = chunk->next;
         // "prev_chunk->parent", "prev_chunk->prev" and "prev_chunk->next" is not needed now.
 
-        if ( !_can_free_chunk ( prev_chunk ) ) {
+        if ( !can_free_chunk ) {
             // if "prev_chunk" can't be freed - it is subtree or single chunk.
             // it should be detached.
             // TODO detach prev_chunk
@@ -321,7 +323,7 @@ _tralloc_chunk * _subtree_to_vertical_list ( _tralloc_chunk * root_chunk )
             chunk = chunk->parent;
             // "prev_chunk->parent", "prev_chunk->prev" and "prev_chunk->next" is not needed now.
 
-            if ( !_can_free_chunk ( prev_chunk ) ) {
+            if ( !can_free_chunk ) {
                 // if "prev_chunk" can't be freed - it is subtree or single chunk.
                 // it should be detached.
                 _detach_chunk_silent ( prev_chunk );
@@ -334,6 +336,8 @@ _tralloc_chunk * _subtree_to_vertical_list ( _tralloc_chunk * root_chunk )
                 }
                 return list_root_chunk;
             }
+
+            can_free_chunk = _can_free_chunk ( chunk );
         }
 
         // algorithm can go to the right.
@@ -341,7 +345,7 @@ _tralloc_chunk * _subtree_to_vertical_list ( _tralloc_chunk * root_chunk )
         chunk = chunk->next;
         // "prev_chunk->parent", "prev_chunk->prev" and "prev_chunk->next" is not needed now.
 
-        if ( !_can_free_chunk ( prev_chunk ) ) {
+        if ( !can_free_chunk ) {
             // if "prev_chunk" can't be freed - it is subtree or single chunk.
             // it should be detached.
             _detach_chunk_silent ( prev_chunk );
