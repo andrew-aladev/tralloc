@@ -166,42 +166,83 @@ Each subtree, that can't be freed should be detached. (the root chunk of subtree
 #if defined(TRALLOC_DEBUG)
 
 // Function goes through subtree and call _tralloc_debug_before_free_chunk for each chunk.
-// This is vanilla version of the algorithm.
 static inline
 tralloc_error _before_free_subtree ( _tralloc_chunk * root_chunk )
 {
     tralloc_error error  = 0;
     tralloc_error result = _tralloc_debug_before_free_subtree ( root_chunk );
     if ( result != 0 ) {
-        return result;
+        error = result;
     }
 
+    tralloc_bool can_free_chunk;
+    _tralloc_chunk * prev_chunk, * next_chunk;
     _tralloc_chunk * chunk = root_chunk;
 
     while ( TRALLOC_TRUE ) {
-        if ( _can_free_chunk ( chunk ) ) {
+        can_free_chunk = _can_free_chunk ( chunk );
+        if ( can_free_chunk ) {
             result = _tralloc_debug_before_free_chunk ( chunk );
             if ( result != 0 ) {
                 error = result;
             }
         }
 
-        if ( _can_free_chunk_children ( chunk ) && chunk->first_child != NULL ) {
-            chunk = chunk->first_child;
-        } else {
-            // if root_chunk is the only chunk, that algorithm can process - it should stops here.
+        if ( _can_free_chunk_children ( chunk ) ) {
+            if ( chunk->first_child != NULL ) {
+                // algorithm can go slightly lower.
+                chunk = chunk->first_child;
+
+                // next "chunk" is ready.
+                continue;
+            }
+        } else if ( can_free_chunk ) {
+            // "chunk" can be freed and it can have children, but algorithm can't free them.
+            // These children chunks should be detached.
+            next_chunk = chunk->first_child;
+            while ( next_chunk != NULL ) {
+                prev_chunk = next_chunk;
+                next_chunk = next_chunk->next;
+                // _detach_chunk_silent ( prev_chunk );
+            }
+        }
+        // algorithm can't go slightly lower.
+
+        // if "root_chunk" is the only chunk, that algorithm can process - it should stops here.
+        if ( chunk == root_chunk ) {
+            return error;
+        }
+
+        while ( chunk->next == NULL ) {
+            // algorithm can go slightly higher.
+            prev_chunk = chunk;
+            chunk = chunk->parent;
+            // "prev_chunk->parent", "prev_chunk->prev" and "prev_chunk->next" is not needed now.
+
+            if ( !can_free_chunk ) {
+                // if "prev_chunk" can't be freed - it is subtree or single chunk.
+                // it should be detached.
+                // _detach_chunk_silent ( prev_chunk );
+            }
+
             if ( chunk == root_chunk ) {
                 return error;
             }
-
-            while ( chunk->next == NULL ) {
-                chunk = chunk->parent;
-                if ( chunk == root_chunk ) {
-                    return error;
-                }
-            }
-            chunk = chunk->next;
         }
+        // algorithm can't go slightly higher.
+
+        // algorithm can go to the right.
+        prev_chunk = chunk;
+        chunk = chunk->next;
+        // "prev_chunk->parent", "prev_chunk->prev" and "prev_chunk->next" is not needed now.
+
+        if ( !can_free_chunk ) {
+            // if "prev_chunk" can't be freed - it is subtree or single chunk.
+            // it should be detached.
+            // _detach_chunk_silent ( prev_chunk );
+        }
+
+        // next "chunk" is ready.
     }
 }
 #endif

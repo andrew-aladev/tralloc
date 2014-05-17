@@ -138,17 +138,6 @@ tralloc_error _tralloc_debug_threads_before_add_chunk ( _tralloc_chunk * parent_
 
 tralloc_error _tralloc_debug_threads_after_add_chunk ( _tralloc_chunk * chunk )
 {
-
-#   if TRALLOC_DEBUG_THREADS_LENGTH == TRALLOC_SPINLOCK
-    if ( pthread_spin_init ( &chunk->length_lock, 0 ) != 0 ) {
-        return TRALLOC_ERROR_SPINLOCK_FAILED;
-    }
-#   elif TRALLOC_DEBUG_THREADS_LENGTH == TRALLOC_MUTEX
-    if ( pthread_mutex_init ( &chunk->length_lock, NULL ) != 0 ) {
-        return TRALLOC_ERROR_MUTEX_FAILED;
-    }
-#   endif
-
     chunk->subtree_usage_status  = _TRALLOC_NOT_USED_BY_THREADS;
     chunk->children_usage_status = _TRALLOC_NOT_USED_BY_THREADS;
 
@@ -251,16 +240,6 @@ tralloc_error _tralloc_debug_threads_before_free_subtree ( _tralloc_chunk * chun
 
 tralloc_error _tralloc_debug_threads_before_free_chunk ( _tralloc_chunk * chunk )
 {
-
-#   if TRALLOC_DEBUG_THREADS_LENGTH == TRALLOC_SPINLOCK
-    if ( pthread_spin_destroy ( &chunk->length_lock ) != 0 ) {
-        return TRALLOC_ERROR_SPINLOCK_FAILED;
-    }
-#   elif TRALLOC_DEBUG_THREADS_LENGTH == TRALLOC_MUTEX
-    if ( pthread_mutex_destroy ( &chunk->length_lock ) != 0 ) {
-        return TRALLOC_ERROR_MUTEX_FAILED;
-    }
-#   endif
 
 #   if TRALLOC_DEBUG_THREADS_CHILDREN == TRALLOC_SPINLOCK
     if ( pthread_spin_destroy ( &chunk->thread_usage_lock ) != 0 ) {
