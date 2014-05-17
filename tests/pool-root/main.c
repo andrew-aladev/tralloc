@@ -11,9 +11,8 @@
 #   include "../destructor/common.h"
 #endif
 
-#if defined(TRALLOC_DEBUG)
+#if defined(TRALLOC_DEBUG_CALLBACKS)
 #   include "../debug/common.h"
-#   include <tralloc/debug.h>
 #endif
 
 #if defined(TRALLOC_LENGTH)
@@ -29,6 +28,10 @@
 #endif
 
 #include <tralloc/tree.h>
+
+#if defined(TRALLOC_DEBUG_STATS)
+#   include <tralloc/debug/stats.h>
+#endif
 
 
 int main ()
@@ -58,7 +61,7 @@ int main ()
     }
 #   endif
 
-#   if defined(TRALLOC_DEBUG)
+#   if defined(TRALLOC_DEBUG_CALLBACKS)
     result = test_debug ( pool_data );
     if ( result != 0 ) {
         return result;
@@ -90,7 +93,7 @@ int main ()
         return 254;
     }
 
-#   if defined(TRALLOC_DEBUG)
+#   if defined(TRALLOC_DEBUG_STATS)
     size_t length;
     if (
         tralloc_debug_stats_get_chunks_count           ( &length ) != 0 || length != 0 ||

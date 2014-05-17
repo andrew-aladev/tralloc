@@ -4,11 +4,17 @@
 // You should have received a copy of the GNU General Lesser Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
 #include "events.h"
-#include "stats.h"
 #include "chunk.h"
-#include "callbacks.h"
 
-#if defined(TRALLOC_THREADS)
+#if defined(TRALLOC_DEBUG_STATS)
+#   include "stats.h"
+#endif
+
+#if defined(TRALLOC_DEBUG_CALLBACKS)
+#   include "callbacks.h"
+#endif
+
+#if defined(TRALLOC_DEBUG_THREADS)
 #   include "threads.h"
 #endif
 
@@ -20,17 +26,19 @@ tralloc_error _tralloc_debug_before_add_chunk ( _tralloc_chunk * parent_chunk, t
 {
     tralloc_error result;
 
-#   if defined(TRALLOC_THREADS)
+#   if defined(TRALLOC_DEBUG_THREADS)
     result = _tralloc_debug_threads_before_add_chunk ( parent_chunk, extensions );
     if ( result != 0 ) {
         return result;
     }
 #   endif
 
+#   if defined(TRALLOC_DEBUG_CALLBACKS)
     result = _tralloc_debug_callback_before_add_chunk ( parent_chunk, extensions, chunk_length, length );
     if ( result != 0 ) {
         return result;
     }
+#   endif
 
     return 0;
 }
@@ -40,33 +48,51 @@ tralloc_error _tralloc_debug_after_add_chunk ( _tralloc_chunk * chunk, size_t ch
     chunk->chunk_length = chunk_length;
     chunk->length       = length;
 
+#   if defined(TRALLOC_DEBUG_LOG)
     chunk->initialized_in_file = strdup ( file );
     if ( chunk->initialized_in_file == NULL ) {
         return TRALLOC_ERROR_MALLOC_FAILED;
     }
     chunk->initialized_at_line = line;
+#   endif
 
     tralloc_error result;
 
-#   if defined(TRALLOC_THREADS)
+#   if defined(TRALLOC_DEBUG_THREADS)
     result = _tralloc_debug_threads_after_add_chunk ( chunk );
     if ( result != 0 ) {
+
+#       if defined(TRALLOC_DEBUG_LOG)
         free ( chunk->initialized_in_file );
+#       endif
+
         return result;
     }
 #   endif
 
+#   if defined(TRALLOC_DEBUG_STATS)
     result = _tralloc_debug_stats_after_add_chunk ( chunk_length, length );
     if ( result != 0 ) {
+
+#       if defined(TRALLOC_DEBUG_LOG)
         free ( chunk->initialized_in_file );
+#       endif
+
         return result;
     }
+#   endif
 
+#   if defined(TRALLOC_DEBUG_CALLBACKS)
     result = _tralloc_debug_callback_after_add_chunk ( chunk, chunk_length, length );
     if ( result != 0 ) {
+
+#       if defined(TRALLOC_DEBUG_LOG)
         free ( chunk->initialized_in_file );
+#       endif
+
         return result;
     }
+#   endif
 
     return 0;
 }
@@ -75,17 +101,19 @@ tralloc_error _tralloc_debug_before_resize_chunk ( _tralloc_chunk * chunk )
 {
     tralloc_error result;
 
-#   if defined(TRALLOC_THREADS)
+#   if defined(TRALLOC_DEBUG_THREADS)
     result = _tralloc_debug_threads_before_resize_chunk ( chunk );
     if ( result != 0 ) {
         return result;
     }
 #   endif
 
+#   if defined(TRALLOC_DEBUG_CALLBACKS)
     result = _tralloc_debug_callback_before_resize_chunk ( chunk );
     if ( result != 0 ) {
         return result;
     }
+#   endif
 
     return 0;
 }
@@ -97,7 +125,7 @@ tralloc_error _tralloc_debug_after_resize_chunk ( _tralloc_chunk * chunk, size_t
         return result;
     }
 
-#   if defined(TRALLOC_THREADS)
+#   if defined(TRALLOC_DEBUG_THREADS)
     result = _tralloc_debug_threads_after_resize_chunk ( chunk );
     if ( result != 0 ) {
         _tralloc_debug_set_length ( chunk, old_length );
@@ -105,17 +133,21 @@ tralloc_error _tralloc_debug_after_resize_chunk ( _tralloc_chunk * chunk, size_t
     }
 #   endif
 
+#   if defined(TRALLOC_DEBUG_STATS)
     result = _tralloc_debug_stats_after_resize_chunk ( old_length, length );
     if ( result != 0 ) {
         _tralloc_debug_set_length ( chunk, old_length );
         return result;
     }
+#   endif
 
+#   if defined(TRALLOC_DEBUG_CALLBACKS)
     result = _tralloc_debug_callback_after_resize_chunk ( chunk, old_length );
     if ( result != 0 ) {
         _tralloc_debug_set_length ( chunk, old_length );
         return result;
     }
+#   endif
 
     return 0;
 }
@@ -124,17 +156,19 @@ tralloc_error _tralloc_debug_before_move_chunk ( _tralloc_chunk * chunk )
 {
     tralloc_error result;
 
-#   if defined(TRALLOC_THREADS)
+#   if defined(TRALLOC_DEBUG_THREADS)
     result = _tralloc_debug_threads_before_move_chunk ( chunk );
     if ( result != 0 ) {
         return result;
     }
 #   endif
 
+#   if defined(TRALLOC_DEBUG_CALLBACKS)
     result = _tralloc_debug_callback_before_move_chunk ( chunk );
     if ( result != 0 ) {
         return result;
     }
+#   endif
 
     return 0;
 }
@@ -143,17 +177,19 @@ tralloc_error _tralloc_debug_after_move_chunk ( _tralloc_chunk * chunk, _tralloc
 {
     tralloc_error result;
 
-#   if defined(TRALLOC_THREADS)
+#   if defined(TRALLOC_DEBUG_THREADS)
     result = _tralloc_debug_threads_after_move_chunk ( chunk );
     if ( result != 0 ) {
         return result;
     }
 #   endif
 
+#   if defined(TRALLOC_DEBUG_CALLBACKS)
     result = _tralloc_debug_callback_after_move_chunk ( chunk, old_parent_chunk );
     if ( result != 0 ) {
         return result;
     }
+#   endif
 
     return 0;
 }
@@ -162,45 +198,54 @@ tralloc_error _tralloc_debug_before_free_subtree ( _tralloc_chunk * chunk )
 {
     tralloc_error result, error = 0;
 
-#   if defined(TRALLOC_THREADS)
+#   if defined(TRALLOC_DEBUG_THREADS)
     result = _tralloc_debug_threads_before_free_subtree ( chunk );
     if ( result != 0 ) {
         error = result;
     }
 #   endif
 
+#   if defined(TRALLOC_DEBUG_CALLBACKS)
     result = _tralloc_debug_callback_before_free_subtree ( chunk );
     if ( result != 0 ) {
         error = result;
     }
+#   endif
 
     return error;
 }
 
 tralloc_error _tralloc_debug_before_free_chunk ( _tralloc_chunk * chunk )
 {
+
+#   if defined(TRALLOC_DEBUG_LOG)
     if ( chunk->initialized_in_file != NULL ) {
         free ( chunk->initialized_in_file );
     }
+#   endif
 
     tralloc_error result, error = 0;
 
-#   if defined(TRALLOC_THREADS)
+#   if defined(TRALLOC_DEBUG_THREADS)
     result = _tralloc_debug_threads_before_free_chunk ( chunk );
     if ( result != 0 ) {
         error = result;
     }
 #   endif
 
+#   if defined(TRALLOC_DEBUG_STATS)
     result = _tralloc_debug_stats_before_free_chunk ( chunk );
     if ( result != 0 ) {
         error = result;
     }
+#   endif
 
+#   if defined(TRALLOC_DEBUG_CALLBACKS)
     result = _tralloc_debug_callback_before_free_chunk ( chunk );
     if ( result != 0 ) {
         error = result;
     }
+#   endif
 
     return error;
 }

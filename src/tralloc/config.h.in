@@ -1,4 +1,3 @@
-#cmakedefine TRALLOC_DEBUG
 #cmakedefine TRALLOC_THREADS
 #cmakedefine TRALLOC_LENGTH
 #cmakedefine TRALLOC_EXTENSIONS
@@ -8,6 +7,11 @@
 #cmakedefine TRALLOC_FILE
 #cmakedefine TRALLOC_UTILS_BUFFER
 #cmakedefine TRALLOC_UTILS
+
+#cmakedefine TRALLOC_DEBUG
+#cmakedefine TRALLOC_DEBUG_THREADS
+#cmakedefine TRALLOC_DEBUG_CALLBACKS
+#cmakedefine TRALLOC_DEBUG_STATS
 
 #cmakedefine TRALLOC_HAVE_C99_INLINE
 #cmakedefine TRALLOC_HAVE_BOOL

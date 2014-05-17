@@ -7,9 +7,17 @@
 #define TRALLOC_DEBUG_H
 
 
-#include "debug/callbacks.h"
-#include "debug/chunk.h"
-#include "debug/stats.h"
+#if defined(TRALLOC_DEBUG_STATS)
+#   include "debug/stats.h"
+#endif
+
+#if defined(TRALLOC_DEBUG_CALLBACKS)
+#   include "debug/callbacks.h"
+#endif
+
+#if defined(TRALLOC_DEBUG_THREADS)
+#   include "debug/threads.h"
+#endif
 
 
 #endif

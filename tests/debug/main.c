@@ -4,7 +4,10 @@
 // You should have received a copy of the GNU General Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
 #include "common.h"
-#include <tralloc/debug.h>
+
+#if defined(TRALLOC_DEBUG_STATS)
+#   include <tralloc/debug/stats.h>
+#endif
 
 
 int main ()
@@ -14,7 +17,7 @@ int main ()
         return result;
     }
 
-#   if defined(TRALLOC_DEBUG)
+#   if defined(TRALLOC_DEBUG_STATS)
     size_t length;
     if (
         tralloc_debug_stats_get_chunks_count           ( &length ) != 0 || length != 0 ||

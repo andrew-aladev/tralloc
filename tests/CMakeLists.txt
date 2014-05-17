@@ -1,6 +1,6 @@
 add_subdirectory ("basic")
 
-if (${TRALLOC_DEBUG})
+if (${TRALLOC_DEBUG_CALLBACKS})
     add_subdirectory ("debug")
 endif ()
 if (${TRALLOC_LENGTH})

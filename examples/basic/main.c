@@ -5,8 +5,8 @@
 
 #include <tralloc/tree.h>
 
-#if defined(TRALLOC_DEBUG)
-#   include <tralloc/debug.h>
+#if defined(TRALLOC_DEBUG_STATS)
+#   include <tralloc/debug/stats.h>
 #endif
 
 
@@ -40,7 +40,7 @@ int main ()
         return 5;
     }
 
-#   if defined(TRALLOC_DEBUG)
+#   if defined(TRALLOC_DEBUG_STATS)
     size_t length;
     if ( tralloc_debug_stats_get_chunks_count ( &length ) != 0 ) {
         return 255;

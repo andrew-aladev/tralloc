@@ -27,7 +27,7 @@ tralloc_error _tralloc_destructors_free_chunk ( _tralloc_chunk * chunk )
         return 0;
     }
 
-#   if defined(TRALLOC_DEBUG)
+#   if defined(TRALLOC_DEBUG_STATS)
     size_t destructors_count = 0;
 #   endif
 
@@ -47,12 +47,12 @@ tralloc_error _tralloc_destructors_free_chunk ( _tralloc_chunk * chunk )
         free ( destructor );
         destructor = next_destructor;
 
-#       if defined(TRALLOC_DEBUG)
+#       if defined(TRALLOC_DEBUG_STATS)
         destructors_count ++;
 #       endif
     }
 
-#   if defined(TRALLOC_DEBUG)
+#   if defined(TRALLOC_DEBUG_STATS)
     result = _tralloc_debug_stats_subtract_chunks_overhead_length ( sizeof ( _tralloc_destructor ) * destructors_count );
     if ( result != 0 ) {
         error = result;

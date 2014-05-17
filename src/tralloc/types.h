@@ -215,12 +215,14 @@ typedef struct _tralloc_chunk_type {
 
 #   endif
 
+#   if defined(TRALLOC_DEBUG_LOG)
     // "initialized_in_file" and "initialized_at_line" should not be locked for thread safety.
     // It will be written only in alloc function. Other functions will read it.
     char * initialized_in_file;
     size_t initialized_at_line;
+#   endif
 
-#   if defined(TRALLOC_THREADS)
+#   if defined(TRALLOC_DEBUG_THREADS)
 
     // "subtree_used_by_thread", "subtree_usage_status", "children_used_by_thread" and "children_usage_status" will be locked for thread safety by "thread_usage_lock".
     pthread_t subtree_used_by_thread;

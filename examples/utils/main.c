@@ -9,8 +9,8 @@
 #   include <tralloc/utils/buffer.h>
 #endif
 
-#if defined(TRALLOC_DEBUG)
-#   include <tralloc/debug.h>
+#if defined(TRALLOC_DEBUG_STATS)
+#   include <tralloc/debug/stats.h>
 #endif
 
 #include <string.h>
@@ -48,7 +48,7 @@ int main ()
     }
 #   endif
 
-#   if defined(TRALLOC_DEBUG)
+#   if defined(TRALLOC_DEBUG_STATS)
     size_t length;
     if ( tralloc_debug_stats_get_chunks_count ( &length ) != 0 || length != 0 ) {
         return 255;
