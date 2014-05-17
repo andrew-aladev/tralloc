@@ -20,6 +20,10 @@ tralloc_error _tralloc_debug_after_move_chunk  ( _tralloc_chunk * chunk, _trallo
 
 tralloc_error _tralloc_debug_before_free_subtree ( _tralloc_chunk * chunk );
 tralloc_error _tralloc_debug_before_free_chunk   ( _tralloc_chunk * chunk );
+tralloc_error _tralloc_debug_before_refuse_to_free_subtree ( _tralloc_chunk * chunk );
+tralloc_error _tralloc_debug_after_refuse_to_free_subtree  ( _tralloc_chunk * chunk );
+tralloc_error _tralloc_debug_before_refuse_to_free_chunk   ( _tralloc_chunk * chunk );
+tralloc_error _tralloc_debug_after_refuse_to_free_chunk    ( _tralloc_chunk * chunk );
 
 
 #endif

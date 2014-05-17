@@ -15,7 +15,7 @@ malloc_dynarr * malloc_history()
     malloc_dynarr * tralloc_history = malloc_dynarr_new ( 8 );
     if (
         tralloc_history == NULL ||
-        tralloc_debug_callback_set_free_data ( NULL, tralloc_history ) != 0
+        tralloc_debug_callback_set_free_data ( NULL, tralloc_history, NULL, NULL, NULL, NULL ) != 0
     ) {
         return NULL;
     }
@@ -43,7 +43,7 @@ tralloc_bool test_debug_free ( tralloc_context * ctx )
     malloc_dynarr * tralloc_history = malloc_history();
     if (
         tralloc_history == NULL ||
-        tralloc_debug_callback_set_free_functions ( NULL, before_free ) != 0
+        tralloc_debug_callback_set_free_functions ( NULL, before_free, NULL, NULL, NULL, NULL ) != 0
     ) {
         return TRALLOC_FALSE;
     }
@@ -57,7 +57,7 @@ tralloc_bool test_debug_free ( tralloc_context * ctx )
         tralloc ( a,   ( tralloc_context ** ) &c, sizeof ( float ) * 4 ) != 0
     ) {
         free_history ( tralloc_history );
-        tralloc_debug_callback_set_free_functions ( NULL, NULL );
+        tralloc_debug_callback_set_free_functions ( NULL, NULL, NULL, NULL, NULL, NULL );
         return TRALLOC_FALSE;
     }
 
@@ -68,7 +68,7 @@ tralloc_bool test_debug_free ( tralloc_context * ctx )
     if (
         tralloc_free ( a ) != 0 ||
         tralloc_free ( b ) != 0 ||
-        tralloc_debug_callback_set_free_functions ( NULL, NULL ) != 0
+        tralloc_debug_callback_set_free_functions ( NULL, NULL, NULL, NULL, NULL, NULL ) != 0
     ) {
         free_history ( tralloc_history );
         return TRALLOC_FALSE;

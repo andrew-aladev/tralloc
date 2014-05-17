@@ -210,3 +210,23 @@ tralloc_error _tralloc_debug_threads_before_free_chunk ( _tralloc_chunk * chunk 
     }
     return 0;
 }
+
+tralloc_error _tralloc_debug_threads_before_refuse_to_free_subtree ( _tralloc_chunk * chunk )
+{
+    // If subtree with root "chunk" will refuse to be freed - it will be detached.
+    // So this operation equals movement to NULL.
+
+    // "chunk" wants to process move operation to NULL from different threads.
+    // In this case "chunk" should have subtree lock.
+    return _check_subtree_lock ( chunk, pthread_self() );
+}
+
+tralloc_error _tralloc_debug_threads_before_refuse_to_free_chunk ( _tralloc_chunk * chunk )
+{
+    // If "chunk" will refuse to be freed - it will be detached.
+    // So this operation equals movement to NULL.
+
+    // "chunk" wants to process move operation to NULL from different threads.
+    // In this case "chunk" should have subtree lock.
+    return _check_subtree_lock ( chunk, pthread_self() );
+}

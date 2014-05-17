@@ -175,7 +175,7 @@ tralloc_error _before_free_subtree ( _tralloc_chunk * root_chunk )
         error = result;
     }
 
-    tralloc_bool can_free_chunk;
+    tralloc_bool can_free_chunk, can_free_chunk_children;
     _tralloc_chunk * prev_chunk, * next_chunk;
     _tralloc_chunk * chunk = root_chunk;
 
@@ -188,7 +188,8 @@ tralloc_error _before_free_subtree ( _tralloc_chunk * root_chunk )
             }
         }
 
-        if ( _can_free_chunk_children ( chunk ) ) {
+        can_free_chunk_children = _can_free_chunk_children ( chunk );
+        if ( can_free_chunk_children ) {
             if ( chunk->first_child != NULL ) {
                 // algorithm can go slightly lower.
                 chunk = chunk->first_child;
@@ -203,7 +204,10 @@ tralloc_error _before_free_subtree ( _tralloc_chunk * root_chunk )
             while ( next_chunk != NULL ) {
                 prev_chunk = next_chunk;
                 next_chunk = next_chunk->next;
-                // TODO detach prev_chunk
+                result = _tralloc_debug_before_refuse_to_free_subtree ( prev_chunk );
+                if ( result != 0 ) {
+                    error = result;
+                }
             }
         }
         // algorithm can't go slightly lower.
@@ -220,16 +224,25 @@ tralloc_error _before_free_subtree ( _tralloc_chunk * root_chunk )
             // "prev_chunk->parent", "prev_chunk->prev" and "prev_chunk->next" is not needed now.
 
             if ( !can_free_chunk ) {
-                // if "prev_chunk" can't be freed - it is subtree or single chunk.
+                // if "prev_chunk" can't be freed - it can be subtree or single chunk.
                 // it should be detached.
-                // TODO detach prev_chunk
+                if ( can_free_chunk_children ) {
+                    result = _tralloc_debug_before_refuse_to_free_chunk ( prev_chunk );
+                } else {
+                    result = _tralloc_debug_before_refuse_to_free_subtree ( prev_chunk );
+                }
+                if ( result != 0 ) {
+                    error = result;
+                }
             }
 
             if ( chunk == root_chunk ) {
                 return error;
             }
 
-            can_free_chunk = _can_free_chunk ( chunk );
+            // "chunk" has changed - "can_free_chunk", "can_free_chunk_children" variables should be updated.
+            can_free_chunk          = _can_free_chunk ( chunk );
+            can_free_chunk_children = _can_free_chunk_children ( chunk );
         }
 
         // algorithm can go to the right.
@@ -238,9 +251,16 @@ tralloc_error _before_free_subtree ( _tralloc_chunk * root_chunk )
         // "prev_chunk->parent", "prev_chunk->prev" and "prev_chunk->next" is not needed now.
 
         if ( !can_free_chunk ) {
-            // if "prev_chunk" can't be freed - it is subtree or single chunk.
+            // if "prev_chunk" can't be freed - it can be subtree or single chunk.
             // it should be detached.
-            // TODO detach prev_chunk
+            if ( can_free_chunk_children ) {
+                result = _tralloc_debug_before_refuse_to_free_chunk ( prev_chunk );
+            } else {
+                result = _tralloc_debug_before_refuse_to_free_subtree ( prev_chunk );
+            }
+            if ( result != 0 ) {
+                error = result;
+            }
         }
 
         // next "chunk" is ready.
@@ -257,30 +277,34 @@ void _detach_chunk_silent ( _tralloc_chunk * chunk )
     chunk->next   = NULL;
 }
 
-// Function returns root chunk of vertical list.
+// Function provides root chunk of vertical list.
 // It can be NULL.
 static inline
-_tralloc_chunk * _subtree_to_vertical_list ( _tralloc_chunk * root_chunk )
+tralloc_error _subtree_to_vertical_list ( _tralloc_chunk * root_chunk, _tralloc_chunk ** list_root_chunk )
 {
-    tralloc_bool can_free_chunk;
-    _tralloc_chunk * list_root_chunk = NULL;
-    _tralloc_chunk * list_chunk      = NULL;
+    tralloc_error result, error = 0;
+
+    tralloc_bool can_free_chunk, can_free_chunk_children;
     _tralloc_chunk * prev_chunk, * next_chunk;
     _tralloc_chunk * chunk = root_chunk;
+
+    _tralloc_chunk * list_chunk = NULL;
+    * list_root_chunk           = NULL;
 
     while ( TRALLOC_TRUE ) {
         can_free_chunk = _can_free_chunk ( chunk );
         if ( can_free_chunk ) {
             // current "chunk" can be added to vertical list.
             if ( list_chunk == NULL ) {
-                list_root_chunk = chunk;
+                * list_root_chunk = chunk;
             } else {
                 list_chunk->first_child = chunk;
             }
             list_chunk = chunk;
         }
 
-        if ( _can_free_chunk_children ( chunk ) ) {
+        can_free_chunk_children = _can_free_chunk_children ( chunk );
+        if ( can_free_chunk_children ) {
             if ( chunk->first_child != NULL ) {
                 // algorithm can go slightly lower.
                 prev_chunk = chunk;
@@ -304,6 +328,14 @@ _tralloc_chunk * _subtree_to_vertical_list ( _tralloc_chunk * root_chunk )
                 prev_chunk = next_chunk;
                 next_chunk = next_chunk->next;
                 _detach_chunk_silent ( prev_chunk );
+
+#               if defined(TRALLOC_DEBUG)
+                result = _tralloc_debug_after_refuse_to_free_subtree ( prev_chunk );
+                if ( result != 0 ) {
+                    error = result;
+                }
+#               endif
+
             }
         }
         // algorithm can't go slightly lower.
@@ -314,7 +346,7 @@ _tralloc_chunk * _subtree_to_vertical_list ( _tralloc_chunk * root_chunk )
             if ( list_chunk != NULL ) {
                 list_chunk->first_child = NULL;
             }
-            return list_root_chunk;
+            return error;
         }
 
         while ( chunk->next == NULL ) {
@@ -324,9 +356,21 @@ _tralloc_chunk * _subtree_to_vertical_list ( _tralloc_chunk * root_chunk )
             // "prev_chunk->parent", "prev_chunk->prev" and "prev_chunk->next" is not needed now.
 
             if ( !can_free_chunk ) {
-                // if "prev_chunk" can't be freed - it is subtree or single chunk.
+                // if "prev_chunk" can't be freed - it can be subtree or single chunk.
                 // it should be detached.
                 _detach_chunk_silent ( prev_chunk );
+
+#               if defined(TRALLOC_DEBUG)
+                if ( can_free_chunk_children ) {
+                    result = _tralloc_debug_after_refuse_to_free_chunk ( prev_chunk );
+                } else {
+                    result = _tralloc_debug_after_refuse_to_free_subtree ( prev_chunk );
+                }
+                if ( result != 0 ) {
+                    error = result;
+                }
+#               endif
+
             }
 
             if ( chunk == root_chunk ) {
@@ -334,10 +378,12 @@ _tralloc_chunk * _subtree_to_vertical_list ( _tralloc_chunk * root_chunk )
                 if ( list_chunk != NULL ) {
                     list_chunk->first_child = NULL;
                 }
-                return list_root_chunk;
+                return error;
             }
 
-            can_free_chunk = _can_free_chunk ( chunk );
+            // "chunk" has changed - "can_free_chunk", "can_free_chunk_children" variables should be updated.
+            can_free_chunk          = _can_free_chunk ( chunk );
+            can_free_chunk_children = _can_free_chunk_children ( chunk );
         }
 
         // algorithm can go to the right.
@@ -346,9 +392,21 @@ _tralloc_chunk * _subtree_to_vertical_list ( _tralloc_chunk * root_chunk )
         // "prev_chunk->parent", "prev_chunk->prev" and "prev_chunk->next" is not needed now.
 
         if ( !can_free_chunk ) {
-            // if "prev_chunk" can't be freed - it is subtree or single chunk.
+            // if "prev_chunk" can't be freed - it can be subtree or single chunk.
             // it should be detached.
             _detach_chunk_silent ( prev_chunk );
+
+#           if defined(TRALLOC_DEBUG)
+            if ( can_free_chunk_children ) {
+                result = _tralloc_debug_after_refuse_to_free_chunk ( prev_chunk );
+            } else {
+                result = _tralloc_debug_after_refuse_to_free_subtree ( prev_chunk );
+            }
+            if ( result != 0 ) {
+                error = result;
+            }
+#           endif
+
         }
 
         // next "chunk" is ready.
@@ -368,8 +426,11 @@ tralloc_error _tralloc_free_subtree ( _tralloc_chunk * root_chunk )
 
     _tralloc_detach_chunk ( root_chunk );
 
-    _tralloc_chunk * prev_chunk = _subtree_to_vertical_list ( root_chunk );
-    _tralloc_chunk * next_chunk;
+    _tralloc_chunk * prev_chunk, * next_chunk;
+    result = _subtree_to_vertical_list ( root_chunk, &prev_chunk );
+    if ( result != 0 ) {
+        error = result;
+    }
 
     while ( prev_chunk != NULL ) {
         next_chunk = prev_chunk->first_child;

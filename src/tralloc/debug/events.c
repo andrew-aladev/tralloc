@@ -261,3 +261,65 @@ tralloc_error _tralloc_debug_before_free_chunk ( _tralloc_chunk * chunk )
 
     return error;
 }
+
+tralloc_error _tralloc_debug_before_refuse_to_free_subtree ( _tralloc_chunk * chunk )
+{
+    tralloc_error result, error = 0;
+
+#   if defined(TRALLOC_DEBUG_THREADS)
+    result = _tralloc_debug_threads_before_refuse_to_free_subtree ( chunk );
+    if ( result != 0 ) {
+        error = result;
+    }
+#   endif
+
+#   if defined(TRALLOC_DEBUG_CALLBACKS)
+    result = _tralloc_debug_callback_before_refuse_to_free_subtree ( chunk );
+    if ( result != 0 ) {
+        error = result;
+    }
+#   endif
+
+    return error;
+}
+
+tralloc_error _tralloc_debug_after_refuse_to_free_subtree ( _tralloc_chunk * chunk )
+{
+
+#   if defined(TRALLOC_DEBUG_CALLBACKS)
+    return _tralloc_debug_callback_after_refuse_to_free_subtree ( chunk );
+#   endif
+
+    return 0;
+}
+
+tralloc_error _tralloc_debug_before_refuse_to_free_chunk ( _tralloc_chunk * chunk )
+{
+    tralloc_error result, error = 0;
+
+#   if defined(TRALLOC_DEBUG_THREADS)
+    result = _tralloc_debug_threads_before_refuse_to_free_chunk ( chunk );
+    if ( result != 0 ) {
+        error = result;
+    }
+#   endif
+
+#   if defined(TRALLOC_DEBUG_CALLBACKS)
+    result = _tralloc_debug_callback_before_refuse_to_free_chunk ( chunk );
+    if ( result != 0 ) {
+        error = result;
+    }
+#   endif
+
+    return error;
+}
+
+tralloc_error _tralloc_debug_after_refuse_to_free_chunk ( _tralloc_chunk * chunk )
+{
+
+#   if defined(TRALLOC_DEBUG_CALLBACKS)
+    return _tralloc_debug_callback_after_refuse_to_free_chunk ( chunk );
+#   endif
+
+    return 0;
+}
