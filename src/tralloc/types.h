@@ -207,11 +207,7 @@ typedef struct _tralloc_chunk_type {
 
     // "length_lock" should not be locked for thread safety.
     // It will be written only in alloc function. Other functions will read it.
-#   if TRALLOC_DEBUG_THREADS_LENGTH == TRALLOC_SPINLOCK
     pthread_spinlock_t length_lock;
-#   elif TRALLOC_DEBUG_THREADS_LENGTH == TRALLOC_MUTEX
-    pthread_mutex_t length_lock;
-#   endif
 
 #   endif
 
@@ -233,11 +229,7 @@ typedef struct _tralloc_chunk_type {
 
     // "children_status_lock" should not be locked for thread safety.
     // It will be written only in alloc function. Other functions will read it.
-#   if TRALLOC_DEBUG_THREADS_CHILDREN == TRALLOC_SPINLOCK
-    pthread_spinlock_t thread_usage_lock;
-#   elif TRALLOC_DEBUG_THREADS_CHILDREN == TRALLOC_MUTEX
     pthread_mutex_t thread_usage_lock;
-#   endif
 
 #   endif
 

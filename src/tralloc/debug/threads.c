@@ -15,16 +15,9 @@
 static inline
 tralloc_error _check_subtree_lock ( _tralloc_chunk * chunk, pthread_t thread_id )
 {
-
-#   if TRALLOC_DEBUG_THREADS_CHILDREN == TRALLOC_SPINLOCK
-    if ( pthread_spin_lock ( &chunk->thread_usage_lock ) != 0 ) {
-        return TRALLOC_ERROR_SPINLOCK_FAILED;
-    }
-#   elif TRALLOC_DEBUG_THREADS_CHILDREN == TRALLOC_MUTEX
     if ( pthread_mutex_lock ( &chunk->thread_usage_lock ) != 0 ) {
         return TRALLOC_ERROR_MUTEX_FAILED;
     }
-#   endif
 
     tralloc_error error = 0;
 
@@ -54,32 +47,18 @@ tralloc_error _check_subtree_lock ( _tralloc_chunk * chunk, pthread_t thread_id 
         error = TRALLOC_ERROR_NO_SUBTREE_LOCK;
     }
 
-#   if TRALLOC_DEBUG_THREADS_CHILDREN == TRALLOC_SPINLOCK
-    if ( pthread_spin_unlock ( &chunk->thread_usage_lock ) != 0 ) {
-        return TRALLOC_ERROR_SPINLOCK_FAILED;
-    }
-#   elif TRALLOC_DEBUG_THREADS_CHILDREN == TRALLOC_MUTEX
     if ( pthread_mutex_unlock ( &chunk->thread_usage_lock ) != 0 ) {
         return TRALLOC_ERROR_MUTEX_FAILED;
     }
-#   endif
-
     return error;
 }
 
 static inline
 tralloc_error _check_children_lock ( _tralloc_chunk * chunk, pthread_t thread_id )
 {
-
-#   if TRALLOC_DEBUG_THREADS_CHILDREN == TRALLOC_SPINLOCK
-    if ( pthread_spin_lock ( &chunk->thread_usage_lock ) != 0 ) {
-        return TRALLOC_ERROR_SPINLOCK_FAILED;
-    }
-#   elif TRALLOC_DEBUG_THREADS_CHILDREN == TRALLOC_MUTEX
     if ( pthread_mutex_lock ( &chunk->thread_usage_lock ) != 0 ) {
         return TRALLOC_ERROR_MUTEX_FAILED;
     }
-#   endif
 
     tralloc_error error = 0;
 
@@ -109,16 +88,9 @@ tralloc_error _check_children_lock ( _tralloc_chunk * chunk, pthread_t thread_id
         error = TRALLOC_ERROR_NO_CHILDREN_LOCK;
     }
 
-#   if TRALLOC_DEBUG_THREADS_CHILDREN == TRALLOC_SPINLOCK
-    if ( pthread_spin_unlock ( &chunk->thread_usage_lock ) != 0 ) {
-        return TRALLOC_ERROR_SPINLOCK_FAILED;
-    }
-#   elif TRALLOC_DEBUG_THREADS_CHILDREN == TRALLOC_MUTEX
     if ( pthread_mutex_unlock ( &chunk->thread_usage_lock ) != 0 ) {
         return TRALLOC_ERROR_MUTEX_FAILED;
     }
-#   endif
-
     return error;
 }
 
@@ -141,16 +113,9 @@ tralloc_error _tralloc_debug_threads_after_add_chunk ( _tralloc_chunk * chunk )
     chunk->subtree_usage_status  = _TRALLOC_NOT_USED_BY_THREADS;
     chunk->children_usage_status = _TRALLOC_NOT_USED_BY_THREADS;
 
-#   if TRALLOC_DEBUG_THREADS_CHILDREN == TRALLOC_SPINLOCK
-    if ( pthread_spin_init ( &chunk->thread_usage_lock, 0 ) != 0 ) {
-        return TRALLOC_ERROR_SPINLOCK_FAILED;
-    }
-#   elif TRALLOC_DEBUG_THREADS_CHILDREN == TRALLOC_MUTEX
-    if ( pthread_mutex_init ( &chunk->thread_usage_lock, NULL ) != 0 ) {
+    if ( pthread_mutex_init ( &chunk->thread_usage_lock, 0 ) != 0 ) {
         return TRALLOC_ERROR_MUTEX_FAILED;
     }
-#   endif
-
     return 0;
 }
 
@@ -240,16 +205,8 @@ tralloc_error _tralloc_debug_threads_before_free_subtree ( _tralloc_chunk * chun
 
 tralloc_error _tralloc_debug_threads_before_free_chunk ( _tralloc_chunk * chunk )
 {
-
-#   if TRALLOC_DEBUG_THREADS_CHILDREN == TRALLOC_SPINLOCK
-    if ( pthread_spin_destroy ( &chunk->thread_usage_lock ) != 0 ) {
-        return TRALLOC_ERROR_SPINLOCK_FAILED;
-    }
-#   elif TRALLOC_DEBUG_THREADS_CHILDREN == TRALLOC_MUTEX
     if ( pthread_mutex_destroy ( &chunk->thread_usage_lock ) != 0 ) {
         return TRALLOC_ERROR_MUTEX_FAILED;
     }
-#   endif
-
     return 0;
 }

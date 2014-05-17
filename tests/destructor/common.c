@@ -224,9 +224,9 @@ tralloc_bool test_destructor_common ( tralloc_context * ctx )
 
     if (
         malloc_dynarr_get_length ( tralloc_history ) != 3 ||
-        strcmp ( malloc_dynarr_get ( tralloc_history, 0 ), "test text 01" ) != 0 ||
-        strcmp ( malloc_dynarr_get ( tralloc_history, 1 ), "test text 04" ) != 0 ||
-        strcmp ( malloc_dynarr_get ( tralloc_history, 2 ), "test text 04" ) != 0
+        malloc_dynarr_get ( tralloc_history, 0 ) != text_01 ||
+        malloc_dynarr_get ( tralloc_history, 1 ) != text_04 ||
+        malloc_dynarr_get ( tralloc_history, 2 ) != text_04
     ) {
         free_history ( tralloc_history );
         return TRALLOC_FALSE;

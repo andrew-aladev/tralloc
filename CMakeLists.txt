@@ -14,16 +14,13 @@ set (TRALLOC_UTILS_BUFFER true CACHE BOOL "buffer util")
 set (TRALLOC_DEBUG_THREADS   true CACHE BOOL "threads in debug feature")
 set (TRALLOC_DEBUG_CALLBACKS true CACHE BOOL "callbacks in debug feature")
 set (TRALLOC_DEBUG_STATS     true CACHE BOOL "stats in debug feature")
+set (TRALLOC_DEBUG_LOG       true CACHE BOOL "log in debug feature")
 
 set (TRALLOC_SHARED   true CACHE BOOL "build shared libs")
 set (TRALLOC_STATIC   true CACHE BOOL "build static libs")
 set (TRALLOC_MAN      true CACHE BOOL "create man")
 set (TRALLOC_TEST     true CACHE BOOL "build tests")
 set (TRALLOC_EXAMPLES true CACHE BOOL "build examples")
-
-set (TRALLOC_DEBUG_LOG              true       CACHE BOOL "log in debug feature")
-set (TRALLOC_DEBUG_THREADS_LENGTH   "spinlock" CACHE BOOL "lock type for length in debug feature")
-set (TRALLOC_DEBUG_THREADS_CHILDREN "spinlock" CACHE BOOL "lock type for usage status in debug feature")
 
 
 if (NOT DEFINED CMAKE_INSTALL_LIBDIR)

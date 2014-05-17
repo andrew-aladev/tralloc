@@ -1,7 +1,7 @@
 #!/bin/bash
 
 make_jobs=$(($(nproc) + 1))
-feature_combinations=$(echo {0..1}{0..1}{0..1}{0..1}{0..1}{0..1}{0..1}{0..1}{0..1}{0..1}{0..1}{0..1})
+feature_combinations=$(echo {0..1}{0..1}{0..1}{0..1}{0..1}{0..1}{0..1}{0..1}{0..1}{0..1})
 for feature in $feature_combinations; do
     if [ "${feature:0:1}" == "1" ]; then
         arguments="-DTRALLOC_THREADS=1 "
@@ -49,21 +49,10 @@ for feature in $feature_combinations; do
     else
         arguments+="-DTRALLOC_DEBUG_STATS=0 "
     fi
-    
     if [ "${feature:9:1}" == "1" ]; then
         arguments+="-DTRALLOC_DEBUG_LOG=1 "
     else
         arguments+="-DTRALLOC_DEBUG_LOG=0 "
-    fi
-    if [ "${feature:10:1}" == "1" ]; then
-        arguments+="-DTRALLOC_DEBUG_THREADS_LENGTH='spinlock' "
-    else
-        arguments+="-DTRALLOC_DEBUG_THREADS_LENGTH='mutex' "
-    fi
-    if [ "${feature:11:1}" == "1" ]; then
-        arguments+="-DTRALLOC_DEBUG_THREADS_CHILDREN='spinlock' "
-    else
-        arguments+="-DTRALLOC_DEBUG_THREADS_CHILDREN='mutex' "
     fi
     
     arguments+="-DTRALLOC_MAN=0 $@"

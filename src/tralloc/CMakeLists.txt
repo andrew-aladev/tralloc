@@ -1,6 +1,3 @@
-set (TRALLOC_SPINLOCK 1)
-set (TRALLOC_MUTEX 2)
-
 set (HEADERS common.h config.h macro.h tree.h types.h)
 set (SOURCES common.c)
 
