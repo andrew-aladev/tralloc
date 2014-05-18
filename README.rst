@@ -77,6 +77,9 @@ Supported compilers
      $ CC="tcc" ../combinations.sh -DTRALLOC_SHARED=0 -DCMAKE_BUILD_TYPE="RELEASE"
      $ CC="clang" ../combinations.sh -DCMAKE_BUILD_TYPE="RELEASE"
      $ CC="ccc-analyzer" ../combinations.sh -DCMAKE_BUILD_TYPE="RELEASE"
+     $ CC="clang" CFLAGS="-fsanitize=leak -fno-omit-frame-pointer" ../combinations.sh -DCMAKE_BUILD_TYPE="RELEASE"
+     $ CC="clang" CFLAGS="-fsanitize=address -fno-omit-frame-pointer" ../combinations.sh -DCMAKE_BUILD_TYPE="RELEASE"
+     $ CC="clang" CFLAGS="-fsanitize=thread -fno-omit-frame-pointer" ../combinations.sh -DCMAKE_BUILD_TYPE="RELEASE"
 
 
 Gentoo
