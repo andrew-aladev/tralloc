@@ -9,7 +9,7 @@
 #include "../types.h"
 
 
-tralloc_error tralloc_get_length ( tralloc_context * context, size_t * length );
+tralloc_error tralloc_get_length ( tralloc_context * context, size_t * length_result_ptr );
 
 
 #endif

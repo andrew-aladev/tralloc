@@ -26,8 +26,8 @@ _tralloc_length * _tralloc_get_length_from_chunk ( _tralloc_chunk * chunk )
 _TRALLOC_INLINE
 void _tralloc_length_set ( _tralloc_chunk * chunk, size_t length )
 {
-    _tralloc_length * length_ext = _tralloc_get_length_from_chunk ( chunk );
-    length_ext->length           = length;
+    _tralloc_length * length_ptr = _tralloc_get_length_from_chunk ( chunk );
+    * length_ptr = length;
 }
 
 

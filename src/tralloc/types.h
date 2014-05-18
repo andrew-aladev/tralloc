@@ -97,9 +97,7 @@ enum {
 typedef uint8_t tralloc_extensions;
 
 #if defined(TRALLOC_LENGTH)
-typedef struct _tralloc_length_type {
-    size_t length;
-} _tralloc_length;
+typedef size_t _tralloc_length;
 #endif
 
 #if defined(TRALLOC_DESTRUCTOR)
@@ -172,7 +170,7 @@ typedef struct _tralloc_pool_type {
 } _tralloc_pool;
 #endif
 
-#if defined(TRALLOC_DEBUG) && defined(TRALLOC_THREADS)
+#if defined(TRALLOC_DEBUG_THREADS)
 enum {
     _TRALLOC_NOT_USED_BY_THREADS,
     _TRALLOC_USED_BY_SINGLE_THREAD,

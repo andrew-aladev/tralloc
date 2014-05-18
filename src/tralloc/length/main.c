@@ -8,7 +8,7 @@
 #include "../common.h"
 
 
-tralloc_error tralloc_get_length ( tralloc_context * context, size_t * length )
+tralloc_error tralloc_get_length ( tralloc_context * context, size_t * length_result_ptr )
 {
     if ( context == NULL ) {
         return TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL;
@@ -17,7 +17,7 @@ tralloc_error tralloc_get_length ( tralloc_context * context, size_t * length )
     if ( ! ( chunk->extensions & TRALLOC_EXTENSION_LENGTH ) ) {
         return TRALLOC_ERROR_NO_SUCH_EXTENSION;
     }
-    _tralloc_length * length_ext = _tralloc_get_length_from_chunk ( chunk );
-    * length                     = length_ext->length;
+    _tralloc_length * length_ptr = _tralloc_get_length_from_chunk ( chunk );
+    * length_result_ptr          = * length_ptr;
     return 0;
 }
