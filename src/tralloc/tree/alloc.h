@@ -17,7 +17,7 @@
 #endif
 
 
-#if defined(TRALLOC_DEBUG)
+#if defined(TRALLOC_DEBUG) && defined(TRALLOC_DEBUG_LOG)
 
 tralloc_error tralloc_with_extensions ( const char * file, size_t line, tralloc_context * parent_context, tralloc_context ** child_context, tralloc_extensions extensions, size_t length );
 
@@ -87,5 +87,6 @@ tralloc_error tralloc_empty_with_extensions ( tralloc_context * parent_context, 
 }
 
 #endif
+
 
 #endif

@@ -43,7 +43,11 @@ tralloc_error _tralloc_debug_before_add_chunk ( _tralloc_chunk * parent_chunk, t
     return 0;
 }
 
+#if defined(TRALLOC_DEBUG_LOG)
 tralloc_error _tralloc_debug_after_add_chunk ( _tralloc_chunk * chunk, size_t chunk_length, size_t length, const char * file, size_t line )
+#else
+tralloc_error _tralloc_debug_after_add_chunk ( _tralloc_chunk * chunk, size_t chunk_length, size_t length )
+#endif
 {
     chunk->chunk_length = chunk_length;
     chunk->length       = length;
