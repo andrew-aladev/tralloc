@@ -62,9 +62,9 @@ tralloc_error _calloc ( void ** data, size_t length )
 static inline
 
 #if defined(TRALLOC_DEBUG) && defined(TRALLOC_DEBUG_LOG)
-tralloc_error _tralloc_with_extensions_with_allocator ( const char * file, size_t line, tralloc_context * parent_context, tralloc_context ** child_context, tralloc_extensions extensions, size_t length, _allocator allocator )
+tralloc_error _tralloc_with_extensions_with_allocator ( const char * file, size_t line, tralloc_context * parent_context, tralloc_context ** child_context, tralloc_extensions _TRALLOC_UNUSED ( extensions ), size_t length, _allocator allocator )
 #else
-tralloc_error _tralloc_with_extensions_with_allocator ( tralloc_context * parent_context, tralloc_context ** child_context, tralloc_extensions extensions, size_t length, _allocator allocator )
+tralloc_error _tralloc_with_extensions_with_allocator ( tralloc_context * parent_context, tralloc_context ** child_context, tralloc_extensions _TRALLOC_UNUSED ( extensions ), size_t length, _allocator allocator )
 #endif
 
 {
@@ -225,7 +225,7 @@ tralloc_error _tralloc_with_extensions_with_allocator ( tralloc_context * parent
     }
 
 #   if defined(TRALLOC_DEBUG)
-    
+
 #   if defined(TRALLOC_DEBUG_LOG)
     result = _tralloc_debug_after_add_chunk ( chunk, chunk_length, length, file, line );
 #   else

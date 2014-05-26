@@ -96,7 +96,7 @@ const char * tralloc_get_string_for_error ( tralloc_error error )
     }
 }
 
-size_t tralloc_predict_chunk_length ( tralloc_extensions extensions )
+size_t tralloc_predict_chunk_length ( tralloc_extensions _TRALLOC_UNUSED ( extensions ) )
 {
     size_t extensions_length = 0;
 

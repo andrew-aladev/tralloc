@@ -7,13 +7,13 @@
 #include <tralloc/tree.h>
 
 
-static
-void * thread ( tralloc_context * current )
-{
-    return ( void * ) ( ( uintptr_t ) tralloc_realloc ( &current, sizeof ( uintptr_t ) ) );
-}
+// static
+// void * thread ( tralloc_context * current )
+// {
+//     return ( void * ) ( ( uintptr_t ) tralloc_realloc ( &current, sizeof ( uintptr_t ) ) );
+// }
 
-tralloc_bool test_debug_threads_resize ( tralloc_context * ctx )
+tralloc_bool test_debug_threads_resize ( tralloc_context * _TRALLOC_UNUSED ( ctx ) )
 {
 //     tralloc_context * parent;
 //     tralloc_context * next;
@@ -29,10 +29,10 @@ tralloc_bool test_debug_threads_resize ( tralloc_context * ctx )
 //     ) {
 //         return TRALLOC_FALSE;
 //     }
-// 
+//
 //     void * result;
 //     pthread_t thread_1;
-// 
+//
 //     if (
 //         pthread_create ( &thread_1, NULL, &thread, current ) != 0 ||
 //         pthread_join   ( thread_1, &result ) != 0 ||
@@ -41,7 +41,7 @@ tralloc_bool test_debug_threads_resize ( tralloc_context * ctx )
 //     ) {
 //         return TRALLOC_FALSE;
 //     }
-// 
+//
 //     if (
 //         tralloc_new ( ctx, &parent )  != 0 ||
 //         tralloc_new ( parent, &next ) != 0 ||
@@ -51,7 +51,7 @@ tralloc_bool test_debug_threads_resize ( tralloc_context * ctx )
 //     ) {
 //         return TRALLOC_FALSE;
 //     }
-// 
+//
 //     if (
 //         pthread_create ( &thread_1, NULL, &thread, current ) != 0 ||
 //         pthread_join   ( thread_1, &result ) != 0 ||
@@ -60,7 +60,7 @@ tralloc_bool test_debug_threads_resize ( tralloc_context * ctx )
 //     ) {
 //         return TRALLOC_FALSE;
 //     }
-// 
+//
 //     if (
 //         tralloc_with_extensions_new ( ctx, &parent, TRALLOC_EXTENSION_LOCK_FIRST_CHILD ) != 0 ||
 //         tralloc_new ( parent, &next ) != 0 ||
@@ -70,7 +70,7 @@ tralloc_bool test_debug_threads_resize ( tralloc_context * ctx )
 //     ) {
 //         return TRALLOC_FALSE;
 //     }
-// 
+//
 //     if (
 //         pthread_create ( &thread_1, NULL, &thread, current ) != 0 ||
 //         pthread_join   ( thread_1, &result ) != 0 ||
@@ -79,7 +79,7 @@ tralloc_bool test_debug_threads_resize ( tralloc_context * ctx )
 //     ) {
 //         return TRALLOC_FALSE;
 //     }
-// 
+//
 //     if (
 //         tralloc_with_extensions_new ( ctx, &parent, TRALLOC_EXTENSION_LOCK_FIRST_CHILD ) != 0 ||
 //         tralloc_new ( parent, &next ) != 0 ||
@@ -89,7 +89,7 @@ tralloc_bool test_debug_threads_resize ( tralloc_context * ctx )
 //     ) {
 //         return TRALLOC_FALSE;
 //     }
-// 
+//
 //     if (
 //         pthread_create ( &thread_1, NULL, &thread, current ) != 0 ||
 //         pthread_join   ( thread_1, &result ) != 0 ||
@@ -98,7 +98,7 @@ tralloc_bool test_debug_threads_resize ( tralloc_context * ctx )
 //     ) {
 //         return TRALLOC_FALSE;
 //     }
-// 
+//
 //     if (
 //         tralloc_with_extensions_new ( ctx, &parent, TRALLOC_EXTENSION_LOCK_FIRST_CHILD ) != 0 ||
 //         tralloc_new ( parent, &next ) != 0 ||
@@ -108,7 +108,7 @@ tralloc_bool test_debug_threads_resize ( tralloc_context * ctx )
 //     ) {
 //         return TRALLOC_FALSE;
 //     }
-// 
+//
 //     if (
 //         pthread_create ( &thread_1, NULL, &thread, current ) != 0 ||
 //         pthread_join   ( thread_1, &result ) != 0 ||
@@ -117,7 +117,7 @@ tralloc_bool test_debug_threads_resize ( tralloc_context * ctx )
 //     ) {
 //         return TRALLOC_FALSE;
 //     }
-// 
+//
 //     if (
 //         tralloc_with_extensions_new ( ctx, &parent, TRALLOC_EXTENSION_LOCK_FIRST_CHILD ) != 0 ||
 //         tralloc_new ( parent, &next ) != 0 ||
@@ -127,7 +127,7 @@ tralloc_bool test_debug_threads_resize ( tralloc_context * ctx )
 //     ) {
 //         return TRALLOC_FALSE;
 //     }
-// 
+//
 //     if (
 //         pthread_create ( &thread_1, NULL, &thread, current ) != 0 ||
 //         pthread_join   ( thread_1, &result ) != 0 ||
@@ -136,7 +136,7 @@ tralloc_bool test_debug_threads_resize ( tralloc_context * ctx )
 //     ) {
 //         return TRALLOC_FALSE;
 //     }
-// 
+//
 //     if (
 //         tralloc_with_extensions_new ( ctx, &parent, TRALLOC_EXTENSION_LOCK_FIRST_CHILD ) != 0 ||
 //         tralloc_with_extensions_new ( parent, &next, TRALLOC_EXTENSION_LOCK_PREV ) != 0 ||
@@ -146,7 +146,7 @@ tralloc_bool test_debug_threads_resize ( tralloc_context * ctx )
 //     ) {
 //         return TRALLOC_FALSE;
 //     }
-// 
+//
 //     if (
 //         pthread_create ( &thread_1, NULL, &thread, current ) != 0 ||
 //         pthread_join   ( thread_1, &result ) != 0 ||
@@ -155,7 +155,7 @@ tralloc_bool test_debug_threads_resize ( tralloc_context * ctx )
 //     ) {
 //         return TRALLOC_FALSE;
 //     }
-// 
+//
 //     if (
 //         tralloc_with_extensions_new ( ctx, &parent, TRALLOC_EXTENSION_LOCK_FIRST_CHILD ) != 0 ||
 //         tralloc_with_extensions_new ( parent, &next, TRALLOC_EXTENSION_LOCK_PREV ) != 0 ||
@@ -165,7 +165,7 @@ tralloc_bool test_debug_threads_resize ( tralloc_context * ctx )
 //     ) {
 //         return TRALLOC_FALSE;
 //     }
-// 
+//
 //     if (
 //         pthread_create ( &thread_1, NULL, &thread, current ) != 0 ||
 //         pthread_join   ( thread_1, &result ) != 0 ||
@@ -174,7 +174,7 @@ tralloc_bool test_debug_threads_resize ( tralloc_context * ctx )
 //     ) {
 //         return TRALLOC_FALSE;
 //     }
-// 
+//
 //     if (
 //         tralloc_with_extensions_new ( ctx, &parent, TRALLOC_EXTENSION_LOCK_FIRST_CHILD ) != 0 ||
 //         tralloc_with_extensions_new ( parent, &next, TRALLOC_EXTENSION_LOCK_PREV ) != 0 ||
@@ -184,7 +184,7 @@ tralloc_bool test_debug_threads_resize ( tralloc_context * ctx )
 //     ) {
 //         return TRALLOC_FALSE;
 //     }
-// 
+//
 //     if (
 //         pthread_create ( &thread_1, NULL, &thread, current ) != 0 ||
 //         pthread_join   ( thread_1, &result ) != 0 ||

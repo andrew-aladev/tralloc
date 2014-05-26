@@ -42,7 +42,7 @@ tralloc_error tralloc_realloc ( tralloc_context ** chunk_context, size_t length 
     }
 
     _tralloc_chunk * old_chunk = _tralloc_get_chunk_from_context ( context );
-    tralloc_error result;
+    tralloc_error _TRALLOC_UNUSED ( result );
 
 #   if defined(TRALLOC_DEBUG)
     size_t old_length;
@@ -103,7 +103,7 @@ tralloc_error tralloc_realloc ( tralloc_context ** chunk_context, size_t length 
         if ( new_memory == NULL ) {
             // "old_chunk" can't be resized, because there is not enough memory in pool.
             // "old_chunk"'s data is still valid.
-            
+
             size_t old_total_length = old_pool_child->length;
 
             // TRALLOC_EXTENSION_POOL_CHILD should be disabled in "old_chunk".
@@ -111,7 +111,7 @@ tralloc_error tralloc_realloc ( tralloc_context ** chunk_context, size_t length 
             extensions_length -= sizeof ( _tralloc_pool_child );
             old_total_length  -= sizeof ( _tralloc_pool_child );
             total_length      -= sizeof ( _tralloc_pool_child );
-            
+
             // "old_chunk" should be copied to new location with enough memory.
             old_memory = ( void * ) ( ( uintptr_t ) old_memory + sizeof ( _tralloc_pool_child ) );
             new_memory = malloc ( total_length );
@@ -153,7 +153,7 @@ tralloc_error tralloc_realloc ( tralloc_context ** chunk_context, size_t length 
 
     } else {
         _tralloc_chunk * new_chunk = ( _tralloc_chunk * ) ( ( uintptr_t ) new_memory + extensions_length );
-        
+
         _tralloc_update_chunk ( new_chunk );
 
 #       if defined(TRALLOC_LENGTH)
@@ -178,6 +178,6 @@ tralloc_error tralloc_realloc ( tralloc_context ** chunk_context, size_t length 
 #       endif
 
     }
-    
+
     return 0;
 }

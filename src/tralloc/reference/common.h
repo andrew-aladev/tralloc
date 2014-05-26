@@ -18,7 +18,7 @@
 
 
 _TRALLOC_INLINE
-size_t _tralloc_get_reference_offset ( _tralloc_chunk * chunk )
+size_t _tralloc_get_reference_offset ( _tralloc_chunk * _TRALLOC_UNUSED ( chunk ) )
 {
     size_t offset = 0;
 

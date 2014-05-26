@@ -5,6 +5,7 @@
 
 #include "events.h"
 #include "chunk.h"
+#include "../macro.h"
 
 #if defined(TRALLOC_DEBUG_STATS)
 #   include "stats.h"
@@ -22,9 +23,9 @@
 #include <string.h>
 
 
-tralloc_error _tralloc_debug_before_add_chunk ( _tralloc_chunk * parent_chunk, tralloc_extensions extensions, size_t chunk_length, size_t length )
+tralloc_error _tralloc_debug_before_add_chunk ( _tralloc_chunk * _TRALLOC_UNUSED ( parent_chunk ), tralloc_extensions _TRALLOC_UNUSED ( extensions ), size_t _TRALLOC_UNUSED ( chunk_length ), size_t _TRALLOC_UNUSED ( length ) )
 {
-    tralloc_error result;
+    tralloc_error _TRALLOC_UNUSED ( result );
 
 #   if defined(TRALLOC_DEBUG_THREADS)
     result = _tralloc_debug_threads_before_add_chunk ( parent_chunk, extensions );
@@ -107,9 +108,9 @@ tralloc_error _tralloc_debug_after_add_chunk ( _tralloc_chunk * chunk, size_t ch
     return 0;
 }
 
-tralloc_error _tralloc_debug_before_resize_chunk ( _tralloc_chunk * chunk )
+tralloc_error _tralloc_debug_before_resize_chunk ( _tralloc_chunk * _TRALLOC_UNUSED ( chunk ) )
 {
-    tralloc_error result;
+    tralloc_error _TRALLOC_UNUSED ( result );
 
 #   if defined(TRALLOC_DEBUG_THREADS)
     result = _tralloc_debug_threads_before_resize_chunk ( chunk );
@@ -162,9 +163,9 @@ tralloc_error _tralloc_debug_after_resize_chunk ( _tralloc_chunk * chunk, size_t
     return 0;
 }
 
-tralloc_error _tralloc_debug_before_move_chunk ( _tralloc_chunk * chunk )
+tralloc_error _tralloc_debug_before_move_chunk ( _tralloc_chunk * _TRALLOC_UNUSED ( chunk ) )
 {
-    tralloc_error result;
+    tralloc_error _TRALLOC_UNUSED ( result );
 
 #   if defined(TRALLOC_DEBUG_THREADS)
     result = _tralloc_debug_threads_before_move_chunk ( chunk );
@@ -183,9 +184,9 @@ tralloc_error _tralloc_debug_before_move_chunk ( _tralloc_chunk * chunk )
     return 0;
 }
 
-tralloc_error _tralloc_debug_after_move_chunk ( _tralloc_chunk * chunk, _tralloc_chunk * old_parent_chunk )
+tralloc_error _tralloc_debug_after_move_chunk ( _tralloc_chunk * _TRALLOC_UNUSED ( chunk ), _tralloc_chunk * _TRALLOC_UNUSED ( old_parent_chunk ) )
 {
-    tralloc_error result;
+    tralloc_error _TRALLOC_UNUSED ( result );
 
 #   if defined(TRALLOC_DEBUG_THREADS)
     result = _tralloc_debug_threads_after_move_chunk ( chunk );
@@ -204,9 +205,9 @@ tralloc_error _tralloc_debug_after_move_chunk ( _tralloc_chunk * chunk, _tralloc
     return 0;
 }
 
-tralloc_error _tralloc_debug_before_free_subtree ( _tralloc_chunk * chunk )
+tralloc_error _tralloc_debug_before_free_subtree ( _tralloc_chunk * _TRALLOC_UNUSED ( chunk ) )
 {
-    tralloc_error result, error = 0;
+    tralloc_error error = 0, _TRALLOC_UNUSED ( result );
 
 #   if defined(TRALLOC_DEBUG_THREADS)
     result = _tralloc_debug_threads_before_free_subtree ( chunk );
@@ -266,9 +267,9 @@ tralloc_error _tralloc_debug_before_free_chunk ( _tralloc_chunk * chunk )
     return error;
 }
 
-tralloc_error _tralloc_debug_before_refuse_to_free_subtree ( _tralloc_chunk * chunk )
+tralloc_error _tralloc_debug_before_refuse_to_free_subtree ( _tralloc_chunk * _TRALLOC_UNUSED ( chunk ) )
 {
-    tralloc_error result, error = 0;
+    tralloc_error error = 0, _TRALLOC_UNUSED ( result );
 
 #   if defined(TRALLOC_DEBUG_THREADS)
     result = _tralloc_debug_threads_before_refuse_to_free_subtree ( chunk );
@@ -287,7 +288,7 @@ tralloc_error _tralloc_debug_before_refuse_to_free_subtree ( _tralloc_chunk * ch
     return error;
 }
 
-tralloc_error _tralloc_debug_after_refuse_to_free_subtree ( _tralloc_chunk * chunk )
+tralloc_error _tralloc_debug_after_refuse_to_free_subtree ( _tralloc_chunk * _TRALLOC_UNUSED ( chunk ) )
 {
 
 #   if defined(TRALLOC_DEBUG_CALLBACKS)
@@ -297,9 +298,9 @@ tralloc_error _tralloc_debug_after_refuse_to_free_subtree ( _tralloc_chunk * chu
     return 0;
 }
 
-tralloc_error _tralloc_debug_before_refuse_to_free_chunk ( _tralloc_chunk * chunk )
+tralloc_error _tralloc_debug_before_refuse_to_free_chunk ( _tralloc_chunk * _TRALLOC_UNUSED ( chunk ) )
 {
-    tralloc_error result, error = 0;
+    tralloc_error error = 0, _TRALLOC_UNUSED ( result );
 
 #   if defined(TRALLOC_DEBUG_THREADS)
     result = _tralloc_debug_threads_before_refuse_to_free_chunk ( chunk );
@@ -318,7 +319,7 @@ tralloc_error _tralloc_debug_before_refuse_to_free_chunk ( _tralloc_chunk * chun
     return error;
 }
 
-tralloc_error _tralloc_debug_after_refuse_to_free_chunk ( _tralloc_chunk * chunk )
+tralloc_error _tralloc_debug_after_refuse_to_free_chunk ( _tralloc_chunk * _TRALLOC_UNUSED ( chunk ) )
 {
 
 #   if defined(TRALLOC_DEBUG_CALLBACKS)

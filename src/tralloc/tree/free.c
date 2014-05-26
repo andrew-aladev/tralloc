@@ -29,7 +29,7 @@
 
 
 static inline
-tralloc_bool _can_free_chunk ( _tralloc_chunk * chunk )
+tralloc_bool _can_free_chunk ( _tralloc_chunk * _TRALLOC_UNUSED ( chunk ) )
 {
 
 #   if defined(TRALLOC_REFERENCE)
@@ -52,7 +52,7 @@ tralloc_bool _can_free_chunk ( _tralloc_chunk * chunk )
 }
 
 static inline
-tralloc_bool _can_free_chunk_children ( _tralloc_chunk * chunk )
+tralloc_bool _can_free_chunk_children ( _tralloc_chunk * _TRALLOC_UNUSED ( chunk ) )
 {
 
 #   if defined(TRALLOC_REFERENCE)
@@ -77,7 +77,7 @@ tralloc_bool _can_free_chunk_children ( _tralloc_chunk * chunk )
 static inline
 tralloc_error _free_chunk ( _tralloc_chunk * chunk )
 {
-    tralloc_error error = 0, result;
+    tralloc_error error = 0, _TRALLOC_UNUSED ( result );
     size_t extensions_length = 0;
 
 #   if defined(TRALLOC_LENGTH)
@@ -282,7 +282,7 @@ void _detach_chunk_silent ( _tralloc_chunk * chunk )
 static inline
 tralloc_error _subtree_to_vertical_list ( _tralloc_chunk * root_chunk, _tralloc_chunk ** list_root_chunk )
 {
-    tralloc_error result, error = 0;
+    tralloc_error error = 0, _TRALLOC_UNUSED ( result );
 
     tralloc_bool can_free_chunk, can_free_chunk_children;
     _tralloc_chunk * prev_chunk, * next_chunk;
