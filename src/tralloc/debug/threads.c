@@ -4,6 +4,7 @@
 // You should have received a copy of the GNU General Lesser Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
 #include "threads.h"
+#include "common.h"
 #include "../macro.h"
 #include "../common.h"
 
@@ -41,7 +42,7 @@ tralloc_error _check_subtree_lock ( _tralloc_chunk * chunk, pthread_t thread_id 
             "%s:%zu error: %s\n",
             chunk->initialized_in_file,
             chunk->initialized_at_line,
-            tralloc_get_string_for_error ( TRALLOC_ERROR_NO_SUBTREE_LOCK )
+            tralloc_debug_get_string_for_error ( TRALLOC_ERROR_NO_SUBTREE_LOCK )
         );
 #       endif
         error = TRALLOC_ERROR_NO_SUBTREE_LOCK;
@@ -82,7 +83,7 @@ tralloc_error _check_children_lock ( _tralloc_chunk * chunk, pthread_t thread_id
             "%s:%zu error: %s\n",
             chunk->initialized_in_file,
             chunk->initialized_at_line,
-            tralloc_get_string_for_error ( TRALLOC_ERROR_NO_CHILDREN_LOCK )
+            tralloc_debug_get_string_for_error ( TRALLOC_ERROR_NO_CHILDREN_LOCK )
         );
 #       endif
         error = TRALLOC_ERROR_NO_CHILDREN_LOCK;

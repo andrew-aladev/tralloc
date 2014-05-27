@@ -6,8 +6,7 @@
 #ifndef TRALLOC_POOL_COMMON_H
 #define TRALLOC_POOL_COMMON_H
 
-#include "../macro.h"
-#include "../types.h"
+#include "../common.h"
 
 #undef _TRALLOC_INLINE
 #ifdef _TRALLOC_POOL_COMMON_INCLUDED_FROM_OBJECT
@@ -18,73 +17,21 @@
 
 
 _TRALLOC_INLINE
-size_t _tralloc_get_pool_offset ( _tralloc_chunk * _TRALLOC_UNUSED ( chunk ) )
-{
-    size_t offset = 0;
-
-#   if defined(TRALLOC_LENGTH)
-    if ( chunk->extensions & TRALLOC_EXTENSION_LENGTH ) {
-        offset += sizeof ( _tralloc_length );
-    }
-#   endif
-
-#   if defined(TRALLOC_DESTRUCTOR)
-    if ( chunk->extensions & TRALLOC_EXTENSION_DESTRUCTORS ) {
-        offset += sizeof ( _tralloc_destructors );
-    }
-#   endif
-
-#   if defined(TRALLOC_REFERENCE)
-    if ( chunk->extensions & TRALLOC_EXTENSION_REFERENCES ) {
-        offset += sizeof ( _tralloc_references );
-    }
-    if ( chunk->extensions & TRALLOC_EXTENSION_REFERENCE ) {
-        offset += sizeof ( _tralloc_reference );
-    }
-#   endif
-
-    return offset;
-}
-
-_TRALLOC_INLINE
 _tralloc_pool_child * _tralloc_get_pool_child_from_chunk ( _tralloc_chunk * chunk )
 {
-    return ( _tralloc_pool_child * ) ( ( uintptr_t ) chunk - _tralloc_get_pool_offset ( chunk ) - sizeof ( _tralloc_pool_child ) );
+    return ( _tralloc_pool_child * ) ( ( uintptr_t ) chunk - _tralloc_get_offset_for_extension ( chunk->extensions, TRALLOC_EXTENSION_POOL_CHILD ) );
 }
 
 _TRALLOC_INLINE
 _tralloc_pool * _tralloc_get_pool_from_chunk ( _tralloc_chunk * chunk )
 {
-    return ( _tralloc_pool * ) ( ( uintptr_t ) chunk - _tralloc_get_pool_offset ( chunk ) - sizeof ( _tralloc_pool ) );
+    return ( _tralloc_pool * ) ( ( uintptr_t ) chunk - _tralloc_get_offset_for_extension ( chunk->extensions, TRALLOC_EXTENSION_POOL ) );
 }
 
 _TRALLOC_INLINE
 _tralloc_chunk * _tralloc_get_chunk_from_pool ( _tralloc_pool * pool )
 {
-    size_t offset = sizeof ( _tralloc_pool );
-
-#   if defined(TRALLOC_LENGTH)
-    if ( pool->extensions & TRALLOC_EXTENSION_LENGTH ) {
-        offset += sizeof ( _tralloc_length );
-    }
-#   endif
-
-#   if defined(TRALLOC_DESTRUCTOR)
-    if ( pool->extensions & TRALLOC_EXTENSION_DESTRUCTORS ) {
-        offset += sizeof ( _tralloc_destructors );
-    }
-#   endif
-
-#   if defined(TRALLOC_REFERENCE)
-    if ( pool->extensions & TRALLOC_EXTENSION_REFERENCES ) {
-        offset += sizeof ( _tralloc_references );
-    }
-    if ( pool->extensions & TRALLOC_EXTENSION_REFERENCE ) {
-        offset += sizeof ( _tralloc_reference );
-    }
-#   endif
-
-    return ( _tralloc_chunk * ) ( ( uintptr_t ) pool + offset );
+    return ( _tralloc_chunk * ) ( ( uintptr_t ) pool + _tralloc_get_offset_for_extension ( pool->extensions, TRALLOC_EXTENSION_POOL ) );
 }
 
 

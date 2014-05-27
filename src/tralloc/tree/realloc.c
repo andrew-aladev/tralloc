@@ -106,8 +106,7 @@ tralloc_error tralloc_realloc ( tralloc_context ** chunk_context, size_t length 
 
             size_t old_total_length = old_pool_child->length;
 
-            // TRALLOC_EXTENSION_POOL_CHILD should be disabled in "old_chunk".
-            old_chunk->extensions &= ~ ( TRALLOC_EXTENSION_POOL_CHILD );
+            // TRALLOC_EXTENSION_POOL_CHILD will be disabled in "new_chunk".
             extensions_length -= sizeof ( _tralloc_pool_child );
             old_total_length  -= sizeof ( _tralloc_pool_child );
             total_length      -= sizeof ( _tralloc_pool_child );
@@ -125,6 +124,10 @@ tralloc_error tralloc_realloc ( tralloc_context ** chunk_context, size_t length 
                 free ( new_memory );
                 return result;
             }
+            
+            // TRALLOC_EXTENSION_POOL_CHILD should be disabled in "new_chunk".
+            _tralloc_chunk * new_chunk = ( _tralloc_chunk * ) ( ( uintptr_t ) new_memory + extensions_length );
+            new_chunk->extensions &= ~ ( TRALLOC_EXTENSION_POOL_CHILD );
         }
     } else {
         new_memory = realloc ( old_memory, total_length );

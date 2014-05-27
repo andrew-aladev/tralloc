@@ -92,6 +92,7 @@ enum {
 #   endif
 
 };
+typedef uint8_t _tralloc_extension;
 #endif
 
 typedef uint8_t tralloc_extensions;

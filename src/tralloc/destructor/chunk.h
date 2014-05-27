@@ -6,8 +6,7 @@
 #ifndef TRALLOC_DESTRUCTOR_CHUNK_H
 #define TRALLOC_DESTRUCTOR_CHUNK_H
 
-#include "../types.h"
-#include "../macro.h"
+#include "../common.h"
 
 #undef _TRALLOC_INLINE
 #ifdef _TRALLOC_DESTRUCTOR_CHUNK_INCLUDED_FROM_OBJECT
@@ -20,15 +19,7 @@
 _TRALLOC_INLINE
 _tralloc_destructors * _tralloc_get_destructors_from_chunk ( _tralloc_chunk * chunk )
 {
-    size_t offset = sizeof ( _tralloc_destructors );
-
-#   if defined(TRALLOC_LENGTH)
-    if ( chunk->extensions & TRALLOC_EXTENSION_LENGTH ) {
-        offset += sizeof ( _tralloc_length );
-    }
-#   endif
-
-    return ( _tralloc_destructors * ) ( ( uintptr_t ) chunk - offset );
+    return ( _tralloc_destructors * ) ( ( uintptr_t ) chunk - _tralloc_get_offset_for_extension ( chunk->extensions, TRALLOC_EXTENSION_DESTRUCTORS ) );
 }
 
 _TRALLOC_INLINE

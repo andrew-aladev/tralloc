@@ -6,128 +6,102 @@
 #define _TRALLOC_COMMON_INCLUDED_FROM_OBJECT
 #include "common.h"
 
-#include <string.h>
 
+// Extension's structures are situated in the memory in the following order : pool / pool_child, references, reference, destructors, length.
 
-static const char _ERROR_REQUIRED_ARGUMENT_IS_NULL [] = "TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL";
-static const char _ERROR_MALLOC_FAILED             [] = "TRALLOC_ERROR_MALLOC_FAILED";
-static const char _ERROR_CALLOC_FAILED             [] = "TRALLOC_ERROR_CALLOC_FAILED";
-static const char _ERROR_REALLOC_FAILED            [] = "TRALLOC_ERROR_REALLOC_FAILED";
-static const char _ERROR_OPEN_DESCRIPTOR_FAILED    [] = "TRALLOC_ERROR_OPEN_DESCRIPTOR_FAILED";
-static const char _ERROR_CLOSE_DESCRIPTOR_FAILED   [] = "TRALLOC_ERROR_CLOSE_DESCRIPTOR_FAILED";
-static const char _ERROR_PRINTF_FAILED             [] = "TRALLOC_ERROR_PRINTF_FAILED";
-
-static const char _ERROR_CHILD_EQUALS_PARENT   [] = "TRALLOC_ERROR_CHILD_EQUALS_PARENT";
-static const char _ERROR_CHILD_HAS_SAME_PARENT [] = "TRALLOC_ERROR_CHILD_HAS_SAME_PARENT";
-
-#if defined(TRALLOC_EXTENSIONS)
-static const char _ERROR_NO_SUCH_EXTENSION [] = "TRALLOC_ERROR_NO_SUCH_EXTENSION";
-#endif
-
-#if defined(TRALLOC_POOL)
-static const char _ERROR_POOL_CANT_BE_REALLOCATED [] = "TRALLOC_ERROR_POOL_CANT_BE_REALLOCATED";
-#endif
-
-#if defined(TRALLOC_UTILS_BUFFER)
-static const char _ERROR_UTILS_BUFFER_OVERFLOW [] = "TRALLOC_ERROR_UTILS_BUFFER_OVERFLOW";
-#endif
-
-#if defined(TRALLOC_THREADS)
-static const char _ERROR_MUTEX_FAILED    [] = "TRALLOC_ERROR_MUTEX_FAILED";
-static const char _ERROR_SPINLOCK_FAILED [] = "TRALLOC_ERROR_SPINLOCK_FAILED";
-
-static const char _ERROR_NO_SUBTREE_LOCK  [] = "chunk should have TRALLOC_EXTENSION_LOCK_SUBTREE";
-static const char _ERROR_NO_CHILDREN_LOCK [] = "chunk should have TRALLOC_EXTENSION_LOCK_CHILDREN";
-
-#endif
-
-const char * tralloc_get_string_for_error ( tralloc_error error )
-{
-    switch ( error ) {
-    case TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL:
-        return _ERROR_REQUIRED_ARGUMENT_IS_NULL;
-    case TRALLOC_ERROR_MALLOC_FAILED:
-        return _ERROR_MALLOC_FAILED;
-    case TRALLOC_ERROR_CALLOC_FAILED:
-        return _ERROR_CALLOC_FAILED;
-    case TRALLOC_ERROR_REALLOC_FAILED:
-        return _ERROR_REALLOC_FAILED;
-    case TRALLOC_ERROR_OPEN_DESCRIPTOR_FAILED:
-        return _ERROR_OPEN_DESCRIPTOR_FAILED;
-    case TRALLOC_ERROR_CLOSE_DESCRIPTOR_FAILED:
-        return _ERROR_CLOSE_DESCRIPTOR_FAILED;
-    case TRALLOC_ERROR_PRINTF_FAILED:
-        return _ERROR_PRINTF_FAILED;
-
-    case TRALLOC_ERROR_CHILD_EQUALS_PARENT:
-        return _ERROR_CHILD_EQUALS_PARENT;
-    case TRALLOC_ERROR_CHILD_HAS_SAME_PARENT:
-        return _ERROR_CHILD_HAS_SAME_PARENT;
-
-#   if defined(TRALLOC_EXTENSIONS)
-    case TRALLOC_ERROR_NO_SUCH_EXTENSION:
-        return _ERROR_NO_SUCH_EXTENSION;
-#   endif
-
-#   if defined(TRALLOC_POOL)
-    case TRALLOC_ERROR_POOL_CANT_BE_REALLOCATED:
-        return _ERROR_POOL_CANT_BE_REALLOCATED;
-#   endif
-
-#   if defined(TRALLOC_UTILS_BUFFER)
-    case TRALLOC_ERROR_UTILS_BUFFER_OVERFLOW:
-        return _ERROR_UTILS_BUFFER_OVERFLOW;
-#   endif
-
-#   if defined(TRALLOC_THREADS)
-    case TRALLOC_ERROR_MUTEX_FAILED:
-        return _ERROR_MUTEX_FAILED;
-    case TRALLOC_ERROR_SPINLOCK_FAILED:
-        return _ERROR_SPINLOCK_FAILED;
-
-    case TRALLOC_ERROR_NO_CHILDREN_LOCK:
-        return _ERROR_NO_CHILDREN_LOCK;
-    case TRALLOC_ERROR_NO_SUBTREE_LOCK:
-        return _ERROR_NO_SUBTREE_LOCK;
-#   endif
-
-    default:
-        return NULL;
-    }
-}
-
+// Function returns size of extensions and chunk.
 size_t tralloc_predict_chunk_length ( tralloc_extensions _TRALLOC_UNUSED ( extensions ) )
 {
-    size_t extensions_length = 0;
+    size_t offset = 0;
 
-#   if defined(TRALLOC_LENGTH)
-    if ( extensions & TRALLOC_EXTENSION_LENGTH ) {
-        extensions_length += sizeof ( _tralloc_length );
-    }
-#   endif
-
-#   if defined(TRALLOC_DESTRUCTOR)
-    if ( extensions & TRALLOC_EXTENSION_DESTRUCTORS ) {
-        extensions_length += sizeof ( _tralloc_destructors );
+#   if defined(TRALLOC_POOL)
+    if ( extensions & TRALLOC_EXTENSION_POOL ) {
+        offset += sizeof ( _tralloc_pool );
+    } else if ( extensions & TRALLOC_EXTENSION_POOL_CHILD ) {
+        offset += sizeof ( _tralloc_pool_child );
     }
 #   endif
 
 #   if defined(TRALLOC_REFERENCE)
     if ( extensions & TRALLOC_EXTENSION_REFERENCES ) {
-        extensions_length += sizeof ( _tralloc_references );
+        offset += sizeof ( _tralloc_references );
     }
     if ( extensions & TRALLOC_EXTENSION_REFERENCE ) {
-        extensions_length += sizeof ( _tralloc_reference );
+        offset += sizeof ( _tralloc_reference );
     }
 #   endif
+
+#   if defined(TRALLOC_DESTRUCTOR)
+    if ( extensions & TRALLOC_EXTENSION_DESTRUCTORS ) {
+        offset += sizeof ( _tralloc_destructors );
+    }
+#   endif
+
+#   if defined(TRALLOC_LENGTH)
+    if ( extensions & TRALLOC_EXTENSION_LENGTH ) {
+        offset += sizeof ( _tralloc_length );
+    }
+#   endif
+
+    return offset + sizeof ( _tralloc_chunk );
+}
+
+
+#if defined(TRALLOC_EXTENSIONS)
+
+// Extension is the one bit of the extensions, "extension & extensions" can be false.
+// Function returns offset of the extension's structure from the bottom.
+size_t _tralloc_get_offset_for_extension ( tralloc_extensions extensions, _tralloc_extension _TRALLOC_UNUSED ( extension ) )
+{
+    size_t offset = 0;
+
+#   if defined(TRALLOC_LENGTH)
+    if ( extensions & TRALLOC_EXTENSION_LENGTH ) {
+        offset += sizeof ( _tralloc_length );
+    }
+    if ( extension == TRALLOC_EXTENSION_LENGTH ) {
+        return offset;
+    }
+#   endif
+
+#   if defined(TRALLOC_DESTRUCTOR)
+    if ( extensions & TRALLOC_EXTENSION_DESTRUCTORS ) {
+        offset += sizeof ( _tralloc_destructors );
+    }
+    if ( extension == TRALLOC_EXTENSION_DESTRUCTORS ) {
+        return offset;
+    }
+#   endif
+
+#   if defined(TRALLOC_REFERENCE)
+    // First is reference, than references. It is important.
+
+    if ( extensions & TRALLOC_EXTENSION_REFERENCE ) {
+        offset += sizeof ( _tralloc_reference );
+    }
+    if ( extension == TRALLOC_EXTENSION_REFERENCE ) {
+        return offset;
+    }
+
+    if ( extensions & TRALLOC_EXTENSION_REFERENCES ) {
+        offset += sizeof ( _tralloc_references );
+    }
+    if ( extension == TRALLOC_EXTENSION_REFERENCES ) {
+        return offset;
+    }
+#   endif
+
+    // extension equals TRALLOC_EXTENSION_POOL or TRALLOC_EXTENSION_POOL_CHILD now.
 
 #   if defined(TRALLOC_POOL)
     if ( extensions & TRALLOC_EXTENSION_POOL ) {
-        extensions_length += sizeof ( _tralloc_pool );
+        offset += sizeof ( _tralloc_pool );
     } else if ( extensions & TRALLOC_EXTENSION_POOL_CHILD ) {
-        extensions_length += sizeof ( _tralloc_pool_child );
+        offset += sizeof ( _tralloc_pool_child );
     }
 #   endif
 
-    return extensions_length + sizeof ( _tralloc_chunk );
+    return offset;
 }
+
+#endif

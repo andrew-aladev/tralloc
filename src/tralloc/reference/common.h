@@ -6,8 +6,7 @@
 #ifndef TRALLOC_REFERENCE_COMMON_H
 #define TRALLOC_REFERENCE_COMMON_H
 
-#include "../macro.h"
-#include "../types.h"
+#include "../common.h"
 
 #undef _TRALLOC_INLINE
 #ifdef _TRALLOC_REFERENCE_COMMON_INCLUDED_FROM_OBJECT
@@ -18,55 +17,21 @@
 
 
 _TRALLOC_INLINE
-size_t _tralloc_get_reference_offset ( _tralloc_chunk * _TRALLOC_UNUSED ( chunk ) )
-{
-    size_t offset = 0;
-
-#   if defined(TRALLOC_LENGTH)
-    if ( chunk->extensions & TRALLOC_EXTENSION_LENGTH ) {
-        offset += sizeof ( _tralloc_length );
-    }
-#   endif
-
-#   if defined(TRALLOC_DESTRUCTOR)
-    if ( chunk->extensions & TRALLOC_EXTENSION_DESTRUCTORS ) {
-        offset += sizeof ( _tralloc_destructors );
-    }
-#   endif
-
-    return offset;
-}
-
-_TRALLOC_INLINE
 _tralloc_references * _tralloc_get_references_from_chunk ( _tralloc_chunk * chunk )
 {
-    return ( _tralloc_references * ) ( ( uintptr_t ) chunk - _tralloc_get_reference_offset ( chunk ) - sizeof ( _tralloc_references ) );
+    return ( _tralloc_references * ) ( ( uintptr_t ) chunk - _tralloc_get_offset_for_extension ( chunk->extensions, TRALLOC_EXTENSION_REFERENCES ) );
 }
 
 _TRALLOC_INLINE
 _tralloc_reference * _tralloc_get_reference_from_chunk ( _tralloc_chunk * chunk )
 {
-    return ( _tralloc_reference * ) ( ( uintptr_t ) chunk - _tralloc_get_reference_offset ( chunk ) - sizeof ( _tralloc_reference ) );
+    return ( _tralloc_reference * ) ( ( uintptr_t ) chunk - _tralloc_get_offset_for_extension ( chunk->extensions, TRALLOC_EXTENSION_REFERENCE ) );
 }
 
 _TRALLOC_INLINE
 _tralloc_chunk * _tralloc_get_chunk_from_references ( _tralloc_references * references )
 {
-    size_t offset = sizeof ( _tralloc_references );
-
-#   if defined(TRALLOC_LENGTH)
-    if ( references->extensions & TRALLOC_EXTENSION_LENGTH ) {
-        offset += sizeof ( _tralloc_length );
-    }
-#   endif
-
-#   if defined(TRALLOC_DESTRUCTOR)
-    if ( references->extensions & TRALLOC_EXTENSION_DESTRUCTORS ) {
-        offset += sizeof ( _tralloc_destructors );
-    }
-#   endif
-
-    return ( _tralloc_chunk * ) ( ( uintptr_t ) references + offset );
+    return ( _tralloc_chunk * ) ( ( uintptr_t ) references + _tralloc_get_offset_for_extension ( references->extensions, TRALLOC_EXTENSION_REFERENCES ) );
 }
 
 

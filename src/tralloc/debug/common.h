@@ -3,22 +3,14 @@
 // tralloc is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Lesser Public License for more details.
 // You should have received a copy of the GNU General Lesser Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TRALLOC_DEBUG_H
-#define TRALLOC_DEBUG_H
+#ifndef TRALLOC_DEBUG_COMMON_H
+#define TRALLOC_DEBUG_COMMON_H
+
+#include "../types.h"
 
 
-#include "debug/common.h"
-
-#if defined(TRALLOC_DEBUG_STATS)
-#   include "debug/stats.h"
-#endif
-
-#if defined(TRALLOC_DEBUG_CALLBACKS)
-#   include "debug/callbacks.h"
-#endif
-
-#if defined(TRALLOC_DEBUG_THREADS)
-#   include "debug/threads.h"
+#if defined(TRALLOC_DEBUG_LOG)
+const char * tralloc_debug_get_string_for_error ( tralloc_error error );
 #endif
 
 
