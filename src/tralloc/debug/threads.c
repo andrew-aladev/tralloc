@@ -114,7 +114,7 @@ tralloc_error _tralloc_debug_threads_after_add_chunk ( _tralloc_chunk * chunk )
     chunk->subtree_usage_status  = _TRALLOC_NOT_USED_BY_THREADS;
     chunk->children_usage_status = _TRALLOC_NOT_USED_BY_THREADS;
 
-    if ( pthread_mutex_init ( &chunk->thread_usage_lock, 0 ) != 0 ) {
+    if ( pthread_mutex_init ( &chunk->thread_usage_lock, NULL ) != 0 ) {
         return TRALLOC_ERROR_MUTEX_FAILED;
     }
     return 0;

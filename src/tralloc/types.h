@@ -98,7 +98,7 @@ typedef uint8_t _tralloc_extension;
 typedef uint8_t tralloc_extensions;
 
 #if defined(TRALLOC_THREADS)
-typedef pthread_mutex_t _tralloc_mutex;
+typedef pthread_mutex_t _tralloc_lock;
 #endif
 
 #if defined(TRALLOC_LENGTH)

@@ -45,10 +45,10 @@ size_t tralloc_predict_chunk_length ( tralloc_extensions _TRALLOC_UNUSED ( exten
 
 #   if defined(TRALLOC_THREADS)
     if ( extensions & TRALLOC_EXTENSION_LOCK_SUBTREE ) {
-        offset += sizeof ( _tralloc_mutex );
+        offset += sizeof ( _tralloc_lock );
     }
     if ( extensions & TRALLOC_EXTENSION_LOCK_CHILDREN ) {
-        offset += sizeof ( _tralloc_mutex );
+        offset += sizeof ( _tralloc_lock );
     }
 #   endif
 
@@ -66,14 +66,14 @@ size_t _tralloc_get_offset_for_extension ( tralloc_extensions extensions, _trall
 
 #   if defined(TRALLOC_THREADS)
     if ( extensions & TRALLOC_EXTENSION_LOCK_SUBTREE ) {
-        offset += sizeof ( _tralloc_mutex );
+        offset += sizeof ( _tralloc_lock );
     }
     if ( extension == TRALLOC_EXTENSION_LOCK_SUBTREE ) {
         return offset;
     }
 
     if ( extensions & TRALLOC_EXTENSION_LOCK_CHILDREN ) {
-        offset += sizeof ( _tralloc_mutex );
+        offset += sizeof ( _tralloc_lock );
     }
     if ( extension == TRALLOC_EXTENSION_LOCK_CHILDREN ) {
         return offset;

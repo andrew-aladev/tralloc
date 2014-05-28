@@ -12,6 +12,10 @@
 #   include "../debug/events.h"
 #endif
 
+#if defined(TRALLOC_THREADS)
+#   include "../lock/chunk.h"
+#endif
+
 #if defined(TRALLOC_LENGTH)
 #   include "../length/chunk.h"
 #endif
@@ -55,6 +59,16 @@ tralloc_error tralloc_realloc ( tralloc_context ** chunk_context, size_t length 
 #   endif
 
     size_t extensions_length = 0;
+
+#   if defined(TRALLOC_THREADS)
+    if ( old_chunk->extensions & TRALLOC_EXTENSION_LOCK_SUBTREE ) {
+        extensions_length += sizeof ( _tralloc_lock );
+    }
+
+    if ( old_chunk->extensions & TRALLOC_EXTENSION_LOCK_CHILDREN ) {
+        extensions_length += sizeof ( _tralloc_lock );
+    }
+#   endif
 
 #   if defined(TRALLOC_LENGTH)
     tralloc_bool have_length = old_chunk->extensions & TRALLOC_EXTENSION_LENGTH;
@@ -124,7 +138,7 @@ tralloc_error tralloc_realloc ( tralloc_context ** chunk_context, size_t length 
                 free ( new_memory );
                 return result;
             }
-            
+
             // TRALLOC_EXTENSION_POOL_CHILD should be disabled in "new_chunk".
             _tralloc_chunk * new_chunk = ( _tralloc_chunk * ) ( ( uintptr_t ) new_memory + extensions_length );
             new_chunk->extensions &= ~ ( TRALLOC_EXTENSION_POOL_CHILD );

@@ -11,6 +11,10 @@
 #   include "../debug/events.h"
 #endif
 
+#if defined(TRALLOC_THREADS)
+#   include "../lock/chunk.h"
+#endif
+
 #if defined(TRALLOC_DESTRUCTOR)
 #   include "../destructor/chunk.h"
 #endif
@@ -79,6 +83,24 @@ tralloc_error _free_chunk ( _tralloc_chunk * chunk )
 {
     tralloc_error error = 0, _TRALLOC_UNUSED ( result );
     size_t extensions_length = 0;
+
+#   if defined(TRALLOC_THREADS)
+    if ( chunk->extensions & TRALLOC_EXTENSION_LOCK_SUBTREE ) {
+        result = _tralloc_lock_subtree_free_chunk ( chunk );
+        if ( result != 0 ) {
+            error = result;
+        }
+        extensions_length += sizeof ( _tralloc_lock );
+    }
+
+    if ( chunk->extensions & TRALLOC_EXTENSION_LOCK_CHILDREN ) {
+        result = _tralloc_lock_children_free_chunk ( chunk );
+        if ( result != 0 ) {
+            error = result;
+        }
+        extensions_length += sizeof ( _tralloc_lock );
+    }
+#   endif
 
 #   if defined(TRALLOC_LENGTH)
     if ( chunk->extensions & TRALLOC_EXTENSION_LENGTH ) {

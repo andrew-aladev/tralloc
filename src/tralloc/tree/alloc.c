@@ -12,6 +12,10 @@
 #   include "../debug/events.h"
 #endif
 
+#if defined(TRALLOC_THREADS)
+#   include "../lock/chunk.h"
+#endif
+
 #if defined(TRALLOC_LENGTH)
 #   include "../length/chunk.h"
 #endif
@@ -81,6 +85,18 @@ tralloc_error _tralloc_with_extensions_with_allocator ( tralloc_context * parent
 
     tralloc_error result;
     size_t extensions_length = 0;
+
+#   if defined(TRALLOC_THREADS)
+    tralloc_bool have_lock_subtree = extensions & TRALLOC_EXTENSION_LOCK_SUBTREE;
+    if ( have_lock_subtree ) {
+        extensions_length += sizeof ( _tralloc_lock );
+    }
+
+    tralloc_bool have_lock_children = extensions & TRALLOC_EXTENSION_LOCK_CHILDREN;
+    if ( have_lock_children ) {
+        extensions_length += sizeof ( _tralloc_lock );
+    }
+#   endif
 
 #   if defined(TRALLOC_LENGTH)
     tralloc_bool have_length = extensions & TRALLOC_EXTENSION_LENGTH;
@@ -186,6 +202,15 @@ tralloc_error _tralloc_with_extensions_with_allocator ( tralloc_context * parent
     chunk->extensions = extensions;
 #   endif
 
+#   if defined(TRALLOC_THREADS)
+    if ( have_lock_subtree ) {
+        _tralloc_lock_subtree_new_chunk ( chunk );
+    }
+    if ( have_lock_children ) {
+        _tralloc_lock_children_new_chunk ( chunk );
+    }
+#   endif
+
 #   if defined(TRALLOC_LENGTH)
     if ( have_length ) {
         _tralloc_length_set ( chunk, length );
@@ -236,6 +261,15 @@ tralloc_error _tralloc_with_extensions_with_allocator ( tralloc_context * parent
         if ( parent_chunk != NULL ) {
             _tralloc_detach_chunk ( chunk );
         }
+
+#       if defined(TRALLOC_THREADS)
+        if ( have_lock_subtree ) {
+            _tralloc_lock_subtree_free_chunk ( chunk );
+        }
+        if ( have_lock_children ) {
+            _tralloc_lock_children_free_chunk ( chunk );
+        }
+#       endif
 
 #       if defined(TRALLOC_DESTRUCTOR)
         if ( have_destructors ) {
