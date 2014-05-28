@@ -97,6 +97,10 @@ typedef uint8_t _tralloc_extension;
 
 typedef uint8_t tralloc_extensions;
 
+#if defined(TRALLOC_THREADS)
+typedef pthread_mutex_t _tralloc_mutex;
+#endif
+
 #if defined(TRALLOC_LENGTH)
 typedef size_t _tralloc_length;
 #endif

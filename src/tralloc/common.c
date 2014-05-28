@@ -43,6 +43,15 @@ size_t tralloc_predict_chunk_length ( tralloc_extensions _TRALLOC_UNUSED ( exten
     }
 #   endif
 
+#   if defined(TRALLOC_THREADS)
+    if ( extensions & TRALLOC_EXTENSION_LOCK_SUBTREE ) {
+        offset += sizeof ( _tralloc_mutex );
+    }
+    if ( extensions & TRALLOC_EXTENSION_LOCK_CHILDREN ) {
+        offset += sizeof ( _tralloc_mutex );
+    }
+#   endif
+
     return offset + sizeof ( _tralloc_chunk );
 }
 
@@ -54,6 +63,22 @@ size_t tralloc_predict_chunk_length ( tralloc_extensions _TRALLOC_UNUSED ( exten
 size_t _tralloc_get_offset_for_extension ( tralloc_extensions extensions, _tralloc_extension _TRALLOC_UNUSED ( extension ) )
 {
     size_t offset = 0;
+
+#   if defined(TRALLOC_THREADS)
+    if ( extensions & TRALLOC_EXTENSION_LOCK_SUBTREE ) {
+        offset += sizeof ( _tralloc_mutex );
+    }
+    if ( extension == TRALLOC_EXTENSION_LOCK_SUBTREE ) {
+        return offset;
+    }
+
+    if ( extensions & TRALLOC_EXTENSION_LOCK_CHILDREN ) {
+        offset += sizeof ( _tralloc_mutex );
+    }
+    if ( extension == TRALLOC_EXTENSION_LOCK_CHILDREN ) {
+        return offset;
+    }
+#   endif
 
 #   if defined(TRALLOC_LENGTH)
     if ( extensions & TRALLOC_EXTENSION_LENGTH ) {
@@ -90,8 +115,6 @@ size_t _tralloc_get_offset_for_extension ( tralloc_extensions extensions, _trall
         return offset;
     }
 #   endif
-
-    // extension equals TRALLOC_EXTENSION_POOL or TRALLOC_EXTENSION_POOL_CHILD now.
 
 #   if defined(TRALLOC_POOL)
     if ( extensions & TRALLOC_EXTENSION_POOL ) {

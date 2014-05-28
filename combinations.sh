@@ -1,8 +1,14 @@
 #!/bin/bash
 
 make_jobs=$(($(nproc) + 1))
+current=1
+count=$((2 ** 10))
 feature_combinations=$(echo {0..1}{0..1}{0..1}{0..1}{0..1}{0..1}{0..1}{0..1}{0..1}{0..1})
 for feature in $feature_combinations; do
+    progress=$(printf "combination %u / %u, progress %05.2f%%\n" $current $count $(awk "BEGIN{print $current / $count * 100}"))
+    echo -ne "\033]2;$progress\007"
+    current=$(($current + 1))
+
     if [ "${feature:0:1}" == "1" ]; then
         arguments="-DTRALLOC_THREADS=1 "
     else
