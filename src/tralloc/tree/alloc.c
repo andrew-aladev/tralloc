@@ -76,14 +76,31 @@ tralloc_error _tralloc_with_extensions_with_allocator ( tralloc_context * parent
         return TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL;
     }
 
+    tralloc_error result;
     _tralloc_chunk * parent_chunk;
+
     if ( parent_context == NULL ) {
         parent_chunk = NULL;
     } else {
         parent_chunk = _tralloc_get_chunk_from_context ( parent_context );
     }
 
-    tralloc_error result;
+#   if defined(TRALLOC_THREADS)
+    tralloc_bool parent_is_locking_children;
+
+    if ( parent_chunk == NULL ) {
+        parent_is_locking_children = false;
+    } else {
+        parent_is_locking_children = parent_chunk->extensions & TRALLOC_EXTENSION_LOCK_CHILDREN;
+        if ( parent_is_locking_children ) {
+            result = _tralloc_lock_children_chunk ( parent_chunk );
+            if ( result != 0 ) {
+                return result;
+            }
+        }
+    }
+#   endif
+
     size_t extensions_length = 0;
 
 #   if defined(TRALLOC_THREADS)
@@ -173,6 +190,13 @@ tralloc_error _tralloc_with_extensions_with_allocator ( tralloc_context * parent
 #   if defined(TRALLOC_DEBUG)
     result = _tralloc_debug_before_add_chunk ( parent_chunk, extensions, chunk_length, length );
     if ( result != 0 ) {
+
+#       if defined(TRALLOC_THREADS)
+        if ( parent_is_locking_children ) {
+            _tralloc_unlock_children_chunk ( parent_chunk );
+        }
+#       endif
+
         return result;
     }
 #   endif
@@ -186,12 +210,26 @@ tralloc_error _tralloc_with_extensions_with_allocator ( tralloc_context * parent
     } else {
         result = allocator ( &memory, total_length );
         if ( result != 0 ) {
+
+#           if defined(TRALLOC_THREADS)
+            if ( parent_is_locking_children ) {
+                _tralloc_unlock_children_chunk ( parent_chunk );
+            }
+#           endif
+
             return result;
         }
     }
 #   else
     result = allocator ( &memory, total_length );
     if ( result != 0 ) {
+
+#       if defined(TRALLOC_THREADS)
+        if ( parent_is_locking_children ) {
+            _tralloc_unlock_children_chunk ( parent_chunk );
+        }
+#       endif
+
         return result;
     }
 #   endif
@@ -204,10 +242,46 @@ tralloc_error _tralloc_with_extensions_with_allocator ( tralloc_context * parent
 
 #   if defined(TRALLOC_THREADS)
     if ( have_lock_subtree ) {
-        _tralloc_lock_subtree_new_chunk ( chunk );
+        result = _tralloc_lock_subtree_new_chunk ( chunk );
+        if ( result != 0 ) {
+
+#           if defined(TRALLOC_POOL)
+            if ( !have_pool_child ) {
+                free ( memory );
+            }
+#           else
+            free ( memory );
+#           endif
+
+#           if defined(TRALLOC_THREADS)
+            if ( parent_is_locking_children ) {
+                _tralloc_unlock_children_chunk ( parent_chunk );
+            }
+#           endif
+
+            return result;
+        }
     }
     if ( have_lock_children ) {
-        _tralloc_lock_children_new_chunk ( chunk );
+        result = _tralloc_lock_children_new_chunk ( chunk );
+        if ( result != 0 ) {
+
+#           if defined(TRALLOC_POOL)
+            if ( !have_pool_child ) {
+                free ( memory );
+            }
+#           else
+            free ( memory );
+#           endif
+
+#           if defined(TRALLOC_THREADS)
+            if ( parent_is_locking_children ) {
+                _tralloc_unlock_children_chunk ( parent_chunk );
+            }
+#           endif
+
+            return result;
+        }
     }
 #   endif
 
@@ -297,7 +371,22 @@ tralloc_error _tralloc_with_extensions_with_allocator ( tralloc_context * parent
         free ( memory );
 #       endif
 
+#       if defined(TRALLOC_THREADS)
+        if ( parent_is_locking_children ) {
+            _tralloc_unlock_children_chunk ( parent_chunk );
+        }
+#       endif
+
         return result;
+    }
+#   endif
+
+#   if defined(TRALLOC_THREADS)
+    if ( parent_is_locking_children ) {
+        result = _tralloc_unlock_children_chunk ( parent_chunk );
+        if ( result != 0 ) {
+            return result;
+        }
     }
 #   endif
 

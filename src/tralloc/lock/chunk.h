@@ -37,6 +37,26 @@ tralloc_error _tralloc_lock_subtree_free_chunk ( _tralloc_chunk * chunk )
 }
 
 _TRALLOC_INLINE
+tralloc_error _tralloc_lock_subtree_chunk ( _tralloc_chunk * chunk )
+{
+    _tralloc_lock * lock = _tralloc_get_lock_children_from_chunk ( chunk );
+    if ( pthread_mutex_lock ( lock ) != 0 ) {
+        return TRALLOC_ERROR_MUTEX_FAILED;
+    }
+    return 0;
+}
+
+_TRALLOC_INLINE
+tralloc_error _tralloc_unlock_subtree_chunk ( _tralloc_chunk * chunk )
+{
+    _tralloc_lock * lock = _tralloc_get_lock_children_from_chunk ( chunk );
+    if ( pthread_mutex_unlock ( lock ) != 0 ) {
+        return TRALLOC_ERROR_MUTEX_FAILED;
+    }
+    return 0;
+}
+
+_TRALLOC_INLINE
 tralloc_error _tralloc_lock_children_new_chunk ( _tralloc_chunk * chunk )
 {
     _tralloc_lock * lock = _tralloc_get_lock_children_from_chunk ( chunk );
@@ -51,6 +71,26 @@ tralloc_error _tralloc_lock_children_free_chunk ( _tralloc_chunk * chunk )
 {
     _tralloc_lock * lock = _tralloc_get_lock_children_from_chunk ( chunk );
     if ( pthread_mutex_destroy ( lock ) != 0 ) {
+        return TRALLOC_ERROR_MUTEX_FAILED;
+    }
+    return 0;
+}
+
+_TRALLOC_INLINE
+tralloc_error _tralloc_lock_children_chunk ( _tralloc_chunk * chunk )
+{
+    _tralloc_lock * lock = _tralloc_get_lock_children_from_chunk ( chunk );
+    if ( pthread_mutex_lock ( lock ) != 0 ) {
+        return TRALLOC_ERROR_MUTEX_FAILED;
+    }
+    return 0;
+}
+
+_TRALLOC_INLINE
+tralloc_error _tralloc_unlock_children_chunk ( _tralloc_chunk * chunk )
+{
+    _tralloc_lock * lock = _tralloc_get_lock_children_from_chunk ( chunk );
+    if ( pthread_mutex_unlock ( lock ) != 0 ) {
         return TRALLOC_ERROR_MUTEX_FAILED;
     }
     return 0;
