@@ -10,7 +10,7 @@
 
 
 void _tralloc_update_chunk ( _tralloc_chunk * chunk );
-void _tralloc_attach_chunk ( _tralloc_chunk * child, _tralloc_chunk * new_parent );
+void _tralloc_attach_chunk ( _tralloc_chunk * chunk, _tralloc_chunk * new_parent_chunk );
 void _tralloc_detach_chunk ( _tralloc_chunk * chunk );
 
 
