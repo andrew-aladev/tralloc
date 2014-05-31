@@ -203,6 +203,12 @@ tralloc_error _tralloc_with_extensions_with_allocator ( tralloc_context * parent
     chunk->extensions = extensions;
 #   endif
 
+#   if defined(TRALLOC_POOL)
+    if ( have_pool_child ) {
+        _tralloc_pool_child_new_chunk ( chunk, parent_pool, total_length, prev_pool_child, next_pool_child );
+    }
+#   endif
+
 #   if defined(TRALLOC_THREADS)
     if ( have_lock_subtree ) {
         result = _tralloc_lock_subtree_new_chunk ( chunk );
@@ -264,8 +270,6 @@ tralloc_error _tralloc_with_extensions_with_allocator ( tralloc_context * parent
 #   if defined(TRALLOC_POOL)
     if ( have_pool ) {
         _tralloc_pool_new_chunk ( chunk, length );
-    } else if ( have_pool_child ) {
-        _tralloc_pool_child_new_chunk ( chunk, parent_pool, total_length, prev_pool_child, next_pool_child );
     }
 #   endif
 
@@ -444,3 +448,9 @@ tralloc_error tralloc_zero_with_extensions ( tralloc_context * parent_context, t
 }
 
 #endif
+
+
+
+
+
+
