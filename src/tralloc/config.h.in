@@ -1,6 +1,6 @@
+#cmakedefine TRALLOC_EXTENSIONS
 #cmakedefine TRALLOC_THREADS
 #cmakedefine TRALLOC_LENGTH
-#cmakedefine TRALLOC_EXTENSIONS
 #cmakedefine TRALLOC_DESTRUCTOR
 #cmakedefine TRALLOC_REFERENCE
 #cmakedefine TRALLOC_POOL

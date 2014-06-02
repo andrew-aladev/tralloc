@@ -13,7 +13,8 @@
 #endif
 
 #if defined(TRALLOC_THREADS)
-#   include "../lock/chunk.h"
+#   include "../threads/chunk.h"
+#   include "../threads/mutex.h"
 #endif
 
 #if defined(TRALLOC_LENGTH)
@@ -90,12 +91,12 @@ tralloc_error _tralloc_with_extensions_with_allocator ( tralloc_context * parent
 #   if defined(TRALLOC_THREADS)
     tralloc_bool have_lock_subtree = extensions & TRALLOC_EXTENSION_LOCK_SUBTREE;
     if ( have_lock_subtree ) {
-        extensions_length += sizeof ( _tralloc_lock );
+        extensions_length += sizeof ( _tralloc_mutex );
     }
 
     tralloc_bool have_lock_children = extensions & TRALLOC_EXTENSION_LOCK_CHILDREN;
     if ( have_lock_children ) {
-        extensions_length += sizeof ( _tralloc_lock );
+        extensions_length += sizeof ( _tralloc_mutex );
     }
 #   endif
 
@@ -210,8 +211,10 @@ tralloc_error _tralloc_with_extensions_with_allocator ( tralloc_context * parent
 #   endif
 
 #   if defined(TRALLOC_THREADS)
+    _tralloc_mutex * subtree_mutex;
     if ( have_lock_subtree ) {
-        result = _tralloc_lock_subtree_new_chunk ( chunk );
+        subtree_mutex = _tralloc_get_subtree_mutex_from_chunk ( chunk );
+        result = _tralloc_mutex_new ( subtree_mutex );
         if ( result != 0 ) {
 
 #           if defined(TRALLOC_POOL)
@@ -227,8 +230,11 @@ tralloc_error _tralloc_with_extensions_with_allocator ( tralloc_context * parent
             return result;
         }
     }
+
+    _tralloc_mutex * children_mutex;
     if ( have_lock_children ) {
-        result = _tralloc_lock_children_new_chunk ( chunk );
+        children_mutex = _tralloc_get_children_mutex_from_chunk ( chunk );
+        result = _tralloc_mutex_new ( children_mutex );
         if ( result != 0 ) {
 
 #           if defined(TRALLOC_POOL)
@@ -281,18 +287,17 @@ tralloc_error _tralloc_with_extensions_with_allocator ( tralloc_context * parent
 #   if defined(TRALLOC_THREADS)
     tralloc_bool parent_is_locking_children = parent_chunk != NULL && ( parent_chunk->extensions & TRALLOC_EXTENSION_LOCK_CHILDREN );
 
+    _tralloc_mutex * parent_children_mutex;
     if ( parent_is_locking_children ) {
-        result = _tralloc_lock_children_chunk ( parent_chunk );
+        parent_children_mutex = _tralloc_get_children_mutex_from_chunk ( parent_chunk );
+        result = _tralloc_mutex_lock ( parent_children_mutex );
         if ( result != 0 ) {
-
-#           if defined(TRALLOC_THREADS)
             if ( have_lock_subtree ) {
-                _tralloc_lock_subtree_free_chunk ( chunk );
+                _tralloc_mutex_free ( subtree_mutex );
             }
             if ( have_lock_children ) {
-                _tralloc_lock_children_free_chunk ( chunk );
+                _tralloc_mutex_free ( children_mutex );
             }
-#           endif
 
 #           if defined(TRALLOC_DESTRUCTOR)
             if ( have_destructors ) {
@@ -327,21 +332,19 @@ tralloc_error _tralloc_with_extensions_with_allocator ( tralloc_context * parent
 
 #   if defined(TRALLOC_THREADS)
     if ( parent_is_locking_children ) {
-        result = _tralloc_unlock_children_chunk ( parent_chunk );
+        result = _tralloc_mutex_unlock ( parent_children_mutex );
         if ( result != 0 ) {
 
             if ( parent_chunk != NULL ) {
                 _tralloc_detach_chunk ( chunk );
             }
 
-#           if defined(TRALLOC_THREADS)
             if ( have_lock_subtree ) {
-                _tralloc_lock_subtree_free_chunk ( chunk );
+                _tralloc_mutex_free ( subtree_mutex );
             }
             if ( have_lock_children ) {
-                _tralloc_lock_children_free_chunk ( chunk );
+                _tralloc_mutex_free ( children_mutex );
             }
-#           endif
 
 #           if defined(TRALLOC_DESTRUCTOR)
             if ( have_destructors ) {
@@ -385,10 +388,10 @@ tralloc_error _tralloc_with_extensions_with_allocator ( tralloc_context * parent
 
 #       if defined(TRALLOC_THREADS)
         if ( have_lock_subtree ) {
-            _tralloc_lock_subtree_free_chunk ( chunk );
+            _tralloc_mutex_free ( subtree_mutex );
         }
         if ( have_lock_children ) {
-            _tralloc_lock_children_free_chunk ( chunk );
+            _tralloc_mutex_free ( children_mutex );
         }
 #       endif
 
@@ -448,9 +451,3 @@ tralloc_error tralloc_zero_with_extensions ( tralloc_context * parent_context, t
 }
 
 #endif
-
-
-
-
-
-

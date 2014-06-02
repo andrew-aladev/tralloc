@@ -13,7 +13,7 @@
 #endif
 
 #if defined(TRALLOC_THREADS)
-#   include "../lock/chunk.h"
+#   include "../threads/chunk.h"
 #endif
 
 #if defined(TRALLOC_LENGTH)
@@ -62,11 +62,11 @@ tralloc_error tralloc_realloc ( tralloc_context ** chunk_context, size_t length 
 
 #   if defined(TRALLOC_THREADS)
     if ( old_chunk->extensions & TRALLOC_EXTENSION_LOCK_SUBTREE ) {
-        extensions_length += sizeof ( _tralloc_lock );
+        extensions_length += sizeof ( _tralloc_mutex );
     }
 
     if ( old_chunk->extensions & TRALLOC_EXTENSION_LOCK_CHILDREN ) {
-        extensions_length += sizeof ( _tralloc_lock );
+        extensions_length += sizeof ( _tralloc_mutex );
     }
 #   endif
 

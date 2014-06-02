@@ -98,7 +98,8 @@ typedef uint8_t _tralloc_extension;
 typedef uint8_t tralloc_extensions;
 
 #if defined(TRALLOC_THREADS)
-typedef pthread_mutex_t _tralloc_lock;
+typedef pthread_mutex_t    _tralloc_mutex;
+typedef pthread_spinlock_t _tralloc_spinlock;
 #endif
 
 #if defined(TRALLOC_LENGTH)
@@ -210,7 +211,7 @@ typedef struct _tralloc_chunk_type {
 
     // "length_lock" should not be locked for thread safety.
     // It will be written only in alloc function. Other functions will read it.
-    pthread_spinlock_t length_lock;
+    _tralloc_spinlock length_lock;
 
 #   endif
 
@@ -232,7 +233,7 @@ typedef struct _tralloc_chunk_type {
 
     // "children_status_lock" should not be locked for thread safety.
     // It will be written only in alloc function. Other functions will read it.
-    pthread_mutex_t thread_usage_lock;
+    _tralloc_mutex thread_usage_lock;
 
 #   endif
 

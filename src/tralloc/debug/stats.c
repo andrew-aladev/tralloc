@@ -6,9 +6,13 @@
 #include "stats.h"
 #include "chunk.h"
 
+#if defined(TRALLOC_THREADS)
+#   include "../threads/mutex.h"
+#endif
+
 
 #if defined(TRALLOC_THREADS)
-static pthread_mutex_t _chunks_count_mutex = PTHREAD_MUTEX_INITIALIZER;
+static _tralloc_mutex _chunks_count_mutex = PTHREAD_MUTEX_INITIALIZER;
 #endif
 
 static size_t _chunks_count = 0;
@@ -16,18 +20,19 @@ static size_t _chunks_count = 0;
 static inline
 tralloc_error _add_chunks_count ( size_t length )
 {
-
 #   if defined(TRALLOC_THREADS)
-    if ( pthread_mutex_lock ( &_chunks_count_mutex ) != 0 ) {
-        return TRALLOC_ERROR_MUTEX_FAILED;
+    tralloc_error result = _tralloc_mutex_lock ( &_chunks_count_mutex );
+    if ( result != 0 ) {
+        return result;
     }
 #   endif
 
     _chunks_count += length;
 
 #   if defined(TRALLOC_THREADS)
-    if ( pthread_mutex_unlock ( &_chunks_count_mutex ) != 0 ) {
-        return TRALLOC_ERROR_MUTEX_FAILED;
+    result = _tralloc_mutex_unlock ( &_chunks_count_mutex );
+    if ( result != 0 ) {
+        return result;
     }
 #   endif
 
@@ -39,16 +44,18 @@ tralloc_error _subtract_chunks_count ( size_t length )
 {
 
 #   if defined(TRALLOC_THREADS)
-    if ( pthread_mutex_lock ( &_chunks_count_mutex ) != 0 ) {
-        return TRALLOC_ERROR_MUTEX_FAILED;
+    tralloc_error result = _tralloc_mutex_lock ( &_chunks_count_mutex );
+    if ( result != 0 ) {
+        return result;
     }
 #   endif
 
     _chunks_count -= length;
 
 #   if defined(TRALLOC_THREADS)
-    if ( pthread_mutex_unlock ( &_chunks_count_mutex ) != 0 ) {
-        return TRALLOC_ERROR_MUTEX_FAILED;
+    result = _tralloc_mutex_unlock ( &_chunks_count_mutex );
+    if ( result != 0 ) {
+        return result;
     }
 #   endif
 
@@ -59,16 +66,18 @@ tralloc_error tralloc_debug_stats_get_chunks_count ( size_t * length )
 {
 
 #   if defined(TRALLOC_THREADS)
-    if ( pthread_mutex_lock ( &_chunks_count_mutex ) != 0 ) {
-        return TRALLOC_ERROR_MUTEX_FAILED;
+    tralloc_error result = _tralloc_mutex_lock ( &_chunks_count_mutex );
+    if ( result != 0 ) {
+        return result;
     }
 #   endif
 
     * length = _chunks_count;
 
 #   if defined(TRALLOC_THREADS)
-    if ( pthread_mutex_unlock ( &_chunks_count_mutex ) != 0 ) {
-        return TRALLOC_ERROR_MUTEX_FAILED;
+    result = _tralloc_mutex_unlock ( &_chunks_count_mutex );
+    if ( result != 0 ) {
+        return result;
     }
 #   endif
 
@@ -77,7 +86,7 @@ tralloc_error tralloc_debug_stats_get_chunks_count ( size_t * length )
 
 
 #if defined(TRALLOC_THREADS)
-static pthread_mutex_t _chunks_overhead_length_mutex = PTHREAD_MUTEX_INITIALIZER;
+static _tralloc_mutex _chunks_overhead_length_mutex = PTHREAD_MUTEX_INITIALIZER;
 #endif
 
 static size_t _chunks_overhead_length = 0;
@@ -86,16 +95,18 @@ tralloc_error _tralloc_debug_stats_add_chunks_overhead_length ( size_t length )
 {
 
 #   if defined(TRALLOC_THREADS)
-    if ( pthread_mutex_lock ( &_chunks_overhead_length_mutex ) != 0 ) {
-        return TRALLOC_ERROR_MUTEX_FAILED;
+    tralloc_error result = _tralloc_mutex_lock ( &_chunks_overhead_length_mutex );
+    if ( result != 0 ) {
+        return result;
     }
 #   endif
 
     _chunks_overhead_length += length;
 
 #   if defined(TRALLOC_THREADS)
-    if ( pthread_mutex_unlock ( &_chunks_overhead_length_mutex ) != 0 ) {
-        return TRALLOC_ERROR_MUTEX_FAILED;
+    result = _tralloc_mutex_unlock ( &_chunks_overhead_length_mutex );
+    if ( result != 0 ) {
+        return result;
     }
 #   endif
 
@@ -106,16 +117,18 @@ tralloc_error _tralloc_debug_stats_subtract_chunks_overhead_length ( size_t leng
 {
 
 #   if defined(TRALLOC_THREADS)
-    if ( pthread_mutex_lock ( &_chunks_overhead_length_mutex ) != 0 ) {
-        return TRALLOC_ERROR_MUTEX_FAILED;
+    tralloc_error result = _tralloc_mutex_lock ( &_chunks_overhead_length_mutex );
+    if ( result != 0 ) {
+        return result;
     }
 #   endif
 
     _chunks_overhead_length -= length;
 
 #   if defined(TRALLOC_THREADS)
-    if ( pthread_mutex_unlock ( &_chunks_overhead_length_mutex ) != 0 ) {
-        return TRALLOC_ERROR_MUTEX_FAILED;
+    result = _tralloc_mutex_unlock ( &_chunks_overhead_length_mutex );
+    if ( result != 0 ) {
+        return result;
     }
 #   endif
 
@@ -126,16 +139,18 @@ tralloc_error tralloc_debug_stats_get_chunks_overhead_length ( size_t * length )
 {
 
 #   if defined(TRALLOC_THREADS)
-    if ( pthread_mutex_lock ( &_chunks_overhead_length_mutex ) != 0 ) {
-        return TRALLOC_ERROR_MUTEX_FAILED;
+    tralloc_error result = _tralloc_mutex_lock ( &_chunks_overhead_length_mutex );
+    if ( result != 0 ) {
+        return result;
     }
 #   endif
 
     * length = _chunks_overhead_length;
 
 #   if defined(TRALLOC_THREADS)
-    if ( pthread_mutex_unlock ( &_chunks_overhead_length_mutex ) != 0 ) {
-        return TRALLOC_ERROR_MUTEX_FAILED;
+    result = _tralloc_mutex_unlock ( &_chunks_overhead_length_mutex );
+    if ( result != 0 ) {
+        return result;
     }
 #   endif
 
@@ -144,7 +159,7 @@ tralloc_error tralloc_debug_stats_get_chunks_overhead_length ( size_t * length )
 
 
 #if defined(TRALLOC_THREADS)
-static pthread_mutex_t _chunks_length_mutex = PTHREAD_MUTEX_INITIALIZER;
+static _tralloc_mutex _chunks_length_mutex = PTHREAD_MUTEX_INITIALIZER;
 #endif
 
 static size_t _chunks_length = 0;
@@ -154,16 +169,18 @@ tralloc_error _add_chunks_length ( size_t length )
 {
 
 #   if defined(TRALLOC_THREADS)
-    if ( pthread_mutex_lock ( &_chunks_length_mutex ) != 0 ) {
-        return TRALLOC_ERROR_MUTEX_FAILED;
+    tralloc_error result = _tralloc_mutex_lock ( &_chunks_length_mutex );
+    if ( result != 0 ) {
+        return result;
     }
 #   endif
 
     _chunks_length += length;
 
 #   if defined(TRALLOC_THREADS)
-    if ( pthread_mutex_unlock ( &_chunks_length_mutex ) != 0 ) {
-        return TRALLOC_ERROR_MUTEX_FAILED;
+    result = _tralloc_mutex_unlock ( &_chunks_length_mutex );
+    if ( result != 0 ) {
+        return result;
     }
 #   endif
 
@@ -175,16 +192,18 @@ tralloc_error _subtract_chunks_length ( size_t length )
 {
 
 #   if defined(TRALLOC_THREADS)
-    if ( pthread_mutex_lock ( &_chunks_length_mutex ) != 0 ) {
-        return TRALLOC_ERROR_MUTEX_FAILED;
+    tralloc_error result = _tralloc_mutex_lock ( &_chunks_length_mutex );
+    if ( result != 0 ) {
+        return result;
     }
 #   endif
 
     _chunks_length -= length;
 
 #   if defined(TRALLOC_THREADS)
-    if ( pthread_mutex_unlock ( &_chunks_length_mutex ) != 0 ) {
-        return TRALLOC_ERROR_MUTEX_FAILED;
+    result = _tralloc_mutex_unlock ( &_chunks_length_mutex );
+    if ( result != 0 ) {
+        return result;
     }
 #   endif
 
@@ -195,16 +214,18 @@ tralloc_error tralloc_debug_stats_get_chunks_length ( size_t * length )
 {
 
 #   if defined(TRALLOC_THREADS)
-    if ( pthread_mutex_lock ( &_chunks_length_mutex ) != 0 ) {
-        return TRALLOC_ERROR_MUTEX_FAILED;
+    tralloc_error result = _tralloc_mutex_lock ( &_chunks_length_mutex );
+    if ( result != 0 ) {
+        return result;
     }
 #   endif
 
     * length = _chunks_length;
 
 #   if defined(TRALLOC_THREADS)
-    if ( pthread_mutex_unlock ( &_chunks_length_mutex ) != 0 ) {
-        return TRALLOC_ERROR_MUTEX_FAILED;
+    result = _tralloc_mutex_unlock ( &_chunks_length_mutex );
+    if ( result != 0 ) {
+        return result;
     }
 #   endif
 
@@ -236,15 +257,28 @@ tralloc_error _tralloc_debug_stats_after_resize_chunk ( size_t old_length, size_
 
 tralloc_error _tralloc_debug_stats_before_free_chunk ( _tralloc_chunk * chunk )
 {
-    tralloc_error result;
+    tralloc_error error = 0, result;
     size_t length;
-    if (
-        ( result = _subtract_chunks_count ( 1 ) ) != 0 ||
-        ( result = _tralloc_debug_stats_subtract_chunks_overhead_length ( chunk->chunk_length ) ) != 0 ||
-        ( result = _tralloc_debug_get_length ( chunk, &length ) ) != 0 ||
-        ( result = _subtract_chunks_length ( length ) ) != 0
-    ) {
-        return result;
+
+    result = _subtract_chunks_count ( 1 );
+    if ( result != 0 ) {
+        error = result;
     }
-    return 0;
+
+    result = _tralloc_debug_stats_subtract_chunks_overhead_length ( chunk->chunk_length );
+    if ( result != 0 ) {
+        error = result;
+    }
+
+    result = _tralloc_debug_get_length ( chunk, &length );
+    if ( result != 0 ) {
+        error = result;
+    }
+
+    result = _subtract_chunks_length ( length );
+    if ( result != 0 ) {
+        error = result;
+    }
+
+    return error;
 }

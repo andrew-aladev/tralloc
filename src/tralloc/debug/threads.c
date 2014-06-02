@@ -4,8 +4,8 @@
 // You should have received a copy of the GNU General Lesser Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
 #include "threads.h"
+#include "../threads/mutex.h"
 #include "common.h"
-#include "../macro.h"
 #include "../common.h"
 
 #if defined(TRALLOC_DEBUG_LOG)
@@ -16,11 +16,12 @@
 static inline
 tralloc_error _check_subtree_lock ( _tralloc_chunk * chunk, pthread_t thread_id )
 {
-    if ( pthread_mutex_lock ( &chunk->thread_usage_lock ) != 0 ) {
-        return TRALLOC_ERROR_MUTEX_FAILED;
-    }
+    tralloc_error error = 0, result;
 
-    tralloc_error error = 0;
+    result = _tralloc_mutex_lock ( &chunk->thread_usage_lock );
+    if ( result != 0 ) {
+        error = result;
+    }
 
     if ( chunk->subtree_usage_status == _TRALLOC_NOT_USED_BY_THREADS ) {
         chunk->subtree_usage_status   = _TRALLOC_USED_BY_SINGLE_THREAD;
@@ -48,8 +49,9 @@ tralloc_error _check_subtree_lock ( _tralloc_chunk * chunk, pthread_t thread_id 
         error = TRALLOC_ERROR_NO_SUBTREE_LOCK;
     }
 
-    if ( pthread_mutex_unlock ( &chunk->thread_usage_lock ) != 0 ) {
-        return TRALLOC_ERROR_MUTEX_FAILED;
+    result = _tralloc_mutex_unlock ( &chunk->thread_usage_lock );
+    if ( result != 0 ) {
+        error = result;
     }
     return error;
 }
@@ -57,11 +59,12 @@ tralloc_error _check_subtree_lock ( _tralloc_chunk * chunk, pthread_t thread_id 
 static inline
 tralloc_error _check_children_lock ( _tralloc_chunk * chunk, pthread_t thread_id )
 {
-    if ( pthread_mutex_lock ( &chunk->thread_usage_lock ) != 0 ) {
-        return TRALLOC_ERROR_MUTEX_FAILED;
-    }
+    tralloc_error error = 0, result;
 
-    tralloc_error error = 0;
+    result = _tralloc_mutex_lock ( &chunk->thread_usage_lock );
+    if ( result != 0 ) {
+        error = result;
+    }
 
     if ( chunk->children_usage_status == _TRALLOC_NOT_USED_BY_THREADS ) {
         chunk->children_usage_status   = _TRALLOC_USED_BY_SINGLE_THREAD;
@@ -89,8 +92,9 @@ tralloc_error _check_children_lock ( _tralloc_chunk * chunk, pthread_t thread_id
         error = TRALLOC_ERROR_NO_CHILDREN_LOCK;
     }
 
-    if ( pthread_mutex_unlock ( &chunk->thread_usage_lock ) != 0 ) {
-        return TRALLOC_ERROR_MUTEX_FAILED;
+    result = _tralloc_mutex_unlock ( &chunk->thread_usage_lock );
+    if ( result != 0 ) {
+        error = result;
     }
     return error;
 }
@@ -114,8 +118,9 @@ tralloc_error _tralloc_debug_threads_after_add_chunk ( _tralloc_chunk * chunk )
     chunk->subtree_usage_status  = _TRALLOC_NOT_USED_BY_THREADS;
     chunk->children_usage_status = _TRALLOC_NOT_USED_BY_THREADS;
 
-    if ( pthread_mutex_init ( &chunk->thread_usage_lock, NULL ) != 0 ) {
-        return TRALLOC_ERROR_MUTEX_FAILED;
+    tralloc_error result = _tralloc_mutex_new ( &chunk->thread_usage_lock );
+    if ( result != 0 ) {
+        return result;
     }
     return 0;
 }
@@ -206,10 +211,7 @@ tralloc_error _tralloc_debug_threads_before_free_subtree ( _tralloc_chunk * chun
 
 tralloc_error _tralloc_debug_threads_before_free_chunk ( _tralloc_chunk * chunk )
 {
-    if ( pthread_mutex_destroy ( &chunk->thread_usage_lock ) != 0 ) {
-        return TRALLOC_ERROR_MUTEX_FAILED;
-    }
-    return 0;
+    return _tralloc_mutex_free ( &chunk->thread_usage_lock );
 }
 
 tralloc_error _tralloc_debug_threads_before_refuse_to_free_subtree ( _tralloc_chunk * chunk )

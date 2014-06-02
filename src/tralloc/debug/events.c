@@ -7,6 +7,10 @@
 #include "chunk.h"
 #include "../macro.h"
 
+#if defined(TRALLOC_THREADS)
+#   include "../threads/spinlock.h"
+#endif
+
 #if defined(TRALLOC_DEBUG_STATS)
 #   include "stats.h"
 #endif
@@ -53,9 +57,12 @@ tralloc_error _tralloc_debug_after_add_chunk ( _tralloc_chunk * chunk, size_t ch
     chunk->chunk_length = chunk_length;
     chunk->length       = length;
 
+    tralloc_error result;
+
 #   if defined(TRALLOC_THREADS)
-    if ( pthread_spin_init ( &chunk->length_lock, 0 ) != 0 ) {
-        return TRALLOC_ERROR_SPINLOCK_FAILED;
+    result = _tralloc_spinlock_new ( &chunk->length_lock );
+    if ( result != 0 ) {
+        return result;
     }
 #   endif
 
@@ -66,8 +73,6 @@ tralloc_error _tralloc_debug_after_add_chunk ( _tralloc_chunk * chunk, size_t ch
     }
     chunk->initialized_at_line = line;
 #   endif
-
-    tralloc_error result;
 
 #   if defined(TRALLOC_DEBUG_THREADS)
     result = _tralloc_debug_threads_after_add_chunk ( chunk );
@@ -228,10 +233,12 @@ tralloc_error _tralloc_debug_before_free_subtree ( _tralloc_chunk * _TRALLOC_UNU
 
 tralloc_error _tralloc_debug_before_free_chunk ( _tralloc_chunk * chunk )
 {
+    tralloc_error error = 0, _TRALLOC_UNUSED ( result );
 
 #   if defined(TRALLOC_THREADS)
-    if ( pthread_spin_destroy ( &chunk->length_lock ) != 0 ) {
-        return TRALLOC_ERROR_SPINLOCK_FAILED;
+    result = _tralloc_spinlock_free ( &chunk->length_lock );
+    if ( result != 0 ) {
+        error = result;
     }
 #   endif
 
@@ -240,8 +247,6 @@ tralloc_error _tralloc_debug_before_free_chunk ( _tralloc_chunk * chunk )
         free ( chunk->initialized_in_file );
     }
 #   endif
-
-    tralloc_error result, error = 0;
 
 #   if defined(TRALLOC_DEBUG_THREADS)
     result = _tralloc_debug_threads_before_free_chunk ( chunk );

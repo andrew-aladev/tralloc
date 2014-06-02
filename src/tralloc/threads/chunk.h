@@ -3,13 +3,13 @@
 // tralloc is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Lesser Public License for more details.
 // You should have received a copy of the GNU General Lesser Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TRALLOC_LOCK_COMMON_H
-#define TRALLOC_LOCK_COMMON_H
+#ifndef TRALLOC_THREADS_CHUNK_H
+#define TRALLOC_THREADS_CHUNK_H
 
 #include "../common.h"
 
 #undef _TRALLOC_INLINE
-#ifdef _TRALLOC_LOCK_COMMON_INCLUDED_FROM_OBJECT
+#ifdef _TRALLOC_THREADS_CHUNK_INCLUDED_FROM_OBJECT
 #    define _TRALLOC_INLINE _TRALLOC_INLINE_IN_OBJECT
 #else
 #    define _TRALLOC_INLINE _TRALLOC_INLINE_IN_HEADER
@@ -17,15 +17,15 @@
 
 
 _TRALLOC_INLINE
-_tralloc_lock * _tralloc_get_lock_subtree_from_chunk ( _tralloc_chunk * chunk )
+_tralloc_mutex * _tralloc_get_subtree_mutex_from_chunk ( _tralloc_chunk * chunk )
 {
-    return ( _tralloc_lock * ) ( ( uintptr_t ) chunk - _tralloc_get_offset_for_extension ( chunk->extensions, TRALLOC_EXTENSION_LOCK_SUBTREE ) );
+    return ( _tralloc_mutex * ) ( ( uintptr_t ) chunk - _tralloc_get_offset_for_extension ( chunk->extensions, TRALLOC_EXTENSION_LOCK_SUBTREE ) );
 }
 
 _TRALLOC_INLINE
-_tralloc_lock * _tralloc_get_lock_children_from_chunk ( _tralloc_chunk * chunk )
+_tralloc_mutex * _tralloc_get_children_mutex_from_chunk ( _tralloc_chunk * chunk )
 {
-    return ( _tralloc_lock * ) ( ( uintptr_t ) chunk - _tralloc_get_offset_for_extension ( chunk->extensions, TRALLOC_EXTENSION_LOCK_CHILDREN ) );
+    return ( _tralloc_mutex * ) ( ( uintptr_t ) chunk - _tralloc_get_offset_for_extension ( chunk->extensions, TRALLOC_EXTENSION_LOCK_CHILDREN ) );
 }
 
 

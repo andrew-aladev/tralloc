@@ -12,7 +12,8 @@
 #endif
 
 #if defined(TRALLOC_THREADS)
-#   include "../lock/chunk.h"
+#   include "../threads/chunk.h"
+#   include "../threads/mutex.h"
 #endif
 
 #if defined(TRALLOC_DESTRUCTOR)
@@ -86,19 +87,21 @@ tralloc_error _free_chunk ( _tralloc_chunk * chunk )
 
 #   if defined(TRALLOC_THREADS)
     if ( chunk->extensions & TRALLOC_EXTENSION_LOCK_SUBTREE ) {
-        result = _tralloc_lock_subtree_free_chunk ( chunk );
+        _tralloc_mutex * subtree_mutex = _tralloc_get_subtree_mutex_from_chunk ( chunk );
+        result = _tralloc_mutex_free ( subtree_mutex );
         if ( result != 0 ) {
             error = result;
         }
-        extensions_length += sizeof ( _tralloc_lock );
+        extensions_length += sizeof ( _tralloc_mutex );
     }
 
     if ( chunk->extensions & TRALLOC_EXTENSION_LOCK_CHILDREN ) {
-        result = _tralloc_lock_children_free_chunk ( chunk );
+        _tralloc_mutex * children_mutex = _tralloc_get_children_mutex_from_chunk ( chunk );
+        result = _tralloc_mutex_free ( children_mutex );
         if ( result != 0 ) {
             error = result;
         }
-        extensions_length += sizeof ( _tralloc_lock );
+        extensions_length += sizeof ( _tralloc_mutex );
     }
 #   endif
 

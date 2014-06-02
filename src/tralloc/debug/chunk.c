@@ -5,21 +5,27 @@
 
 #include "chunk.h"
 
+#if defined(TRALLOC_THREADS)
+#   include "../threads/spinlock.h"
+#endif
+
 
 tralloc_error _tralloc_debug_get_length ( _tralloc_chunk * chunk, size_t * length )
 {
 
 #   if defined(TRALLOC_THREADS)
-    if ( pthread_spin_lock ( &chunk->length_lock ) != 0 ) {
-        return TRALLOC_ERROR_SPINLOCK_FAILED;
+    tralloc_error result = _tralloc_spinlock_lock ( &chunk->length_lock );
+    if ( result != 0 ) {
+        return result;
     }
 #   endif
 
     * length = chunk->length;
 
 #   if defined(TRALLOC_THREADS)
-    if ( pthread_spin_unlock ( &chunk->length_lock ) != 0 ) {
-        return TRALLOC_ERROR_SPINLOCK_FAILED;
+    result = _tralloc_spinlock_unlock ( &chunk->length_lock );
+    if ( result != 0 ) {
+        return result;
     }
 #   endif
 
@@ -30,16 +36,18 @@ tralloc_error _tralloc_debug_set_length ( _tralloc_chunk * chunk, size_t length 
 {
 
 #   if defined(TRALLOC_THREADS)
-    if ( pthread_spin_lock ( &chunk->length_lock ) != 0 ) {
-        return TRALLOC_ERROR_SPINLOCK_FAILED;
+    tralloc_error result = _tralloc_spinlock_lock ( &chunk->length_lock );
+    if ( result != 0 ) {
+        return result;
     }
 #   endif
 
     chunk->length = length;
 
 #   if defined(TRALLOC_THREADS)
-    if ( pthread_spin_unlock ( &chunk->length_lock ) != 0 ) {
-        return TRALLOC_ERROR_SPINLOCK_FAILED;
+    result = _tralloc_spinlock_unlock ( &chunk->length_lock );
+    if ( result != 0 ) {
+        return result;
     }
 #   endif
 
