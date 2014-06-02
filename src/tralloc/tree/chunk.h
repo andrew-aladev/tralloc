@@ -10,8 +10,9 @@
 
 
 void _tralloc_update_chunk ( _tralloc_chunk * chunk );
+
+// "chunk" can't be NULL, "new_parent_chunk" can be NULL.
 void _tralloc_attach_chunk ( _tralloc_chunk * chunk, _tralloc_chunk * new_parent_chunk );
-void _tralloc_detach_chunk ( _tralloc_chunk * chunk );
 
 
 #endif

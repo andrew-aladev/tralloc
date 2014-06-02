@@ -336,7 +336,7 @@ tralloc_error _tralloc_with_extensions_with_allocator ( tralloc_context * parent
         if ( result != 0 ) {
 
             if ( parent_chunk != NULL ) {
-                _tralloc_detach_chunk ( chunk );
+                _tralloc_attach_chunk ( chunk, NULL );
             }
 
             if ( have_lock_subtree ) {
@@ -383,7 +383,7 @@ tralloc_error _tralloc_with_extensions_with_allocator ( tralloc_context * parent
 
     if ( result != 0 ) {
         if ( parent_chunk != NULL ) {
-            _tralloc_detach_chunk ( chunk );
+            _tralloc_attach_chunk ( chunk, NULL );
         }
 
 #       if defined(TRALLOC_THREADS)

@@ -449,7 +449,7 @@ tralloc_error _tralloc_free_subtree ( _tralloc_chunk * root_chunk )
     }
 #   endif
 
-    _tralloc_detach_chunk ( root_chunk );
+    _tralloc_attach_chunk ( root_chunk, NULL );
 
     _tralloc_chunk * prev_chunk, * next_chunk;
     result = _subtree_to_vertical_list ( root_chunk, &prev_chunk );

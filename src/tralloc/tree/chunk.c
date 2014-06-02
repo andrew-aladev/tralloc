@@ -6,13 +6,13 @@
 #include "chunk.h"
 
 
-void _tralloc_attach_chunk ( _tralloc_chunk * chunk, _tralloc_chunk * new_parent )
+void _tralloc_attach_chunk ( _tralloc_chunk * chunk, _tralloc_chunk * new_parent_chunk )
 {
     _tralloc_chunk * parent = chunk->parent;
     _tralloc_chunk * prev   = chunk->prev;
     _tralloc_chunk * next   = chunk->next;
 
-    chunk->parent = new_parent;
+    chunk->parent = new_parent_chunk;
     chunk->prev   = NULL;
 
     if ( prev != NULL ) {
@@ -24,33 +24,17 @@ void _tralloc_attach_chunk ( _tralloc_chunk * chunk, _tralloc_chunk * new_parent
         next->prev = prev;
     }
 
-    _tralloc_chunk * new_first_child = new_parent->first_child;
-    if ( new_first_child != NULL ) {
-        new_first_child->prev = chunk;
-        chunk->next = new_first_child;
-    } else {
+    if ( new_parent_chunk == NULL ) {
         chunk->next = NULL;
-    }
-    new_parent->first_child = chunk;
-}
-
-void _tralloc_detach_chunk ( _tralloc_chunk * chunk )
-{
-    _tralloc_chunk * parent = chunk->parent;
-    _tralloc_chunk * prev   = chunk->prev;
-    _tralloc_chunk * next   = chunk->next;
-
-    chunk->parent = NULL;
-    chunk->prev   = NULL;
-    chunk->next   = NULL;
-
-    if ( prev != NULL ) {
-        prev->next = next;
-    } else if ( parent != NULL ) {
-        parent->first_child = next;
-    }
-    if ( next != NULL ) {
-        next->prev = prev;
+    } else {
+        _tralloc_chunk * new_first_child = new_parent_chunk->first_child;
+        if ( new_first_child != NULL ) {
+            new_first_child->prev = chunk;
+            chunk->next = new_first_child;
+        } else {
+            chunk->next = NULL;
+        }
+        new_parent_chunk->first_child = chunk;
     }
 }
 
