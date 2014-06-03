@@ -5,7 +5,7 @@ function (check_pthread)
     
     try_compile (
         CHECK_PTHREAD_COMPILE_RESULT
-        ${PROJECT_BINARY_DIR}
+        ${PROJECT_BINARY_DIR}/CMakeTmp
         SOURCES "${PROJECT_SOURCE_DIR}/cmake/test_files/pthread.c"
         COMPILE_DEFINITIONS "-pthread"
         LINK_LIBRARIES      "-pthread"

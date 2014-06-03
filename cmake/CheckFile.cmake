@@ -5,7 +5,7 @@ function (check_file)
     
     try_compile (
         CHECK_FILE_COMPILE_RESULT
-        ${PROJECT_BINARY_DIR}
+        ${PROJECT_BINARY_DIR}/CMakeTmp
         SOURCES "${PROJECT_SOURCE_DIR}/cmake/test_files/file.c"
     )
     if (${CHECK_FILE_COMPILE_RESULT})

@@ -5,7 +5,7 @@ function (check_lto)
     
     try_compile (
         CHECK_LTO_COMPILE_RESULT
-        ${PROJECT_BINARY_DIR}
+        ${PROJECT_BINARY_DIR}/CMakeTmp
         SOURCES "${PROJECT_SOURCE_DIR}/cmake/test_files/empty.c"
         COMPILE_DEFINITIONS "-flto -fuse-linker-plugin"
     )

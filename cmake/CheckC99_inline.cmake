@@ -14,7 +14,7 @@ function (check_c99_inline)
     
     try_compile (
         CHECK_C99_INLINE_COMPILE_RESULT
-        ${PROJECT_BINARY_DIR}
+        ${PROJECT_BINARY_DIR}/CMakeTmp
         SOURCES
             "${PROJECT_SOURCE_DIR}/cmake/test_files/c99_inline/test.c"
             "${PROJECT_SOURCE_DIR}/cmake/test_files/c99_inline/main.c"

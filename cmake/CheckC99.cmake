@@ -5,7 +5,7 @@ function (check_c99)
     
     try_compile (
         CHECK_C99_COMPILE_RESULT
-        ${PROJECT_BINARY_DIR}
+        ${PROJECT_BINARY_DIR}/CMakeTmp
         SOURCES "${PROJECT_SOURCE_DIR}/cmake/test_files/empty.c"
         COMPILE_DEFINITIONS "-std=gnu99"
     )
@@ -18,7 +18,7 @@ function (check_c99)
     
     try_compile (
         CHECK_C99_COMPILE_RESULT
-        ${PROJECT_BINARY_DIR}
+        ${PROJECT_BINARY_DIR}/CMakeTmp
         SOURCES "${PROJECT_SOURCE_DIR}/cmake/test_files/empty.c"
         COMPILE_DEFINITIONS "-std=c99"
     )

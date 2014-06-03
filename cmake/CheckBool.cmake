@@ -5,7 +5,7 @@ function (check_bool)
     
     try_compile (
         CHECK_BOOL_COMPILE_RESULT
-        ${PROJECT_BINARY_DIR}
+        ${PROJECT_BINARY_DIR}/CMakeTmp
         SOURCES "${PROJECT_SOURCE_DIR}/cmake/test_files/bool.c"
     )
     if (${CHECK_BOOL_COMPILE_RESULT})
