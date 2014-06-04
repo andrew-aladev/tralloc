@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 2.8.12)
+cmake_minimum_required (VERSION 2.8)
 project (tralloc C)
 
 
@@ -38,7 +38,7 @@ if (NOT DEFINED TRALLOC_TARGET)
     set (TRALLOC_TARGET ${PROJECT_NAME})
 endif ()
 
-set (CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
+set (CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/checks" "${PROJECT_SOURCE_DIR}/cmake/finds")
 include (CheckBool)
 check_bool ()
 include (CheckFile)

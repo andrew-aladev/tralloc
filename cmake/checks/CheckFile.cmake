@@ -5,8 +5,8 @@ function (check_file)
     
     try_compile (
         CHECK_FILE_COMPILE_RESULT
-        ${PROJECT_BINARY_DIR}/CMakeTmp
-        SOURCES "${PROJECT_SOURCE_DIR}/cmake/test_files/file.c"
+        "${PROJECT_BINARY_DIR}/CMakeTmp/file"
+        "${PROJECT_SOURCE_DIR}/cmake/checks/file" "check_file"
     )
     if (${CHECK_FILE_COMPILE_RESULT})
         set (TRALLOC_HAVE_FILE true CACHE STRING "Status of File support")

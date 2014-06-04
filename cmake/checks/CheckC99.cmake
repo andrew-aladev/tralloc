@@ -5,9 +5,9 @@ function (check_c99)
     
     try_compile (
         CHECK_C99_COMPILE_RESULT
-        ${PROJECT_BINARY_DIR}/CMakeTmp
-        SOURCES "${PROJECT_SOURCE_DIR}/cmake/test_files/empty.c"
-        COMPILE_DEFINITIONS "-std=gnu99"
+        "${PROJECT_BINARY_DIR}/CMakeTmp/C99"
+        "${PROJECT_SOURCE_DIR}/cmake/checks/C99" "check_C99"
+        CMAKE_FLAGS "-DCMAKE_C_FLAGS:STRING = -std=gnu99"
     )
     if (${CHECK_C99_COMPILE_RESULT})
         set (TRALLOC_HAVE_C99 true CACHE STRING "Status of C99 support")
@@ -18,9 +18,9 @@ function (check_c99)
     
     try_compile (
         CHECK_C99_COMPILE_RESULT
-        ${PROJECT_BINARY_DIR}/CMakeTmp
-        SOURCES "${PROJECT_SOURCE_DIR}/cmake/test_files/empty.c"
-        COMPILE_DEFINITIONS "-std=c99"
+        "${PROJECT_BINARY_DIR}/CMakeTmp/C99"
+        "${PROJECT_SOURCE_DIR}/cmake/checks/C99" "check_C99"
+        CMAKE_FLAGS "-DCMAKE_C_FLAGS:STRING = -std=c99"
     )
     if (${CHECK_C99_COMPILE_RESULT})
         set (TRALLOC_HAVE_C99 true CACHE STRING "Status of C99 support")

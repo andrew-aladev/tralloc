@@ -14,11 +14,9 @@ function (check_c99_inline)
     
     try_compile (
         CHECK_C99_INLINE_COMPILE_RESULT
-        ${PROJECT_BINARY_DIR}/CMakeTmp
-        SOURCES
-            "${PROJECT_SOURCE_DIR}/cmake/test_files/c99_inline/test.c"
-            "${PROJECT_SOURCE_DIR}/cmake/test_files/c99_inline/main.c"
-        COMPILE_DEFINITIONS ${C99_CFLAGS}
+        "${PROJECT_BINARY_DIR}/CMakeTmp/C99_inline"
+        "${PROJECT_SOURCE_DIR}/cmake/checks/C99_inline" "check_C99_inline"
+        CMAKE_FLAGS "-DCMAKE_C_FLAGS:STRING = ${C99_CFLAGS}"
     )
     if (${CHECK_C99_INLINE_COMPILE_RESULT})
         set (TRALLOC_HAVE_C99_INLINE true CACHE STRING "Status of C99 inline support")

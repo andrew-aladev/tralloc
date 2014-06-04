@@ -5,10 +5,9 @@ function (check_pthread)
     
     try_compile (
         CHECK_PTHREAD_COMPILE_RESULT
-        ${PROJECT_BINARY_DIR}/CMakeTmp
-        SOURCES "${PROJECT_SOURCE_DIR}/cmake/test_files/pthread.c"
-        COMPILE_DEFINITIONS "-pthread"
-        LINK_LIBRARIES      "-pthread"
+        "${PROJECT_BINARY_DIR}/CMakeTmp/pthread"
+        "${PROJECT_SOURCE_DIR}/cmake/checks/pthread" "check_pthread"
+        CMAKE_FLAGS "-DCMAKE_C_FLAGS:STRING = -pthread" "-DCMAKE_LD_FLAGS:STRING = -pthread"
     )
     if (${CHECK_PTHREAD_COMPILE_RESULT})
         set (TRALLOC_HAVE_PTHREAD true CACHE STRING "Status of pthread support")

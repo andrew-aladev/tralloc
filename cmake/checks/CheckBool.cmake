@@ -5,8 +5,8 @@ function (check_bool)
     
     try_compile (
         CHECK_BOOL_COMPILE_RESULT
-        ${PROJECT_BINARY_DIR}/CMakeTmp
-        SOURCES "${PROJECT_SOURCE_DIR}/cmake/test_files/bool.c"
+        "${PROJECT_BINARY_DIR}/CMakeTmp/bool"
+        "${PROJECT_SOURCE_DIR}/cmake/checks/bool" "check_bool"
     )
     if (${CHECK_BOOL_COMPILE_RESULT})
         set (TRALLOC_HAVE_BOOL true CACHE STRING "Status of Bool support")
