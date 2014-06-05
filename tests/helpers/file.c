@@ -65,9 +65,20 @@ tralloc_bool test_helpers_file ( tralloc_context * ctx )
 
     char * file_name;
     int * test_file;
+    mode_t mode = S_IRUSR | S_IWUSR;
+    
+#   if defined(S_IRGRP)
+    mode |= S_IRGRP;
+#   endif
+#   if defined(S_IROTH)
+    mode |= S_IROTH;
+#   endif
+    
+    // mode is 644
+    
     if (
         tralloc_strdup ( ctx, &file_name, "/tmp/tralloc_test_file" ) != 0 ||
-        tralloc_open_mode ( ctx, &test_file, file_name, O_CREAT | O_WRONLY, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH ) != 0 // 0644
+        tralloc_open_mode ( ctx, &test_file, file_name, O_CREAT | O_WRONLY, mode ) != 0 // 0644
     ) {
         tralloc_free ( file_name );
         return TRALLOC_FALSE;
