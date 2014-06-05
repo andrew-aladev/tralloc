@@ -12,25 +12,25 @@
 
 
 #if defined(TRALLOC_THREADS)
-static _tralloc_mutex _chunks_count_mutex = PTHREAD_MUTEX_INITIALIZER;
+static _tralloc_mutex _tralloc_chunks_count_mutex = PTHREAD_MUTEX_INITIALIZER;
 #endif
 
-static size_t _chunks_count = 0;
+static size_t _tralloc_chunks_count = 0;
 
 static inline
-tralloc_error _add_chunks_count ( size_t length )
+tralloc_error _tralloc_add_chunks_count ( size_t length )
 {
 #   if defined(TRALLOC_THREADS)
-    tralloc_error result = _tralloc_mutex_lock ( &_chunks_count_mutex );
+    tralloc_error result = _tralloc_mutex_lock ( &_tralloc_chunks_count_mutex );
     if ( result != 0 ) {
         return result;
     }
 #   endif
 
-    _chunks_count += length;
+    _tralloc_chunks_count += length;
 
 #   if defined(TRALLOC_THREADS)
-    result = _tralloc_mutex_unlock ( &_chunks_count_mutex );
+    result = _tralloc_mutex_unlock ( &_tralloc_chunks_count_mutex );
     if ( result != 0 ) {
         return result;
     }
@@ -40,20 +40,20 @@ tralloc_error _add_chunks_count ( size_t length )
 }
 
 static inline
-tralloc_error _subtract_chunks_count ( size_t length )
+tralloc_error _tralloc_subtract_chunks_count ( size_t length )
 {
 
 #   if defined(TRALLOC_THREADS)
-    tralloc_error result = _tralloc_mutex_lock ( &_chunks_count_mutex );
+    tralloc_error result = _tralloc_mutex_lock ( &_tralloc_chunks_count_mutex );
     if ( result != 0 ) {
         return result;
     }
 #   endif
 
-    _chunks_count -= length;
+    _tralloc_chunks_count -= length;
 
 #   if defined(TRALLOC_THREADS)
-    result = _tralloc_mutex_unlock ( &_chunks_count_mutex );
+    result = _tralloc_mutex_unlock ( &_tralloc_chunks_count_mutex );
     if ( result != 0 ) {
         return result;
     }
@@ -66,16 +66,16 @@ tralloc_error tralloc_debug_stats_get_chunks_count ( size_t * length )
 {
 
 #   if defined(TRALLOC_THREADS)
-    tralloc_error result = _tralloc_mutex_lock ( &_chunks_count_mutex );
+    tralloc_error result = _tralloc_mutex_lock ( &_tralloc_chunks_count_mutex );
     if ( result != 0 ) {
         return result;
     }
 #   endif
 
-    * length = _chunks_count;
+    * length = _tralloc_chunks_count;
 
 #   if defined(TRALLOC_THREADS)
-    result = _tralloc_mutex_unlock ( &_chunks_count_mutex );
+    result = _tralloc_mutex_unlock ( &_tralloc_chunks_count_mutex );
     if ( result != 0 ) {
         return result;
     }
@@ -86,25 +86,25 @@ tralloc_error tralloc_debug_stats_get_chunks_count ( size_t * length )
 
 
 #if defined(TRALLOC_THREADS)
-static _tralloc_mutex _chunks_overhead_length_mutex = PTHREAD_MUTEX_INITIALIZER;
+static _tralloc_mutex _tralloc_chunks_overhead_length_mutex = PTHREAD_MUTEX_INITIALIZER;
 #endif
 
-static size_t _chunks_overhead_length = 0;
+static size_t _tralloc_chunks_overhead_length = 0;
 
 tralloc_error _tralloc_debug_stats_add_chunks_overhead_length ( size_t length )
 {
 
 #   if defined(TRALLOC_THREADS)
-    tralloc_error result = _tralloc_mutex_lock ( &_chunks_overhead_length_mutex );
+    tralloc_error result = _tralloc_mutex_lock ( &_tralloc_chunks_overhead_length_mutex );
     if ( result != 0 ) {
         return result;
     }
 #   endif
 
-    _chunks_overhead_length += length;
+    _tralloc_chunks_overhead_length += length;
 
 #   if defined(TRALLOC_THREADS)
-    result = _tralloc_mutex_unlock ( &_chunks_overhead_length_mutex );
+    result = _tralloc_mutex_unlock ( &_tralloc_chunks_overhead_length_mutex );
     if ( result != 0 ) {
         return result;
     }
@@ -117,16 +117,16 @@ tralloc_error _tralloc_debug_stats_subtract_chunks_overhead_length ( size_t leng
 {
 
 #   if defined(TRALLOC_THREADS)
-    tralloc_error result = _tralloc_mutex_lock ( &_chunks_overhead_length_mutex );
+    tralloc_error result = _tralloc_mutex_lock ( &_tralloc_chunks_overhead_length_mutex );
     if ( result != 0 ) {
         return result;
     }
 #   endif
 
-    _chunks_overhead_length -= length;
+    _tralloc_chunks_overhead_length -= length;
 
 #   if defined(TRALLOC_THREADS)
-    result = _tralloc_mutex_unlock ( &_chunks_overhead_length_mutex );
+    result = _tralloc_mutex_unlock ( &_tralloc_chunks_overhead_length_mutex );
     if ( result != 0 ) {
         return result;
     }
@@ -139,16 +139,16 @@ tralloc_error tralloc_debug_stats_get_chunks_overhead_length ( size_t * length )
 {
 
 #   if defined(TRALLOC_THREADS)
-    tralloc_error result = _tralloc_mutex_lock ( &_chunks_overhead_length_mutex );
+    tralloc_error result = _tralloc_mutex_lock ( &_tralloc_chunks_overhead_length_mutex );
     if ( result != 0 ) {
         return result;
     }
 #   endif
 
-    * length = _chunks_overhead_length;
+    * length = _tralloc_chunks_overhead_length;
 
 #   if defined(TRALLOC_THREADS)
-    result = _tralloc_mutex_unlock ( &_chunks_overhead_length_mutex );
+    result = _tralloc_mutex_unlock ( &_tralloc_chunks_overhead_length_mutex );
     if ( result != 0 ) {
         return result;
     }
@@ -159,26 +159,26 @@ tralloc_error tralloc_debug_stats_get_chunks_overhead_length ( size_t * length )
 
 
 #if defined(TRALLOC_THREADS)
-static _tralloc_mutex _chunks_length_mutex = PTHREAD_MUTEX_INITIALIZER;
+static _tralloc_mutex _tralloc_chunks_length_mutex = PTHREAD_MUTEX_INITIALIZER;
 #endif
 
-static size_t _chunks_length = 0;
+static size_t _tralloc_chunks_length = 0;
 
 static inline
-tralloc_error _add_chunks_length ( size_t length )
+tralloc_error _tralloc_add_chunks_length ( size_t length )
 {
 
 #   if defined(TRALLOC_THREADS)
-    tralloc_error result = _tralloc_mutex_lock ( &_chunks_length_mutex );
+    tralloc_error result = _tralloc_mutex_lock ( &_tralloc_chunks_length_mutex );
     if ( result != 0 ) {
         return result;
     }
 #   endif
 
-    _chunks_length += length;
+    _tralloc_chunks_length += length;
 
 #   if defined(TRALLOC_THREADS)
-    result = _tralloc_mutex_unlock ( &_chunks_length_mutex );
+    result = _tralloc_mutex_unlock ( &_tralloc_chunks_length_mutex );
     if ( result != 0 ) {
         return result;
     }
@@ -188,20 +188,20 @@ tralloc_error _add_chunks_length ( size_t length )
 }
 
 static inline
-tralloc_error _subtract_chunks_length ( size_t length )
+tralloc_error _tralloc_subtract_chunks_length ( size_t length )
 {
 
 #   if defined(TRALLOC_THREADS)
-    tralloc_error result = _tralloc_mutex_lock ( &_chunks_length_mutex );
+    tralloc_error result = _tralloc_mutex_lock ( &_tralloc_chunks_length_mutex );
     if ( result != 0 ) {
         return result;
     }
 #   endif
 
-    _chunks_length -= length;
+    _tralloc_chunks_length -= length;
 
 #   if defined(TRALLOC_THREADS)
-    result = _tralloc_mutex_unlock ( &_chunks_length_mutex );
+    result = _tralloc_mutex_unlock ( &_tralloc_chunks_length_mutex );
     if ( result != 0 ) {
         return result;
     }
@@ -214,16 +214,16 @@ tralloc_error tralloc_debug_stats_get_chunks_length ( size_t * length )
 {
 
 #   if defined(TRALLOC_THREADS)
-    tralloc_error result = _tralloc_mutex_lock ( &_chunks_length_mutex );
+    tralloc_error result = _tralloc_mutex_lock ( &_tralloc_chunks_length_mutex );
     if ( result != 0 ) {
         return result;
     }
 #   endif
 
-    * length = _chunks_length;
+    * length = _tralloc_chunks_length;
 
 #   if defined(TRALLOC_THREADS)
-    result = _tralloc_mutex_unlock ( &_chunks_length_mutex );
+    result = _tralloc_mutex_unlock ( &_tralloc_chunks_length_mutex );
     if ( result != 0 ) {
         return result;
     }
@@ -236,9 +236,9 @@ tralloc_error _tralloc_debug_stats_after_add_chunk ( size_t chunk_length, size_t
 {
     tralloc_error result;
     if (
-        ( result = _add_chunks_count ( 1 ) ) != 0 ||
+        ( result = _tralloc_add_chunks_count ( 1 ) ) != 0 ||
         ( result = _tralloc_debug_stats_add_chunks_overhead_length ( chunk_length ) ) != 0 ||
-        ( result = _add_chunks_length ( length ) ) != 0
+        ( result = _tralloc_add_chunks_length ( length ) ) != 0
     ) {
         return result;
     }
@@ -248,9 +248,9 @@ tralloc_error _tralloc_debug_stats_after_add_chunk ( size_t chunk_length, size_t
 tralloc_error _tralloc_debug_stats_after_resize_chunk ( size_t old_length, size_t length )
 {
     if ( length > old_length ) {
-        return _add_chunks_length ( length - old_length );
+        return _tralloc_add_chunks_length ( length - old_length );
     } else if ( length < old_length ) {
-        return _subtract_chunks_length ( old_length - length );
+        return _tralloc_subtract_chunks_length ( old_length - length );
     }
     return 0;
 }
@@ -260,7 +260,7 @@ tralloc_error _tralloc_debug_stats_before_free_chunk ( _tralloc_chunk * chunk )
     tralloc_error error = 0, result;
     size_t length;
 
-    result = _subtract_chunks_count ( 1 );
+    result = _tralloc_subtract_chunks_count ( 1 );
     if ( result != 0 ) {
         error = result;
     }
@@ -275,7 +275,7 @@ tralloc_error _tralloc_debug_stats_before_free_chunk ( _tralloc_chunk * chunk )
         error = result;
     }
 
-    result = _subtract_chunks_length ( length );
+    result = _tralloc_subtract_chunks_length ( length );
     if ( result != 0 ) {
         error = result;
     }

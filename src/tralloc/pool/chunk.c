@@ -13,7 +13,7 @@
 
 
 static inline
-void _pool_child_attach ( _tralloc_pool_child * current, _tralloc_pool_child * prev, _tralloc_pool_child * next )
+void _tralloc_pool_child_attach ( _tralloc_pool_child * current, _tralloc_pool_child * prev, _tralloc_pool_child * next )
 {
     current->prev = prev;
     current->next = next;
@@ -29,7 +29,7 @@ void _pool_child_attach ( _tralloc_pool_child * current, _tralloc_pool_child * p
 }
 
 static inline
-void _pool_child_detach ( _tralloc_pool_child * current )
+void _tralloc_pool_child_detach ( _tralloc_pool_child * current )
 {
     _tralloc_pool_child * prev = current->prev;
     _tralloc_pool_child * next = current->next;
@@ -45,7 +45,7 @@ void _pool_child_detach ( _tralloc_pool_child * current )
 }
 
 static inline
-void _pool_child_update ( _tralloc_pool_child * current )
+void _tralloc_pool_child_update ( _tralloc_pool_child * current )
 {
     _tralloc_pool_child * prev = current->prev;
     _tralloc_pool_child * next = current->next;
@@ -65,13 +65,13 @@ void _tralloc_pool_child_new_chunk ( _tralloc_chunk * chunk, _tralloc_pool * poo
     _tralloc_pool_child * pool_child = _tralloc_get_pool_child_from_chunk ( chunk );
     pool_child->pool   = pool;
     pool_child->length = length;
-    _pool_child_attach ( pool_child, prev, next );
+    _tralloc_pool_child_attach ( pool_child, prev, next );
 }
 
 static inline
-void _free_pool_child ( _tralloc_pool_child * pool_child )
+void _tralloc_free_pool_child ( _tralloc_pool_child * pool_child )
 {
-    _pool_child_detach ( pool_child );
+    _tralloc_pool_child_detach ( pool_child );
 
     _tralloc_pool_fragment_free_child (
         pool_child,
@@ -114,7 +114,7 @@ _tralloc_pool_child * _tralloc_pool_child_resize ( _tralloc_pool_child * pool_ch
         _tralloc_pool_child * new_pool_child = ( _tralloc_pool_child * ) prev_fragment;
         memmove ( new_pool_child, pool_child, pool_child->length );
         new_pool_child->length += prev_fragment_length;
-        _pool_child_update ( new_pool_child );
+        _tralloc_pool_child_update ( new_pool_child );
 
         // "next_fragment" should be notified about "new_pool_child".
         _tralloc_pool_fragment * next_fragment = ( _tralloc_pool_fragment * ) ( ( uintptr_t ) pool_child + pool_child->length );
@@ -147,10 +147,10 @@ _tralloc_pool_child * _tralloc_pool_child_resize ( _tralloc_pool_child * pool_ch
         // the free space with length >= "target_length" should act as prev or next fragment to current "pool_child".
         // But this is impossible, because function have checked that "prev_fragment_length" + "pool_child->length" + "next_fragment_length" < target_length.
         // So "pool_child" can be freed without risk to broke "new_prev_pool_child" or "new_next_pool_child".
-        _free_pool_child ( pool_child );
+        _tralloc_free_pool_child ( pool_child );
 
         new_pool_child->length = target_length;
-        _pool_child_attach ( new_pool_child, new_prev_pool_child, new_next_pool_child );
+        _tralloc_pool_child_attach ( new_pool_child, new_prev_pool_child, new_next_pool_child );
 
         return new_pool_child;
     }
@@ -165,7 +165,7 @@ tralloc_error _tralloc_pool_child_free_chunk ( _tralloc_chunk * chunk )
     _tralloc_pool_child * prev_pool_child = pool_child->prev;
     _tralloc_pool_child * next_pool_child = pool_child->next;
 
-    _free_pool_child ( pool_child );
+    _tralloc_free_pool_child ( pool_child );
 
     if ( prev_pool_child == NULL && next_pool_child == NULL ) {
         if ( pool->autofree ) {

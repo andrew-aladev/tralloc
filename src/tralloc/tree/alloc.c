@@ -41,7 +41,7 @@
 typedef tralloc_error ( * _allocator ) ( void ** data, size_t length );
 
 static inline
-tralloc_error _malloc ( void ** data, size_t length )
+tralloc_error _tralloc_malloc ( void ** data, size_t length )
 {
     void * _data = malloc ( length );
     if ( _data == NULL ) {
@@ -53,7 +53,7 @@ tralloc_error _malloc ( void ** data, size_t length )
 }
 
 static inline
-tralloc_error _calloc ( void ** data, size_t length )
+tralloc_error _tralloc_calloc ( void ** data, size_t length )
 {
     void * _data = calloc ( 1, length );
     if ( _data == NULL ) {
@@ -184,7 +184,7 @@ tralloc_error _tralloc_with_extensions_with_allocator ( tralloc_context * parent
 #   if defined(TRALLOC_POOL)
     _tralloc_pool_child * prev_pool_child, * next_pool_child;
     if ( have_pool_child ) {
-        _tralloc_pool_alloc ( parent_pool, &memory, total_length, allocator == _calloc, &prev_pool_child, &next_pool_child );
+        _tralloc_pool_alloc ( parent_pool, &memory, total_length, allocator == _tralloc_calloc, &prev_pool_child, &next_pool_child );
     } else {
         result = allocator ( &memory, total_length );
         if ( result != 0 ) {
@@ -430,24 +430,24 @@ tralloc_error _tralloc_with_extensions_with_allocator ( tralloc_context * parent
 
 tralloc_error tralloc_with_extensions ( const char * file, size_t line, tralloc_context * parent_context, tralloc_context ** child_context, tralloc_extensions extensions, size_t length )
 {
-    return _tralloc_with_extensions_with_allocator ( file, line, parent_context, child_context, extensions, length, _malloc );
+    return _tralloc_with_extensions_with_allocator ( file, line, parent_context, child_context, extensions, length, _tralloc_malloc );
 }
 
 tralloc_error tralloc_zero_with_extensions ( const char * file, size_t line, tralloc_context * parent_context, tralloc_context ** child_context, tralloc_extensions extensions, size_t length )
 {
-    return _tralloc_with_extensions_with_allocator ( file, line, parent_context, child_context, extensions, length, _calloc );
+    return _tralloc_with_extensions_with_allocator ( file, line, parent_context, child_context, extensions, length, _tralloc_calloc );
 }
 
 #else
 
 tralloc_error tralloc_with_extensions ( tralloc_context * parent_context, tralloc_context ** child_context, tralloc_extensions extensions, size_t length )
 {
-    return _tralloc_with_extensions_with_allocator ( parent_context, child_context, extensions, length, _malloc );
+    return _tralloc_with_extensions_with_allocator ( parent_context, child_context, extensions, length, _tralloc_malloc );
 }
 
 tralloc_error tralloc_zero_with_extensions ( tralloc_context * parent_context, tralloc_context ** child_context, tralloc_extensions extensions, size_t length )
 {
-    return _tralloc_with_extensions_with_allocator ( parent_context, child_context, extensions, length, _calloc );
+    return _tralloc_with_extensions_with_allocator ( parent_context, child_context, extensions, length, _tralloc_calloc );
 }
 
 #endif
