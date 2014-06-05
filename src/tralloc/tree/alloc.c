@@ -237,6 +237,10 @@ tralloc_error _tralloc_with_extensions_with_allocator ( tralloc_context * parent
         result = _tralloc_mutex_new ( children_mutex );
         if ( result != 0 ) {
 
+            if ( have_lock_subtree ) {
+                _tralloc_mutex_free ( subtree_mutex );
+            }
+
 #           if defined(TRALLOC_POOL)
             if ( have_pool_child ) {
                 _tralloc_pool_child_free_chunk ( chunk );
