@@ -22,7 +22,7 @@ set (TRALLOC_MAN      true CACHE BOOL "create man")
 set (TRALLOC_TEST     true CACHE BOOL "build tests")
 set (TRALLOC_EXAMPLES true CACHE BOOL "build examples")
 
-set (TRALLOC_CONCAT_SOURCES false CACHE BOOL "concat all .c files in one to make compilation faster")
+set (TRALLOC_COLLECT_SOURCES false CACHE BOOL "collect all .c files in one to make compilation faster")
 
 
 if (NOT DEFINED CMAKE_INSTALL_LIBDIR)

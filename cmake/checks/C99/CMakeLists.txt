@@ -3,5 +3,5 @@ project (check_bool C)
 
 add_executable (
     "main"
-    "${PROJECT_SOURCE_DIR}/main.c"
+    "${CMAKE_CURRENT_SOURCE_DIR}/main.c"
 )
