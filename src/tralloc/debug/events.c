@@ -256,16 +256,16 @@ tralloc_error _tralloc_debug_before_free_chunk ( _tralloc_chunk * chunk )
     }
 #   endif
 
+#   if defined(TRALLOC_DEBUG_LOG)
+    if ( chunk->initialized_in_file != NULL ) {
+        free ( chunk->initialized_in_file );
+    }
+#   endif
+
 #   if defined(TRALLOC_THREADS)
     result = _tralloc_spinlock_free ( &chunk->length_lock );
     if ( result != 0 ) {
         error = result;
-    }
-#   endif
-
-#   if defined(TRALLOC_DEBUG_LOG)
-    if ( chunk->initialized_in_file != NULL ) {
-        free ( chunk->initialized_in_file );
     }
 #   endif
 
