@@ -3,11 +3,11 @@
 // tralloc is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Lesser Public License for more details.
 // You should have received a copy of the GNU General Lesser Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
-#include "stats.h"
-#include "chunk.h"
+#include <tralloc/debug/stats.h>
+#include <tralloc/debug/chunk.h>
 
 #if defined(TRALLOC_THREADS)
-#   include "../threads/mutex.h"
+#   include <tralloc/threads/mutex.h>
 #endif
 
 

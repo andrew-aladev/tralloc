@@ -4,10 +4,10 @@
 // You should have received a copy of the GNU General Lesser Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
 #define _TRALLOC_UTILS_BUFFER_INCLUDED_FROM_OBJECT
-#include "buffer.h"
-#include "../tree/alloc.h"
-#include "../tree/realloc.h"
-#include "../tree/free.h"
+#include <tralloc/utils/buffer.h>
+#include <tralloc/tree/alloc.h>
+#include <tralloc/tree/realloc.h>
+#include <tralloc/tree/free.h>
 
 #include <string.h>
 

@@ -3,10 +3,10 @@
 // tralloc is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Lesser Public License for more details.
 // You should have received a copy of the GNU General Lesser Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
-#include "chunk.h"
+#include <tralloc/debug/chunk.h>
 
 #if defined(TRALLOC_THREADS)
-#   include "../threads/spinlock.h"
+#   include <tralloc/threads/spinlock.h>
 #endif
 
 

@@ -4,11 +4,11 @@
 // You should have received a copy of the GNU General Lesser Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
 #define _TRALLOC_DESTRUCTOR_CHUNK_INCLUDED_FROM_OBJECT
-#include "chunk.h"
-#include "../common.h"
+#include <tralloc/destructor/chunk.h>
+#include <tralloc/common.h>
 
 #if defined(TRALLOC_DEBUG)
-#   include "../debug/stats.h"
+#   include <tralloc/debug/stats.h>
 #endif
 
 #include <stdlib.h>

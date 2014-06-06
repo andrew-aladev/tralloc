@@ -4,10 +4,10 @@
 // You should have received a copy of the GNU General Lesser Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
 #define _TRALLOC_HELPERS_FILE_INCLUDED_FROM_OBJECT
-#include "file.h"
-#include "../tree/alloc.h"
-#include "../tree/free.h"
-#include "../destructor/append.h"
+#include <tralloc/helpers/file.h>
+#include <tralloc/tree/alloc.h>
+#include <tralloc/tree/free.h>
+#include <tralloc/destructor/append.h>
 
 #include <unistd.h>
 

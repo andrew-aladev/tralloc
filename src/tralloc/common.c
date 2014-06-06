@@ -4,7 +4,7 @@
 // You should have received a copy of the GNU General Lesser Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
 #define _TRALLOC_COMMON_INCLUDED_FROM_OBJECT
-#include "common.h"
+#include <tralloc/common.h>
 
 
 // Extension's structures are situated in the memory in the following order : pool / pool_child, references, reference, destructors, length.

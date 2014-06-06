@@ -22,6 +22,8 @@ set (TRALLOC_MAN      true CACHE BOOL "create man")
 set (TRALLOC_TEST     true CACHE BOOL "build tests")
 set (TRALLOC_EXAMPLES true CACHE BOOL "build examples")
 
+set (TRALLOC_CONCAT_SOURCES false CACHE BOOL "concat all .c files in one to make compilation faster")
+
 
 if (NOT DEFINED CMAKE_INSTALL_LIBDIR)
     set (CMAKE_INSTALL_LIBDIR "lib" CACHE PATH "Output directory for libraries")
@@ -94,8 +96,14 @@ set (CMAKE_C_FLAGS_RELEASE  "-pipe -O2 ${LTO_CFLAGS}")
 set (CMAKE_LD_FLAGS_RELEASE ${LTO_LDLAGS})
 
 
-add_subdirectory ("src")
+function(join VALUES GLUE OUTPUT)
+  string (REGEX REPLACE "([^\\]|^);" "\\1${GLUE}" _TMP_STR "${VALUES}")
+  string (REGEX REPLACE "[\\](.)" "\\1" _TMP_STR "${_TMP_STR}") #fixes escaping
+  set (${OUTPUT} "${_TMP_STR}" PARENT_SCOPE)
+endfunction()
+
 include_directories ("src")
+add_subdirectory ("src")
 
 if (${TRALLOC_TEST} OR ${TRALLOC_EXAMPLES})
     enable_testing()

@@ -4,10 +4,10 @@
 // You should have received a copy of the GNU General Lesser Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
 #define _TRALLOC_POOL_CHUNK_INCLUDED_FROM_OBJECT
-#include "chunk.h"
-#include "head_chunk.h"
-#include "fragment.h"
-#include "../tree/free.h"
+#include <tralloc/pool/chunk.h>
+#include <tralloc/pool/head_chunk.h>
+#include <tralloc/pool/fragment.h>
+#include <tralloc/tree/free.h>
 
 #include <string.h>
 

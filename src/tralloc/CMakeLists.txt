@@ -1,5 +1,7 @@
-set (HEADERS common.h config.h macro.h tree.h types.h)
-set (SOURCES common.c)
+install (FILES common.h config.h macro.h tree.h types.h DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/${CURRENT_INCLUDEDIR}")
+set (SOURCES
+    ${CMAKE_CURRENT_SOURCE_DIR}/common.c
+)
 
 if (${TRALLOC_DEBUG})
     set (HEADERS ${HEADERS} debug.h)
@@ -55,6 +57,12 @@ endif ()
 install (FILES ${HEADERS} DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/${CURRENT_INCLUDEDIR}")
 
 configure_file (${CMAKE_CURRENT_SOURCE_DIR}/config.h.in ${CMAKE_CURRENT_SOURCE_DIR}/config.h)
+
+if (${TRALLOC_CONCAT_SOURCES})
+    join ("${SOURCES}" " " FILES)
+    set (SOURCES "${CMAKE_CURRENT_BINARY_DIR}/sources.c")
+    execute_process(COMMAND sh -c "cat ${FILES} > ${SOURCES}")
+endif ()
 
 if (${TRALLOC_SHARED})
     add_library (${TRALLOC_TARGET} SHARED ${SOURCES})

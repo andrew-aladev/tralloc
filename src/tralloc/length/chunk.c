@@ -4,4 +4,4 @@
 // You should have received a copy of the GNU General Lesser Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
 #define _TRALLOC_LENGTH_CHUNK_INCLUDED_FROM_OBJECT
-#include "chunk.h"
+#include <tralloc/length/chunk.h>

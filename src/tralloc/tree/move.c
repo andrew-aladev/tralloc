@@ -3,17 +3,17 @@
 // tralloc is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Lesser Public License for more details.
 // You should have received a copy of the GNU General Lesser Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
-#include "move.h"
-#include "chunk.h"
-#include "../common.h"
+#include <tralloc/tree/move.h>
+#include <tralloc/tree/chunk.h>
+#include <tralloc/common.h>
 
 #if defined(TRALLOC_THREADS)
-#   include "../threads/chunk.h"
-#   include "../threads/mutex.h"
+#   include <tralloc/threads/chunk.h>
+#   include <tralloc/threads/mutex.h>
 #endif
 
 #if defined(TRALLOC_DEBUG)
-#   include "../debug/events.h"
+#   include <tralloc/debug/events.h>
 #endif
 
 

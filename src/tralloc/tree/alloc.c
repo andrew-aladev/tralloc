@@ -4,35 +4,35 @@
 // You should have received a copy of the GNU General Lesser Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
 #define _TRALLOC_TREE_ALLOC_INCLUDED_FROM_OBJECT
-#include "alloc.h"
-#include "chunk.h"
-#include "../common.h"
+#include <tralloc/tree/alloc.h>
+#include <tralloc/tree/chunk.h>
+#include <tralloc/common.h>
 
 #if defined(TRALLOC_DEBUG)
-#   include "../debug/events.h"
+#   include <tralloc/debug/events.h>
 #endif
 
 #if defined(TRALLOC_THREADS)
-#   include "../threads/chunk.h"
-#   include "../threads/mutex.h"
+#   include <tralloc/threads/chunk.h>
+#   include <tralloc/threads/mutex.h>
 #endif
 
 #if defined(TRALLOC_LENGTH)
-#   include "../length/chunk.h"
+#   include <tralloc/length/chunk.h>
 #endif
 
 #if defined(TRALLOC_DESTRUCTOR)
-#   include "../destructor/chunk.h"
+#   include <tralloc/destructor/chunk.h>
 #endif
 
 #if defined(TRALLOC_REFERENCE)
-#   include "../reference/head_chunk.h"
-#   include "../reference/chunk.h"
+#   include <tralloc/reference/head_chunk.h>
+#   include <tralloc/reference/chunk.h>
 #endif
 
 #if defined(TRALLOC_POOL)
-#   include "../pool/chunk.h"
-#   include "../pool/head_chunk.h"
+#   include <tralloc/pool/chunk.h>
+#   include <tralloc/pool/head_chunk.h>
 #endif
 
 #include <stdlib.h>

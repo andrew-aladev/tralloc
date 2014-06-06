@@ -3,24 +3,24 @@
 // tralloc is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Lesser Public License for more details.
 // You should have received a copy of the GNU General Lesser Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
-#include "events.h"
-#include "chunk.h"
-#include "../macro.h"
+#include <tralloc/debug/events.h>
+#include <tralloc/debug/chunk.h>
+#include <tralloc/macro.h>
 
 #if defined(TRALLOC_THREADS)
-#   include "../threads/spinlock.h"
+#   include <tralloc/threads/spinlock.h>
 #endif
 
 #if defined(TRALLOC_DEBUG_STATS)
-#   include "stats.h"
+#   include <tralloc/debug/stats.h>
 #endif
 
 #if defined(TRALLOC_DEBUG_CALLBACKS)
-#   include "callbacks.h"
+#   include <tralloc/debug/callbacks.h>
 #endif
 
 #if defined(TRALLOC_DEBUG_THREADS)
-#   include "threads.h"
+#   include <tralloc/debug/threads.h>
 #endif
 
 #include <stdlib.h>

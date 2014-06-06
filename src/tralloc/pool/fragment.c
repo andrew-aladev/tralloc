@@ -4,7 +4,8 @@
 // You should have received a copy of the GNU General Lesser Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
 #define _TRALLOC_POOL_FRAGMENT_INCLUDED_FROM_OBJECT
-#include "fragment.h"
+#include <tralloc/pool/fragment.h>
+
 #include <string.h>
 
 

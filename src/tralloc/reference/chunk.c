@@ -4,8 +4,8 @@
 // You should have received a copy of the GNU General Lesser Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
 #define _TRALLOC_REFERENCE_CHUNK_INCLUDED_FROM_OBJECT
-#include "chunk.h"
-#include "../tree/free.h"
+#include <tralloc/reference/chunk.h>
+#include <tralloc/tree/free.h>
 
 
 void _tralloc_reference_update_chunk ( _tralloc_chunk * chunk )
