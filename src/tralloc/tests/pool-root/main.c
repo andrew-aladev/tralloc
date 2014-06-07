@@ -83,7 +83,7 @@ int main ()
 #   endif
 
 #   if defined(TRALLOC_UTILS)
-    result = test_utils ( pool_data );
+    result = _tralloc_test_utils ( pool_data );
     if ( result != 0 ) {
         return result;
     }

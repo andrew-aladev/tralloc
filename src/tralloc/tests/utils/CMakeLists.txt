@@ -8,6 +8,12 @@ if (${TRALLOC_UTILS_BUFFER})
     )
 endif ()
 
+if (${TRALLOC_COLLECT_SOURCES})
+    join ("${SOURCES}" " " FILES)
+    set (SOURCES "${CMAKE_CURRENT_BINARY_DIR}/sources.c")
+    execute_process(COMMAND sh -c "cat ${FILES} > ${SOURCES}")
+endif ()
+
 if (${TRALLOC_SHARED})
     add_library ("${TRALLOC_TARGET}-libtest-utils" SHARED ${SOURCES})
     target_link_libraries ("${TRALLOC_TARGET}-libtest-utils" ${TRALLOC_TARGET})

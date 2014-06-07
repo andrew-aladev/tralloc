@@ -6,8 +6,8 @@
 #ifndef TRALLOC_UTILS_BUFFER_H
 #define TRALLOC_UTILS_BUFFER_H
 
-#include "../macro.h"
-#include "../types.h"
+#include <tralloc/types.h>
+#include <tralloc/macro.h>
 
 #undef _TRALLOC_INLINE
 #ifdef _TRALLOC_UTILS_BUFFER_INCLUDED_FROM_OBJECT
@@ -17,66 +17,106 @@
 #endif
 
 
+// User have some stream of data.
+// He wants to write portions of data to the stream.
+// He wants to read fixed portions of data from stream.
+
+// "capacity" is buffer capacity, "offset" is a offset to the valid data and "length" is the length of valid data.
+// User can write data to the empty bytes after "length" part and read data from "length" part.
+// User can prepare buffer for the portion of data.
+// User can trim buffer from the left, from the right and from both sides at once.
+// User can resize buffer to the size >= "length".
+
+// <-- empty bytes --> <-- valid_data  --> <-- empty bytes -->
+// <----------------------- capacity ------------------------>
+// <---- offset -----> <---- length ----->
+
 typedef struct _tralloc_buffer_type {
-    uint8_t * buf;
-    size_t    data_offset;
-    size_t    data_length;
+    uint8_t * data;
+    size_t    offset;
     size_t    length;
+    size_t    capacity;
 } tralloc_buffer;
 
-#if defined(TRALLOC_EXTENSIONS)
-
-tralloc_error tralloc_buffer_with_extensions_new ( tralloc_context * ctx, tralloc_buffer ** buffer_ptr, tralloc_extensions extensions );
+tralloc_error tralloc_buffer_new_with_extensions ( tralloc_context * ctx, tralloc_buffer ** buffer_ptr, size_t capacity, tralloc_extensions extensions );
 
 _TRALLOC_INLINE
-tralloc_error tralloc_buffer_new ( tralloc_context * ctx, tralloc_buffer ** buffer_ptr )
+tralloc_error tralloc_buffer_new ( tralloc_context * ctx, tralloc_buffer ** buffer_ptr, size_t capacity )
 {
-    return tralloc_buffer_with_extensions_new ( ctx, buffer_ptr, 0 );
-}
-
-#else
-
-tralloc_error tralloc_buffer_new ( tralloc_context * ctx, tralloc_buffer ** buffer_ptr );
-
-#endif
-
-_TRALLOC_INLINE
-void tralloc_buffer_written ( tralloc_buffer * buffer, size_t length )
-{
-    buffer->data_length += length;
+    return tralloc_buffer_new_with_extensions ( ctx, buffer_ptr, capacity, 0 );
 }
 
 _TRALLOC_INLINE
-tralloc_error tralloc_buffer_readed ( tralloc_buffer * buffer, size_t length )
+size_t tralloc_buffer_get_read_length ( const tralloc_buffer * buffer )
 {
-    if ( buffer->data_length < length ) {
+    return buffer->length;
+}
+
+_TRALLOC_INLINE
+tralloc_error tralloc_buffer_add_read_length ( tralloc_buffer * buffer, size_t read_length )
+{
+    if ( tralloc_buffer_get_read_length ( buffer ) < read_length ) {
         return TRALLOC_ERROR_UTILS_BUFFER_OVERFLOW;
     }
-    buffer->data_offset += length;
-    buffer->data_length -= length;
+    buffer->offset += read_length;
+    buffer->length -= read_length;
     return 0;
 }
 
 _TRALLOC_INLINE
-uint8_t * tralloc_buffer_get_read_point ( const tralloc_buffer * buffer )
+uint8_t * tralloc_buffer_get_read_pointer ( const tralloc_buffer * buffer )
 {
-    return buffer->buf + buffer->data_offset;
+    return buffer->data + buffer->offset;
 }
 
 _TRALLOC_INLINE
-uint8_t * tralloc_buffer_get_write_point ( const tralloc_buffer * buffer )
+size_t tralloc_buffer_get_write_length ( const tralloc_buffer * buffer )
 {
-    return buffer->buf + buffer->data_offset + buffer->data_length;
+    return buffer->capacity - buffer->offset - buffer->length;
 }
 
 _TRALLOC_INLINE
-size_t tralloc_buffer_get_length ( const tralloc_buffer * buffer )
+tralloc_error tralloc_buffer_add_write_length ( tralloc_buffer * buffer, size_t write_length )
 {
-    return buffer->data_length;
+    if ( tralloc_buffer_get_write_length ( buffer ) < write_length ) {
+        return TRALLOC_ERROR_UTILS_BUFFER_OVERFLOW;
+    }
+    buffer->length += write_length;
+    return 0;
 }
 
-tralloc_error tralloc_buffer_prepare ( tralloc_buffer * buffer, size_t length );
-tralloc_error tralloc_buffer_trim    ( tralloc_buffer * buffer );
+_TRALLOC_INLINE
+uint8_t * tralloc_buffer_get_write_pointer ( const tralloc_buffer * buffer )
+{
+    return buffer->data + buffer->offset + buffer->length;
+}
+
+tralloc_error tralloc_buffer_resize ( tralloc_buffer * buffer, size_t new_capacity );
+
+_TRALLOC_INLINE
+tralloc_error tralloc_buffer_prepare_write_length ( tralloc_buffer * buffer, size_t new_write_length )
+{
+    size_t write_length = tralloc_buffer_get_write_length ( buffer );
+    if ( write_length < new_write_length ) {
+        return tralloc_buffer_resize ( buffer, buffer->capacity + new_write_length - write_length );
+    } else {
+        return 0;
+    }
+}
+
+tralloc_error tralloc_buffer_left_trim ( tralloc_buffer * buffer );
+
+_TRALLOC_INLINE
+tralloc_error tralloc_buffer_right_trim ( tralloc_buffer * buffer )
+{
+    return tralloc_buffer_resize ( buffer, buffer->offset + buffer->length );
+}
+
+_TRALLOC_INLINE
+tralloc_error tralloc_buffer_trim ( tralloc_buffer * buffer )
+{
+    return tralloc_buffer_resize ( buffer, buffer->length );
+}
 
 
 #endif

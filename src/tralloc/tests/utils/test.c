@@ -7,7 +7,7 @@
 #include <tralloc/tree.h>
 
 
-int test_utils ( tralloc_context * ctx )
+int _tralloc_test_utils ( tralloc_context * ctx )
 {
     tralloc_context * root;
     if ( tralloc_empty ( ctx, &root ) != 0 ) {
@@ -15,7 +15,7 @@ int test_utils ( tralloc_context * ctx )
     }
 
 #   if defined(TRALLOC_UTILS_BUFFER)
-    if ( !test_utils_buffer ( root ) ) {
+    if ( !_tralloc_test_utils_buffer ( root ) ) {
         tralloc_free ( root );
         return 2;
     }

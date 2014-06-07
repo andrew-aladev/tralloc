@@ -30,6 +30,7 @@ tralloc_error _tralloc_test_debug_after_resize ( void * user_data, _tralloc_chun
         free ( info );
         return TRALLOC_ERROR_MALLOC_FAILED;
     }
+    _tralloc_tests_dynarr_set_free_item ( history, free );
     return 0;
 }
 
