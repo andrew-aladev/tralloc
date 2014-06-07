@@ -1,5 +1,5 @@
-cmake_minimum_required (VERSION 2.8)
-project (check_C99_inline C)
+cmake_minimum_required (VERSION "2.8")
+project ("check_C99_inline" "C")
 
 add_executable (
     "main"

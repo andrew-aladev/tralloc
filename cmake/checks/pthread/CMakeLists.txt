@@ -1,5 +1,5 @@
-cmake_minimum_required (VERSION 2.8)
-project (check_pthread C)
+cmake_minimum_required (VERSION "2.8")
+project ("check_pthread" "C")
 
 add_executable (
     "main"

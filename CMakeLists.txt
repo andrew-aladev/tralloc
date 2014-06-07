@@ -1,5 +1,5 @@
-cmake_minimum_required (VERSION 2.8)
-project (tralloc C)
+cmake_minimum_required (VERSION "2.8")
+project ("tralloc" "C")
 
 
 set (TRALLOC_VERSION "0.7.0")
@@ -19,7 +19,7 @@ set (TRALLOC_DEBUG_LOG       true CACHE BOOL "log in debug feature")
 set (TRALLOC_SHARED   true CACHE BOOL "build shared libs")
 set (TRALLOC_STATIC   true CACHE BOOL "build static libs")
 set (TRALLOC_MAN      true CACHE BOOL "create man")
-set (TRALLOC_TEST     true CACHE BOOL "build tests")
+set (TRALLOC_TESTS    true CACHE BOOL "build tests")
 set (TRALLOC_EXAMPLES true CACHE BOOL "build examples")
 
 set (TRALLOC_COLLECT_SOURCES false CACHE BOOL "collect all .c files in one to make compilation faster")
@@ -102,15 +102,13 @@ function(join VALUES GLUE OUTPUT)
   set (${OUTPUT} "${_TMP_STR}" PARENT_SCOPE)
 endfunction()
 
+if (${TRALLOC_TESTS} OR ${TRALLOC_EXAMPLES})
+    enable_testing()
+endif ()
+
 include_directories ("src")
 add_subdirectory ("src")
 
-if (${TRALLOC_TEST} OR ${TRALLOC_EXAMPLES})
-    enable_testing()
-endif ()
-if (${TRALLOC_TEST})
-    add_subdirectory ("tests")
-endif ()
 if (${TRALLOC_EXAMPLES})
     add_subdirectory ("examples")
 endif ()

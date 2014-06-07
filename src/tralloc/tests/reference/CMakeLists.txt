@@ -1,0 +1,34 @@
+set (SOURCES
+    "${CMAKE_CURRENT_SOURCE_DIR}/errors.c"
+    "${CMAKE_CURRENT_SOURCE_DIR}/add.c"
+    "${CMAKE_CURRENT_SOURCE_DIR}/move_and_resize.c"
+    "${CMAKE_CURRENT_SOURCE_DIR}/free_subtree.c"
+    "${CMAKE_CURRENT_SOURCE_DIR}/test.c"
+)
+
+if (${TRALLOC_SHARED})
+    add_library ("${TRALLOC_TARGET}-libtest-reference" SHARED ${SOURCES})
+    target_link_libraries ("${TRALLOC_TARGET}-libtest-reference" ${TRALLOC_TARGET} "m")
+endif ()
+if (${TRALLOC_STATIC})
+    add_library ("${TRALLOC_TARGET}-libtest-reference-static" STATIC ${SOURCES})
+    target_link_libraries ("${TRALLOC_TARGET}-libtest-reference-static" "${TRALLOC_TARGET}-static" "m")
+    set_target_properties ("${TRALLOC_TARGET}-libtest-reference-static" PROPERTIES OUTPUT_NAME "${TRALLOC_TARGET}-libtest-reference-static")
+endif ()
+
+set (SOURCES
+    "${CMAKE_CURRENT_SOURCE_DIR}/main.c"
+)
+
+if (${TRALLOC_SHARED})
+    set (NAME "${TRALLOC_TARGET}-test-reference")
+    add_executable (${NAME} ${SOURCES})
+    target_link_libraries (${NAME} "${TRALLOC_TARGET}-libtest-reference")
+    add_test (${NAME} ${NAME})
+endif ()
+if (${TRALLOC_STATIC})
+    set (NAME "${TRALLOC_TARGET}-test-reference-static")
+    add_executable (${NAME} ${SOURCES})
+    target_link_libraries (${NAME} "${TRALLOC_TARGET}-libtest-reference-static")
+    add_test (${NAME} ${NAME})
+endif ()

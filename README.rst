@@ -38,17 +38,25 @@ Extensions and features enable/disable
     ::
     
      $ cmake .. \
-        -DTRALLOC_DEBUG=0        \
+        -DTRALLOC_THREADS=0      \
         -DTRALLOC_LENGTH=0       \
         -DTRALLOC_DESTRUCTOR=0   \
         -DTRALLOC_REFERENCE=0    \
         -DTRALLOC_POOL=0         \
         -DTRALLOC_UTILS_BUFFER=0 \
-        -DTRALLOC_SHARED=0       \
-        -DTRALLOC_STATIC=0       \
-        -DTRALLOC_MAN=0          \
-        -DTRALLOC_TEST=0         \
-        -DTRALLOC_EXAMPLES=0
+        \
+        -DTRALLOC_DEBUG_THREADS=0   \
+        -DTRALLOC_DEBUG_CALLBACKS=0 \
+        -DTRALLOC_DEBUG_STATS=0     \
+        -DTRALLOC_DEBUG_LOG=0       \
+        \
+        -DTRALLOC_SHARED=0   \
+        -DTRALLOC_STATIC=0   \
+        -DTRALLOC_MAN=0      \
+        -DTRALLOC_TESTS=0    \
+        -DTRALLOC_EXAMPLES=0 \
+        \
+        -DTRALLOC_COLLECT_SOURCES=0
 
 You can test all possible combinations of extensions and features : debug, length, destructor, reference, pool, utils_buffer.
 
@@ -72,8 +80,8 @@ Supported compilers
     ::
 
      $ CC="gcc-4.8.2" CFLAGS="-Werror -Wno-maybe-uninitialized" ../combinations.sh -DCMAKE_BUILD_TYPE="RELEASE"
-     $ NO_TESTS=1 CFLAGS="-Werror -Wno-maybe-uninitialized" ../combinations.sh -DCMAKE_TOOLCHAIN_FILE=../cmake/toolchains/arduino.cmake -DTRALLOC_SHARED=0 -DCMAKE_BUILD_TYPE="RELEASE"
-     $ CC="tcc" CFLAGS="-Werror" ../combinations.sh -DTRALLOC_SHARED=0 -DCMAKE_BUILD_TYPE="RELEASE"
+     $ NO_TESTS=1 CFLAGS="-Werror -Wno-maybe-uninitialized" ../combinations.sh -DCMAKE_TOOLCHAIN_FILE=../cmake/toolchains/arduino.cmake -DCMAKE_BUILD_TYPE="RELEASE"
+     $ CC="tcc" CFLAGS="-Werror" ../combinations.sh -DCMAKE_BUILD_TYPE="RELEASE"
      $ CC="clang" CFLAGS="-Werror" ../combinations.sh -DCMAKE_BUILD_TYPE="RELEASE"
      $ CC="ccc-analyzer" CFLAGS="-Werror" ../combinations.sh -DCMAKE_BUILD_TYPE="RELEASE"
      $ CC="clang" CFLAGS="-Werror -fsanitize=leak -fno-omit-frame-pointer" ../combinations.sh -DCMAKE_BUILD_TYPE="RELEASE"

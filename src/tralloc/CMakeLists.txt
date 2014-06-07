@@ -76,3 +76,7 @@ if (${TRALLOC_STATIC})
     install (TARGETS ${TRALLOC_TARGET}-static DESTINATION ${CMAKE_INSTALL_LIBDIR})
     install (CODE "EXECUTE_PROCESS(COMMAND ${CMAKE_STRIP} --strip-unneeded -R .comment -R .GCC.command.line -R .note.gnu.gold-version \$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}/lib${TRALLOC_TARGET}.a)")
 endif ()
+
+if (${TRALLOC_TESTS})
+    add_subdirectory ("tests")
+endif ()

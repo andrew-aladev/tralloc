@@ -61,7 +61,7 @@ for feature in $feature_combinations; do
         arguments+="-DTRALLOC_DEBUG_LOG=0 "
     fi
     
-    arguments+="-DTRALLOC_MAN=0 $@"
+    arguments+="-DTRALLOC_EXAMPLES=0 -DTRALLOC_MAN=0 -DTRALLOC_SHARED=0 -DTRALLOC_COLLECT_SOURCES=1 $@"
     
     command="cmake .. $arguments && make clean && make -j $make_jobs"
     echo $command
