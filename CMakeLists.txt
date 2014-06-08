@@ -41,6 +41,7 @@ if (NOT DEFINED TRALLOC_TARGET)
 endif ()
 
 set (CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/checks" "${PROJECT_SOURCE_DIR}/cmake/finds")
+
 include (CheckBool)
 check_bool ()
 include (CheckFile)
@@ -51,6 +52,8 @@ include (CheckLTO)
 check_lto ()
 include (CheckPthread)
 check_pthread ()
+
+find_package (Asciidoc)
 
 if (${TRALLOC_DESTRUCTOR} AND ${TRALLOC_HAVE_FILE})
     set (TRALLOC_FILE true)
@@ -80,8 +83,13 @@ if (NOT ${TRALLOC_DEBUG} AND ${TRALLOC_DEBUG_LOG})
     message(WARNING "TRALLOC_DEBUG_LOG is disabled, because TRALLOC_DEBUG is disabled.")
 endif ()
 
+if (NOT ASCIIDOC_A2X_EXECUTABLE)
+    set (TRALLOC_MAN false PARENT_SCOPE)
+    message(WARNING "TRALLOC_MAN is disabled, because you have no \"asciidoc\".")
+endif ()
+
 if (NOT ${TRALLOC_STATIC} AND NOT ${TRALLOC_SHARED})
-    message (FATAL_ERROR "Tralloc can not be compiled. Please enable building of shared or static libraries")
+    message (FATAL_ERROR "Tralloc can not be compiled. Please enable building of shared or static libraries.")
 endif ()
 
 

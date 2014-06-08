@@ -14,7 +14,7 @@ Thread safety.
 Supported platforms
 -------------------
 
-GNU/Linux, GNU/Hurd and microcontrollers are supported. Cygwin is not supported but it works.
+GNU/Linux and GNU/Hurd are supported. Cygwin is not supported but it works.
 
 
 Debug build
@@ -58,7 +58,7 @@ Extensions and features enable/disable
         \
         -DTRALLOC_COLLECT_SOURCES=0
 
-You can test all possible combinations of extensions and features : debug, length, destructor, reference, pool, utils_buffer.
+You can test all possible combinations of extensions and features
 
     ::
     
@@ -79,14 +79,16 @@ Supported compilers
     
     ::
 
-     $ CC="gcc-4.8.2" CFLAGS="-Werror -Wno-maybe-uninitialized" ../combinations.sh -DCMAKE_BUILD_TYPE="RELEASE"
-     $ NO_TESTS=1 CFLAGS="-Werror -Wno-maybe-uninitialized" ../combinations.sh -DCMAKE_TOOLCHAIN_FILE=../cmake/toolchains/arduino.cmake -DCMAKE_BUILD_TYPE="RELEASE"
-     $ CC="tcc" CFLAGS="-Werror" ../combinations.sh -DCMAKE_BUILD_TYPE="RELEASE"
-     $ CC="clang" CFLAGS="-Werror" ../combinations.sh -DCMAKE_BUILD_TYPE="RELEASE"
-     $ CC="ccc-analyzer" CFLAGS="-Werror" ../combinations.sh -DCMAKE_BUILD_TYPE="RELEASE"
-     $ CC="clang" CFLAGS="-Werror -fsanitize=leak -fno-omit-frame-pointer" ../combinations.sh -DCMAKE_BUILD_TYPE="RELEASE"
-     $ CC="clang" CFLAGS="-Werror -fsanitize=address -fno-omit-frame-pointer" ../combinations.sh -DCMAKE_BUILD_TYPE="RELEASE"
-     $ CC="clang" CFLAGS="-Werror -fsanitize=thread -fno-omit-frame-pointer" ../combinations.sh -DCMAKE_BUILD_TYPE="RELEASE"
+     $ ../combinations.sh -DCMAKE_TOOLCHAIN_FILE=../cmake/toolchains/gcc-3.4.6.cmake -DCMAKE_BUILD_TYPE="RELEASE" && rm -r *
+     $ ../combinations.sh -DCMAKE_TOOLCHAIN_FILE=../cmake/toolchains/gcc-4.7.3.cmake -DCMAKE_BUILD_TYPE="RELEASE" && rm -r *
+     $ ../combinations.sh -DCMAKE_TOOLCHAIN_FILE=../cmake/toolchains/gcc-4.8.2.cmake -DCMAKE_BUILD_TYPE="RELEASE" && rm -r *
+     $ ../combinations.sh -DCMAKE_TOOLCHAIN_FILE=../cmake/toolchains/tcc.cmake -DCMAKE_BUILD_TYPE="RELEASE" && rm -r *
+     $ ../combinations.sh -DCMAKE_TOOLCHAIN_FILE=../cmake/toolchains/clang.cmake -DCMAKE_BUILD_TYPE="RELEASE" && rm -r *
+     $ ../combinations.sh -DCMAKE_TOOLCHAIN_FILE=../cmake/toolchains/ccc-analyzer.cmake -DCMAKE_BUILD_TYPE="RELEASE" && rm -r *
+     $ ../combinations.sh -DCMAKE_TOOLCHAIN_FILE=../cmake/toolchains/clang-leak.cmake -DCMAKE_BUILD_TYPE="RELEASE" && rm -r *
+     $ ../combinations.sh -DCMAKE_TOOLCHAIN_FILE=../cmake/toolchains/clang-address.cmake -DCMAKE_BUILD_TYPE="RELEASE" && rm -r *
+     $ ../combinations.sh -DCMAKE_TOOLCHAIN_FILE=../cmake/toolchains/clang-thread.cmake -DCMAKE_BUILD_TYPE="RELEASE" && rm -r *
+
 
 
 Gentoo
