@@ -14,7 +14,7 @@ Thread safety.
 Supported platforms
 -------------------
 
-GNU/Linux and GNU/Hurd are supported. Cygwin is not supported but it works.
+GNU/Linux, GNU/Hurd and microcontrollers are supported. Cygwin is not supported but it works.
 
 
 Debug build
@@ -77,19 +77,7 @@ Multilib
 Supported compilers
 ---------
     
-    ::
-
-     $ ../combinations.sh -DCMAKE_TOOLCHAIN_FILE=../cmake/toolchains/gcc-3.4.6.cmake -DCMAKE_BUILD_TYPE="RELEASE" && rm -r *
-     $ ../combinations.sh -DCMAKE_TOOLCHAIN_FILE=../cmake/toolchains/gcc-4.7.3.cmake -DCMAKE_BUILD_TYPE="RELEASE" && rm -r *
-     $ ../combinations.sh -DCMAKE_TOOLCHAIN_FILE=../cmake/toolchains/gcc-4.8.2.cmake -DCMAKE_BUILD_TYPE="RELEASE" && rm -r *
-     $ ../combinations.sh -DCMAKE_TOOLCHAIN_FILE=../cmake/toolchains/tcc.cmake -DCMAKE_BUILD_TYPE="RELEASE" && rm -r *
-     $ ../combinations.sh -DCMAKE_TOOLCHAIN_FILE=../cmake/toolchains/clang.cmake -DCMAKE_BUILD_TYPE="RELEASE" && rm -r *
-     $ ../combinations.sh -DCMAKE_TOOLCHAIN_FILE=../cmake/toolchains/ccc-analyzer.cmake -DCMAKE_BUILD_TYPE="RELEASE" && rm -r *
-     $ ../combinations.sh -DCMAKE_TOOLCHAIN_FILE=../cmake/toolchains/clang-leak.cmake -DCMAKE_BUILD_TYPE="RELEASE" && rm -r *
-     $ ../combinations.sh -DCMAKE_TOOLCHAIN_FILE=../cmake/toolchains/clang-address.cmake -DCMAKE_BUILD_TYPE="RELEASE" && rm -r *
-     $ ../combinations.sh -DCMAKE_TOOLCHAIN_FILE=../cmake/toolchains/clang-thread.cmake -DCMAKE_BUILD_TYPE="RELEASE" && rm -r *
-
-
+    Checkout `test_all_`.
 
 Gentoo
 ------
@@ -133,3 +121,4 @@ My English is not perfect, my native language is Belarusian. Feel free to ask me
 .. _overlay:        https://github.com/andrew-aladev/puchuu-overlay
 .. _gentoo:         https://github.com/andrew-aladev/tralloc/tree/master/gentoo
 .. _format_sources: https://github.com/andrew-aladev/tralloc/blob/master/format_sources
+.. _test_all:       https://github.com/andrew-aladev/tralloc/blob/threads/test-all.sh

@@ -138,7 +138,7 @@ _tralloc_pool_child * _tralloc_pool_child_resize ( _tralloc_pool_child * pool_ch
 
         _tralloc_pool_child * new_pool_child;
         _tralloc_pool_child * new_prev_pool_child, * new_next_pool_child;
-        _tralloc_pool_alloc ( pool, ( void ** ) &new_pool_child, target_length, false, &new_prev_pool_child, &new_next_pool_child );
+        _tralloc_pool_alloc ( pool, ( void ** ) &new_pool_child, target_length, TRALLOC_FALSE, &new_prev_pool_child, &new_next_pool_child );
 
         // Moving "pool_child" to the new position.
         memmove ( new_pool_child, pool_child, pool_child->length );
