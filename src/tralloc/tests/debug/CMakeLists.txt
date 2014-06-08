@@ -22,7 +22,7 @@ if (${TRALLOC_SHARED})
 endif ()
 if (${TRALLOC_STATIC})
     add_library ("${TRALLOC_TARGET}-libtest-debug-static" STATIC ${SOURCES})
-    target_link_libraries ("${TRALLOC_TARGET}-libtest-debug-static" "${TRALLOC_TARGET}-libtest" "${TRALLOC_TARGET}-static")
+    target_link_libraries ("${TRALLOC_TARGET}-libtest-debug-static" "${TRALLOC_TARGET}-libtest-static" "${TRALLOC_TARGET}-static")
     set_target_properties ("${TRALLOC_TARGET}-libtest-debug-static" PROPERTIES OUTPUT_NAME "${TRALLOC_TARGET}-libtest-debug-static")
 endif ()
 
