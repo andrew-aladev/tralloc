@@ -3,14 +3,14 @@
 // tralloc is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TRALLOC_TESTS_LIB_DYNARR_H
-#define TRALLOC_TESTS_LIB_DYNARR_H
+#ifndef TRALLOC_TESTS_COMMON_DYNARR_H
+#define TRALLOC_TESTS_COMMON_DYNARR_H
 
 #include <tralloc/types.h>
 #include <tralloc/macro.h>
 
 #undef _TRALLOC_INLINE
-#ifdef _TRALLOC_TESTS_LIB_DYNARR_INCLUDED_FROM_OBJECT
+#ifdef _TRALLOC_TESTS_COMMON_DYNARR_INCLUDED_FROM_OBJECT
 #    define _TRALLOC_INLINE _TRALLOC_INLINE_IN_OBJECT
 #else
 #    define _TRALLOC_INLINE _TRALLOC_INLINE_IN_HEADER
@@ -19,47 +19,47 @@
 
 // this was implemented to store history of tralloc events
 
-typedef void ( * _tralloc_tests_dynarr_free_item ) ( void * item );
+typedef void ( * dynarr_free_item ) ( void * item );
 
-typedef struct _tralloc_tests_dynarr_t {
+typedef struct dynarr_t {
     size_t length;
     size_t start_capacity;
     size_t current_capacity;
     void ** data;
-    _tralloc_tests_dynarr_free_item free_item;
-} _tralloc_tests_dynarr;
+    dynarr_free_item free_item;
+} dynarr;
 
-_tralloc_tests_dynarr * _tralloc_tests_dynarr_new ( size_t capacity );
+dynarr * dynarr_new ( size_t capacity );
 
 _TRALLOC_INLINE
-void _tralloc_tests_dynarr_set_free_item ( _tralloc_tests_dynarr * arr, _tralloc_tests_dynarr_free_item free_item )
+void dynarr_set_free_item ( dynarr * arr, dynarr_free_item free_item )
 {
     arr->free_item = free_item;
 }
 
-uint8_t _tralloc_tests_dynarr_grow   ( _tralloc_tests_dynarr * arr );
-uint8_t _tralloc_tests_dynarr_append ( _tralloc_tests_dynarr * arr, void * pointer );
-uint8_t _tralloc_tests_dynarr_clear  ( _tralloc_tests_dynarr * arr );
+uint8_t dynarr_grow   ( dynarr * arr );
+uint8_t dynarr_append ( dynarr * arr, void * pointer );
+uint8_t dynarr_clear  ( dynarr * arr );
 
 _TRALLOC_INLINE
-void _tralloc_tests_dynarr_set ( _tralloc_tests_dynarr * arr, size_t position, void * pointer )
+void dynarr_set ( dynarr * arr, size_t position, void * pointer )
 {
     arr->data[position] = pointer;
 }
 
 _TRALLOC_INLINE
-void * _tralloc_tests_dynarr_get ( _tralloc_tests_dynarr * arr, size_t position )
+void * dynarr_get ( dynarr * arr, size_t position )
 {
     return arr->data[position];
 }
 
 _TRALLOC_INLINE
-size_t _tralloc_tests_dynarr_get_length ( _tralloc_tests_dynarr * arr )
+size_t dynarr_get_length ( dynarr * arr )
 {
     return arr->length;
 }
 
-void _tralloc_tests_dynarr_free ( _tralloc_tests_dynarr * arr );
+void dynarr_free ( dynarr * arr );
 
 
 #endif

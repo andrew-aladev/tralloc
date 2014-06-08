@@ -3,18 +3,5 @@
 // tralloc is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TRALLOC_TESTS_DEBUG_COMMON
-#define TRALLOC_TESTS_DEBUG_COMMON
-
-#include <tralloc/types.h>
-
-
-tralloc_bool test_debug_add    ( tralloc_context * ctx );
-tralloc_bool test_debug_resize ( tralloc_context * ctx );
-tralloc_bool test_debug_move   ( tralloc_context * ctx );
-tralloc_bool test_debug_free   ( tralloc_context * ctx );
-
-int test_debug ( tralloc_context * ctx );
-
-
-#endif
+#define _TRALLOC_TESTS_COMMON_MAIN_INCLUDED_FROM_OBJECT
+#include <tralloc/tests/common/main.h>

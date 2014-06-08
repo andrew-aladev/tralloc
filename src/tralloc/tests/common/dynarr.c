@@ -3,19 +3,19 @@
 // tralloc is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
-#define _TRALLOC_TESTS_LIB_DYNARR_INCLUDED_FROM_OBJECT
-#include <tralloc/tests/lib/dynarr.h>
+#define _TRALLOC_TESTS_COMMON_DYNARR_INCLUDED_FROM_OBJECT
+#include <tralloc/tests/common/dynarr.h>
 
 #include <stdlib.h>
 
 
-_tralloc_tests_dynarr * _tralloc_tests_dynarr_new ( size_t capacity )
+dynarr * dynarr_new ( size_t capacity )
 {
     if ( capacity == 0 ) {
         return NULL;
     }
 
-    _tralloc_tests_dynarr * arr = malloc ( sizeof ( _tralloc_tests_dynarr ) );
+    dynarr * arr = malloc ( sizeof ( dynarr ) );
     if ( arr == NULL ) {
         return NULL;
     }
@@ -33,7 +33,7 @@ _tralloc_tests_dynarr * _tralloc_tests_dynarr_new ( size_t capacity )
     return arr;
 }
 
-uint8_t _tralloc_tests_dynarr_grow ( _tralloc_tests_dynarr * arr )
+uint8_t dynarr_grow ( dynarr * arr )
 {
     // linear growth
     arr->current_capacity = arr->current_capacity + arr->start_capacity;
@@ -45,12 +45,12 @@ uint8_t _tralloc_tests_dynarr_grow ( _tralloc_tests_dynarr * arr )
     return 0;
 }
 
-uint8_t _tralloc_tests_dynarr_append ( _tralloc_tests_dynarr * arr, void * pointer )
+uint8_t dynarr_append ( dynarr * arr, void * pointer )
 {
     size_t index = arr->length;
     arr->length++;
     if ( arr->length > arr->current_capacity ) {
-        if ( _tralloc_tests_dynarr_grow ( arr ) != 0 ) {
+        if ( dynarr_grow ( arr ) != 0 ) {
             return 1;
         }
     }
@@ -58,12 +58,12 @@ uint8_t _tralloc_tests_dynarr_append ( _tralloc_tests_dynarr * arr, void * point
     return 0;
 }
 
-uint8_t _tralloc_tests_dynarr_clear ( _tralloc_tests_dynarr * arr )
+uint8_t dynarr_clear ( dynarr * arr )
 {
     if ( arr == NULL ) {
         return 1;
     }
-    _tralloc_tests_dynarr_free_item free_item = arr->free_item;
+    dynarr_free_item free_item = arr->free_item;
     size_t index;
     if ( free_item != NULL ) {
         for ( index = 0; index < arr->length; index ++ ) {
@@ -82,12 +82,12 @@ uint8_t _tralloc_tests_dynarr_clear ( _tralloc_tests_dynarr * arr )
     return 0;
 }
 
-void _tralloc_tests_dynarr_free ( _tralloc_tests_dynarr * arr )
+void dynarr_free ( dynarr * arr )
 {
     if ( arr == NULL ) {
         return;
     }
-    _tralloc_tests_dynarr_free_item free_item = arr->free_item;
+    dynarr_free_item free_item = arr->free_item;
     size_t index;
     if ( free_item != NULL ) {
         for ( index = 0; index < arr->length; index ++ ) {

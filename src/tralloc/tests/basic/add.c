@@ -7,7 +7,7 @@
 #include <tralloc/tree.h>
 
 
-tralloc_bool _tralloc_test_basic_add ( _tralloc_test_basic_tree * tr )
+tralloc_bool test_basic_add ( test_basic_tree * tr )
 {
     if ( tralloc ( tr, ( tralloc_context ** ) &tr->data_1, sizeof ( uint8_t ) ) != 0 ) {
         return TRALLOC_FALSE;

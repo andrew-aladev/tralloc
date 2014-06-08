@@ -11,25 +11,25 @@
 #endif
 
 
-int _tralloc_test_debug ( tralloc_context * ctx )
+int test_debug ( tralloc_context * ctx )
 {
     tralloc_context * root;
     if ( tralloc_empty ( ctx, &root ) != 0 ) {
         return 1;
     }
-    if ( !_tralloc_test_debug_add ( root ) ) {
+    if ( !test_debug_add ( root ) ) {
         tralloc_free ( root );
         return 2;
     }
-    if ( !_tralloc_test_debug_resize ( root ) ) {
+    if ( !test_debug_resize ( root ) ) {
         tralloc_free ( root );
         return 3;
     }
-    if ( !_tralloc_test_debug_move ( root ) ) {
+    if ( !test_debug_move ( root ) ) {
         tralloc_free ( root );
         return 4;
     }
-    if ( !_tralloc_test_debug_free ( root ) ) {
+    if ( !test_debug_free ( root ) ) {
         tralloc_free ( root );
         return 5;
     }

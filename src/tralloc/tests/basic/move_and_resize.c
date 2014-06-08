@@ -3,18 +3,12 @@
 // tralloc is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
+#include <tralloc/tests/common/main.h>
 #include <tralloc/tests/basic/common.h>
 #include <tralloc/tree.h>
-#include <math.h>
 
 
-static
-tralloc_bool _tralloc_test_basic_compare_float ( float a, float b )
-{
-    return fabs ( a - b ) < 0.000001;
-}
-
-tralloc_bool _tralloc_test_basic_move_and_resize ( _tralloc_test_basic_tree * tr )
+tralloc_bool test_basic_move_and_resize ( test_basic_tree * tr )
 {
     if (
         tralloc_move ( tr->data_7, tr->data_2 ) != 0 ||
@@ -42,10 +36,10 @@ tralloc_bool _tralloc_test_basic_move_and_resize ( _tralloc_test_basic_tree * tr
         tr->data_5[0] != 123 || tr->data_5[1] != 213 ||
 
         tralloc_realloc ( ( tralloc_context ** ) &tr->data_6, sizeof ( float ) * 10 ) != 0 ||
-        !_tralloc_test_basic_compare_float ( tr->data_6[0], 0.012345 ) ||
+        !compare_float ( tr->data_6[0], 0.012345 ) ||
 
         tralloc_realloc ( ( tralloc_context ** ) &tr->data_7, sizeof ( float ) ) != 0 ||
-        !_tralloc_test_basic_compare_float ( tr->data_7[0], 0.01234 )
+        !compare_float ( tr->data_7[0], 0.01234 )
     ) {
         return TRALLOC_FALSE;
     }

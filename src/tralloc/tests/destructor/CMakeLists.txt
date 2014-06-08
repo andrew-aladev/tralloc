@@ -1,17 +1,22 @@
 set (SOURCES
     "${CMAKE_CURRENT_SOURCE_DIR}/errors.c"
     "${CMAKE_CURRENT_SOURCE_DIR}/common.c"
-    "${CMAKE_CURRENT_SOURCE_DIR}/../lib/dynarr.c"
     "${CMAKE_CURRENT_SOURCE_DIR}/test.c"
 )
 
+if (${TRALLOC_COLLECT_SOURCES})
+    join ("${SOURCES}" " " FILES)
+    set (SOURCES "${CMAKE_CURRENT_BINARY_DIR}/sources.c")
+    execute_process(COMMAND sh -c "cat ${FILES} > ${SOURCES}")
+endif ()
+
 if (${TRALLOC_SHARED})
     add_library ("${TRALLOC_TARGET}-libtest-destructor" SHARED ${SOURCES})
-    target_link_libraries ("${TRALLOC_TARGET}-libtest-destructor" ${TRALLOC_TARGET})
+    target_link_libraries ("${TRALLOC_TARGET}-libtest-destructor" "${TRALLOC_TARGET}-libtest" ${TRALLOC_TARGET})
 endif ()
 if (${TRALLOC_STATIC})
     add_library ("${TRALLOC_TARGET}-libtest-destructor-static" STATIC ${SOURCES})
-    target_link_libraries ("${TRALLOC_TARGET}-libtest-destructor-static" "${TRALLOC_TARGET}-static")
+    target_link_libraries ("${TRALLOC_TARGET}-libtest-destructor-static" "${TRALLOC_TARGET}-libtest-static" "${TRALLOC_TARGET}-static")
     set_target_properties ("${TRALLOC_TARGET}-libtest-destructor-static" PROPERTIES OUTPUT_NAME "${TRALLOC_TARGET}-libtest-destructor-static")
 endif ()
 

@@ -41,7 +41,7 @@ int main ()
         return 253;
     }
 
-    int result = _tralloc_test_basic ( pool_data );
+    int result = test_basic ( pool_data );
     if ( result != 0 ) {
         return result;
     }
@@ -62,7 +62,7 @@ int main ()
 #   endif
 
 #   if defined(TRALLOC_DEBUG_CALLBACKS)
-    result = _tralloc_test_debug ( pool_data );
+    result = test_debug ( pool_data );
     if ( result != 0 ) {
         return result;
     }
@@ -83,7 +83,7 @@ int main ()
 #   endif
 
 #   if defined(TRALLOC_UTILS)
-    result = _tralloc_test_utils ( pool_data );
+    result = test_utils ( pool_data );
     if ( result != 0 ) {
         return result;
     }

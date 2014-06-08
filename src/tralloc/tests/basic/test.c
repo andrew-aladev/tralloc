@@ -7,25 +7,25 @@
 #include <tralloc/tree.h>
 
 
-int _tralloc_test_basic ( tralloc_context * ctx )
+int test_basic ( tralloc_context * ctx )
 {
-    _tralloc_test_basic_tree * tr;
-    if ( tralloc ( ctx, ( tralloc_context ** ) &tr, sizeof ( _tralloc_test_basic_tree ) ) != 0 ) {
+    test_basic_tree * tr;
+    if ( tralloc ( ctx, ( tralloc_context ** ) &tr, sizeof ( test_basic_tree ) ) != 0 ) {
         return 1;
     }
-    if ( !_tralloc_test_basic_errors ( tr ) ) {
+    if ( !test_basic_errors ( tr ) ) {
         tralloc_free ( tr );
         return 2;
     }
-    if ( !_tralloc_test_basic_add ( tr ) ) {
+    if ( !test_basic_add ( tr ) ) {
         tralloc_free ( tr );
         return 3;
     }
-    if ( !_tralloc_test_basic_move_and_resize ( tr ) ) {
+    if ( !test_basic_move_and_resize ( tr ) ) {
         tralloc_free ( tr );
         return 5;
     }
-    if ( !_tralloc_test_basic_free_subtree ( tr ) ) {
+    if ( !test_basic_free_subtree ( tr ) ) {
         tralloc_free ( tr );
         return 6;
     }

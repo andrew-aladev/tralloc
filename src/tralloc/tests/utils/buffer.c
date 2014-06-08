@@ -9,7 +9,7 @@
 #include <string.h>
 
 
-tralloc_bool _tralloc_test_utils_buffer ( tralloc_context * ctx )
+tralloc_bool test_utils_buffer ( tralloc_context * ctx )
 {
     if (
         tralloc_buffer_new                 ( NULL, NULL, 0 )    != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL ||

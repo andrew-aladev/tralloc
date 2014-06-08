@@ -8,8 +8,8 @@
 #include <tralloc/pool/common.h>
 
 
-static
-tralloc_bool test_fragment_is_remained ( tralloc_context * ctx )
+static inline
+tralloc_bool test_pool_resize_left_fragment_is_remained ( tralloc_context * ctx )
 {
     size_t data_1_user_length = sizeof ( uint8_t ) * 5;
     size_t data_2_user_length = sizeof ( uint8_t ) * 4;
@@ -112,8 +112,8 @@ tralloc_bool test_fragment_is_remained ( tralloc_context * ctx )
     return TRALLOC_TRUE;
 }
 
-static
-tralloc_bool test_space_is_remained ( tralloc_context * ctx )
+static inline
+tralloc_bool test_pool_resize_left_space_is_remained ( tralloc_context * ctx )
 {
     size_t data_1_user_length = sizeof ( uint8_t ) * 5;
     size_t data_2_user_length = sizeof ( uint8_t ) * 4;
@@ -208,8 +208,8 @@ tralloc_bool test_space_is_remained ( tralloc_context * ctx )
     return TRALLOC_TRUE;
 }
 
-static
-tralloc_bool test_strict ( tralloc_context * ctx )
+static inline
+tralloc_bool test_pool_resize_left_strict ( tralloc_context * ctx )
 {
     size_t data_1_user_length = sizeof ( uint8_t ) * 5;
     size_t data_2_user_length = sizeof ( uint8_t ) * 4;
@@ -307,9 +307,9 @@ tralloc_bool test_strict ( tralloc_context * ctx )
 tralloc_bool test_pool_resize_left ( tralloc_context * ctx )
 {
     if (
-        ! test_fragment_is_remained ( ctx ) ||
-        ! test_space_is_remained    ( ctx ) ||
-        ! test_strict               ( ctx )
+        ! test_pool_resize_left_fragment_is_remained ( ctx ) ||
+        ! test_pool_resize_left_space_is_remained    ( ctx ) ||
+        ! test_pool_resize_left_strict               ( ctx )
     ) {
         return TRALLOC_FALSE;
     }

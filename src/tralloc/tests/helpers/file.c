@@ -14,7 +14,17 @@
 
 
 static
-tralloc_bool test_file_errors ( tralloc_context * ctx )
+tralloc_error test_helpers_file_destructor_unlink_file ( tralloc_context * _TRALLOC_UNUSED ( chunk_context ), void * user_data )
+{
+    char * file_name = user_data;
+    if ( unlink ( file_name ) != 0 ) {
+        return 1;
+    } else {
+        return 0;
+    }
+}
+
+tralloc_bool test_helpers_file ( tralloc_context * ctx )
 {
     if (
         tralloc_open                      ( NULL, NULL, NULL, 0 )       != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL ||
@@ -35,27 +45,6 @@ tralloc_bool test_file_errors ( tralloc_context * ctx )
         return TRALLOC_FALSE;
     }
 
-    return TRALLOC_TRUE;
-}
-
-static
-tralloc_error destructor_unlink_file ( tralloc_context * _TRALLOC_UNUSED ( chunk_context ), void * user_data )
-{
-    char * file_name = user_data;
-    if ( unlink ( file_name ) != 0 ) {
-        return 1;
-    } else {
-        return 0;
-    }
-}
-
-tralloc_bool test_helpers_file ( tralloc_context * ctx )
-{
-    if ( !test_file_errors ( ctx ) ) {
-        return TRALLOC_FALSE;
-    }
-
-    int * hosts;
     if ( tralloc_open ( ctx, &hosts, "/etc/hosts", O_RDONLY ) != 0 ) {
         return TRALLOC_FALSE;
     }
@@ -77,7 +66,7 @@ tralloc_bool test_helpers_file ( tralloc_context * ctx )
         tralloc_free ( file_name );
         return TRALLOC_FALSE;
     }
-    if ( tralloc_append_destructor ( test_file, destructor_unlink_file, file_name ) != 0 ) {
+    if ( tralloc_append_destructor ( test_file, test_helpers_file_destructor_unlink_file, file_name ) != 0 ) {
         tralloc_free ( test_file );
         return TRALLOC_FALSE;
     }

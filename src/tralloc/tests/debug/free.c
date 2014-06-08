@@ -4,42 +4,42 @@
 // You should have received a copy of the GNU General Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
 #include <tralloc/tests/debug/common.h>
-#include <tralloc/tests/lib/dynarr.h>
+#include <tralloc/tests/common/dynarr.h>
 #include <tralloc/tree.h>
 #include <tralloc/debug.h>
 
 
 static
-tralloc_error _tralloc_test_debug_before_free ( void * user_data, _tralloc_chunk * chunk )
+tralloc_error test_debug_before_free ( void * user_data, _tralloc_chunk * chunk )
 {
-    _tralloc_tests_dynarr * tralloc_history = ( _tralloc_tests_dynarr * ) user_data;
-    if ( _tralloc_tests_dynarr_append ( tralloc_history, chunk ) != 0 ) {
+    dynarr * tralloc_history = ( dynarr * ) user_data;
+    if ( dynarr_append ( tralloc_history, chunk ) != 0 ) {
         return TRALLOC_ERROR_MALLOC_FAILED;
     }
     return 0;
 }
 
-static
-_tralloc_tests_dynarr * _tralloc_test_debug_new_history()
+static inline
+dynarr * test_debug_free_new_history()
 {
-    _tralloc_tests_dynarr * history = _tralloc_tests_dynarr_new ( 8 );
+    dynarr * history = dynarr_new ( 8 );
     if ( history == NULL ) {
         return NULL;
     }
     if ( tralloc_debug_callback_set_free_data ( NULL, history, NULL, NULL, NULL, NULL ) != 0 ) {
-        _tralloc_tests_dynarr_free ( history );
+        dynarr_free ( history );
         return NULL;
     }
-    if ( tralloc_debug_callback_set_free_functions ( NULL, _tralloc_test_debug_before_free, NULL, NULL, NULL, NULL ) != 0 ) {
+    if ( tralloc_debug_callback_set_free_functions ( NULL, test_debug_before_free, NULL, NULL, NULL, NULL ) != 0 ) {
         tralloc_debug_callback_set_free_data ( NULL, NULL, NULL, NULL, NULL, NULL );
-        _tralloc_tests_dynarr_free ( history );
+        dynarr_free ( history );
         return NULL;
     }
     return history;
 }
 
-static
-tralloc_error _tralloc_test_debug_free_history ( _tralloc_tests_dynarr * history )
+static inline
+tralloc_error test_debug_free_free_history ( dynarr * history )
 {
     tralloc_error error  = 0;
     tralloc_error result = tralloc_debug_callback_set_free_data ( NULL, NULL, NULL, NULL, NULL, NULL );
@@ -51,13 +51,13 @@ tralloc_error _tralloc_test_debug_free_history ( _tralloc_tests_dynarr * history
         error = result;
     }
 
-    _tralloc_tests_dynarr_free ( history );
+    dynarr_free ( history );
     return error;
 }
 
-tralloc_bool _tralloc_test_debug_free ( tralloc_context * ctx )
+tralloc_bool test_debug_free ( tralloc_context * ctx )
 {
-    _tralloc_tests_dynarr * history = _tralloc_test_debug_new_history();
+    dynarr * history = test_debug_free_new_history();
     if ( history == NULL ) {
         return TRALLOC_FALSE;
     }
@@ -70,7 +70,7 @@ tralloc_bool _tralloc_test_debug_free ( tralloc_context * ctx )
         tralloc ( ctx, ( tralloc_context ** ) &b, sizeof ( char ) * 3 )  != 0 ||
         tralloc ( a,   ( tralloc_context ** ) &c, sizeof ( float ) * 4 ) != 0
     ) {
-        _tralloc_test_debug_free_history ( history );
+        test_debug_free_free_history ( history );
         return TRALLOC_FALSE;
     }
 
@@ -83,17 +83,17 @@ tralloc_bool _tralloc_test_debug_free ( tralloc_context * ctx )
         tralloc_free ( a ) != 0 ||
         tralloc_free ( b ) != 0 ||
 
-        _tralloc_tests_dynarr_get_length ( history ) != 3 ||
-        ( chunk = _tralloc_tests_dynarr_get ( history, 0 ) ) == NULL ||
+        dynarr_get_length ( history ) != 3 ||
+        ( chunk = dynarr_get ( history, 0 ) ) == NULL ||
         chunk != a_chunk ||
-        ( chunk = _tralloc_tests_dynarr_get ( history, 1 ) ) == NULL ||
+        ( chunk = dynarr_get ( history, 1 ) ) == NULL ||
         chunk != c_chunk ||
-        ( chunk = _tralloc_tests_dynarr_get ( history, 2 ) ) == NULL ||
+        ( chunk = dynarr_get ( history, 2 ) ) == NULL ||
         chunk != b_chunk
     ) {
-        _tralloc_test_debug_free_history ( history );
+        test_debug_free_free_history ( history );
         return TRALLOC_FALSE;
     }
 
-    return _tralloc_test_debug_free_history ( history ) == 0;
+    return test_debug_free_free_history ( history ) == 0;
 }

@@ -6,13 +6,19 @@ set (SOURCES
     "${CMAKE_CURRENT_SOURCE_DIR}/test.c"
 )
 
+if (${TRALLOC_COLLECT_SOURCES})
+    join ("${SOURCES}" " " FILES)
+    set (SOURCES "${CMAKE_CURRENT_BINARY_DIR}/sources.c")
+    execute_process(COMMAND sh -c "cat ${FILES} > ${SOURCES}")
+endif ()
+
 if (${TRALLOC_SHARED})
     add_library ("${TRALLOC_TARGET}-libtest-basic" SHARED ${SOURCES})
-    target_link_libraries ("${TRALLOC_TARGET}-libtest-basic" ${TRALLOC_TARGET} "m")
+    target_link_libraries ("${TRALLOC_TARGET}-libtest-basic" "${TRALLOC_TARGET}-libtest" ${TRALLOC_TARGET} "m")
 endif ()
 if (${TRALLOC_STATIC})
     add_library ("${TRALLOC_TARGET}-libtest-basic-static" STATIC ${SOURCES})
-    target_link_libraries ("${TRALLOC_TARGET}-libtest-basic-static" "${TRALLOC_TARGET}-static" "m")
+    target_link_libraries ("${TRALLOC_TARGET}-libtest-basic-static" "${TRALLOC_TARGET}-libtest-static" "${TRALLOC_TARGET}-static" "m")
     set_target_properties ("${TRALLOC_TARGET}-libtest-basic-static" PROPERTIES OUTPUT_NAME "${TRALLOC_TARGET}-libtest-basic-static")
 endif ()
 

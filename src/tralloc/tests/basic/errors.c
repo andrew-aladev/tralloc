@@ -7,7 +7,7 @@
 #include <tralloc/tree.h>
 
 
-tralloc_bool _tralloc_test_basic_errors ( tralloc_context * ctx )
+tralloc_bool test_basic_errors ( tralloc_context * ctx )
 {
     if (
         tralloc       ( NULL, NULL, 0 ) != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL ||

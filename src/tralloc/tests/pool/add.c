@@ -8,8 +8,8 @@
 #include <tralloc/pool/common.h>
 
 
-static
-tralloc_bool test_memory_overflow ( tralloc_context * ctx )
+static inline
+tralloc_bool test_pool_add_overflow ( tralloc_context * ctx )
 {
     tralloc_context * empty_pool_data;
     if ( tralloc_empty_with_extensions ( ctx, &empty_pool_data, TRALLOC_EXTENSION_POOL ) != 0 ) {
@@ -45,8 +45,8 @@ tralloc_bool test_memory_overflow ( tralloc_context * ctx )
     return TRALLOC_TRUE;
 }
 
-static
-tralloc_bool test_memory_strict ( tralloc_context * ctx )
+static inline
+tralloc_bool test_pool_add_strict ( tralloc_context * ctx )
 {
     size_t pool_data_length = tralloc_predict_chunk_length ( TRALLOC_EXTENSION_POOL_CHILD ) + sizeof ( uint8_t ) * 5;
 
@@ -106,8 +106,8 @@ tralloc_bool test_memory_strict ( tralloc_context * ctx )
     return TRALLOC_TRUE;
 }
 
-static
-tralloc_bool test_memory_much ( tralloc_context * ctx )
+static inline
+tralloc_bool test_pool_add_much ( tralloc_context * ctx )
 {
     size_t data_1_length    = tralloc_predict_chunk_length ( TRALLOC_EXTENSION_POOL_CHILD ) + sizeof ( uint8_t ) * 5;
     size_t pool_data_length = data_1_length + sizeof ( _tralloc_pool_fragment );
@@ -174,8 +174,8 @@ tralloc_bool test_memory_much ( tralloc_context * ctx )
     return TRALLOC_TRUE;
 }
 
-static
-tralloc_bool test_memory_zero ( tralloc_context * ctx )
+static inline
+tralloc_bool test_pool_add_zero ( tralloc_context * ctx )
 {
     size_t pool_data_length = tralloc_predict_chunk_length ( TRALLOC_EXTENSION_POOL_CHILD ) + sizeof ( uint8_t ) * 3;
 
@@ -202,8 +202,8 @@ tralloc_bool test_memory_zero ( tralloc_context * ctx )
     return TRALLOC_TRUE;
 }
 
-static
-tralloc_bool test_normal ( tralloc_context * ctx )
+static inline
+tralloc_bool test_pool_add_normal ( tralloc_context * ctx )
 {
     size_t data_1_length    = tralloc_predict_chunk_length ( TRALLOC_EXTENSION_POOL_CHILD ) + sizeof ( uint8_t ) * 5;
     size_t data_2_length    = tralloc_predict_chunk_length ( TRALLOC_EXTENSION_POOL_CHILD ) + sizeof ( uint8_t ) * 3;
@@ -266,11 +266,11 @@ tralloc_bool test_normal ( tralloc_context * ctx )
 tralloc_bool test_pool_add ( tralloc_context * ctx )
 {
     if (
-        ! test_memory_overflow ( ctx ) ||
-        ! test_memory_strict   ( ctx ) ||
-        ! test_memory_much     ( ctx ) ||
-        ! test_memory_zero     ( ctx ) ||
-        ! test_normal          ( ctx )
+        ! test_pool_add_overflow ( ctx ) ||
+        ! test_pool_add_strict   ( ctx ) ||
+        ! test_pool_add_much     ( ctx ) ||
+        ! test_pool_add_zero     ( ctx ) ||
+        ! test_pool_add_normal   ( ctx )
     ) {
         return TRALLOC_FALSE;
     }

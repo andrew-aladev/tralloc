@@ -3,18 +3,25 @@
 // tralloc is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TRALLOC_TESTS_DEBUG_COMMON
-#define TRALLOC_TESTS_DEBUG_COMMON
+#ifndef TRALLOC_TESTS_COMMON_MAIN_H
+#define TRALLOC_TESTS_COMMON_MAIN_H
 
 #include <tralloc/types.h>
+#include <tralloc/macro.h>
 
+#include <math.h>
 
-tralloc_bool test_debug_add    ( tralloc_context * ctx );
-tralloc_bool test_debug_resize ( tralloc_context * ctx );
-tralloc_bool test_debug_move   ( tralloc_context * ctx );
-tralloc_bool test_debug_free   ( tralloc_context * ctx );
+#undef _TRALLOC_INLINE
+#ifdef _TRALLOC_TESTS_COMMON_MAIN_INCLUDED_FROM_OBJECT
+#    define _TRALLOC_INLINE _TRALLOC_INLINE_IN_OBJECT
+#else
+#    define _TRALLOC_INLINE _TRALLOC_INLINE_IN_HEADER
+#endif
 
-int test_debug ( tralloc_context * ctx );
-
+_TRALLOC_INLINE
+tralloc_bool compare_float ( float a, float b )
+{
+    return fabs ( a - b ) < 0.000001;
+}
 
 #endif

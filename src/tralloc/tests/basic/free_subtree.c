@@ -7,7 +7,7 @@
 #include <tralloc/tree.h>
 
 
-tralloc_bool _tralloc_test_basic_free_subtree ( _tralloc_test_basic_tree * tr )
+tralloc_bool test_basic_free_subtree ( test_basic_tree * tr )
 {
     if (
         tralloc_free ( tr->data_4 ) != 0 ||

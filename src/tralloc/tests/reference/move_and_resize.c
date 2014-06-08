@@ -4,24 +4,14 @@
 // You should have received a copy of the GNU General Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
 #include <tralloc/tests/reference/common.h>
+#include <tralloc/tests/common/main.h>
 #include <tralloc/tree.h>
 #include <tralloc/reference.h>
 #include <tralloc/reference/common.h>
-#include <math.h>
 
-/*
-                     tree    common
-                     /|\
-            1         2      shared
-           /|         |        |
-common_2    3      common_1  common_3
-   |        |
-shared_1 shared_2
 
-*/
-
-static
-tralloc_bool test_empty_references ( test_reference_tree * tr )
+static inline
+tralloc_bool test_reference_check_empty_references ( test_reference_tree * tr )
 {
     _tralloc_references * common_references  = _tralloc_get_references_from_chunk ( _tralloc_get_chunk_from_context ( tr->common ) );
     _tralloc_references * shared_references  = _tralloc_get_references_from_chunk ( _tralloc_get_chunk_from_context ( tr->shared ) );
@@ -61,49 +51,19 @@ tralloc_bool test_empty_references ( test_reference_tree * tr )
     return TRALLOC_TRUE;
 }
 
-static
-tralloc_bool test_references ( test_reference_tree * tr )
-{
-    _tralloc_references * common_references  = _tralloc_get_references_from_chunk ( _tralloc_get_chunk_from_context ( tr->common ) );
-    _tralloc_references * shared_references  = _tralloc_get_references_from_chunk ( _tralloc_get_chunk_from_context ( tr->shared ) );
-    _tralloc_reference  * common_1_reference = _tralloc_get_reference_from_chunk  ( _tralloc_get_chunk_from_context ( tr->common_1 ) );
-    _tralloc_reference  * common_2_reference = _tralloc_get_reference_from_chunk  ( _tralloc_get_chunk_from_context ( tr->common_2 ) );
-    _tralloc_reference  * common_3_reference = _tralloc_get_reference_from_chunk  ( _tralloc_get_chunk_from_context ( tr->common_3 ) );
-    _tralloc_reference  * shared_1_reference = _tralloc_get_reference_from_chunk  ( _tralloc_get_chunk_from_context ( tr->shared_1 ) );
-    _tralloc_reference  * shared_2_reference = _tralloc_get_reference_from_chunk  ( _tralloc_get_chunk_from_context ( tr->shared_2 ) );
+/*
+                     tree    common
+                     /|\
+            1         2      shared
+           /|         |        |
+common_2    3      common_1  common_3
+   |        |
+shared_1 shared_2
 
-    if (
-        common_references->first_reference != common_3_reference ||
+*/
 
-        common_3_reference->prev       != NULL               ||
-        common_3_reference->next       != common_2_reference ||
-        common_3_reference->references != common_references  ||
-
-        common_2_reference->prev       != common_3_reference ||
-        common_2_reference->next       != common_1_reference ||
-        common_2_reference->references != common_references  ||
-
-        common_1_reference->prev       != common_2_reference ||
-        common_1_reference->next       != NULL               ||
-        common_1_reference->references != common_references  ||
-
-        shared_references->first_reference != shared_2_reference ||
-
-        shared_2_reference->prev       != NULL               ||
-        shared_2_reference->next       != shared_1_reference ||
-        shared_2_reference->references != shared_references  ||
-
-        shared_1_reference->prev       != shared_2_reference ||
-        shared_1_reference->next       != NULL               ||
-        shared_1_reference->references != shared_references
-    ) {
-        return TRALLOC_FALSE;
-    }
-    return TRALLOC_TRUE;
-}
-
-static
-tralloc_bool test_chunks ( test_reference_tree * tr )
+static inline
+tralloc_bool test_reference_check_moved_chunks ( test_reference_tree * tr )
 {
     _tralloc_chunk * root_chunk     = _tralloc_get_chunk_from_context ( tr );
     _tralloc_chunk * common_chunk   = _tralloc_get_chunk_from_context ( tr->common );
@@ -174,18 +134,48 @@ tralloc_bool test_chunks ( test_reference_tree * tr )
     ) {
         return TRALLOC_FALSE;
     }
-    return test_references ( tr );
-}
+    
+    _tralloc_references * common_references  = _tralloc_get_references_from_chunk ( _tralloc_get_chunk_from_context ( tr->common ) );
+    _tralloc_references * shared_references  = _tralloc_get_references_from_chunk ( _tralloc_get_chunk_from_context ( tr->shared ) );
+    _tralloc_reference  * common_1_reference = _tralloc_get_reference_from_chunk  ( _tralloc_get_chunk_from_context ( tr->common_1 ) );
+    _tralloc_reference  * common_2_reference = _tralloc_get_reference_from_chunk  ( _tralloc_get_chunk_from_context ( tr->common_2 ) );
+    _tralloc_reference  * common_3_reference = _tralloc_get_reference_from_chunk  ( _tralloc_get_chunk_from_context ( tr->common_3 ) );
+    _tralloc_reference  * shared_1_reference = _tralloc_get_reference_from_chunk  ( _tralloc_get_chunk_from_context ( tr->shared_1 ) );
+    _tralloc_reference  * shared_2_reference = _tralloc_get_reference_from_chunk  ( _tralloc_get_chunk_from_context ( tr->shared_2 ) );
 
-static
-tralloc_bool compare_float ( float a, float b )
-{
-    return fabs ( a - b ) < 0.000001;
+    if (
+        common_references->first_reference != common_3_reference ||
+
+        common_3_reference->prev       != NULL               ||
+        common_3_reference->next       != common_2_reference ||
+        common_3_reference->references != common_references  ||
+
+        common_2_reference->prev       != common_3_reference ||
+        common_2_reference->next       != common_1_reference ||
+        common_2_reference->references != common_references  ||
+
+        common_1_reference->prev       != common_2_reference ||
+        common_1_reference->next       != NULL               ||
+        common_1_reference->references != common_references  ||
+
+        shared_references->first_reference != shared_2_reference ||
+
+        shared_2_reference->prev       != NULL               ||
+        shared_2_reference->next       != shared_1_reference ||
+        shared_2_reference->references != shared_references  ||
+
+        shared_1_reference->prev       != shared_2_reference ||
+        shared_1_reference->next       != NULL               ||
+        shared_1_reference->references != shared_references
+    ) {
+        return TRALLOC_FALSE;
+    }
+    return TRALLOC_TRUE;
 }
 
 tralloc_bool test_reference_move_and_resize ( test_reference_tree * tr )
 {
-    if ( !test_empty_references ( tr ) ) {
+    if ( !test_reference_check_empty_references ( tr ) ) {
         return TRALLOC_FALSE;
     }
 
@@ -208,7 +198,7 @@ tralloc_bool test_reference_move_and_resize ( test_reference_tree * tr )
         return TRALLOC_FALSE;
     }
 
-    if ( !test_chunks ( tr ) ) {
+    if ( !test_reference_check_moved_chunks ( tr ) ) {
         return TRALLOC_FALSE;
     }
 
@@ -219,7 +209,7 @@ tralloc_bool test_reference_move_and_resize ( test_reference_tree * tr )
         return TRALLOC_FALSE;
     }
 
-    if ( !test_empty_references ( tr ) ) {
+    if ( !test_reference_check_empty_references ( tr ) ) {
         return TRALLOC_FALSE;
     }
 
@@ -234,7 +224,7 @@ tralloc_bool test_reference_move_and_resize ( test_reference_tree * tr )
         return TRALLOC_FALSE;
     }
 
-    if ( !test_chunks ( tr ) ) {
+    if ( !test_reference_check_moved_chunks ( tr ) ) {
         return TRALLOC_FALSE;
     }
 
@@ -267,5 +257,5 @@ tralloc_bool test_reference_move_and_resize ( test_reference_tree * tr )
         return TRALLOC_FALSE;
     }
 
-    return test_chunks ( tr );
+    return test_reference_check_moved_chunks ( tr );
 }

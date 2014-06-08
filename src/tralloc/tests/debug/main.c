@@ -12,7 +12,7 @@
 
 int main ()
 {
-    int result = _tralloc_test_debug ( NULL );
+    int result = test_debug ( NULL );
     if ( result != 0 ) {
         return result;
     }

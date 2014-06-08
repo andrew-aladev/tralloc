@@ -8,8 +8,7 @@
 #include <tralloc/length.h>
 
 
-static
-tralloc_bool test_length_errors ( tralloc_context * ctx )
+tralloc_bool test_length_common ( tralloc_context * ctx )
 {
     size_t length;
     if (
@@ -18,16 +17,7 @@ tralloc_bool test_length_errors ( tralloc_context * ctx )
     ) {
         return TRALLOC_FALSE;
     }
-    return TRALLOC_TRUE;
-}
 
-tralloc_bool test_length_common ( tralloc_context * ctx )
-{
-    if ( !test_length_errors ( ctx ) ) {
-        return TRALLOC_FALSE;
-    }
-
-    size_t length;
     tralloc_context * empty;
     if (
         tralloc_empty_with_extensions ( ctx, &empty, TRALLOC_EXTENSION_LENGTH ) != 0 ||

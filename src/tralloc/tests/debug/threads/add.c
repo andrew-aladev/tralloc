@@ -27,9 +27,9 @@
 //     return NULL;
 // }
 
-static
-tralloc_bool test_parent_and_first_child ( tralloc_context * _TRALLOC_UNUSED ( ctx ) )
-{
+// static
+// tralloc_bool test_parent_and_first_child ( tralloc_context * _TRALLOC_UNUSED ( ctx ) )
+// {
 //     tralloc_context * parent_1;
 //     if ( tralloc_new ( ctx, &parent_1 ) != 0 ) {
 //         return TRALLOC_FALSE;
@@ -73,13 +73,13 @@ tralloc_bool test_parent_and_first_child ( tralloc_context * _TRALLOC_UNUSED ( c
 //     ) {
 //         return TRALLOC_FALSE;
 //     }
+//
+//     return TRALLOC_TRUE;
+// }
 
-    return TRALLOC_TRUE;
-}
-
-static
-tralloc_bool test_prev_and_next ( tralloc_context * _TRALLOC_UNUSED ( ctx ) )
-{
+// static
+// tralloc_bool test_prev_and_next ( tralloc_context * _TRALLOC_UNUSED ( ctx ) )
+// {
 //     tralloc_context * parent;
 //     tralloc_context * next_1;
 //     if (
@@ -130,17 +130,17 @@ tralloc_bool test_prev_and_next ( tralloc_context * _TRALLOC_UNUSED ( ctx ) )
 //     if ( tralloc_free ( parent ) != 0 ) {
 //         return TRALLOC_FALSE;
 //     }
+//
+//     return TRALLOC_TRUE;
+// }
 
-    return TRALLOC_TRUE;
-}
-
-tralloc_bool test_debug_threads_add ( tralloc_context * ctx )
+tralloc_bool test_debug_threads_add ( tralloc_context * _TRALLOC_UNUSED ( ctx ) )
 {
-    if (
-        !test_parent_and_first_child ( ctx ) ||
-        !test_prev_and_next          ( ctx )
-    ) {
-        return TRALLOC_FALSE;
-    }
+//     if (
+//         !test_parent_and_first_child ( ctx ) ||
+//         !test_prev_and_next          ( ctx )
+//     ) {
+//         return TRALLOC_FALSE;
+//     }
     return TRALLOC_TRUE;
 }

@@ -4,57 +4,57 @@
 // You should have received a copy of the GNU General Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
 #include <tralloc/tests/debug/common.h>
-#include <tralloc/tests/lib/dynarr.h>
+#include <tralloc/tests/common/dynarr.h>
 #include <tralloc/tree.h>
 #include <tralloc/debug.h>
 
 #include <stdlib.h>
 
 
-typedef struct _tralloc_test_debug_resize_info_t {
+typedef struct test_debug_resize_info_t {
     _tralloc_chunk * chunk;
     size_t old_length;
-} _tralloc_test_debug_resize_info;
+} test_debug_resize_info;
 
 static
-tralloc_error _tralloc_test_debug_after_resize ( void * user_data, _tralloc_chunk * chunk, size_t old_length )
+tralloc_error test_debug_after_resize ( void * user_data, _tralloc_chunk * chunk, size_t old_length )
 {
-    _tralloc_tests_dynarr * history = ( _tralloc_tests_dynarr * ) user_data;
-    _tralloc_test_debug_resize_info * info = malloc ( sizeof ( _tralloc_test_debug_resize_info ) );
+    dynarr * history = ( dynarr * ) user_data;
+    test_debug_resize_info * info = malloc ( sizeof ( test_debug_resize_info ) );
     if ( info == NULL ) {
         return TRALLOC_ERROR_MALLOC_FAILED;
     }
     info->chunk      = chunk;
     info->old_length = old_length;
-    if ( _tralloc_tests_dynarr_append ( history, info ) != 0 ) {
+    if ( dynarr_append ( history, info ) != 0 ) {
         free ( info );
         return TRALLOC_ERROR_MALLOC_FAILED;
     }
-    _tralloc_tests_dynarr_set_free_item ( history, free );
+    dynarr_set_free_item ( history, free );
     return 0;
 }
 
-static
-_tralloc_tests_dynarr * _tralloc_test_debug_new_history()
+static inline
+dynarr * test_debug_resize_new_history()
 {
-    _tralloc_tests_dynarr * history = _tralloc_tests_dynarr_new ( 8 );
+    dynarr * history = dynarr_new ( 8 );
     if ( history == NULL ) {
         return NULL;
     }
     if ( tralloc_debug_callback_set_resize_data ( NULL, history ) != 0 ) {
-        _tralloc_tests_dynarr_free ( history );
+        dynarr_free ( history );
         return NULL;
     }
-    if ( tralloc_debug_callback_set_resize_functions ( NULL, _tralloc_test_debug_after_resize ) != 0 ) {
+    if ( tralloc_debug_callback_set_resize_functions ( NULL, test_debug_after_resize ) != 0 ) {
         tralloc_debug_callback_set_resize_data ( NULL, NULL );
-        _tralloc_tests_dynarr_free ( history );
+        dynarr_free ( history );
         return NULL;
     }
     return history;
 }
 
-static
-tralloc_error _tralloc_test_debug_free_history ( _tralloc_tests_dynarr * history )
+static inline
+tralloc_error test_debug_resize_free_history ( dynarr * history )
 {
     tralloc_error error  = 0;
     tralloc_error result = tralloc_debug_callback_set_resize_data ( NULL, NULL );
@@ -66,13 +66,13 @@ tralloc_error _tralloc_test_debug_free_history ( _tralloc_tests_dynarr * history
         error = result;
     }
 
-    _tralloc_tests_dynarr_free ( history );
+    dynarr_free ( history );
     return error;
 }
 
-tralloc_bool _tralloc_test_debug_resize ( tralloc_context * ctx )
+tralloc_bool test_debug_resize ( tralloc_context * ctx )
 {
-    _tralloc_tests_dynarr * history = _tralloc_test_debug_new_history();
+    dynarr * history = test_debug_resize_new_history();
     if ( history == NULL ) {
         return TRALLOC_FALSE;
     }
@@ -89,30 +89,30 @@ tralloc_bool _tralloc_test_debug_resize ( tralloc_context * ctx )
         tralloc_realloc ( ( tralloc_context ** ) &a, sizeof ( int ) * 9 )    != 0 ||
         tralloc_realloc ( ( tralloc_context ** ) &c, sizeof ( float ) * 10 ) != 0
     ) {
-        _tralloc_test_debug_free_history ( history );
+        test_debug_resize_free_history ( history );
         return TRALLOC_FALSE;
     }
 
     _tralloc_chunk * a_chunk = _tralloc_get_chunk_from_context ( a );
     _tralloc_chunk * b_chunk = _tralloc_get_chunk_from_context ( b );
     _tralloc_chunk * c_chunk = _tralloc_get_chunk_from_context ( c );
-    _tralloc_test_debug_resize_info * info;
+    test_debug_resize_info * info;
 
     if (
-        _tralloc_tests_dynarr_get_length ( history ) != 3 ||
-        ( info = _tralloc_tests_dynarr_get ( history, 0 ) ) == NULL ||
+        dynarr_get_length ( history ) != 3 ||
+        ( info = dynarr_get ( history, 0 ) ) == NULL ||
         info->chunk != b_chunk || info->old_length != sizeof ( char ) * 3 || info->chunk->length != sizeof ( char ) * 8 ||
-        ( info = _tralloc_tests_dynarr_get ( history, 1 ) ) == NULL ||
+        ( info = dynarr_get ( history, 1 ) ) == NULL ||
         info->chunk != a_chunk || info->old_length != sizeof ( int ) * 2 || info->chunk->length != sizeof ( int ) * 9 ||
-        ( info = _tralloc_tests_dynarr_get ( history, 2 ) ) == NULL ||
+        ( info = dynarr_get ( history, 2 ) ) == NULL ||
         info->chunk != c_chunk || info->old_length != sizeof ( float ) * 4 || info->chunk->length != sizeof ( float ) * 10 ||
 
         tralloc_free ( a ) != 0 ||
         tralloc_free ( b ) != 0
     ) {
-        _tralloc_test_debug_free_history ( history );
+        test_debug_resize_free_history ( history );
         return TRALLOC_FALSE;
     }
 
-    return _tralloc_test_debug_free_history ( history ) == 0;
+    return test_debug_resize_free_history ( history ) == 0;
 }
