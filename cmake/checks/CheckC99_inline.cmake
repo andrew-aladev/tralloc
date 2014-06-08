@@ -16,7 +16,7 @@ function (check_c99_inline)
         CHECK_C99_INLINE_COMPILE_RESULT
         "${PROJECT_BINARY_DIR}/CMakeTmp/C99_inline"
         "${PROJECT_SOURCE_DIR}/cmake/checks/C99_inline" "check_C99_inline"
-        CMAKE_FLAGS "-DCMAKE_C_FLAGS:STRING = ${C99_CFLAGS}"
+        CMAKE_FLAGS "-DCMAKE_C_FLAGS:STRING = ${CMAKE_C_FLAGS} ${C99_CFLAGS}"
     )
     if (${CHECK_C99_INLINE_COMPILE_RESULT})
         set (TRALLOC_HAVE_C99_INLINE true CACHE STRING "Status of C99 inline support")
