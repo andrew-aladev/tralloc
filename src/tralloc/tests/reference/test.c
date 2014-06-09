@@ -10,7 +10,7 @@
 int test_reference ( test_reference_tree * ctx )
 {
     test_reference_tree * tr;
-    if ( tralloc ( ctx, ( tralloc_context ** ) &tr, sizeof ( test_reference_tree ) ) != 0 ) {
+    if ( tralloc_new ( ctx, ( tralloc_context ** ) &tr, sizeof ( test_reference_tree ) ) != 0 ) {
         return 1;
     }
     if ( !test_reference_errors ( tr ) ) {

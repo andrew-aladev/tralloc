@@ -14,13 +14,13 @@
 int main ()
 {
     tralloc_context * ctx;
-    if ( tralloc_empty ( NULL, &ctx ) != 0 ) {
+    if ( tralloc_new_empty ( NULL, &ctx ) != 0 ) {
         return 1;
     }
     uint16_t * data;
     size_t length;
     if (
-        tralloc_with_extensions ( ctx, ( tralloc_context ** ) &data, TRALLOC_EXTENSION_LENGTH, sizeof ( uint16_t ) * 10 ) != 0 ||
+        tralloc_new_with_extensions ( ctx, ( tralloc_context ** ) &data, TRALLOC_EXTENSION_LENGTH, sizeof ( uint16_t ) * 10 ) != 0 ||
         tralloc_get_length ( data, &length ) != 0 ||
         length != sizeof ( uint16_t ) * 10
     ) {

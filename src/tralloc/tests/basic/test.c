@@ -10,7 +10,7 @@
 int test_basic ( tralloc_context * ctx )
 {
     test_basic_tree * tr;
-    if ( tralloc ( ctx, ( tralloc_context ** ) &tr, sizeof ( test_basic_tree ) ) != 0 ) {
+    if ( tralloc_new ( ctx, ( tralloc_context ** ) &tr, sizeof ( test_basic_tree ) ) != 0 ) {
         return 1;
     }
     if ( !test_basic_errors ( tr ) ) {

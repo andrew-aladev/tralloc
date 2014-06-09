@@ -19,12 +19,12 @@ int main ()
         return 1;
     }
     tralloc_context * common_reference_1;
-    if ( tralloc_empty_with_extensions ( NULL, &common_reference_1, TRALLOC_EXTENSION_REFERENCE ) != 0 ) {
+    if ( tralloc_new_empty_with_extensions ( NULL, &common_reference_1, TRALLOC_EXTENSION_REFERENCE ) != 0 ) {
         tralloc_free ( common );
         return 2;
     }
     tralloc_context * common_reference_2;
-    if ( tralloc_empty_with_extensions ( NULL, &common_reference_2, TRALLOC_EXTENSION_REFERENCE ) != 0 ) {
+    if ( tralloc_new_empty_with_extensions ( NULL, &common_reference_2, TRALLOC_EXTENSION_REFERENCE ) != 0 ) {
         tralloc_free ( common_reference_1 );
         tralloc_free ( common );
         return 3;

@@ -9,13 +9,13 @@
 
 tralloc_bool test_basic_add ( test_basic_tree * tr )
 {
-    if ( tralloc ( tr, ( tralloc_context ** ) &tr->data_1, sizeof ( uint8_t ) ) != 0 ) {
+    if ( tralloc_new ( tr, ( tralloc_context ** ) &tr->data_1, sizeof ( uint8_t ) ) != 0 ) {
         return TRALLOC_FALSE;
     }
     * tr->data_1 = 123;
 
     if (
-        tralloc_zero ( tr->data_1, ( tralloc_context ** ) &tr->data_2, sizeof ( uint8_t ) * 4 ) != 0 ||
+        tralloc_new_zero ( tr->data_1, ( tralloc_context ** ) &tr->data_2, sizeof ( uint8_t ) * 4 ) != 0 ||
         tr->data_2[0] != 0 || tr->data_2[1] != 0 || tr->data_2[2] != 0 || tr->data_2[3] != 0
     ) {
         return TRALLOC_FALSE;
@@ -25,7 +25,7 @@ tralloc_bool test_basic_add ( test_basic_tree * tr )
     tr->data_2[2] = 56;
     tr->data_2[3] = 78;
 
-    if ( tralloc ( tr->data_1, ( tralloc_context ** ) &tr->data_3, sizeof ( char ) * 3 ) != 0 ) {
+    if ( tralloc_new ( tr->data_1, ( tralloc_context ** ) &tr->data_3, sizeof ( char ) * 3 ) != 0 ) {
         return TRALLOC_FALSE;
     }
     tr->data_3[0] = 'q';
@@ -33,7 +33,7 @@ tralloc_bool test_basic_add ( test_basic_tree * tr )
     tr->data_3[2] = 'e';
 
     if (
-        tralloc_zero ( tr->data_1, ( tralloc_context ** ) &tr->data_4, sizeof ( int ) * 2 ) != 0 ||
+        tralloc_new_zero ( tr->data_1, ( tralloc_context ** ) &tr->data_4, sizeof ( int ) * 2 ) != 0 ||
         tr->data_4[0] != 0 || tr->data_4[1] != 0
     ) {
         return TRALLOC_FALSE;
@@ -41,7 +41,7 @@ tralloc_bool test_basic_add ( test_basic_tree * tr )
     tr->data_4[0] = -102;
     tr->data_4[1] = 103;
 
-    if ( tralloc ( tr->data_3, ( tralloc_context ** ) &tr->data_5, sizeof ( size_t ) * 3 ) != 0 ) {
+    if ( tralloc_new ( tr->data_3, ( tralloc_context ** ) &tr->data_5, sizeof ( size_t ) * 3 ) != 0 ) {
         return TRALLOC_FALSE;
     }
     tr->data_5[0] = 123;
@@ -49,20 +49,20 @@ tralloc_bool test_basic_add ( test_basic_tree * tr )
     tr->data_5[2] = 123;
 
     if (
-        tralloc_zero ( tr->data_3, ( tralloc_context ** ) &tr->data_6, sizeof ( float ) ) != 0 ||
+        tralloc_new_zero ( tr->data_3, ( tralloc_context ** ) &tr->data_6, sizeof ( float ) ) != 0 ||
         * tr->data_6 != 0
     ) {
         return TRALLOC_FALSE;
     }
     * tr->data_6 = 0.012345;
 
-    if ( tralloc ( tr->data_3, ( tralloc_context ** ) &tr->data_7, sizeof ( float ) * 2 ) != 0 ) {
+    if ( tralloc_new ( tr->data_3, ( tralloc_context ** ) &tr->data_7, sizeof ( float ) * 2 ) != 0 ) {
         return TRALLOC_FALSE;
     }
     tr->data_7[0] = 0.01234;
     tr->data_7[1] = 0.56789;
 
-    if ( tralloc_empty ( tr->data_7, ( tralloc_context ** ) &tr->trivium ) != 0 ) {
+    if ( tralloc_new_empty ( tr->data_7, ( tralloc_context ** ) &tr->trivium ) != 0 ) {
         return TRALLOC_FALSE;
     }
 

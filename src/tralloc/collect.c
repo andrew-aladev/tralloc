@@ -26,6 +26,9 @@
 
 #if defined(TRALLOC_THREADS)
 
+    // for threads/chunk.c
+#   define _TRALLOC_THREADS_CHUNK_INCLUDED_FROM_OBJECT
+
     // for threads/mutex.c
 #   define _TRALLOC_THREADS_MUTEX_INCLUDED_FROM_OBJECT
 

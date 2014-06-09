@@ -37,7 +37,7 @@
 int main ()
 {
     tralloc_context * pool_data;
-    if ( tralloc_with_extensions ( NULL, &pool_data, TRALLOC_EXTENSION_POOL, sizeof ( uint8_t ) * 5000 ) != 0 ) {
+    if ( tralloc_new_with_extensions ( NULL, &pool_data, TRALLOC_EXTENSION_POOL, sizeof ( uint8_t ) * 5000 ) != 0 ) {
         return 253;
     }
 

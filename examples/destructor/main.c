@@ -33,11 +33,11 @@ tralloc_error file_destructor ( tralloc_context * context, void * _TRALLOC_UNUSE
 int main ()
 {
     tralloc_context * ctx;
-    if ( tralloc_empty ( NULL, &ctx ) != 0 ) {
+    if ( tralloc_new_empty ( NULL, &ctx ) != 0 ) {
         return 1;
     }
     int * number;
-    if ( tralloc_with_extensions ( ctx, ( tralloc_context ** ) &number, TRALLOC_EXTENSION_DESTRUCTORS, sizeof ( int ) ) != 0 ) {
+    if ( tralloc_new_with_extensions ( ctx, ( tralloc_context ** ) &number, TRALLOC_EXTENSION_DESTRUCTORS, sizeof ( int ) ) != 0 ) {
         tralloc_free ( ctx );
         return 2;
     }

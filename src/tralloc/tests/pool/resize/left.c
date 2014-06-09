@@ -23,10 +23,10 @@ tralloc_bool test_pool_resize_left_fragment_is_remained ( tralloc_context * ctx 
     tralloc_context * pool_data;
     uint8_t * data_1, * data_2, * data_3;
     if (
-        tralloc_with_extensions ( ctx, &pool_data, TRALLOC_EXTENSION_POOL, pool_data_length ) != 0 ||
-        tralloc ( pool_data, ( tralloc_context ** ) &data_1, data_1_user_length ) != 0 ||
-        tralloc ( pool_data, ( tralloc_context ** ) &data_2, data_2_user_length ) != 0 ||
-        tralloc ( pool_data, ( tralloc_context ** ) &data_3, data_3_user_length ) != 0 ||
+        tralloc_new_with_extensions ( ctx, &pool_data, TRALLOC_EXTENSION_POOL, pool_data_length ) != 0 ||
+        tralloc_new ( pool_data, ( tralloc_context ** ) &data_1, data_1_user_length ) != 0 ||
+        tralloc_new ( pool_data, ( tralloc_context ** ) &data_2, data_2_user_length ) != 0 ||
+        tralloc_new ( pool_data, ( tralloc_context ** ) &data_3, data_3_user_length ) != 0 ||
         tralloc_free ( data_1 ) != 0 ||
         tralloc_free ( data_3 ) != 0
     ) {
@@ -127,10 +127,10 @@ tralloc_bool test_pool_resize_left_space_is_remained ( tralloc_context * ctx )
     tralloc_context * pool_data;
     uint8_t * data_1, * data_2, * data_3;
     if (
-        tralloc_with_extensions ( ctx, &pool_data, TRALLOC_EXTENSION_POOL, pool_data_length ) != 0 ||
-        tralloc ( pool_data, ( tralloc_context ** ) &data_1, data_1_user_length ) != 0 ||
-        tralloc ( pool_data, ( tralloc_context ** ) &data_2, data_2_user_length ) != 0 ||
-        tralloc ( pool_data, ( tralloc_context ** ) &data_3, data_3_user_length ) != 0 ||
+        tralloc_new_with_extensions ( ctx, &pool_data, TRALLOC_EXTENSION_POOL, pool_data_length ) != 0 ||
+        tralloc_new ( pool_data, ( tralloc_context ** ) &data_1, data_1_user_length ) != 0 ||
+        tralloc_new ( pool_data, ( tralloc_context ** ) &data_2, data_2_user_length ) != 0 ||
+        tralloc_new ( pool_data, ( tralloc_context ** ) &data_3, data_3_user_length ) != 0 ||
         tralloc_free ( data_1 ) != 0 ||
         tralloc_free ( data_3 ) != 0
     ) {
@@ -223,10 +223,10 @@ tralloc_bool test_pool_resize_left_strict ( tralloc_context * ctx )
     tralloc_context * pool_data;
     uint8_t * data_1, * data_2, * data_3;
     if (
-        tralloc_with_extensions ( ctx, &pool_data, TRALLOC_EXTENSION_POOL, pool_data_length ) != 0 ||
-        tralloc ( pool_data, ( tralloc_context ** ) &data_1, data_1_user_length ) != 0 ||
-        tralloc ( pool_data, ( tralloc_context ** ) &data_2, data_2_user_length ) != 0 ||
-        tralloc ( pool_data, ( tralloc_context ** ) &data_3, data_3_user_length ) != 0 ||
+        tralloc_new_with_extensions ( ctx, &pool_data, TRALLOC_EXTENSION_POOL, pool_data_length ) != 0 ||
+        tralloc_new ( pool_data, ( tralloc_context ** ) &data_1, data_1_user_length ) != 0 ||
+        tralloc_new ( pool_data, ( tralloc_context ** ) &data_2, data_2_user_length ) != 0 ||
+        tralloc_new ( pool_data, ( tralloc_context ** ) &data_3, data_3_user_length ) != 0 ||
         tralloc_free ( data_1 ) != 0 ||
         tralloc_free ( data_3 ) != 0
     ) {

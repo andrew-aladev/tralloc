@@ -14,13 +14,13 @@
 
 tralloc_error tralloc_buffer_new_with_extensions ( tralloc_context * ctx, tralloc_buffer ** buffer_ptr, size_t capacity, tralloc_extensions extensions )
 {
-    tralloc_error result = tralloc_with_extensions ( ctx, ( tralloc_context ** ) buffer_ptr, extensions, sizeof ( tralloc_buffer ) );
+    tralloc_error result = tralloc_new_with_extensions ( ctx, ( tralloc_context ** ) buffer_ptr, extensions, sizeof ( tralloc_buffer ) );
     if ( result != 0 ) {
         return result;
     }
 
     tralloc_buffer * buffer = * buffer_ptr;
-    result = tralloc ( buffer, ( tralloc_context ** ) &buffer->data, sizeof ( uint8_t ) * capacity );
+    result = tralloc_new ( buffer, ( tralloc_context ** ) &buffer->data, sizeof ( uint8_t ) * capacity );
     if ( result != 0 ) {
         tralloc_free ( buffer );
         return result;

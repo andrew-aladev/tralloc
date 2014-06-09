@@ -19,69 +19,69 @@
 
 #if defined(TRALLOC_DEBUG_LOG)
 
-tralloc_error _tralloc_debug_log_with_extensions ( const char * file, size_t line, tralloc_context * parent_context, tralloc_context ** child_context, tralloc_extensions extensions, size_t length );
+tralloc_error _tralloc_debug_log_new_with_extensions ( const char * file, size_t line, tralloc_context * parent_context, tralloc_context ** child_context, tralloc_extensions extensions, size_t length );
 
 _TRALLOC_INLINE
-tralloc_error _tralloc_debug_log ( const char * file, size_t line, tralloc_context * parent_context, tralloc_context ** child_context, size_t length )
+tralloc_error _tralloc_debug_log_new ( const char * file, size_t line, tralloc_context * parent_context, tralloc_context ** child_context, size_t length )
 {
-    return _tralloc_debug_log_with_extensions ( file, line, parent_context, child_context, 0, length );
+    return _tralloc_debug_log_new_with_extensions ( file, line, parent_context, child_context, 0, length );
 }
 
-tralloc_error _tralloc_debug_log_zero_with_extensions ( const char * file, size_t line, tralloc_context * parent_context, tralloc_context ** child_context, tralloc_extensions extensions, size_t length );
+tralloc_error _tralloc_debug_log_new_zero_with_extensions ( const char * file, size_t line, tralloc_context * parent_context, tralloc_context ** child_context, tralloc_extensions extensions, size_t length );
 
 _TRALLOC_INLINE
-tralloc_error _tralloc_debug_log_zero ( const char * file, size_t line, tralloc_context * parent_context, tralloc_context ** child_context, size_t length )
+tralloc_error _tralloc_debug_log_new_zero ( const char * file, size_t line, tralloc_context * parent_context, tralloc_context ** child_context, size_t length )
 {
-    return _tralloc_debug_log_zero_with_extensions ( file, line, parent_context, child_context, 0, length );
-}
-
-_TRALLOC_INLINE
-tralloc_error _tralloc_debug_log_empty ( const char * file, size_t line, tralloc_context * parent_context, tralloc_context ** child_context )
-{
-    return _tralloc_debug_log ( file, line, parent_context, child_context, 0 );
+    return _tralloc_debug_log_new_zero_with_extensions ( file, line, parent_context, child_context, 0, length );
 }
 
 _TRALLOC_INLINE
-tralloc_error _tralloc_debug_log_empty_with_extensions ( const char * file, size_t line, tralloc_context * parent_context, tralloc_context ** child_context, tralloc_extensions extensions )
+tralloc_error _tralloc_debug_log_new_empty ( const char * file, size_t line, tralloc_context * parent_context, tralloc_context ** child_context )
 {
-    return _tralloc_debug_log_with_extensions ( file, line, parent_context, child_context, extensions, 0 );
+    return _tralloc_debug_log_new ( file, line, parent_context, child_context, 0 );
 }
 
-#define tralloc_with_extensions(...)       _tralloc_debug_log_with_extensions       (__FILE__, __LINE__, __VA_ARGS__)
-#define tralloc(...)                       _tralloc_debug_log                       (__FILE__, __LINE__, __VA_ARGS__)
-#define tralloc_zero_with_extensions(...)  _tralloc_debug_log_zero_with_extensions  (__FILE__, __LINE__, __VA_ARGS__)
-#define tralloc_zero(...)                  _tralloc_debug_log_zero                  (__FILE__, __LINE__, __VA_ARGS__)
-#define tralloc_empty(...)                 _tralloc_debug_log_empty                 (__FILE__, __LINE__, __VA_ARGS__)
-#define tralloc_empty_with_extensions(...) _tralloc_debug_log_empty_with_extensions (__FILE__, __LINE__, __VA_ARGS__)
+_TRALLOC_INLINE
+tralloc_error _tralloc_debug_log_new_empty_with_extensions ( const char * file, size_t line, tralloc_context * parent_context, tralloc_context ** child_context, tralloc_extensions extensions )
+{
+    return _tralloc_debug_log_new_with_extensions ( file, line, parent_context, child_context, extensions, 0 );
+}
+
+#define tralloc_new_with_extensions(...)       _tralloc_debug_log_new_with_extensions       (__FILE__, __LINE__, __VA_ARGS__)
+#define tralloc_new(...)                       _tralloc_debug_log_new                       (__FILE__, __LINE__, __VA_ARGS__)
+#define tralloc_new_zero_with_extensions(...)  _tralloc_debug_log_new_zero_with_extensions  (__FILE__, __LINE__, __VA_ARGS__)
+#define tralloc_new_zero(...)                  _tralloc_debug_log_new_zero                  (__FILE__, __LINE__, __VA_ARGS__)
+#define tralloc_new_empty(...)                 _tralloc_debug_log_new_empty                 (__FILE__, __LINE__, __VA_ARGS__)
+#define tralloc_new_empty_with_extensions(...) _tralloc_debug_log_new_empty_with_extensions (__FILE__, __LINE__, __VA_ARGS__)
 
 #else
 
-tralloc_error tralloc_with_extensions ( tralloc_context * parent_context, tralloc_context ** child_context, tralloc_extensions extensions, size_t length );
+tralloc_error tralloc_new_with_extensions ( tralloc_context * parent_context, tralloc_context ** child_context, tralloc_extensions extensions, size_t length );
 
 _TRALLOC_INLINE
-tralloc_error tralloc ( tralloc_context * parent_context, tralloc_context ** child_context, size_t length )
+tralloc_error tralloc_new ( tralloc_context * parent_context, tralloc_context ** child_context, size_t length )
 {
-    return tralloc_with_extensions ( parent_context, child_context, 0, length );
+    return tralloc_new_with_extensions ( parent_context, child_context, 0, length );
 }
 
-tralloc_error tralloc_zero_with_extensions ( tralloc_context * parent_context, tralloc_context ** child_context, tralloc_extensions extensions, size_t length );
+tralloc_error tralloc_new_zero_with_extensions ( tralloc_context * parent_context, tralloc_context ** child_context, tralloc_extensions extensions, size_t length );
 
 _TRALLOC_INLINE
-tralloc_error tralloc_zero ( tralloc_context * parent_context, tralloc_context ** child_context, size_t length )
+tralloc_error tralloc_new_zero ( tralloc_context * parent_context, tralloc_context ** child_context, size_t length )
 {
-    return tralloc_zero_with_extensions ( parent_context, child_context, 0, length );
-}
-
-_TRALLOC_INLINE
-tralloc_error tralloc_empty ( tralloc_context * parent_context, tralloc_context ** child_context )
-{
-    return tralloc ( parent_context, child_context, 0 );
+    return tralloc_new_zero_with_extensions ( parent_context, child_context, 0, length );
 }
 
 _TRALLOC_INLINE
-tralloc_error tralloc_empty_with_extensions ( tralloc_context * parent_context, tralloc_context ** child_context, tralloc_extensions extensions )
+tralloc_error tralloc_new_empty ( tralloc_context * parent_context, tralloc_context ** child_context )
 {
-    return tralloc_with_extensions ( parent_context, child_context, extensions, 0 );
+    return tralloc_new ( parent_context, child_context, 0 );
+}
+
+_TRALLOC_INLINE
+tralloc_error tralloc_new_empty_with_extensions ( tralloc_context * parent_context, tralloc_context ** child_context, tralloc_extensions extensions )
+{
+    return tralloc_new_with_extensions ( parent_context, child_context, extensions, 0 );
 }
 
 #endif

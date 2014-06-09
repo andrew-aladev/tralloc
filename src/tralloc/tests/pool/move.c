@@ -17,9 +17,9 @@ tralloc_bool test_pool_move ( tralloc_context * ctx )
     tralloc_context * pool_data;
     uint8_t * data_1, * data_2;
     if (
-        tralloc_with_extensions ( ctx, &pool_data, TRALLOC_EXTENSION_POOL, pool_data_length ) != 0 ||
-        tralloc ( pool_data, ( tralloc_context ** ) &data_1, sizeof ( uint8_t ) * 5 ) != 0 ||
-        tralloc ( pool_data, ( tralloc_context ** ) &data_2, sizeof ( uint8_t ) * 4 ) != 0 ||
+        tralloc_new_with_extensions ( ctx, &pool_data, TRALLOC_EXTENSION_POOL, pool_data_length ) != 0 ||
+        tralloc_new ( pool_data, ( tralloc_context ** ) &data_1, sizeof ( uint8_t ) * 5 ) != 0 ||
+        tralloc_new ( pool_data, ( tralloc_context ** ) &data_2, sizeof ( uint8_t ) * 4 ) != 0 ||
         tralloc_move ( data_2, ctx ) != 0
     ) {
         return TRALLOC_FALSE;

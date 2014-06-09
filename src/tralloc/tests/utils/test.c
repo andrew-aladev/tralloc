@@ -10,7 +10,7 @@
 int test_utils ( tralloc_context * ctx )
 {
     tralloc_context * root;
-    if ( tralloc_empty ( ctx, &root ) != 0 ) {
+    if ( tralloc_new_empty ( ctx, &root ) != 0 ) {
         return 1;
     }
 

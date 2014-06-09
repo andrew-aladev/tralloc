@@ -13,14 +13,14 @@
 int main ()
 {
     tralloc_context * ctx;
-    if ( tralloc_empty ( NULL, &ctx ) != 0 ) {
+    if ( tralloc_new_empty ( NULL, &ctx ) != 0 ) {
         return 1;
     }
     int16_t * numbers;
     char * string;
     if (
-        tralloc_zero ( ctx, ( tralloc_context ** ) &numbers, sizeof ( int16_t ) * 5 ) != 0 ||
-        tralloc ( ctx, ( tralloc_context ** ) &string, sizeof ( char ) * 10 ) != 0
+        tralloc_new_zero ( ctx, ( tralloc_context ** ) &numbers, sizeof ( int16_t ) * 5 ) != 0 ||
+        tralloc_new ( ctx, ( tralloc_context ** ) &string, sizeof ( char ) * 10 ) != 0
     ) {
         tralloc_free ( ctx );
         return 2;

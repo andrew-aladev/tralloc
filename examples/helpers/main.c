@@ -34,7 +34,7 @@ tralloc_error destructor_unlink_file ( tralloc_context * _TRALLOC_UNUSED ( chunk
 int main ()
 {
     tralloc_context * ctx;
-    if ( tralloc_empty ( NULL, &ctx ) != 0 ) {
+    if ( tralloc_new_empty ( NULL, &ctx ) != 0 ) {
         return 1;
     }
     char * string;

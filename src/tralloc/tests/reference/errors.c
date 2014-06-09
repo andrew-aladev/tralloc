@@ -20,7 +20,7 @@ tralloc_bool test_reference_errors ( tralloc_context * ctx )
 
     tralloc_context * empty;
     if (
-        tralloc_empty            ( ctx, &empty ) != 0 ||
+        tralloc_new_empty            ( ctx, &empty ) != 0 ||
         tralloc_clear_references ( empty )       != TRALLOC_ERROR_NO_SUCH_EXTENSION ||
         tralloc_move_reference   ( empty, NULL ) != TRALLOC_ERROR_NO_SUCH_EXTENSION
     ) {
@@ -29,14 +29,14 @@ tralloc_bool test_reference_errors ( tralloc_context * ctx )
 
     tralloc_context * references, * reference;
     if (
-        tralloc_empty_with_extensions ( ctx, &references, TRALLOC_EXTENSION_REFERENCES ) != 0 ||
-        tralloc_empty_with_extensions ( ctx, &reference,  TRALLOC_EXTENSION_REFERENCE )  != 0 ||
-        tralloc_move_reference        ( reference, NULL )       != TRALLOC_ERROR_CHILD_HAS_SAME_PARENT ||
-        tralloc_move_reference        ( reference, empty )      != TRALLOC_ERROR_NO_SUCH_EXTENSION     ||
-        tralloc_move_reference        ( reference, references ) != 0 ||
-        tralloc_move_reference        ( reference, references ) != TRALLOC_ERROR_CHILD_HAS_SAME_PARENT ||
-        tralloc_move_reference        ( reference, NULL )       != 0 ||
-        tralloc_move_reference        ( reference, NULL )       != TRALLOC_ERROR_CHILD_HAS_SAME_PARENT
+        tralloc_new_empty_with_extensions ( ctx, &references, TRALLOC_EXTENSION_REFERENCES ) != 0 ||
+        tralloc_new_empty_with_extensions ( ctx, &reference,  TRALLOC_EXTENSION_REFERENCE )  != 0 ||
+        tralloc_move_reference ( reference, NULL )       != TRALLOC_ERROR_CHILD_HAS_SAME_PARENT ||
+        tralloc_move_reference ( reference, empty )      != TRALLOC_ERROR_NO_SUCH_EXTENSION     ||
+        tralloc_move_reference ( reference, references ) != 0 ||
+        tralloc_move_reference ( reference, references ) != TRALLOC_ERROR_CHILD_HAS_SAME_PARENT ||
+        tralloc_move_reference ( reference, NULL )       != 0 ||
+        tralloc_move_reference ( reference, NULL )       != TRALLOC_ERROR_CHILD_HAS_SAME_PARENT
     ) {
         return TRALLOC_FALSE;
     }

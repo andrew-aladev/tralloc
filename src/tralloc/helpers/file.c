@@ -25,7 +25,7 @@ tralloc_error _tralloc_close ( tralloc_context * chunk_context, void * _TRALLOC_
 static inline
 tralloc_error _tralloc_process_descriptor ( tralloc_context * parent_context, int ** descriptor_ptr, int descriptor, tralloc_extensions extensions )
 {
-    tralloc_error result = tralloc_with_extensions ( parent_context, ( tralloc_context ** ) descriptor_ptr, extensions | TRALLOC_EXTENSION_DESTRUCTORS, sizeof ( int ) );
+    tralloc_error result = tralloc_new_with_extensions ( parent_context, ( tralloc_context ** ) descriptor_ptr, extensions | TRALLOC_EXTENSION_DESTRUCTORS, sizeof ( int ) );
     if ( result != 0 ) {
         close ( descriptor );
         return result;
