@@ -2,7 +2,7 @@ cmake_minimum_required (VERSION "2.8")
 project ("tralloc" "C")
 
 
-set (TRALLOC_VERSION "0.7.0")
+set (TRALLOC_VERSION "0.8.0")
 
 set (TRALLOC_THREADS      true CACHE BOOL "threads feature")
 set (TRALLOC_LENGTH       true CACHE BOOL "length feature")
@@ -102,7 +102,8 @@ set (CMAKE_LD_FLAGS "${CMAKE_LD_FLAGS} ${PTHREAD_LDLAGS}")
 set (CMAKE_C_FLAGS_DEBUG    "-pipe -O0 -g")
 set (CMAKE_C_FLAGS_RELEASE  "-pipe -O2 ${LTO_CFLAGS}")
 set (CMAKE_LD_FLAGS_RELEASE ${LTO_LDLAGS})
-
+set (CMAKE_C_FLAGS_RELEASE_EMBED  "-pipe -Os ${LTO_CFLAGS}")
+set (CMAKE_LD_FLAGS_RELEASE_EMBED ${LTO_LDLAGS})
 
 function(join VALUES GLUE OUTPUT)
   string (REGEX REPLACE "([^\\]|^);" "\\1${GLUE}" _TMP_STR "${VALUES}")

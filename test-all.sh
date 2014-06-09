@@ -11,4 +11,4 @@
 ../combinations.sh -DCMAKE_TOOLCHAIN_FILE=../cmake/toolchains/clang-address.cmake -DCMAKE_BUILD_TYPE="RELEASE" && rm -r * &&
 ../combinations.sh -DCMAKE_TOOLCHAIN_FILE=../cmake/toolchains/clang-thread.cmake  -DCMAKE_BUILD_TYPE="RELEASE" && rm -r * &&
 
-NO_TESTS=1 ../combinations.sh -DCMAKE_TOOLCHAIN_FILE=../cmake/toolchains/avr-gcc-4.8.2.cmake -DCMAKE_BUILD_TYPE="RELEASE" && rm -r *
+NO_TESTS=1 ../combinations.sh -DCMAKE_TOOLCHAIN_FILE=../cmake/toolchains/avr-gcc-4.8.2.cmake -DCMAKE_BUILD_TYPE="RELEASE_EMBED" && rm -r *
