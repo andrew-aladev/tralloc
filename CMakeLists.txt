@@ -84,7 +84,7 @@ if (NOT ${TRALLOC_DEBUG} AND ${TRALLOC_DEBUG_LOG})
 endif ()
 
 if (NOT ASCIIDOC_A2X_EXECUTABLE)
-    set (TRALLOC_MAN false PARENT_SCOPE)
+    set (TRALLOC_MAN false)
     message(WARNING "TRALLOC_MAN is disabled, because you have no \"asciidoc\".")
 endif ()
 
