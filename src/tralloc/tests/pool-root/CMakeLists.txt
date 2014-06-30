@@ -7,7 +7,7 @@ if (${TRALLOC_SHARED})
     add_executable (${NAME} ${SOURCES})
     
     set (LIBS
-        "${TRALLOC_TARGET}-libtest-basic"
+        "${TRALLOC_TARGET}-libtest-tree"
         "${TRALLOC_TARGET}-libtest-helpers"
         "${TRALLOC_TARGET}-libtest-pool"
     )
@@ -36,7 +36,7 @@ if (${TRALLOC_STATIC})
     add_executable (${NAME} ${SOURCES})
     
     set (LIBS
-        "${TRALLOC_TARGET}-libtest-basic-static"
+        "${TRALLOC_TARGET}-libtest-tree-static"
         "${TRALLOC_TARGET}-libtest-helpers-static"
         "${TRALLOC_TARGET}-libtest-pool-static"
     )

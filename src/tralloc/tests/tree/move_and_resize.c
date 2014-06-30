@@ -4,11 +4,11 @@
 // You should have received a copy of the GNU General Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
 #include <tralloc/tests/common/main.h>
-#include <tralloc/tests/basic/common.h>
+#include <tralloc/tests/tree/common.h>
 #include <tralloc/tree.h>
 
 
-tralloc_bool test_basic_move_and_resize ( test_basic_tree * tr )
+tralloc_bool test_tree_move_and_resize ( test_tree_data * tr )
 {
     if (
         tralloc_move ( tr->data_7, tr->data_2 ) != 0 ||

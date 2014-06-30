@@ -3,13 +3,13 @@
 // tralloc is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TRALLOC_TESTS_BASIC_COMMON
-#define TRALLOC_TESTS_BASIC_COMMON
+#ifndef TRALLOC_TESTS_TREE_COMMON
+#define TRALLOC_TESTS_TREE_COMMON
 
 #include <tralloc/types.h>
 
 
-typedef struct test_basic_tree_type {
+typedef struct test_tree_data_type {
     uint8_t *         data_1;
     uint8_t *         data_2;
     char *            data_3;
@@ -18,14 +18,14 @@ typedef struct test_basic_tree_type {
     float *           data_6;
     float  *          data_7;
     tralloc_context * trivium;
-} test_basic_tree;
+} test_tree_data;
 
-tralloc_bool test_basic_errors          ( tralloc_context * ctx );
-tralloc_bool test_basic_add             ( test_basic_tree * tr );
-tralloc_bool test_basic_move_and_resize ( test_basic_tree * tr );
-tralloc_bool test_basic_free_subtree    ( test_basic_tree * tr );
+tralloc_bool test_tree_errors          ( tralloc_context * ctx );
+tralloc_bool test_tree_add             ( test_tree_data * tr );
+tralloc_bool test_tree_move_and_resize ( test_tree_data * tr );
+tralloc_bool test_tree_free_subtree    ( test_tree_data * tr );
 
-int test_basic ( tralloc_context * ctx );
+int test_tree ( tralloc_context * ctx );
 
 
 #endif
