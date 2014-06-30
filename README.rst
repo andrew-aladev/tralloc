@@ -114,7 +114,7 @@ Source tree includes `format_sources`_ file for Kdevelop IDE.
 Notes about implementation
 --------------------------
 
-    1. `inline workaround`_
+1. `inline workaround`_
 
 
 Language
