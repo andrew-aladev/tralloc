@@ -128,4 +128,4 @@ My English is not perfect, my native language is Belarusian. Feel free to ask me
 .. _gentoo:            https://github.com/andrew-aladev/tralloc/tree/master/gentoo
 .. _format_sources:    https://github.com/andrew-aladev/tralloc/blob/master/format_sources
 .. _test_all:          https://github.com/andrew-aladev/tralloc/blob/threads/test-all.sh
-.. _inline_workaround: https://www.puchuu.com/posts/inline-workaround.html
+.. _inline workaround: https://www.puchuu.com/posts/inline-workaround.html
