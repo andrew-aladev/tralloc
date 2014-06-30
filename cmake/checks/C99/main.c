@@ -1,12 +1,15 @@
+#include <stdbool.h>
 #include <stdlib.h>
+
+// comment
 
 int main ()
 {
-    void * data_1 = malloc ( sizeof ( char ) * 10 );
+    long long int * data_1 = malloc ( sizeof ( long long int ) * 5 );
     if ( data_1 == NULL ) {
         return 1;
     }
-    void * data_2 = calloc ( 1, sizeof ( char ) * 10 );
+    bool * data_2 = calloc ( 1, sizeof ( bool ) * 10 );
     if ( data_2 == NULL ) {
         return 2;
     }
