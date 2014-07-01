@@ -1,6 +1,12 @@
 #include <pthread.h>
 
-void * thread ( void * argument )
+#ifdef __GNUC__
+#    define _UNUSED(x) x __attribute__((__unused__))
+#else
+#    define _UNUSED(x) x
+#endif
+
+void * thread ( void * _UNUSED ( argument ) )
 {
     return NULL;
 }
