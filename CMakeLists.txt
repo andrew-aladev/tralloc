@@ -22,6 +22,7 @@ set (TRALLOC_MAN      true CACHE BOOL "create man")
 set (TRALLOC_TESTS    true CACHE BOOL "build tests")
 set (TRALLOC_EXAMPLES true CACHE BOOL "build examples")
 
+# Use this feature only for release. One big source file is inconvenient for debug.
 set (TRALLOC_COLLECT_SOURCES false CACHE BOOL "collect all .c files in one to make compilation faster")
 
 

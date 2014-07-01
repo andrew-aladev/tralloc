@@ -6,90 +6,90 @@
 #include <tralloc/config.h>
 
 // for common.c
-#define _TRALLOC_COMMON_INCLUDED_FROM_OBJECT
+#define _TRALLOC_INCLUDED_FROM_COMMON_C
 
 // for tree/alloc.c
-#define _TRALLOC_TREE_ALLOC_INCLUDED_FROM_OBJECT
+#define _TRALLOC_INCLUDED_FROM_TREE_ALLOC_C
 
 // for tree/free.c
-#define _TRALLOC_TREE_FREE_INCLUDED_FROM_OBJECT
+#define _TRALLOC_INCLUDED_FROM_TREE_FREE_C
 
 // for helpers/string.c
-#define _TRALLOC_HELPERS_STRING_INCLUDED_FROM_OBJECT
+#define _TRALLOC_INCLUDED_FROM_HELPERS_STRING_C
 
 #if defined(TRALLOC_FILE)
 
-    // for helpers/file.c
-#   define _TRALLOC_HELPERS_FILE_INCLUDED_FROM_OBJECT
+// for helpers/file.c
+#   define _TRALLOC_INCLUDED_FROM_HELPERS_FILE_C
 
 #endif
 
 #if defined(TRALLOC_THREADS)
 
-    // for threads/chunk.c
-#   define _TRALLOC_THREADS_CHUNK_INCLUDED_FROM_OBJECT
+// for threads/chunk.c
+#   define _TRALLOC_INCLUDED_FROM_THREADS_CHUNK_C
 
-    // for threads/mutex.c
-#   define _TRALLOC_THREADS_MUTEX_INCLUDED_FROM_OBJECT
+// for threads/mutex.c
+#   define _TRALLOC_INCLUDED_FROM_THREADS_MUTEX_C
 
-    // for threads/spinlock.c
-#   define _TRALLOC_THREADS_SPINLOCK_INCLUDED_FROM_OBJECT
+// for threads/spinlock.c
+#   define _TRALLOC_INCLUDED_FROM_THREADS_SPINLOCK_C
 
 #endif
 
 #if defined(TRALLOC_LENGTH)
 
-    // for length/chunk.c
-#   define _TRALLOC_LENGTH_CHUNK_INCLUDED_FROM_OBJECT
+// for length/chunk.c
+#   define _TRALLOC_INCLUDED_FROM_LENGTH_CHUNK_C
 
 #endif
 
 #if defined(TRALLOC_DESTRUCTOR)
 
-    // for destructor/chunk.c
-#   define _TRALLOC_DESTRUCTOR_CHUNK_INCLUDED_FROM_OBJECT
+// for destructor/chunk.c
+#   define _TRALLOC_INCLUDED_FROM_DESTRUCTOR_CHUNK_C
 
-    // for destructor/delete.c
-#   define _TRALLOC_DESTRUCTOR_DELETE_INCLUDED_FROM_OBJECT
+// for destructor/delete.c
+#   define _TRALLOC_INCLUDED_FROM_DESTRUCTOR_DELETE_C
 
 #endif
 
 #if defined(TRALLOC_REFERENCE)
 
-    // for reference/chunk.c
-#   define _TRALLOC_REFERENCE_CHUNK_INCLUDED_FROM_OBJECT
+// for reference/chunk.c
+#   define _TRALLOC_INCLUDED_FROM_REFERENCE_CHUNK_C
 
-    // for reference/common.c
-#   define _TRALLOC_REFERENCE_COMMON_INCLUDED_FROM_OBJECT
+// for reference/common.c
+#   define _TRALLOC_INCLUDED_FROM_REFERENCE_COMMON_C
 
-    // for reference/head_chunk.c
-#   define _TRALLOC_REFERENCE_HEAD_CHUNK_INCLUDED_FROM_OBJECT
+// for reference/head_chunk.c
+#   define _TRALLOC_INCLUDED_FROM_REFERENCE_HEAD_CHUNK_C
 
-    // for threads/chunk.c
-#   define _TRALLOC_THREADS_CHUNK_INCLUDED_FROM_OBJECT
+// for threads/chunk.c
+#   define _TRALLOC_INCLUDED_FROM_THREADS_CHUNK_C
 
 #endif
 
 #if defined(TRALLOC_POOL)
 
-    // for pool/chunk.c
-#   define _TRALLOC_POOL_CHUNK_INCLUDED_FROM_OBJECT
+// for pool/chunk.c
+#   define _TRALLOC_INCLUDED_FROM_POOL_CHUNK_C
 
-    // for pool/common.c
-#   define _TRALLOC_POOL_COMMON_INCLUDED_FROM_OBJECT
+// for pool/common.c
+#   define _TRALLOC_INCLUDED_FROM_POOL_COMMON_C
 
-    // for pool/fragment.c
-#   define _TRALLOC_POOL_FRAGMENT_INCLUDED_FROM_OBJECT
+// for pool/fragment.c
+#   define _TRALLOC_INCLUDED_FROM_POOL_FRAGMENT_C
 
-    // for pool/head_chunk.c
-#   define _TRALLOC_POOL_HEAD_CHUNK_INCLUDED_FROM_OBJECT
+// for pool/head_chunk.c
+#   define _TRALLOC_INCLUDED_FROM_POOL_HEAD_CHUNK_C
 
 #endif
 
 #if defined(TRALLOC_UTILS_BUFFER)
 
-    // for utils/buffer.c
-#   define _TRALLOC_UTILS_BUFFER_INCLUDED_FROM_OBJECT
+// for utils/buffer.c
+#   define _TRALLOC_INCLUDED_FROM_UTILS_BUFFER_C
 
 #endif
 
