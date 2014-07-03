@@ -10,7 +10,7 @@
 
 
 tralloc_bool test_tree_alloc_errors ();
-tralloc_bool test_tree_alloc_add    ( test_tree_data * tr );
+tralloc_bool test_tree_alloc_main   ( test_tree_data * tr );
 
 #if defined(TRALLOC_THREADS)
 tralloc_bool test_tree_alloc_threads ( tralloc_context * ctx );

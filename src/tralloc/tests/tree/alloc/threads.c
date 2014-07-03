@@ -7,6 +7,7 @@
 #include <tralloc/tree.h>
 
 
+// Thread creates several contexts on parent.
 static
 void * thread ( void * argument )
 {
@@ -15,7 +16,7 @@ void * thread ( void * argument )
     tralloc_context * parent = argument;
 
     for ( size_t index = 0; index < 20; index ++ ) {
-        result = tralloc_new ( parent, ( tralloc_context ** ) &data, sizeof ( uint8_t ) * index );
+        result = tralloc_new ( parent, ( tralloc_context ** ) &data, sizeof ( uint8_t ) * index * 2 );
         if ( result != 0 ) {
             return ( void * ) ( ( uintptr_t ) result );
         }
@@ -32,13 +33,16 @@ tralloc_bool test_tree_alloc_threads ( tralloc_context * ctx )
     }
 
     void * result;
-    pthread_t thread_1, thread_2;
+    pthread_t thread_1, thread_2, thread_3;
 
+    // This is a competition between 3 threads to create contexts on 1 parent.
     if (
         pthread_create ( &thread_1, NULL, &thread, parent ) != 0 ||
         pthread_create ( &thread_2, NULL, &thread, parent ) != 0 ||
+        pthread_create ( &thread_3, NULL, &thread, parent ) != 0 ||
         pthread_join   ( thread_1, &result ) != 0 || result != 0 ||
-        pthread_join   ( thread_2, &result ) != 0 || result != 0
+        pthread_join   ( thread_2, &result ) != 0 || result != 0 ||
+        pthread_join   ( thread_3, &result ) != 0 || result != 0
     ) {
         return TRALLOC_FALSE;
     }

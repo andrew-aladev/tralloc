@@ -21,6 +21,7 @@ typedef struct test_tree_data_type {
 } test_tree_data;
 
 tralloc_bool test_tree_alloc ( test_tree_data * tr );
+tralloc_bool test_tree_move  ( test_tree_data * tr );
 
 tralloc_bool test_tree_errors          ( tralloc_context * ctx );
 tralloc_bool test_tree_move_and_resize ( test_tree_data * tr );

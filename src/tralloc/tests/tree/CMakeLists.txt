@@ -6,6 +6,7 @@ set (SOURCES
 )
 
 add_subdirectory ("alloc")
+add_subdirectory ("move")
 
 if (${TRALLOC_COLLECT_SOURCES})
     join ("${SOURCES}" " " FILES)
