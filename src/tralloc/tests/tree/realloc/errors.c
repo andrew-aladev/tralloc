@@ -3,29 +3,18 @@
 // tralloc is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TRALLOC_TESTS_TREE_COMMON_H
-#define TRALLOC_TESTS_TREE_COMMON_H
-
-#include <tralloc/types.h>
+#include <tralloc/tests/tree/realloc/common.h>
+#include <tralloc/tree.h>
 
 
-typedef struct test_tree_data_type {
-    uint8_t *         data_1;
-    uint8_t *         data_2;
-    char *            data_3;
-    int *             data_4;
-    size_t *          data_5;
-    float *           data_6;
-    float  *          data_7;
-    tralloc_context * trivium;
-} test_tree_data;
-
-tralloc_bool test_tree_alloc   ( test_tree_data * tr );
-tralloc_bool test_tree_move    ( test_tree_data * tr );
-tralloc_bool test_tree_realloc ( test_tree_data * tr );
-tralloc_bool test_tree_free    ( test_tree_data * tr );
-
-int test_tree ( tralloc_context * ctx );
-
-
-#endif
+tralloc_bool test_tree_realloc_errors ()
+{
+    tralloc_context * empty = NULL;
+    if (
+        tralloc_realloc ( NULL, 0 )   != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL ||
+        tralloc_realloc ( &empty, 0 ) != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL
+    ) {
+        return TRALLOC_FALSE;
+    }
+    return TRALLOC_TRUE;
+}

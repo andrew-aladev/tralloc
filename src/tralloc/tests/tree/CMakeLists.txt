@@ -1,12 +1,11 @@
 set (SOURCES
-    "${CMAKE_CURRENT_SOURCE_DIR}/errors.c"
-    "${CMAKE_CURRENT_SOURCE_DIR}/move_and_resize.c"
-    "${CMAKE_CURRENT_SOURCE_DIR}/free_subtree.c"
     "${CMAKE_CURRENT_SOURCE_DIR}/test.c"
 )
 
 add_subdirectory ("alloc")
 add_subdirectory ("move")
+add_subdirectory ("realloc")
+add_subdirectory ("free")
 
 if (${TRALLOC_COLLECT_SOURCES})
     join ("${SOURCES}" " " FILES)

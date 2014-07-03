@@ -1,0 +1,5 @@
+set (SOURCES ${SOURCES}
+    "${CMAKE_CURRENT_SOURCE_DIR}/errors.c"
+    "${CMAKE_CURRENT_SOURCE_DIR}/main.c"
+    "${CMAKE_CURRENT_SOURCE_DIR}/test.c"
+PARENT_SCOPE)

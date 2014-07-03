@@ -19,20 +19,14 @@ int test_tree ( tralloc_context * ctx )
     if ( !test_tree_move ( tr ) ) {
         return 3;
     }
-    if ( !test_tree_errors ( tr ) ) {
-        tralloc_free ( tr );
+    if ( !test_tree_realloc ( tr ) ) {
         return 4;
     }
-    if ( !test_tree_move_and_resize ( tr ) ) {
-        tralloc_free ( tr );
+    if ( !test_tree_free ( tr ) ) {
         return 5;
     }
-    if ( !test_tree_free_subtree ( tr ) ) {
-        tralloc_free ( tr );
-        return 6;
-    }
     if ( tralloc_free ( tr ) != 0 ) {
-        return 7;
+        return 6;
     }
     return 0;
 }

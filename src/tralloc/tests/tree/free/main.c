@@ -3,11 +3,11 @@
 // tralloc is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
-#include <tralloc/tests/tree/common.h>
+#include <tralloc/tests/tree/free/common.h>
 #include <tralloc/tree.h>
 
 
-tralloc_bool test_tree_free_subtree ( test_tree_data * tr )
+tralloc_bool test_tree_free_main ( test_tree_data * tr )
 {
     if (
         tralloc_free ( tr->data_4 ) != 0 ||
@@ -15,7 +15,7 @@ tralloc_bool test_tree_free_subtree ( test_tree_data * tr )
     ) {
         return TRALLOC_FALSE;
     }
-    
+
     /*
           tree
            |
@@ -24,7 +24,7 @@ tralloc_bool test_tree_free_subtree ( test_tree_data * tr )
         6  2
 
     */
-    
+
     _tralloc_chunk * root_chunk    = _tralloc_get_chunk_from_context ( tr );
     _tralloc_chunk * data_1_chunk  = _tralloc_get_chunk_from_context ( tr->data_1 );
     _tralloc_chunk * data_2_chunk  = _tralloc_get_chunk_from_context ( tr->data_2 );
