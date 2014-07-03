@@ -1,0 +1,13 @@
+set (LOCAL_SOURCES
+    "${CMAKE_CURRENT_SOURCE_DIR}/errors.c"
+    "${CMAKE_CURRENT_SOURCE_DIR}/add.c"
+    "${CMAKE_CURRENT_SOURCE_DIR}/main.c"
+)
+
+if (${TRALLOC_THREADS})
+    set (LOCAL_SOURCES ${LOCAL_SOURCES}
+        "${CMAKE_CURRENT_SOURCE_DIR}/threads.c"
+    )
+endif ()
+
+set (SOURCES ${SOURCES} ${LOCAL_SOURCES} PARENT_SCOPE)

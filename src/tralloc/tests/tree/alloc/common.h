@@ -3,15 +3,18 @@
 // tralloc is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TRALLOC_TESTS_LENGTH_COMMON_H
-#define TRALLOC_TESTS_LENGTH_COMMON_H
+#ifndef TRALLOC_TESTS_TREE_ALLOC_COMMON_H
+#define TRALLOC_TESTS_TREE_ALLOC_COMMON_H
 
-#include <tralloc/types.h>
+#include <tralloc/tests/tree/common.h>
 
 
-tralloc_bool test_length_common ( tralloc_context * ctx );
+tralloc_bool test_tree_alloc_errors ();
+tralloc_bool test_tree_alloc_add    ( test_tree_data * tr );
 
-int test_length ( tralloc_context * ctx );
+#if defined(TRALLOC_THREADS)
+tralloc_bool test_tree_alloc_threads ( tralloc_context * ctx );
+#endif
 
 
 #endif

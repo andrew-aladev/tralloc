@@ -3,8 +3,8 @@
 // tralloc is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TRALLOC_TESTS_TREE_COMMON
-#define TRALLOC_TESTS_TREE_COMMON
+#ifndef TRALLOC_TESTS_TREE_COMMON_H
+#define TRALLOC_TESTS_TREE_COMMON_H
 
 #include <tralloc/types.h>
 
@@ -20,8 +20,9 @@ typedef struct test_tree_data_type {
     tralloc_context * trivium;
 } test_tree_data;
 
+tralloc_bool test_tree_alloc ( test_tree_data * tr );
+
 tralloc_bool test_tree_errors          ( tralloc_context * ctx );
-tralloc_bool test_tree_add             ( test_tree_data * tr );
 tralloc_bool test_tree_move_and_resize ( test_tree_data * tr );
 tralloc_bool test_tree_free_subtree    ( test_tree_data * tr );
 
