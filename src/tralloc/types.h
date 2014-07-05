@@ -226,14 +226,15 @@ typedef struct _tralloc_chunk_type {
 
     // "subtree_used_by_thread", "subtree_usage_status", "children_used_by_thread" and "children_usage_status" will be locked for thread safety by "thread_usage_lock".
     pthread_t subtree_used_by_thread;
-    _tralloc_thread_usage_status subtree_usage_status;
-
     pthread_t children_used_by_thread;
+    _tralloc_thread_usage_status subtree_usage_status;
     _tralloc_thread_usage_status children_usage_status;
-
-    // "children_status_lock" should not be locked for thread safety.
-    // It will be written only in alloc function. Other functions will read it.
     _tralloc_mutex thread_usage_lock;
+
+    // In debug threads mode each chunk have locks without respect to extensions.
+    // Locks from extensions are inactive.
+    _tralloc_mutex subtree_mutex;
+    _tralloc_mutex children_mutex;
 
 #   endif
 

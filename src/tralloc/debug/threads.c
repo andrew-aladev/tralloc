@@ -119,8 +119,12 @@ tralloc_error _tralloc_debug_threads_after_add_chunk ( _tralloc_chunk * chunk )
     chunk->subtree_usage_status  = _TRALLOC_NOT_USED_BY_THREADS;
     chunk->children_usage_status = _TRALLOC_NOT_USED_BY_THREADS;
 
-    tralloc_error result = _tralloc_mutex_new ( &chunk->thread_usage_lock );
-    if ( result != 0 ) {
+    tralloc_error result;
+    if (
+        ( result = _tralloc_mutex_new ( &chunk->thread_usage_lock ) ) != 0 ||
+        ( result = _tralloc_mutex_new ( &chunk->subtree_mutex )     ) != 0 ||
+        ( result = _tralloc_mutex_new ( &chunk->children_mutex )    ) != 0
+    ) {
         return result;
     }
     return 0;
@@ -212,7 +216,22 @@ tralloc_error _tralloc_debug_threads_before_free_subtree ( _tralloc_chunk * chun
 
 tralloc_error _tralloc_debug_threads_before_free_chunk ( _tralloc_chunk * chunk )
 {
-    return _tralloc_mutex_free ( &chunk->thread_usage_lock );
+    tralloc_error error = 0;
+
+    tralloc_error result = _tralloc_mutex_free ( &chunk->thread_usage_lock );
+    if ( result != 0 ) {
+        error = result;
+    }
+    result = _tralloc_mutex_free ( &chunk->subtree_mutex );
+    if ( result != 0 ) {
+        error = result;
+    }
+    result = _tralloc_mutex_free ( &chunk->children_mutex );
+    if ( result != 0 ) {
+        error = result;
+    }
+
+    return error;
 }
 
 tralloc_error _tralloc_debug_threads_before_refuse_to_free_subtree ( _tralloc_chunk * chunk )

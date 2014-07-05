@@ -10,7 +10,7 @@
 tralloc_bool test_tree_alloc ( test_tree_data * tr )
 {
     if (
-        !test_tree_alloc_errors () ||
+        !test_tree_alloc_errors ( tr ) ||
         !test_tree_alloc_main   ( tr )
     ) {
         return TRALLOC_FALSE;

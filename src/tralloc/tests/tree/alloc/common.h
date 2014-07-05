@@ -9,7 +9,7 @@
 #include <tralloc/tests/tree/common.h>
 
 
-tralloc_bool test_tree_alloc_errors ();
+tralloc_bool test_tree_alloc_errors ( tralloc_context * ctx );
 tralloc_bool test_tree_alloc_main   ( test_tree_data * tr );
 
 #if defined(TRALLOC_THREADS)

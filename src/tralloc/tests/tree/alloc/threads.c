@@ -21,8 +21,7 @@ void * thread ( void * argument )
             return ( void * ) ( ( uintptr_t ) result );
         }
     }
-
-    return NULL;
+    return ( void * ) ( ( uintptr_t ) 0 );
 }
 
 tralloc_bool test_tree_alloc_threads ( tralloc_context * ctx )
@@ -40,9 +39,9 @@ tralloc_bool test_tree_alloc_threads ( tralloc_context * ctx )
         pthread_create ( &thread_1, NULL, &thread, parent ) != 0 ||
         pthread_create ( &thread_2, NULL, &thread, parent ) != 0 ||
         pthread_create ( &thread_3, NULL, &thread, parent ) != 0 ||
-        pthread_join   ( thread_1, &result ) != 0 || result != 0 ||
-        pthread_join   ( thread_2, &result ) != 0 || result != 0 ||
-        pthread_join   ( thread_3, &result ) != 0 || result != 0
+        pthread_join   ( thread_1, &result ) != 0 || ( uintptr_t ) result != 0 ||
+        pthread_join   ( thread_2, &result ) != 0 || ( uintptr_t ) result != 0 ||
+        pthread_join   ( thread_3, &result ) != 0 || ( uintptr_t ) result != 0
     ) {
         return TRALLOC_FALSE;
     }

@@ -49,6 +49,7 @@ tralloc_error tralloc_realloc ( tralloc_context ** chunk_context, size_t length 
     tralloc_error _TRALLOC_UNUSED ( result );
 
 #   if defined(TRALLOC_DEBUG)
+    // Debug should care about thread safety of operations with "old_chunk" by itself.
     size_t old_length;
     if (
         ( result = _tralloc_debug_get_length ( old_chunk, &old_length ) ) != 0 ||
@@ -165,6 +166,7 @@ tralloc_error tralloc_realloc ( tralloc_context ** chunk_context, size_t length 
 #       endif
 
 #       if defined(TRALLOC_DEBUG)
+        // Debug should care about thread safety of operations with "old_chunk" by itself.
         return _tralloc_debug_after_resize_chunk ( old_chunk, old_length, length );
 #       endif
 
@@ -191,6 +193,7 @@ tralloc_error tralloc_realloc ( tralloc_context ** chunk_context, size_t length 
         * chunk_context = _tralloc_get_context_from_chunk ( new_chunk );
 
 #       if defined(TRALLOC_DEBUG)
+        // Debug should care about thread safety of operations with "old_chunk" by itself.
         return _tralloc_debug_after_resize_chunk ( new_chunk, old_length, length );
 #       endif
 
