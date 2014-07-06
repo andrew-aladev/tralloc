@@ -6,9 +6,6 @@
 #include <tralloc/tests/tree/move/common.h>
 #include <tralloc/tree.h>
 
-#include <stdlib.h>
-#include <time.h>
-
 
 typedef struct test_tree_move_data_type {
     tralloc_context * parent_1;
@@ -16,6 +13,8 @@ typedef struct test_tree_move_data_type {
     tralloc_context * child_1;
     tralloc_context * child_2;
     tralloc_context * child_3;
+    tralloc_context * child_4;
+    tralloc_context * child_5;
 } test_tree_move_data;
 
 // Thread selects random child and moves it on random parent or NULL.
@@ -27,7 +26,7 @@ void * thread ( void * argument )
     tralloc_context * child;
 
     for ( size_t index = 0; index < 20; index ++ ) {
-        switch ( rand() % 3 ) {
+        switch ( index % 3 ) {
         case 0:
             parent = data->parent_1;
             break;
@@ -39,15 +38,21 @@ void * thread ( void * argument )
             break;
         }
 
-        switch ( rand() % 3 ) {
+        switch ( index % 5 ) {
         case 0:
             child = data->child_1;
             break;
         case 1:
             child = data->child_2;
             break;
-        default:
+        case 2:
             child = data->child_3;
+            break;
+        case 3:
+            child = data->child_4;
+            break;
+        default:
+            child = data->child_5;
             break;
         }
 
@@ -63,13 +68,15 @@ tralloc_bool test_tree_move_threads ( tralloc_context * ctx )
 {
     test_tree_move_data data;
     tralloc_context * parent_1, * parent_2;
-    tralloc_context * child_1, * child_2, * child_3;
+    tralloc_context * child_1, * child_2, * child_3, * child_4, * child_5;
     if (
         tralloc_new_empty_with_extensions ( ctx, &parent_1, TRALLOC_EXTENSION_LOCK_CHILDREN ) != 0 ||
         tralloc_new_empty_with_extensions ( ctx, &parent_2, TRALLOC_EXTENSION_LOCK_CHILDREN ) != 0 ||
         tralloc_new_empty_with_extensions ( NULL, &child_1, TRALLOC_EXTENSION_LOCK_SUBTREE )  != 0 ||
         tralloc_new_empty_with_extensions ( NULL, &child_2, TRALLOC_EXTENSION_LOCK_SUBTREE )  != 0 ||
-        tralloc_new_empty_with_extensions ( NULL, &child_3, TRALLOC_EXTENSION_LOCK_SUBTREE )  != 0
+        tralloc_new_empty_with_extensions ( NULL, &child_3, TRALLOC_EXTENSION_LOCK_SUBTREE )  != 0 ||
+        tralloc_new_empty_with_extensions ( NULL, &child_4, TRALLOC_EXTENSION_LOCK_SUBTREE )  != 0 ||
+        tralloc_new_empty_with_extensions ( NULL, &child_5, TRALLOC_EXTENSION_LOCK_SUBTREE )  != 0
     ) {
         return TRALLOC_FALSE;
     }
@@ -79,13 +86,13 @@ tralloc_bool test_tree_move_threads ( tralloc_context * ctx )
     data.child_1  = child_1;
     data.child_2  = child_2;
     data.child_3  = child_3;
+    data.child_4  = child_4;
+    data.child_5  = child_5;
 
     void * result;
     pthread_t thread_1, thread_2, thread_3;
 
-    srand ( time ( NULL ) );
-
-    // This is a competition between 3 childs to be moved on 2 parents or NULL.
+    // This is a competition between 5 childs to be moved on 2 parents or NULL from 3 threads.
     if (
         pthread_create ( &thread_1, NULL, &thread, &data )  != 0 ||
         pthread_create ( &thread_2, NULL, &thread, &data )  != 0 ||
@@ -101,6 +108,8 @@ tralloc_bool test_tree_move_threads ( tralloc_context * ctx )
         tralloc_free ( child_1 )  != 0 ||
         tralloc_free ( child_2 )  != 0 ||
         tralloc_free ( child_3 )  != 0 ||
+        tralloc_free ( child_4 )  != 0 ||
+        tralloc_free ( child_5 )  != 0 ||
         tralloc_free ( parent_1 ) != 0 ||
         tralloc_free ( parent_2 ) != 0
     ) {
