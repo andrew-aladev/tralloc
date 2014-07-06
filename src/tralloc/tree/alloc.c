@@ -322,7 +322,8 @@ tralloc_error _tralloc_new_with_extensions_with_allocator ( tralloc_context * pa
             result = _tralloc_mutex_lock ( parent_children_mutex );
             if ( result != 0 ) {
                 // It is time to do emergency exit.
-                // Chunk is ready to be freed through standard method.
+                // "chunk->parent" should be freed.
+                // It is ready to be freed through standard method.
                 return _tralloc_free_subtree ( chunk );
             }
         }
@@ -335,11 +336,9 @@ tralloc_error _tralloc_new_with_extensions_with_allocator ( tralloc_context * pa
             result = _tralloc_mutex_unlock ( parent_children_mutex );
             if ( result != 0 ) {
                 // It is time to do emergency exit.
-
-                // "chunk" should be deleted, but it is impossible.
-                // "parent_children_mutex" should be locked before deleting "chunk" from "parent_chunk".
-                // But this mutex is locked, another lock from this thread will create a dead lock.
-                return result;
+                // "chunk->parent" should be freed.
+                // It is ready to be freed through standard method.
+                return _tralloc_free_subtree ( chunk );
             }
         }
 #       endif
@@ -357,7 +356,8 @@ tralloc_error _tralloc_new_with_extensions_with_allocator ( tralloc_context * pa
 
     if ( result != 0 ) {
         // It is time to do emergency exit.
-        // Chunk is ready to be freed through standard method.
+        // "chunk->parent" should be freed.
+        // It is ready to be freed through standard method.
         return _tralloc_free_subtree ( chunk );
     }
 #   endif

@@ -7,7 +7,7 @@
 #include <tralloc/tree.h>
 
 
-typedef struct test_tree_move_data_type {
+typedef struct test_tree_move_threads_data_type {
     tralloc_context * parent_1;
     tralloc_context * parent_2;
     tralloc_context * child_1;
@@ -15,13 +15,13 @@ typedef struct test_tree_move_data_type {
     tralloc_context * child_3;
     tralloc_context * child_4;
     tralloc_context * child_5;
-} test_tree_move_data;
+} test_tree_move_threads_data;
 
 // Thread selects random child and moves it on random parent or NULL.
 static
 void * thread ( void * argument )
 {
-    test_tree_move_data * data = argument;
+    test_tree_move_threads_data * data = argument;
     tralloc_context * parent;
     tralloc_context * child;
 
@@ -66,7 +66,7 @@ void * thread ( void * argument )
 
 tralloc_bool test_tree_move_threads ( tralloc_context * ctx )
 {
-    test_tree_move_data data;
+    test_tree_move_threads_data data;
     tralloc_context * parent_1, * parent_2;
     tralloc_context * child_1, * child_2, * child_3, * child_4, * child_5;
     if (
