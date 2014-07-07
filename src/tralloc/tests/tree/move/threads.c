@@ -19,7 +19,7 @@ typedef struct test_tree_move_threads_data_type {
 
 // Thread selects random child and moves it on random parent or NULL.
 static
-void * thread ( void * argument )
+void * _test_tree_move_threads_thread ( void * argument )
 {
     test_tree_move_threads_data * data = argument;
     tralloc_context * parent;
@@ -94,9 +94,9 @@ tralloc_bool test_tree_move_threads ( tralloc_context * ctx )
 
     // This is a competition between 5 childs to be moved on 2 parents or NULL from 3 threads.
     if (
-        pthread_create ( &thread_1, NULL, &thread, &data )  != 0 ||
-        pthread_create ( &thread_2, NULL, &thread, &data )  != 0 ||
-        pthread_create ( &thread_3, NULL, &thread, &data )  != 0 ||
+        pthread_create ( &thread_1, NULL, &_test_tree_move_threads_thread, &data )  != 0 ||
+        pthread_create ( &thread_2, NULL, &_test_tree_move_threads_thread, &data )  != 0 ||
+        pthread_create ( &thread_3, NULL, &_test_tree_move_threads_thread, &data )  != 0 ||
         pthread_join   ( thread_1, &result ) != 0 || ( uintptr_t ) result != 0 ||
         pthread_join   ( thread_2, &result ) != 0 || ( uintptr_t ) result != 0 ||
         pthread_join   ( thread_3, &result ) != 0 || ( uintptr_t ) result != 0

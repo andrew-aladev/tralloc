@@ -11,7 +11,7 @@
 
 // Thread creates several contexts on parent.
 static
-void * thread ( void * argument )
+void * _test_tree_alloc_errors_thread ( void * argument )
 {
     tralloc_context * ctx = argument;
     tralloc_context * temp;
@@ -42,8 +42,8 @@ tralloc_bool _test_tree_alloc_errors_children ( tralloc_context * ctx )
     // Any of "result_1" or "result_2" will be an error, which means:
     // Parent should have lock of it's children list, if any child can be allocated from different threads.
     if (
-        pthread_create ( &thread_1, NULL, &thread, parent ) != 0 ||
-        pthread_create ( &thread_2, NULL, &thread, parent ) != 0 ||
+        pthread_create ( &thread_1, NULL, &_test_tree_alloc_errors_thread, parent ) != 0 ||
+        pthread_create ( &thread_2, NULL, &_test_tree_alloc_errors_thread, parent ) != 0 ||
         pthread_join   ( thread_1, &result_1 ) != 0 ||
         pthread_join   ( thread_2, &result_2 ) != 0 ||
         (

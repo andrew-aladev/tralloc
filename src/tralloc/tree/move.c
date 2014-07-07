@@ -43,7 +43,7 @@ tralloc_error tralloc_move ( tralloc_context * context, tralloc_context * parent
 
 #   if defined(TRALLOC_DEBUG_THREADS)
     // Locks from extensions are inactive in debug threads mode.
-    have_subtree_mutex = true;
+    have_subtree_mutex = TRALLOC_TRUE;
     subtree_mutex = &chunk->subtree_mutex;
 #   else
     have_subtree_mutex = chunk->extensions & TRALLOC_EXTENSION_LOCK_SUBTREE;
@@ -244,6 +244,7 @@ tralloc_error tralloc_move ( tralloc_context * context, tralloc_context * parent
 
         tralloc_error error = result;
 
+#       if defined(TRALLOC_THREADS)
         if ( have_subtree_mutex ) {
             result = _tralloc_mutex_lock ( subtree_mutex );
             if ( result != 0 ) {
@@ -262,10 +263,12 @@ tralloc_error tralloc_move ( tralloc_context * context, tralloc_context * parent
                 return error;
             }
         }
+#       endif
 
         // "chunk->parent" has been changed, old parent should be reverted.
         _tralloc_attach_chunk ( chunk, old_parent_chunk );
 
+#       if defined(TRALLOC_THREADS)
         if ( have_subtree_mutex ) {
             _tralloc_mutex_unlock ( subtree_mutex );
         }
@@ -275,6 +278,7 @@ tralloc_error tralloc_move ( tralloc_context * context, tralloc_context * parent
         if ( new_parent_have_children_mutex ) {
             _tralloc_mutex_unlock ( new_parent_children_mutex );
         }
+#       endif
 
         return error;
     }
