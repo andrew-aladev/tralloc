@@ -13,12 +13,12 @@
 static
 void * _test_tree_alloc_errors_thread ( void * argument )
 {
-    tralloc_context * ctx = argument;
+    tralloc_context * parent = argument;
     tralloc_context * temp;
     tralloc_error first_error = 0, result;
 
     for ( size_t index = 0; index < 20; index ++ ) {
-        result = tralloc_new ( ctx, &temp, sizeof ( uint8_t ) * index * 2 );
+        result = tralloc_new ( parent, &temp, sizeof ( uint8_t ) * index * 2 );
         if ( result != 0 && first_error == 0 ) {
             first_error = result;
         }
@@ -34,21 +34,24 @@ tralloc_bool _test_tree_alloc_errors_children ( tralloc_context * ctx )
         return TRALLOC_FALSE;
     }
 
-    void * result_1, * result_2;
-    pthread_t thread_1, thread_2;
+    void * result_1, * result_2, * result_3;
+    pthread_t thread_1, thread_2, thread_3;
 
-    // 2 threads try to create several chunks on parent.
+    // 3 threads try to create several chunks on parent.
     // First chunk will be created normally, other will not.
-    // Any of "result_1" or "result_2" will be an error, which means:
+    // Any of "result_1", "result_2" or "result_3" will be an error, which means:
     // Parent should have lock of it's children list, if any child can be allocated from different threads.
     if (
         pthread_create ( &thread_1, NULL, &_test_tree_alloc_errors_thread, parent ) != 0 ||
         pthread_create ( &thread_2, NULL, &_test_tree_alloc_errors_thread, parent ) != 0 ||
+        pthread_create ( &thread_3, NULL, &_test_tree_alloc_errors_thread, parent ) != 0 ||
         pthread_join   ( thread_1, &result_1 ) != 0 ||
         pthread_join   ( thread_2, &result_2 ) != 0 ||
+        pthread_join   ( thread_3, &result_3 ) != 0 ||
         (
             ( tralloc_error ) ( ( uintptr_t ) result_1 ) != TRALLOC_ERROR_NO_CHILDREN_LOCK &&
-            ( tralloc_error ) ( ( uintptr_t ) result_2 ) != TRALLOC_ERROR_NO_CHILDREN_LOCK
+            ( tralloc_error ) ( ( uintptr_t ) result_2 ) != TRALLOC_ERROR_NO_CHILDREN_LOCK &&
+            ( tralloc_error ) ( ( uintptr_t ) result_3 ) != TRALLOC_ERROR_NO_CHILDREN_LOCK
         )
     ) {
         tralloc_free ( parent );
@@ -82,7 +85,7 @@ tralloc_bool test_tree_alloc_errors ( tralloc_context * _TRALLOC_UNUSED ( ctx ) 
     ) {
         return TRALLOC_FALSE;
     }
-
+    
 #   if defined(TRALLOC_DEBUG_THREADS)
     if ( !_test_tree_alloc_errors_children ( ctx ) ) {
         return TRALLOC_FALSE;

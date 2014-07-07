@@ -224,12 +224,12 @@ typedef struct _tralloc_chunk_type {
 
 #   if defined(TRALLOC_DEBUG_THREADS)
 
-    // "subtree_used_by_thread", "subtree_usage_status", "children_used_by_thread" and "children_usage_status" will be locked for thread safety by "thread_usage_lock".
+    // "subtree_used_by_thread", "subtree_usage_status", "children_used_by_thread" and "children_usage_status" will be locked for thread safety by "thread_usage_mutex".
     pthread_t subtree_used_by_thread;
     pthread_t children_used_by_thread;
     _tralloc_thread_usage_status subtree_usage_status;
     _tralloc_thread_usage_status children_usage_status;
-    _tralloc_mutex thread_usage_lock;
+    _tralloc_mutex thread_usage_mutex;
 
     // In debug threads mode each chunk have locks without respect to extensions.
     // Locks from extensions are inactive.

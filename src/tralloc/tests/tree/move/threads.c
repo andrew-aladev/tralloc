@@ -22,8 +22,8 @@ static
 void * _test_tree_move_threads_thread ( void * argument )
 {
     test_tree_move_threads_data * data = argument;
-    tralloc_context * parent;
-    tralloc_context * child;
+    tralloc_error result;
+    tralloc_context * child, * parent;
 
     for ( size_t index = 0; index < 20; index ++ ) {
         switch ( index % 3 ) {
@@ -56,11 +56,12 @@ void * _test_tree_move_threads_thread ( void * argument )
             break;
         }
 
-        tralloc_error result = tralloc_move ( child, parent );
+        result = tralloc_move ( child, parent );
         if ( result != 0 && result != TRALLOC_ERROR_CHILD_HAS_SAME_PARENT ) {
             return ( void * ) ( ( uintptr_t ) result );
         }
     }
+
     return ( void * ) ( ( uintptr_t ) 0 );
 }
 
@@ -94,13 +95,20 @@ tralloc_bool test_tree_move_threads ( tralloc_context * ctx )
 
     // This is a competition between 5 childs to be moved on 2 parents or NULL from 3 threads.
     if (
-        pthread_create ( &thread_1, NULL, &_test_tree_move_threads_thread, &data )  != 0 ||
-        pthread_create ( &thread_2, NULL, &_test_tree_move_threads_thread, &data )  != 0 ||
-        pthread_create ( &thread_3, NULL, &_test_tree_move_threads_thread, &data )  != 0 ||
+        pthread_create ( &thread_1, NULL, &_test_tree_move_threads_thread, &data ) != 0 ||
+        pthread_create ( &thread_2, NULL, &_test_tree_move_threads_thread, &data ) != 0 ||
+        pthread_create ( &thread_3, NULL, &_test_tree_move_threads_thread, &data ) != 0 ||
         pthread_join   ( thread_1, &result ) != 0 || ( uintptr_t ) result != 0 ||
         pthread_join   ( thread_2, &result ) != 0 || ( uintptr_t ) result != 0 ||
         pthread_join   ( thread_3, &result ) != 0 || ( uintptr_t ) result != 0
     ) {
+        tralloc_free ( child_1 );
+        tralloc_free ( child_2 );
+        tralloc_free ( child_3 );
+        tralloc_free ( child_4 );
+        tralloc_free ( child_5 );
+        tralloc_free ( parent_1 );
+        tralloc_free ( parent_2 );
         return TRALLOC_FALSE;
     }
 
@@ -115,5 +123,6 @@ tralloc_bool test_tree_move_threads ( tralloc_context * ctx )
     ) {
         return TRALLOC_FALSE;
     }
+
     return TRALLOC_TRUE;
 }

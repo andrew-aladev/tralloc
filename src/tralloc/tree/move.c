@@ -157,6 +157,7 @@ tralloc_error tralloc_move ( tralloc_context * context, tralloc_context * parent
         result = _tralloc_mutex_unlock ( new_parent_children_mutex );
         if ( result != 0 ) {
             // It is time to do emergency exit.
+            // "new_parent_children_mutex" have locked status.
 
             // "chunk->parent" has been changed, old parent should be reverted.
             _tralloc_attach_chunk ( chunk, old_parent_chunk );
@@ -177,6 +178,7 @@ tralloc_error tralloc_move ( tralloc_context * context, tralloc_context * parent
         result = _tralloc_mutex_unlock ( old_parent_children_mutex );
         if ( result != 0 ) {
             // It is time to do emergency exit.
+            // "old_parent_children_mutex" have locked status.
 
             tralloc_error error = result;
 
@@ -205,6 +207,7 @@ tralloc_error tralloc_move ( tralloc_context * context, tralloc_context * parent
         result = _tralloc_mutex_unlock ( subtree_mutex );
         if ( result != 0 ) {
             // It is time to do emergency exit.
+            // "subtree_mutex" have locked status.
 
             tralloc_error error = result;
 

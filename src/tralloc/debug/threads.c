@@ -17,11 +17,9 @@
 static inline
 tralloc_error _tralloc_check_subtree_lock ( _tralloc_chunk * chunk, pthread_t thread_id )
 {
-    tralloc_error error = 0, result;
-
-    result = _tralloc_mutex_lock ( &chunk->thread_usage_lock );
+    tralloc_error result = _tralloc_mutex_lock ( &chunk->thread_usage_mutex );
     if ( result != 0 ) {
-        error = result;
+        return result;
     }
 
     if ( chunk->subtree_usage_status == _TRALLOC_NOT_USED_BY_THREADS ) {
@@ -47,24 +45,24 @@ tralloc_error _tralloc_check_subtree_lock ( _tralloc_chunk * chunk, pthread_t th
             tralloc_debug_get_string_for_error ( TRALLOC_ERROR_NO_SUBTREE_LOCK )
         );
 #       endif
-        error = TRALLOC_ERROR_NO_SUBTREE_LOCK;
+
+        _tralloc_mutex_unlock ( &chunk->thread_usage_mutex );
+        return TRALLOC_ERROR_NO_SUBTREE_LOCK;
     }
 
-    result = _tralloc_mutex_unlock ( &chunk->thread_usage_lock );
+    result = _tralloc_mutex_unlock ( &chunk->thread_usage_mutex );
     if ( result != 0 ) {
-        error = result;
+        return result;
     }
-    return error;
+    return 0;
 }
 
 static inline
 tralloc_error _tralloc_check_children_lock ( _tralloc_chunk * chunk, pthread_t thread_id )
 {
-    tralloc_error error = 0, result;
-
-    result = _tralloc_mutex_lock ( &chunk->thread_usage_lock );
+    tralloc_error result = _tralloc_mutex_lock ( &chunk->thread_usage_mutex );
     if ( result != 0 ) {
-        error = result;
+        return result;
     }
 
     if ( chunk->children_usage_status == _TRALLOC_NOT_USED_BY_THREADS ) {
@@ -90,14 +88,16 @@ tralloc_error _tralloc_check_children_lock ( _tralloc_chunk * chunk, pthread_t t
             tralloc_debug_get_string_for_error ( TRALLOC_ERROR_NO_CHILDREN_LOCK )
         );
 #       endif
-        error = TRALLOC_ERROR_NO_CHILDREN_LOCK;
+
+        _tralloc_mutex_unlock ( &chunk->thread_usage_mutex );
+        return TRALLOC_ERROR_NO_CHILDREN_LOCK;
     }
 
-    result = _tralloc_mutex_unlock ( &chunk->thread_usage_lock );
+    result = _tralloc_mutex_unlock ( &chunk->thread_usage_mutex );
     if ( result != 0 ) {
-        error = result;
+        return result;
     }
-    return error;
+    return 0;
 }
 
 tralloc_error _tralloc_debug_threads_before_add_chunk ( _tralloc_chunk * parent_chunk, tralloc_extensions _TRALLOC_UNUSED ( extensions ) )
@@ -121,9 +121,9 @@ tralloc_error _tralloc_debug_threads_after_add_chunk ( _tralloc_chunk * chunk )
 
     tralloc_error result;
     if (
-        ( result = _tralloc_mutex_new ( &chunk->thread_usage_lock ) ) != 0 ||
-        ( result = _tralloc_mutex_new ( &chunk->subtree_mutex )     ) != 0 ||
-        ( result = _tralloc_mutex_new ( &chunk->children_mutex )    ) != 0
+        ( result = _tralloc_mutex_new ( &chunk->thread_usage_mutex ) ) != 0 ||
+        ( result = _tralloc_mutex_new ( &chunk->subtree_mutex )      ) != 0 ||
+        ( result = _tralloc_mutex_new ( &chunk->children_mutex )     ) != 0
     ) {
         return result;
     }
@@ -132,14 +132,24 @@ tralloc_error _tralloc_debug_threads_after_add_chunk ( _tralloc_chunk * chunk )
 
 tralloc_error _tralloc_debug_threads_before_move_chunk ( _tralloc_chunk * chunk )
 {
-    tralloc_error result;
+    tralloc_error result = _tralloc_mutex_lock ( &chunk->subtree_mutex );
+    if ( result != 0 ) {
+        return result;
+    }
+
+    _tralloc_chunk * parent_chunk = chunk->parent;
+    result = _tralloc_mutex_unlock ( &chunk->subtree_mutex );
+    if ( result != 0 ) {
+        return result;
+    }
+
     pthread_t thread_id = pthread_self();
 
-    if ( chunk->parent != NULL ) {
-        // "chunk" from "chunk->parent"'s children list wants to process move operation from thread_1.
-        // Other chunk from "chunk->parent"'s children list wants to process other operation from thread_2.
-        // In this case "chunk->parent" should have children lock.
-        result = _tralloc_check_children_lock ( chunk->parent, thread_id );
+    if ( parent_chunk != NULL ) {
+        // "chunk" from "parent_chunk"'s children list wants to process move operation from thread_1.
+        // Other chunk from "parent_chunk"'s children list wants to process other operation from thread_2.
+        // In this case "parent_chunk" should have children lock.
+        result = _tralloc_check_children_lock ( parent_chunk, thread_id );
         if ( result != 0 ) {
             return result;
         }
@@ -152,28 +162,51 @@ tralloc_error _tralloc_debug_threads_before_move_chunk ( _tralloc_chunk * chunk 
 
 tralloc_error _tralloc_debug_threads_after_move_chunk ( _tralloc_chunk * chunk )
 {
-    if ( chunk->parent != NULL ) {
-        // "chunk" from new "chunk->parent"'s children list wants to end move operation from thread_1.
-        // Other chunk from new "chunk->parent"'s children list wants to process other operation from thread_2.
-        // In this case new "chunk->parent" should have children lock.
-        return _tralloc_check_children_lock ( chunk->parent, pthread_self() );
+    tralloc_error result = _tralloc_mutex_lock ( &chunk->subtree_mutex );
+    if ( result != 0 ) {
+        return result;
+    }
+
+    _tralloc_chunk * parent_chunk = chunk->parent;
+    result = _tralloc_mutex_unlock ( &chunk->subtree_mutex );
+    if ( result != 0 ) {
+        return result;
+    }
+
+    if ( parent_chunk != NULL ) {
+        // "chunk" from new "parent_chunk"'s children list wants to end move operation from thread_1.
+        // Other chunk from new "parent_chunk"'s children list wants to process other operation from thread_2.
+        // In this case new "parent_chunk" should have children lock.
+        return _tralloc_check_children_lock ( parent_chunk, pthread_self() );
     }
     return 0;
 }
 
-tralloc_error _tralloc_debug_threads_before_resize_chunk ( _tralloc_chunk * chunk )
+tralloc_error _tralloc_debug_threads_before_resize_chunk ( _tralloc_chunk * _TRALLOC_UNUSED ( chunk ) )
 {
+    /*
     // Resize operation can not take part in threads competition, because it runs in single thread and returns pointer to valid data only after operation.
     // So chunk should not be checked.
 
-    tralloc_error result;
+    _tralloc_mutex * subtree_mutex = &chunk->subtree_mutex;
+    tralloc_error result = _tralloc_mutex_lock ( subtree_mutex );
+    if ( result != 0 ) {
+        return result;
+    }
+
+    _tralloc_chunk * parent_chunk = chunk->parent;
+    result = _tralloc_mutex_unlock ( subtree_mutex );
+    if ( result != 0 ) {
+        return result;
+    }
+
     pthread_t thread_id = pthread_self();
 
-    if ( chunk->parent != NULL ) {
-        // "chunk" from "chunk->parent"'s children list wants to process resize operation from thread_1.
-        // Other chunk from "chunk->parent"'s children list wants to process other operation from thread_2.
-        // In this case "chunk->parent" should have children lock.
-        result = _tralloc_check_children_lock ( chunk->parent, thread_id );
+    if ( parent_chunk != NULL ) {
+        // "chunk" from "parent_chunk"'s children list wants to process resize operation from thread_1.
+        // Other chunk from "parent_chunk"'s children list wants to process other operation from thread_2.
+        // In this case "parent_chunk" should have children lock.
+        result = _tralloc_check_children_lock ( parent_chunk, thread_id );
         if ( result != 0 ) {
             return result;
         }
@@ -183,6 +216,7 @@ tralloc_error _tralloc_debug_threads_before_resize_chunk ( _tralloc_chunk * chun
     // Other chunk from "chunk"'s children list wants to process other operation from thread_2.
     // In this case "parent" of this other chunk can be invalid.
     // So "chunk"'s children should have subtree lock.
+
     _tralloc_chunk * child_chunk = chunk->first_child;
     while ( child_chunk != NULL ) {
         result = _tralloc_check_subtree_lock ( child_chunk, thread_id );
@@ -191,6 +225,7 @@ tralloc_error _tralloc_debug_threads_before_resize_chunk ( _tralloc_chunk * chun
         }
         child_chunk = child_chunk->next;
     }
+    */
 
     return 0;
 }
@@ -205,11 +240,22 @@ tralloc_error _tralloc_debug_threads_before_free_subtree ( _tralloc_chunk * chun
     // Free operation can not take part in threads competition, because pointer will become invalid after this operation.
     // So chunk should not be checked.
 
-    if ( chunk->parent != NULL ) {
-        // "chunk" from "chunk->parent"'s children will be freed from thread_1.
-        // Other chunk from "chunk->parent"'s children list wants to process other operation from thread_2.
-        // In this case "chunk->parent" should have children lock.
-        return _tralloc_check_children_lock ( chunk->parent, pthread_self() );
+    tralloc_error result = _tralloc_mutex_lock ( &chunk->subtree_mutex );
+    if ( result != 0 ) {
+        return result;
+    }
+
+    _tralloc_chunk * parent_chunk = chunk->parent;
+    result = _tralloc_mutex_unlock ( &chunk->subtree_mutex );
+    if ( result != 0 ) {
+        return result;
+    }
+
+    if ( parent_chunk != NULL ) {
+        // "chunk" from "parent_chunk"'s children will be freed from thread_1.
+        // Other chunk from "parent_chunk"'s children list wants to process other operation from thread_2.
+        // In this case "parent_chunk" should have children lock.
+        return _tralloc_check_children_lock ( parent_chunk, pthread_self() );
     }
     return 0;
 }
@@ -218,7 +264,7 @@ tralloc_error _tralloc_debug_threads_before_free_chunk ( _tralloc_chunk * chunk 
 {
     tralloc_error error = 0;
 
-    tralloc_error result = _tralloc_mutex_free ( &chunk->thread_usage_lock );
+    tralloc_error result = _tralloc_mutex_free ( &chunk->thread_usage_mutex );
     if ( result != 0 ) {
         error = result;
     }
