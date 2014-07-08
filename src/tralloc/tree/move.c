@@ -17,6 +17,38 @@
 #endif
 
 
+// There are 2 mutexes from "old_parent_chunk" and "new_parent_chunk", that should be locked before moving "chunk".
+// This situation can create a deadlock:
+//
+//    parent_1   parent_2
+//       |          |
+//    child_1    child_2
+//
+// "thread_1" wants to move "child_1" to "parent_2".
+// "thread_2" wants to move "child_2" to "parent_1".
+//
+// "thread_1" see:
+//     "old_parent_chunk->children_mutex" equals "parent_1->children_mutex"
+//     "new_parent_chunk->children_mutex" equals "parent_2->children_mutex"
+//
+// "thread_2" see:
+//     "old_parent_chunk->children_mutex" equals "parent_2->children_mutex"
+//     "new_parent_chunk->children_mutex" equals "parent_1->children_mutex"
+//
+// Step 1:
+//     "thread_1" locks "old_parent_chunk->children_mutex" => it locks "parent_1->children_mutex"
+//     "thread_2" locks "old_parent_chunk->children_mutex" => it locks "parent_2->children_mutex"
+//
+// Step 2:
+//     "thread_1" is waiting to lock "new_parent_chunk->children_mutex" => "parent_2->children_mutex" becomes a deadlock
+//     "thread_2" is waiting to lock "new_parent_chunk->children_mutex" => "parent_1->children_mutex" becomes a deadlock
+//
+// Move operation do not care about what "children_mutex" will be locked first : parent_1 or parent_2.
+// This situation can be fixed by defining the order of "children_mutex".
+// The pointer of "chunk" is changing only in alloc and realloc functions.
+// These functions can not take part in threads competition, because it runs in single thread and returns pointer to data only after operation.
+// So if pointer "parent_1" is less than "parent_2" - it's "children_mutex" should be locked first.
+
 tralloc_error tralloc_move ( tralloc_context * context, tralloc_context * parent_context )
 {
     if ( context == NULL ) {
@@ -87,24 +119,56 @@ tralloc_error tralloc_move ( tralloc_context * context, tralloc_context * parent
     // "chunk->parent" is going to be changed.
 
 #   if defined(TRALLOC_THREADS)
-    tralloc_bool old_parent_have_children_mutex;
-    _tralloc_mutex * old_parent_children_mutex;
+    tralloc_bool parent_1_have_children_mutex;
+    tralloc_bool parent_2_have_children_mutex;
+    _tralloc_mutex * parent_1_children_mutex;
+    _tralloc_mutex * parent_2_children_mutex;
 
 #   if defined(TRALLOC_DEBUG_THREADS)
     // Locks from extensions are inactive in debug threads mode.
-    old_parent_have_children_mutex = old_parent_chunk != NULL;
-    if ( old_parent_have_children_mutex ) {
-        old_parent_children_mutex = &old_parent_chunk->children_mutex;
+    if ( old_parent_chunk < new_parent_chunk ) {
+        parent_1_have_children_mutex = old_parent_chunk != NULL;
+        if ( parent_1_have_children_mutex ) {
+            parent_1_children_mutex = &old_parent_chunk->children_mutex;
+        }
+        parent_2_have_children_mutex = new_parent_chunk != NULL;
+        if ( parent_2_have_children_mutex ) {
+            parent_2_children_mutex = &new_parent_chunk->children_mutex;
+        }
+    } else {
+        parent_1_have_children_mutex = new_parent_chunk != NULL;
+        if ( parent_1_have_children_mutex ) {
+            parent_1_children_mutex = &new_parent_chunk->children_mutex;
+        }
+        parent_2_have_children_mutex = old_parent_chunk != NULL;
+        if ( parent_2_have_children_mutex ) {
+            parent_2_children_mutex = &old_parent_chunk->children_mutex;
+        }
     }
 #   else
-    old_parent_have_children_mutex = old_parent_chunk != NULL && ( old_parent_chunk->extensions & TRALLOC_EXTENSION_LOCK_CHILDREN );
-    if ( old_parent_have_children_mutex ) {
-        old_parent_children_mutex = _tralloc_get_children_mutex_from_chunk ( old_parent_chunk );
+    if ( old_parent_chunk < new_parent_chunk ) {
+        parent_1_have_children_mutex = old_parent_chunk != NULL && ( old_parent_chunk->extensions & TRALLOC_EXTENSION_LOCK_CHILDREN );
+        if ( parent_1_have_children_mutex ) {
+            parent_1_children_mutex = _tralloc_get_children_mutex_from_chunk ( old_parent_chunk );
+        }
+        parent_2_have_children_mutex = new_parent_chunk != NULL && ( new_parent_chunk->extensions & TRALLOC_EXTENSION_LOCK_CHILDREN );
+        if ( parent_2_have_children_mutex ) {
+            parent_2_children_mutex = _tralloc_get_children_mutex_from_chunk ( new_parent_chunk );
+        }
+    } else {
+        parent_1_have_children_mutex = new_parent_chunk != NULL && ( new_parent_chunk->extensions & TRALLOC_EXTENSION_LOCK_CHILDREN );
+        if ( parent_1_have_children_mutex ) {
+            parent_1_children_mutex = _tralloc_get_children_mutex_from_chunk ( new_parent_chunk );
+        }
+        parent_2_have_children_mutex = old_parent_chunk != NULL && ( old_parent_chunk->extensions & TRALLOC_EXTENSION_LOCK_CHILDREN );
+        if ( parent_2_have_children_mutex ) {
+            parent_2_children_mutex = _tralloc_get_children_mutex_from_chunk ( old_parent_chunk );
+        }
     }
 #   endif
 
-    if ( old_parent_have_children_mutex ) {
-        result = _tralloc_mutex_lock ( old_parent_children_mutex );
+    if ( parent_1_have_children_mutex ) {
+        result = _tralloc_mutex_lock ( parent_1_children_mutex );
         if ( result != 0 ) {
             // It is time to do emergency exit.
 
@@ -116,24 +180,8 @@ tralloc_error tralloc_move ( tralloc_context * context, tralloc_context * parent
         }
     }
 
-    _tralloc_mutex * new_parent_children_mutex;
-    tralloc_bool new_parent_have_children_mutex;
-
-#   if defined(TRALLOC_DEBUG_THREADS)
-    // Locks from extensions are inactive in debug threads mode.
-    new_parent_have_children_mutex = new_parent_chunk != NULL;
-    if ( new_parent_have_children_mutex ) {
-        new_parent_children_mutex = &new_parent_chunk->children_mutex;
-    }
-#   else
-    new_parent_have_children_mutex = new_parent_chunk != NULL && ( new_parent_chunk->extensions & TRALLOC_EXTENSION_LOCK_CHILDREN );
-    if ( new_parent_have_children_mutex ) {
-        new_parent_children_mutex = _tralloc_get_children_mutex_from_chunk ( new_parent_chunk );
-    }
-#   endif
-
-    if ( new_parent_have_children_mutex ) {
-        result = _tralloc_mutex_lock ( new_parent_children_mutex );
+    if ( parent_2_have_children_mutex ) {
+        result = _tralloc_mutex_lock ( parent_2_children_mutex );
         if ( result != 0 ) {
             // It is time to do emergency exit.
 
@@ -141,9 +189,9 @@ tralloc_error tralloc_move ( tralloc_context * context, tralloc_context * parent
             if ( have_subtree_mutex ) {
                 _tralloc_mutex_unlock ( subtree_mutex );
             }
-            // Children mutex of "old_parent_chunk" is locked, it should be unlocked.
-            if ( old_parent_have_children_mutex ) {
-                _tralloc_mutex_unlock ( old_parent_children_mutex );
+            // "parent_1_children_mutex" is locked, it should be unlocked.
+            if ( parent_1_have_children_mutex ) {
+                _tralloc_mutex_unlock ( parent_1_children_mutex );
             }
             return result;
         }
@@ -153,37 +201,37 @@ tralloc_error tralloc_move ( tralloc_context * context, tralloc_context * parent
     _tralloc_attach_chunk ( chunk, new_parent_chunk );
 
 #   if defined(TRALLOC_THREADS)
-    if ( new_parent_have_children_mutex ) {
-        result = _tralloc_mutex_unlock ( new_parent_children_mutex );
+    if ( parent_2_have_children_mutex ) {
+        result = _tralloc_mutex_unlock ( parent_2_children_mutex );
         if ( result != 0 ) {
             // It is time to do emergency exit.
-            // "new_parent_children_mutex" have locked status.
+            // "parent_2_children_mutex" have locked status.
 
             // "chunk->parent" has been changed, old parent should be reverted.
             _tralloc_attach_chunk ( chunk, old_parent_chunk );
 
+            // "parent_1_children_mutex" is locked, it should be unlocked.
+            if ( parent_1_have_children_mutex ) {
+                _tralloc_mutex_unlock ( parent_1_children_mutex );
+            }
             // Subtree mutex of "chunk" is locked, it should be unlocked.
             if ( have_subtree_mutex ) {
                 _tralloc_mutex_unlock ( subtree_mutex );
-            }
-            // Children mutex of "old_parent_chunk" is locked, it should be unlocked.
-            if ( old_parent_have_children_mutex ) {
-                _tralloc_mutex_unlock ( old_parent_children_mutex );
             }
             return result;
         }
     }
 
-    if ( old_parent_have_children_mutex ) {
-        result = _tralloc_mutex_unlock ( old_parent_children_mutex );
+    if ( parent_1_have_children_mutex ) {
+        result = _tralloc_mutex_unlock ( parent_1_children_mutex );
         if ( result != 0 ) {
             // It is time to do emergency exit.
-            // "old_parent_children_mutex" have locked status.
+            // "parent_1_children_mutex" have locked status.
 
             tralloc_error error = result;
 
-            if ( new_parent_have_children_mutex ) {
-                result = _tralloc_mutex_lock ( new_parent_children_mutex );
+            if ( parent_2_have_children_mutex ) {
+                result = _tralloc_mutex_lock ( parent_2_children_mutex );
                 if ( result != 0 ) {
                     return error;
                 }
@@ -192,12 +240,12 @@ tralloc_error tralloc_move ( tralloc_context * context, tralloc_context * parent
             // "chunk->parent" has been changed, old parent should be reverted.
             _tralloc_attach_chunk ( chunk, old_parent_chunk );
 
+            if ( parent_2_have_children_mutex ) {
+                _tralloc_mutex_unlock ( parent_2_children_mutex );
+            }
             // Subtree mutex of "chunk" is locked, it should be unlocked.
             if ( have_subtree_mutex ) {
                 _tralloc_mutex_unlock ( subtree_mutex );
-            }
-            if ( new_parent_have_children_mutex ) {
-                _tralloc_mutex_unlock ( new_parent_children_mutex );
             }
             return error;
         }
@@ -211,14 +259,14 @@ tralloc_error tralloc_move ( tralloc_context * context, tralloc_context * parent
 
             tralloc_error error = result;
 
-            if ( old_parent_have_children_mutex ) {
-                result = _tralloc_mutex_lock ( old_parent_children_mutex );
+            if ( parent_1_have_children_mutex ) {
+                result = _tralloc_mutex_lock ( parent_1_children_mutex );
                 if ( result != 0 ) {
                     return error;
                 }
             }
-            if ( new_parent_have_children_mutex ) {
-                result = _tralloc_mutex_lock ( new_parent_children_mutex );
+            if ( parent_2_have_children_mutex ) {
+                result = _tralloc_mutex_lock ( parent_2_children_mutex );
                 if ( result != 0 ) {
                     return error;
                 }
@@ -227,11 +275,11 @@ tralloc_error tralloc_move ( tralloc_context * context, tralloc_context * parent
             // "chunk->parent" has been changed, old parent should be reverted.
             _tralloc_attach_chunk ( chunk, old_parent_chunk );
 
-            if ( old_parent_have_children_mutex ) {
-                _tralloc_mutex_unlock ( old_parent_children_mutex );
+            if ( parent_2_have_children_mutex ) {
+                _tralloc_mutex_unlock ( parent_2_children_mutex );
             }
-            if ( new_parent_have_children_mutex ) {
-                _tralloc_mutex_unlock ( new_parent_children_mutex );
+            if ( parent_1_have_children_mutex ) {
+                _tralloc_mutex_unlock ( parent_1_children_mutex );
             }
 
             return error;
@@ -254,14 +302,14 @@ tralloc_error tralloc_move ( tralloc_context * context, tralloc_context * parent
                 return error;
             }
         }
-        if ( old_parent_have_children_mutex ) {
-            result = _tralloc_mutex_lock ( old_parent_children_mutex );
+        if ( parent_1_have_children_mutex ) {
+            result = _tralloc_mutex_lock ( parent_1_children_mutex );
             if ( result != 0 ) {
                 return error;
             }
         }
-        if ( new_parent_have_children_mutex ) {
-            result = _tralloc_mutex_lock ( new_parent_children_mutex );
+        if ( parent_2_have_children_mutex ) {
+            result = _tralloc_mutex_lock ( parent_2_children_mutex );
             if ( result != 0 ) {
                 return error;
             }
@@ -275,11 +323,11 @@ tralloc_error tralloc_move ( tralloc_context * context, tralloc_context * parent
         if ( have_subtree_mutex ) {
             _tralloc_mutex_unlock ( subtree_mutex );
         }
-        if ( old_parent_have_children_mutex ) {
-            _tralloc_mutex_unlock ( old_parent_children_mutex );
+        if ( parent_2_have_children_mutex ) {
+            _tralloc_mutex_unlock ( parent_2_children_mutex );
         }
-        if ( new_parent_have_children_mutex ) {
-            _tralloc_mutex_unlock ( new_parent_children_mutex );
+        if ( parent_1_have_children_mutex ) {
+            _tralloc_mutex_unlock ( parent_1_children_mutex );
         }
 #       endif
 
