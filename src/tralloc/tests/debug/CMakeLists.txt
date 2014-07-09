@@ -6,10 +6,6 @@ set (SOURCES
     "${CMAKE_CURRENT_SOURCE_DIR}/test.c"
 )
 
-if (${TRALLOC_THREADS})
-    add_subdirectory ("threads")
-endif ()
-
 if (${TRALLOC_COLLECT_SOURCES})
     join ("${SOURCES}" " " FILES)
     set (SOURCES "${CMAKE_CURRENT_BINARY_DIR}/sources.c")

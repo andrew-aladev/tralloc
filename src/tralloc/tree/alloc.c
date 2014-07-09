@@ -427,7 +427,7 @@ tralloc_error _tralloc_new_with_extensions_with_allocator ( tralloc_context * pa
     if ( result != 0 ) {
         // It is time to do emergency exit.
 
-        tralloc_error error = result;
+        tralloc_error _TRALLOC_UNUSED ( error ) = result;
 
         if ( parent_chunk != NULL ) {
 
@@ -452,6 +452,7 @@ tralloc_error _tralloc_new_with_extensions_with_allocator ( tralloc_context * pa
 #           endif
         }
 
+#       if defined(TRALLOC_THREADS)
         // Subtree mutex of "chunk" has been allocated, it should be freed.
         if ( have_lock_subtree ) {
             _tralloc_mutex_free ( subtree_mutex );
@@ -460,6 +461,7 @@ tralloc_error _tralloc_new_with_extensions_with_allocator ( tralloc_context * pa
         if ( have_lock_children ) {
             _tralloc_mutex_free ( children_mutex );
         }
+#       endif
 
 #       if defined(TRALLOC_DESTRUCTOR)
         // Destructors of "chunk" has been allocated, it should be freed.

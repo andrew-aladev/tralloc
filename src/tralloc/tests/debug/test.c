@@ -6,10 +6,6 @@
 #include <tralloc/tests/debug/common.h>
 #include <tralloc/tree.h>
 
-#if defined(TRALLOC_THREADS)
-#   include <tralloc/tests/debug/threads/common.h>
-#endif
-
 
 int test_debug ( tralloc_context * ctx )
 {
@@ -33,14 +29,6 @@ int test_debug ( tralloc_context * ctx )
         tralloc_free ( root );
         return 5;
     }
-
-#   if defined(TRALLOC_THREADS)
-    if ( !test_debug_threads ( root ) ) {
-        tralloc_free ( root );
-        return 6;
-    }
-#   endif
-
     if ( tralloc_free ( root ) != 0 ) {
         return 7;
     }
