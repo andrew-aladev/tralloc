@@ -3,7 +3,7 @@
 // tralloc is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Lesser Public License for more details.
 // You should have received a copy of the GNU General Lesser Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TRALLOC_HELPERS_FILE_H
+#if !defined ( TRALLOC_HELPERS_FILE_H )
 #define TRALLOC_HELPERS_FILE_H
 
 #include "../macro.h"
@@ -12,7 +12,7 @@
 #include <fcntl.h>
 
 #undef _TRALLOC_INLINE
-#ifdef _TRALLOC_INCLUDED_FROM_HELPERS_FILE_C
+#if defined ( _TRALLOC_INCLUDED_FROM_HELPERS_FILE_C )
 #    define _TRALLOC_INLINE _TRALLOC_INLINE_IN_OBJECT
 #else
 #    define _TRALLOC_INLINE _TRALLOC_INLINE_IN_HEADER

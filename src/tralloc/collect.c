@@ -17,14 +17,14 @@
 // for helpers/string.c
 #define _TRALLOC_INCLUDED_FROM_HELPERS_STRING_C
 
-#if defined(TRALLOC_FILE)
+#if defined ( TRALLOC_FILE )
 
 // for helpers/file.c
 #   define _TRALLOC_INCLUDED_FROM_HELPERS_FILE_C
 
 #endif
 
-#if defined(TRALLOC_THREADS)
+#if defined ( TRALLOC_THREADS )
 
 // for threads/chunk.c
 #   define _TRALLOC_INCLUDED_FROM_THREADS_CHUNK_C
@@ -37,14 +37,14 @@
 
 #endif
 
-#if defined(TRALLOC_LENGTH)
+#if defined ( TRALLOC_LENGTH )
 
 // for length/chunk.c
 #   define _TRALLOC_INCLUDED_FROM_LENGTH_CHUNK_C
 
 #endif
 
-#if defined(TRALLOC_DESTRUCTOR)
+#if defined ( TRALLOC_DESTRUCTOR )
 
 // for destructor/chunk.c
 #   define _TRALLOC_INCLUDED_FROM_DESTRUCTOR_CHUNK_C
@@ -54,7 +54,7 @@
 
 #endif
 
-#if defined(TRALLOC_REFERENCE)
+#if defined ( TRALLOC_REFERENCE )
 
 // for reference/chunk.c
 #   define _TRALLOC_INCLUDED_FROM_REFERENCE_CHUNK_C
@@ -70,7 +70,7 @@
 
 #endif
 
-#if defined(TRALLOC_POOL)
+#if defined ( TRALLOC_POOL )
 
 // for pool/chunk.c
 #   define _TRALLOC_INCLUDED_FROM_POOL_CHUNK_C
@@ -86,7 +86,7 @@
 
 #endif
 
-#if defined(TRALLOC_UTILS_BUFFER)
+#if defined ( TRALLOC_UTILS_BUFFER )
 
 // for utils/buffer.c
 #   define _TRALLOC_INCLUDED_FROM_UTILS_BUFFER_C

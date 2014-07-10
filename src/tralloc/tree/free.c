@@ -7,25 +7,25 @@
 #include <tralloc/tree/free.h>
 #include <tralloc/tree/chunk.h>
 
-#if defined(TRALLOC_DEBUG)
+#if defined ( TRALLOC_DEBUG )
 #   include <tralloc/debug/events.h>
 #endif
 
-#if defined(TRALLOC_THREADS)
+#if defined ( TRALLOC_THREADS )
 #   include <tralloc/threads/chunk.h>
 #   include <tralloc/threads/mutex.h>
 #endif
 
-#if defined(TRALLOC_DESTRUCTOR)
+#if defined ( TRALLOC_DESTRUCTOR )
 #   include <tralloc/destructor/chunk.h>
 #endif
 
-#if defined(TRALLOC_REFERENCE)
+#if defined ( TRALLOC_REFERENCE )
 #   include <tralloc/reference/head_chunk.h>
 #   include <tralloc/reference/chunk.h>
 #endif
 
-#if defined(TRALLOC_POOL)
+#if defined ( TRALLOC_POOL )
 #   include <tralloc/pool/chunk.h>
 #   include <tralloc/pool/head_chunk.h>
 #endif
@@ -37,7 +37,7 @@ static inline
 tralloc_bool _tralloc_can_free_chunk ( _tralloc_chunk * _TRALLOC_UNUSED ( chunk ) )
 {
 
-#   if defined(TRALLOC_REFERENCE)
+#   if defined ( TRALLOC_REFERENCE )
     if ( chunk->extensions & TRALLOC_EXTENSION_REFERENCES ) {
         if ( ! _tralloc_references_can_free_chunk ( chunk ) ) {
             return TRALLOC_FALSE;
@@ -45,7 +45,7 @@ tralloc_bool _tralloc_can_free_chunk ( _tralloc_chunk * _TRALLOC_UNUSED ( chunk 
     }
 #   endif
 
-#   if defined(TRALLOC_POOL)
+#   if defined ( TRALLOC_POOL )
     if ( chunk->extensions & TRALLOC_EXTENSION_POOL ) {
         if ( ! _tralloc_pool_can_free_chunk ( chunk ) ) {
             return TRALLOC_FALSE;
@@ -60,7 +60,7 @@ static inline
 tralloc_bool _tralloc_can_free_chunk_children ( _tralloc_chunk * _TRALLOC_UNUSED ( chunk ) )
 {
 
-#   if defined(TRALLOC_REFERENCE)
+#   if defined ( TRALLOC_REFERENCE )
     if ( chunk->extensions & TRALLOC_EXTENSION_REFERENCES ) {
         if ( ! _tralloc_references_can_free_chunk_children ( chunk ) ) {
             return TRALLOC_FALSE;
@@ -68,7 +68,7 @@ tralloc_bool _tralloc_can_free_chunk_children ( _tralloc_chunk * _TRALLOC_UNUSED
     }
 #   endif
 
-#   if defined(TRALLOC_POOL)
+#   if defined ( TRALLOC_POOL )
     if ( chunk->extensions & TRALLOC_EXTENSION_POOL ) {
         if ( ! _tralloc_pool_can_free_chunk_children ( chunk ) ) {
             return TRALLOC_FALSE;
@@ -85,7 +85,7 @@ tralloc_error _tralloc_free_chunk ( _tralloc_chunk * chunk )
     tralloc_error error = 0, _TRALLOC_UNUSED ( result );
     size_t extensions_length = 0;
 
-#   if defined(TRALLOC_THREADS)
+#   if defined ( TRALLOC_THREADS )
     if ( chunk->extensions & TRALLOC_EXTENSION_LOCK_SUBTREE ) {
         _tralloc_mutex * subtree_mutex = _tralloc_get_subtree_mutex_from_chunk ( chunk );
         result = _tralloc_mutex_free ( subtree_mutex );
@@ -105,13 +105,13 @@ tralloc_error _tralloc_free_chunk ( _tralloc_chunk * chunk )
     }
 #   endif
 
-#   if defined(TRALLOC_LENGTH)
+#   if defined ( TRALLOC_LENGTH )
     if ( chunk->extensions & TRALLOC_EXTENSION_LENGTH ) {
         extensions_length += sizeof ( _tralloc_length );
     }
 #   endif
 
-#   if defined(TRALLOC_DESTRUCTOR)
+#   if defined ( TRALLOC_DESTRUCTOR )
     if ( chunk->extensions & TRALLOC_EXTENSION_DESTRUCTORS ) {
         result = _tralloc_destructors_free_chunk ( chunk );
         if ( result != 0 ) {
@@ -121,7 +121,7 @@ tralloc_error _tralloc_free_chunk ( _tralloc_chunk * chunk )
     }
 #   endif
 
-#   if defined(TRALLOC_REFERENCE)
+#   if defined ( TRALLOC_REFERENCE )
     if ( chunk->extensions & TRALLOC_EXTENSION_REFERENCES ) {
         extensions_length += sizeof ( _tralloc_references );
     }
@@ -134,7 +134,7 @@ tralloc_error _tralloc_free_chunk ( _tralloc_chunk * chunk )
     }
 #   endif
 
-#   if defined(TRALLOC_POOL)
+#   if defined ( TRALLOC_POOL )
     tralloc_bool have_pool_child = chunk->extensions & TRALLOC_EXTENSION_POOL_CHILD;
     if ( chunk->extensions & TRALLOC_EXTENSION_POOL ) {
         extensions_length += sizeof ( _tralloc_pool );
@@ -146,7 +146,7 @@ tralloc_error _tralloc_free_chunk ( _tralloc_chunk * chunk )
     }
 #   endif
 
-#   if defined(TRALLOC_POOL)
+#   if defined ( TRALLOC_POOL )
     if ( have_pool_child ) {
         return error;
     }
@@ -188,7 +188,7 @@ Each subtree, that can't be freed should be detached. (the root chunk of subtree
 
 */
 
-#if defined(TRALLOC_DEBUG)
+#if defined ( TRALLOC_DEBUG )
 
 // Function goes through subtree and call _tralloc_debug_before_free_chunk for each chunk.
 static inline
@@ -354,7 +354,7 @@ tralloc_error _tralloc_subtree_to_vertical_list ( _tralloc_chunk * root_chunk, _
                 next_chunk = next_chunk->next;
                 _tralloc_detach_chunk_silent ( prev_chunk );
 
-#               if defined(TRALLOC_DEBUG)
+#               if defined ( TRALLOC_DEBUG )
                 result = _tralloc_debug_after_refuse_to_free_subtree ( prev_chunk );
                 if ( result != 0 ) {
                     error = result;
@@ -385,7 +385,7 @@ tralloc_error _tralloc_subtree_to_vertical_list ( _tralloc_chunk * root_chunk, _
                 // it should be detached.
                 _tralloc_detach_chunk_silent ( prev_chunk );
 
-#               if defined(TRALLOC_DEBUG)
+#               if defined ( TRALLOC_DEBUG )
                 if ( can_free_chunk_children ) {
                     result = _tralloc_debug_after_refuse_to_free_chunk ( prev_chunk );
                 } else {
@@ -421,7 +421,7 @@ tralloc_error _tralloc_subtree_to_vertical_list ( _tralloc_chunk * root_chunk, _
             // it should be detached.
             _tralloc_detach_chunk_silent ( prev_chunk );
 
-#           if defined(TRALLOC_DEBUG)
+#           if defined ( TRALLOC_DEBUG )
             if ( can_free_chunk_children ) {
                 result = _tralloc_debug_after_refuse_to_free_chunk ( prev_chunk );
             } else {
@@ -442,7 +442,7 @@ tralloc_error _tralloc_free_subtree ( _tralloc_chunk * root_chunk )
 {
     tralloc_error result, error = 0;
 
-#   if defined(TRALLOC_DEBUG)
+#   if defined ( TRALLOC_DEBUG )
     result = _tralloc_before_free_subtree ( root_chunk );
     if ( result != 0 ) {
         error = result;

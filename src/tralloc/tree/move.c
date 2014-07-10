@@ -7,12 +7,12 @@
 #include <tralloc/tree/chunk.h>
 #include <tralloc/common.h>
 
-#if defined(TRALLOC_THREADS)
+#if defined ( TRALLOC_THREADS )
 #   include <tralloc/threads/chunk.h>
 #   include <tralloc/threads/mutex.h>
 #endif
 
-#if defined(TRALLOC_DEBUG)
+#if defined ( TRALLOC_DEBUG )
 #   include <tralloc/debug/events.h>
 #endif
 
@@ -61,7 +61,7 @@ tralloc_error tralloc_move ( tralloc_context * context, tralloc_context * parent
 
     tralloc_error _TRALLOC_UNUSED ( result );
 
-#   if defined(TRALLOC_DEBUG)
+#   if defined ( TRALLOC_DEBUG )
     // Debug should care about thread safety of operations with "chunk" by itself.
     result = _tralloc_debug_before_move_chunk ( chunk );
     if ( result != 0 ) {
@@ -69,11 +69,11 @@ tralloc_error tralloc_move ( tralloc_context * context, tralloc_context * parent
     }
 #   endif
 
-#   if defined(TRALLOC_THREADS)
+#   if defined ( TRALLOC_THREADS )
     tralloc_bool have_subtree_mutex;
     _tralloc_mutex * subtree_mutex;
 
-#   if defined(TRALLOC_DEBUG_THREADS)
+#   if defined ( TRALLOC_DEBUG_THREADS )
     // Locks from extensions are inactive in debug threads mode.
     have_subtree_mutex = TRALLOC_TRUE;
     subtree_mutex = &chunk->subtree_mutex;
@@ -104,7 +104,7 @@ tralloc_error tralloc_move ( tralloc_context * context, tralloc_context * parent
 
     if ( old_parent_chunk == new_parent_chunk ) {
 
-#       if defined(TRALLOC_THREADS)
+#       if defined ( TRALLOC_THREADS )
         // It is time to do emergency exit.
 
         // Subtree mutex of "chunk" is locked, it should be unlocked.
@@ -118,13 +118,13 @@ tralloc_error tralloc_move ( tralloc_context * context, tralloc_context * parent
 
     // "chunk->parent" is going to be changed.
 
-#   if defined(TRALLOC_THREADS)
+#   if defined ( TRALLOC_THREADS )
     tralloc_bool parent_1_have_children_mutex;
     tralloc_bool parent_2_have_children_mutex;
     _tralloc_mutex * parent_1_children_mutex;
     _tralloc_mutex * parent_2_children_mutex;
 
-#   if defined(TRALLOC_DEBUG_THREADS)
+#   if defined ( TRALLOC_DEBUG_THREADS )
     // Locks from extensions are inactive in debug threads mode.
     if ( old_parent_chunk < new_parent_chunk ) {
         parent_1_have_children_mutex = old_parent_chunk != NULL;
@@ -200,7 +200,7 @@ tralloc_error tralloc_move ( tralloc_context * context, tralloc_context * parent
 
     _tralloc_attach_chunk ( chunk, new_parent_chunk );
 
-#   if defined(TRALLOC_THREADS)
+#   if defined ( TRALLOC_THREADS )
     if ( parent_2_have_children_mutex ) {
         result = _tralloc_mutex_unlock ( parent_2_children_mutex );
         if ( result != 0 ) {
@@ -287,7 +287,7 @@ tralloc_error tralloc_move ( tralloc_context * context, tralloc_context * parent
     }
 #   endif
 
-#   if defined(TRALLOC_DEBUG)
+#   if defined ( TRALLOC_DEBUG )
     // Debug should care about thread safety of operations with "chunk" by itself.
     result = _tralloc_debug_after_move_chunk ( chunk, old_parent_chunk );
     if ( result != 0 ) {
@@ -295,7 +295,7 @@ tralloc_error tralloc_move ( tralloc_context * context, tralloc_context * parent
 
         tralloc_error error = result;
 
-#       if defined(TRALLOC_THREADS)
+#       if defined ( TRALLOC_THREADS )
         if ( have_subtree_mutex ) {
             result = _tralloc_mutex_lock ( subtree_mutex );
             if ( result != 0 ) {
@@ -319,7 +319,7 @@ tralloc_error tralloc_move ( tralloc_context * context, tralloc_context * parent
         // "chunk->parent" has been changed, old parent should be reverted.
         _tralloc_attach_chunk ( chunk, old_parent_chunk );
 
-#       if defined(TRALLOC_THREADS)
+#       if defined ( TRALLOC_THREADS )
         if ( have_subtree_mutex ) {
             _tralloc_mutex_unlock ( subtree_mutex );
         }

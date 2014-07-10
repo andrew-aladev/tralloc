@@ -3,7 +3,7 @@
 // tralloc is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Lesser Public License for more details.
 // You should have received a copy of the GNU General Lesser Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TRALLOC_TYPES_H
+#if !defined ( TRALLOC_TYPES_H )
 #define TRALLOC_TYPES_H
 
 #include <stdint.h>
@@ -11,12 +11,12 @@
 
 #include "config.h"
 
-#if defined(TRALLOC_THREADS)
+#if defined ( TRALLOC_THREADS )
 #   include <pthread.h>
 #endif
 
 
-#ifdef TRALLOC_HAVE_BOOL
+#if defined ( TRALLOC_HAVE_BOOL )
 #    include <stdbool.h>
 typedef bool tralloc_bool;
 #    define TRALLOC_TRUE true
@@ -42,19 +42,19 @@ enum {
     TRALLOC_ERROR_CHILD_EQUALS_PARENT,
     TRALLOC_ERROR_CHILD_HAS_SAME_PARENT,
 
-#   if defined(TRALLOC_EXTENSIONS)
+#   if defined ( TRALLOC_EXTENSIONS )
     TRALLOC_ERROR_NO_SUCH_EXTENSION,
 #   endif
 
-#   if defined(TRALLOC_POOL)
+#   if defined ( TRALLOC_POOL )
     TRALLOC_ERROR_POOL_CANT_BE_REALLOCATED,
 #   endif
 
-#   if defined(TRALLOC_UTILS_BUFFER)
+#   if defined ( TRALLOC_UTILS_BUFFER )
     TRALLOC_ERROR_UTILS_BUFFER_OVERFLOW,
 #   endif
 
-#   if defined(TRALLOC_THREADS)
+#   if defined ( TRALLOC_THREADS )
     TRALLOC_ERROR_MUTEX_FAILED,
     TRALLOC_ERROR_SPINLOCK_FAILED,
 
@@ -65,28 +65,28 @@ enum {
 };
 typedef uint8_t tralloc_error;
 
-#if defined(TRALLOC_EXTENSIONS)
+#if defined ( TRALLOC_EXTENSIONS )
 enum {
 
-#   if defined(TRALLOC_LENGTH)
+#   if defined ( TRALLOC_LENGTH )
     TRALLOC_EXTENSION_LENGTH = 1,
 #   endif
 
-#   if defined(TRALLOC_DESTRUCTOR)
+#   if defined ( TRALLOC_DESTRUCTOR )
     TRALLOC_EXTENSION_DESTRUCTORS = 1 << 1,
 #   endif
 
-#   if defined(TRALLOC_REFERENCE)
+#   if defined ( TRALLOC_REFERENCE )
     TRALLOC_EXTENSION_REFERENCE  = 1 << 2,
     TRALLOC_EXTENSION_REFERENCES = 1 << 3,
 #   endif
 
-#   if defined(TRALLOC_POOL)
+#   if defined ( TRALLOC_POOL )
     TRALLOC_EXTENSION_POOL       = 1 << 4,
     TRALLOC_EXTENSION_POOL_CHILD = 1 << 5,
 #   endif
 
-#   if defined(TRALLOC_THREADS)
+#   if defined ( TRALLOC_THREADS )
     TRALLOC_EXTENSION_LOCK_SUBTREE  = 1 << 6,
     TRALLOC_EXTENSION_LOCK_CHILDREN = 1 << 7,
 #   endif
@@ -97,16 +97,16 @@ typedef uint8_t _tralloc_extension;
 
 typedef uint8_t tralloc_extensions;
 
-#if defined(TRALLOC_THREADS)
+#if defined ( TRALLOC_THREADS )
 typedef pthread_mutex_t    _tralloc_mutex;
 typedef pthread_spinlock_t _tralloc_spinlock;
 #endif
 
-#if defined(TRALLOC_LENGTH)
+#if defined ( TRALLOC_LENGTH )
 typedef size_t _tralloc_length;
 #endif
 
-#if defined(TRALLOC_DESTRUCTOR)
+#if defined ( TRALLOC_DESTRUCTOR )
 typedef tralloc_error ( * tralloc_destructor_function ) ( tralloc_context * chunk_context, void * user_data );
 
 typedef struct _tralloc_destructor_type {
@@ -124,7 +124,7 @@ typedef struct _tralloc_destructors_type {
 } _tralloc_destructors;
 #endif
 
-#if defined(TRALLOC_REFERENCE)
+#if defined ( TRALLOC_REFERENCE )
 typedef struct _tralloc_reference_type {
     struct _tralloc_references_type * references;
     struct _tralloc_reference_type * prev;
@@ -141,7 +141,7 @@ typedef struct _tralloc_references_type {
 } _tralloc_references;
 #endif
 
-#if defined(TRALLOC_POOL)
+#if defined ( TRALLOC_POOL )
 // "pool_child" should be the first in the stack of extensions.
 // This slight limitation makes fragment's calculation much easier and descreases the total amount of pool's memory overhead.
 typedef struct _tralloc_pool_child_type {
@@ -176,7 +176,7 @@ typedef struct _tralloc_pool_type {
 } _tralloc_pool;
 #endif
 
-#if defined(TRALLOC_DEBUG_THREADS)
+#if defined ( TRALLOC_DEBUG_THREADS )
 enum {
     _TRALLOC_NOT_USED_BY_THREADS,
     _TRALLOC_USED_BY_SINGLE_THREAD,
@@ -193,13 +193,13 @@ typedef struct _tralloc_chunk_type {
     struct _tralloc_chunk_type * next;
     struct _tralloc_chunk_type * first_child;
 
-#   if defined(TRALLOC_EXTENSIONS)
+#   if defined ( TRALLOC_EXTENSIONS )
     // "extensions" should not be locked for thread safety.
     // It will be written only in alloc function. Other functions will read it.
     tralloc_extensions extensions;
 #   endif
 
-#   if defined(TRALLOC_DEBUG)
+#   if defined ( TRALLOC_DEBUG )
     // "chunk_length" should not be locked for thread safety.
     // It will be written only in alloc function. Other functions will read it.
     size_t chunk_length;
@@ -207,7 +207,7 @@ typedef struct _tralloc_chunk_type {
     // "length" will be locked for thread safety by "length_lock".
     size_t length;
 
-#   if defined(TRALLOC_THREADS)
+#   if defined ( TRALLOC_THREADS )
 
     // "length_lock" should not be locked for thread safety.
     // It will be written only in alloc function. Other functions will read it.
@@ -215,14 +215,14 @@ typedef struct _tralloc_chunk_type {
 
 #   endif
 
-#   if defined(TRALLOC_DEBUG_LOG)
+#   if defined ( TRALLOC_DEBUG_LOG )
     // "initialized_in_file" and "initialized_at_line" should not be locked for thread safety.
     // It will be written only in alloc function. Other functions will read it.
     char * initialized_in_file;
     size_t initialized_at_line;
 #   endif
 
-#   if defined(TRALLOC_DEBUG_THREADS)
+#   if defined ( TRALLOC_DEBUG_THREADS )
 
     // "subtree_used_by_thread", "subtree_usage_status", "children_used_by_thread" and "children_usage_status" will be locked for thread safety by "thread_usage_mutex".
     pthread_t subtree_used_by_thread;

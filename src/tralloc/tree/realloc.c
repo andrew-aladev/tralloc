@@ -7,29 +7,29 @@
 #include <tralloc/tree/chunk.h>
 #include <tralloc/common.h>
 
-#if defined(TRALLOC_DEBUG)
+#if defined ( TRALLOC_DEBUG )
 #   include <tralloc/debug/chunk.h>
 #   include <tralloc/debug/events.h>
 #endif
 
-#if defined(TRALLOC_THREADS)
+#if defined ( TRALLOC_THREADS )
 #   include <tralloc/threads/chunk.h>
 #endif
 
-#if defined(TRALLOC_LENGTH)
+#if defined ( TRALLOC_LENGTH )
 #   include <tralloc/length/chunk.h>
 #endif
 
-#if defined(TRALLOC_DESTRUCTOR)
+#if defined ( TRALLOC_DESTRUCTOR )
 #   include <tralloc/destructor/chunk.h>
 #endif
 
-#if defined(TRALLOC_REFERENCE)
+#if defined ( TRALLOC_REFERENCE )
 #   include <tralloc/reference/head_chunk.h>
 #   include <tralloc/reference/chunk.h>
 #endif
 
-#if defined(TRALLOC_POOL)
+#if defined ( TRALLOC_POOL )
 #   include <tralloc/pool/chunk.h>
 #   include <tralloc/pool/head_chunk.h>
 #endif

@@ -3,21 +3,21 @@
 // tralloc is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Lesser Public License for more details.
 // You should have received a copy of the GNU General Lesser Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TRALLOC_TREE_ALLOC_H
+#if !defined ( TRALLOC_TREE_ALLOC_H )
 #define TRALLOC_TREE_ALLOC_H
 
 #include "../macro.h"
 #include "../types.h"
 
 #undef _TRALLOC_INLINE
-#ifdef _TRALLOC_INCLUDED_FROM_TREE_ALLOC_C
+#if defined ( _TRALLOC_INCLUDED_FROM_TREE_ALLOC_C )
 #    define _TRALLOC_INLINE _TRALLOC_INLINE_IN_OBJECT
 #else
 #    define _TRALLOC_INLINE _TRALLOC_INLINE_IN_HEADER
 #endif
 
 
-#if defined(TRALLOC_DEBUG_LOG)
+#if defined ( TRALLOC_DEBUG_LOG )
 
 tralloc_error _tralloc_debug_log_new_with_extensions ( const char * file, size_t line, tralloc_context * parent_context, tralloc_context ** child_context, tralloc_extensions extensions, size_t length );
 
