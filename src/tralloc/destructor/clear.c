@@ -7,7 +7,7 @@
 #include <tralloc/destructor/chunk.h>
 #include <tralloc/common.h>
 
-#if defined(TRALLOC_DEBUG)
+#if defined ( TRALLOC_DEBUG )
 #   include <tralloc/debug/stats.h>
 #endif
 
@@ -31,7 +31,7 @@ tralloc_error tralloc_clear_destructors ( tralloc_context * chunk_context )
         return 0;
     }
 
-#   if defined(TRALLOC_DEBUG_STATS)
+#   if defined ( TRALLOC_DEBUG_STATS )
     size_t destructors_count = 0;
 #   endif
 
@@ -41,14 +41,14 @@ tralloc_error tralloc_clear_destructors ( tralloc_context * chunk_context )
         free ( destructor );
         destructor = next_destructor;
 
-#       if defined(TRALLOC_DEBUG_STATS)
+#       if defined ( TRALLOC_DEBUG_STATS )
         destructors_count ++;
 #       endif
     }
     destructors->first_destructor = NULL;
     destructors->last_destructor  = NULL;
 
-#   if defined(TRALLOC_DEBUG_STATS)
+#   if defined ( TRALLOC_DEBUG_STATS )
     tralloc_error result = _tralloc_debug_stats_subtract_chunks_overhead_length ( sizeof ( _tralloc_destructor ) * destructors_count );
     if ( result != 0 ) {
         return result;

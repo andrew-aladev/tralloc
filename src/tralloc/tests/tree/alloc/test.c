@@ -16,7 +16,7 @@ tralloc_bool test_tree_alloc ( test_tree_data * tr )
         return TRALLOC_FALSE;
     }
 
-#   if defined(TRALLOC_THREADS)
+#   if defined ( TRALLOC_THREADS )
     if ( !test_tree_alloc_threads ( tr ) ) {
         return TRALLOC_FALSE;
     }

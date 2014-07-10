@@ -12,7 +12,7 @@
 tralloc_bool test_tree_alloc_errors ( tralloc_context * ctx );
 tralloc_bool test_tree_alloc_main   ( test_tree_data * tr );
 
-#if defined(TRALLOC_THREADS)
+#if defined ( TRALLOC_THREADS )
 tralloc_bool test_tree_alloc_threads ( tralloc_context * ctx );
 #endif
 

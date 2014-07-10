@@ -7,29 +7,29 @@
 #include <tralloc/tests/helpers/common.h>
 #include <tralloc/tests/pool/common.h>
 
-#if defined(TRALLOC_DESTRUCTOR)
+#if defined ( TRALLOC_DESTRUCTOR )
 #   include <tralloc/tests/destructor/common.h>
 #endif
 
-#if defined(TRALLOC_DEBUG_CALLBACKS)
+#if defined ( TRALLOC_DEBUG_CALLBACKS )
 #   include <tralloc/tests/debug/common.h>
 #endif
 
-#if defined(TRALLOC_LENGTH)
+#if defined ( TRALLOC_LENGTH )
 #   include <tralloc/tests/length/common.h>
 #endif
 
-#if defined(TRALLOC_REFERENCE)
+#if defined ( TRALLOC_REFERENCE )
 #   include <tralloc/tests/reference/common.h>
 #endif
 
-#if defined(TRALLOC_UTILS)
+#if defined ( TRALLOC_UTILS )
 #   include <tralloc/tests/utils/common.h>
 #endif
 
 #include <tralloc/tree.h>
 
-#if defined(TRALLOC_DEBUG_STATS)
+#if defined ( TRALLOC_DEBUG_STATS )
 #   include <tralloc/debug/stats.h>
 #endif
 
@@ -54,35 +54,35 @@ int main ()
         return result;
     }
 
-#   if defined(TRALLOC_DESTRUCTOR)
+#   if defined ( TRALLOC_DESTRUCTOR )
     result = test_destructor ( pool_data );
     if ( result != 0 ) {
         return result;
     }
 #   endif
 
-#   if defined(TRALLOC_DEBUG_CALLBACKS)
+#   if defined ( TRALLOC_DEBUG_CALLBACKS )
     result = test_debug ( pool_data );
     if ( result != 0 ) {
         return result;
     }
 #   endif
 
-#   if defined(TRALLOC_LENGTH)
+#   if defined ( TRALLOC_LENGTH )
     result = test_length ( pool_data );
     if ( result != 0 ) {
         return result;
     }
 #   endif
 
-#   if defined(TRALLOC_REFERENCE)
+#   if defined ( TRALLOC_REFERENCE )
     result = test_reference ( pool_data );
     if ( result != 0 ) {
         return result;
     }
 #   endif
 
-#   if defined(TRALLOC_UTILS)
+#   if defined ( TRALLOC_UTILS )
     result = test_utils ( pool_data );
     if ( result != 0 ) {
         return result;
@@ -93,7 +93,7 @@ int main ()
         return 254;
     }
 
-#   if defined(TRALLOC_DEBUG_STATS)
+#   if defined ( TRALLOC_DEBUG_STATS )
     size_t length;
     if (
         tralloc_debug_stats_get_chunks_count           ( &length ) != 0 || length != 0 ||

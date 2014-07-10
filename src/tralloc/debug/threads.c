@@ -9,7 +9,7 @@
 
 #include <tralloc/threads/mutex.h>
 
-#if defined(TRALLOC_DEBUG_LOG)
+#if defined ( TRALLOC_DEBUG_LOG )
 #   include <stdio.h>
 #endif
 
@@ -36,7 +36,7 @@ tralloc_error _tralloc_check_subtree_lock ( _tralloc_chunk * chunk, pthread_t th
         chunk->subtree_usage_status == _TRALLOC_USED_BY_MULTIPLE_THREADS &&
         ! ( chunk->extensions & TRALLOC_EXTENSION_LOCK_SUBTREE )
     ) {
-#       if defined(TRALLOC_DEBUG_LOG)
+#       if defined ( TRALLOC_DEBUG_LOG )
         fprintf (
             stderr,
             "%s:%zu error: %s\n",
@@ -79,7 +79,7 @@ tralloc_error _tralloc_check_children_lock ( _tralloc_chunk * chunk, pthread_t t
         chunk->children_usage_status == _TRALLOC_USED_BY_MULTIPLE_THREADS &&
         ! ( chunk->extensions & TRALLOC_EXTENSION_LOCK_CHILDREN )
     ) {
-#       if defined(TRALLOC_DEBUG_LOG)
+#       if defined ( TRALLOC_DEBUG_LOG )
         fprintf (
             stderr,
             "%s:%zu error: %s\n",

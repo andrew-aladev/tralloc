@@ -18,7 +18,7 @@ int test_helpers ( tralloc_context * ctx )
         return 2;
     }
 
-#   if defined(TRALLOC_FILE)
+#   if defined ( TRALLOC_FILE )
     if ( !test_helpers_file ( root ) ) {
         tralloc_free ( root );
         return 3;

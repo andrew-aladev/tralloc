@@ -57,11 +57,11 @@ tralloc_bool test_helpers_file ( tralloc_context * ctx )
     
     mode_t mode = S_IRUSR | S_IWUSR;
     
-#   if defined(S_IRGRP)
+#   if defined ( S_IRGRP )
     mode |= S_IRGRP;
 #   endif
     
-#   if defined(S_IROTH)
+#   if defined ( S_IROTH )
     mode |= S_IROTH;
 #   endif
     

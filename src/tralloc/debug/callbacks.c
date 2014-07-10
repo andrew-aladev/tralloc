@@ -5,12 +5,12 @@
 
 #include <tralloc/debug/callbacks.h>
 
-#if defined(TRALLOC_THREADS)
+#if defined ( TRALLOC_THREADS )
 #   include <tralloc/threads/mutex.h>
 #endif
 
 
-#if defined(TRALLOC_THREADS)
+#if defined ( TRALLOC_THREADS )
 static _tralloc_mutex _tralloc_add_mutex = PTHREAD_MUTEX_INITIALIZER;
 #endif
 
@@ -22,7 +22,7 @@ static tralloc_debug_callback_after_add  _tralloc_after_add_callback  = NULL;
 tralloc_error tralloc_debug_callback_set_add_data ( void * before_add, void * after_add )
 {
 
-#   if defined(TRALLOC_THREADS)
+#   if defined ( TRALLOC_THREADS )
     tralloc_error result = _tralloc_mutex_lock ( &_tralloc_add_mutex );
     if ( result != 0 ) {
         return result;
@@ -32,7 +32,7 @@ tralloc_error tralloc_debug_callback_set_add_data ( void * before_add, void * af
     _tralloc_before_add_data = before_add;
     _tralloc_after_add_data  = after_add;
 
-#   if defined(TRALLOC_THREADS)
+#   if defined ( TRALLOC_THREADS )
     result = _tralloc_mutex_unlock ( &_tralloc_add_mutex );
     if ( result != 0 ) {
         return result;
@@ -45,7 +45,7 @@ tralloc_error tralloc_debug_callback_set_add_data ( void * before_add, void * af
 tralloc_error tralloc_debug_callback_set_add_functions ( tralloc_debug_callback_before_add before_add, tralloc_debug_callback_after_add after_add )
 {
 
-#   if defined(TRALLOC_THREADS)
+#   if defined ( TRALLOC_THREADS )
     tralloc_error result = _tralloc_mutex_lock ( &_tralloc_add_mutex );
     if ( result != 0 ) {
         return result;
@@ -55,7 +55,7 @@ tralloc_error tralloc_debug_callback_set_add_functions ( tralloc_debug_callback_
     _tralloc_before_add_callback = before_add;
     _tralloc_after_add_callback  = after_add;
 
-#   if defined(TRALLOC_THREADS)
+#   if defined ( TRALLOC_THREADS )
     result = _tralloc_mutex_unlock ( &_tralloc_add_mutex );
     if ( result != 0 ) {
         return result;
@@ -68,7 +68,7 @@ tralloc_error tralloc_debug_callback_set_add_functions ( tralloc_debug_callback_
 tralloc_error _tralloc_debug_callback_before_add_chunk ( _tralloc_chunk * parent_chunk, tralloc_extensions extensions, size_t chunk_length, size_t length )
 {
 
-#   if defined(TRALLOC_THREADS)
+#   if defined ( TRALLOC_THREADS )
     tralloc_error result = _tralloc_mutex_lock ( &_tralloc_add_mutex );
     if ( result != 0 ) {
         return result;
@@ -78,7 +78,7 @@ tralloc_error _tralloc_debug_callback_before_add_chunk ( _tralloc_chunk * parent
     void * data = _tralloc_before_add_data;
     tralloc_debug_callback_before_add function = _tralloc_before_add_callback;
 
-#   if defined(TRALLOC_THREADS)
+#   if defined ( TRALLOC_THREADS )
     result = _tralloc_mutex_unlock ( &_tralloc_add_mutex );
     if ( result != 0 ) {
         return result;
@@ -94,7 +94,7 @@ tralloc_error _tralloc_debug_callback_before_add_chunk ( _tralloc_chunk * parent
 tralloc_error _tralloc_debug_callback_after_add_chunk ( _tralloc_chunk * chunk, size_t chunk_length, size_t length )
 {
 
-#   if defined(TRALLOC_THREADS)
+#   if defined ( TRALLOC_THREADS )
     tralloc_error result = _tralloc_mutex_lock ( &_tralloc_add_mutex );
     if ( result != 0 ) {
         return result;
@@ -104,7 +104,7 @@ tralloc_error _tralloc_debug_callback_after_add_chunk ( _tralloc_chunk * chunk, 
     void * data = _tralloc_after_add_data;
     tralloc_debug_callback_after_add function = _tralloc_after_add_callback;
 
-#   if defined(TRALLOC_THREADS)
+#   if defined ( TRALLOC_THREADS )
     result = _tralloc_mutex_unlock ( &_tralloc_add_mutex );
     if ( result != 0 ) {
         return result;
@@ -118,7 +118,7 @@ tralloc_error _tralloc_debug_callback_after_add_chunk ( _tralloc_chunk * chunk, 
 }
 
 
-#if defined(TRALLOC_THREADS)
+#if defined ( TRALLOC_THREADS )
 static _tralloc_mutex _tralloc_resize_mutex = PTHREAD_MUTEX_INITIALIZER;
 #endif
 
@@ -130,7 +130,7 @@ static tralloc_debug_callback_after_resize  _tralloc_after_resize_callback  = NU
 tralloc_error tralloc_debug_callback_set_resize_data ( void * before_resize, void * after_resize )
 {
 
-#   if defined(TRALLOC_THREADS)
+#   if defined ( TRALLOC_THREADS )
     tralloc_error result = _tralloc_mutex_lock ( &_tralloc_resize_mutex );
     if ( result != 0 ) {
         return result;
@@ -140,7 +140,7 @@ tralloc_error tralloc_debug_callback_set_resize_data ( void * before_resize, voi
     _tralloc_before_resize_data = before_resize;
     _tralloc_after_resize_data  = after_resize;
 
-#   if defined(TRALLOC_THREADS)
+#   if defined ( TRALLOC_THREADS )
     result = _tralloc_mutex_unlock ( &_tralloc_resize_mutex );
     if ( result != 0 ) {
         return result;
@@ -153,7 +153,7 @@ tralloc_error tralloc_debug_callback_set_resize_data ( void * before_resize, voi
 tralloc_error tralloc_debug_callback_set_resize_functions ( tralloc_debug_callback_before_resize before_resize, tralloc_debug_callback_after_resize after_resize )
 {
 
-#   if defined(TRALLOC_THREADS)
+#   if defined ( TRALLOC_THREADS )
     tralloc_error result = _tralloc_mutex_lock ( &_tralloc_resize_mutex );
     if ( result != 0 ) {
         return result;
@@ -163,7 +163,7 @@ tralloc_error tralloc_debug_callback_set_resize_functions ( tralloc_debug_callba
     _tralloc_before_resize_callback = before_resize;
     _tralloc_after_resize_callback  = after_resize;
 
-#   if defined(TRALLOC_THREADS)
+#   if defined ( TRALLOC_THREADS )
     result = _tralloc_mutex_unlock ( &_tralloc_resize_mutex );
     if ( result != 0 ) {
         return result;
@@ -176,7 +176,7 @@ tralloc_error tralloc_debug_callback_set_resize_functions ( tralloc_debug_callba
 tralloc_error _tralloc_debug_callback_before_resize_chunk ( _tralloc_chunk * chunk )
 {
 
-#   if defined(TRALLOC_THREADS)
+#   if defined ( TRALLOC_THREADS )
     tralloc_error result = _tralloc_mutex_lock ( &_tralloc_resize_mutex );
     if ( result != 0 ) {
         return result;
@@ -186,7 +186,7 @@ tralloc_error _tralloc_debug_callback_before_resize_chunk ( _tralloc_chunk * chu
     void * data = _tralloc_before_resize_data;
     tralloc_debug_callback_before_resize function = _tralloc_before_resize_callback;
 
-#   if defined(TRALLOC_THREADS)
+#   if defined ( TRALLOC_THREADS )
     result = _tralloc_mutex_unlock ( &_tralloc_resize_mutex );
     if ( result != 0 ) {
         return result;
@@ -202,7 +202,7 @@ tralloc_error _tralloc_debug_callback_before_resize_chunk ( _tralloc_chunk * chu
 tralloc_error _tralloc_debug_callback_after_resize_chunk ( _tralloc_chunk * chunk, size_t old_length )
 {
 
-#   if defined(TRALLOC_THREADS)
+#   if defined ( TRALLOC_THREADS )
     tralloc_error result = _tralloc_mutex_lock ( &_tralloc_resize_mutex );
     if ( result != 0 ) {
         return result;
@@ -212,7 +212,7 @@ tralloc_error _tralloc_debug_callback_after_resize_chunk ( _tralloc_chunk * chun
     void * data = _tralloc_after_resize_data;
     tralloc_debug_callback_after_resize function = _tralloc_after_resize_callback;
 
-#   if defined(TRALLOC_THREADS)
+#   if defined ( TRALLOC_THREADS )
     result = _tralloc_mutex_unlock ( &_tralloc_resize_mutex );
     if ( result != 0 ) {
         return result;
@@ -226,7 +226,7 @@ tralloc_error _tralloc_debug_callback_after_resize_chunk ( _tralloc_chunk * chun
 }
 
 
-#if defined(TRALLOC_THREADS)
+#if defined ( TRALLOC_THREADS )
 static _tralloc_mutex _tralloc_move_mutex = PTHREAD_MUTEX_INITIALIZER;
 #endif
 
@@ -238,7 +238,7 @@ static tralloc_debug_callback_after_move  _tralloc_after_move_callback  = NULL;
 tralloc_error tralloc_debug_callback_set_move_data ( void * before_move, void * after_move )
 {
 
-#   if defined(TRALLOC_THREADS)
+#   if defined ( TRALLOC_THREADS )
     tralloc_error result = _tralloc_mutex_lock ( &_tralloc_move_mutex );
     if ( result != 0 ) {
         return result;
@@ -248,7 +248,7 @@ tralloc_error tralloc_debug_callback_set_move_data ( void * before_move, void * 
     _tralloc_before_move_data = before_move;
     _tralloc_after_move_data  = after_move;
 
-#   if defined(TRALLOC_THREADS)
+#   if defined ( TRALLOC_THREADS )
     result = _tralloc_mutex_unlock ( &_tralloc_move_mutex );
     if ( result != 0 ) {
         return result;
@@ -261,7 +261,7 @@ tralloc_error tralloc_debug_callback_set_move_data ( void * before_move, void * 
 tralloc_error tralloc_debug_callback_set_move_functions ( tralloc_debug_callback_before_move before_move, tralloc_debug_callback_after_move after_move )
 {
 
-#   if defined(TRALLOC_THREADS)
+#   if defined ( TRALLOC_THREADS )
     tralloc_error result = _tralloc_mutex_lock ( &_tralloc_move_mutex );
     if ( result != 0 ) {
         return result;
@@ -271,7 +271,7 @@ tralloc_error tralloc_debug_callback_set_move_functions ( tralloc_debug_callback
     _tralloc_before_move_callback = before_move;
     _tralloc_after_move_callback  = after_move;
 
-#   if defined(TRALLOC_THREADS)
+#   if defined ( TRALLOC_THREADS )
     result = _tralloc_mutex_unlock ( &_tralloc_move_mutex );
     if ( result != 0 ) {
         return result;
@@ -284,7 +284,7 @@ tralloc_error tralloc_debug_callback_set_move_functions ( tralloc_debug_callback
 tralloc_error _tralloc_debug_callback_before_move_chunk ( _tralloc_chunk * chunk )
 {
 
-#   if defined(TRALLOC_THREADS)
+#   if defined ( TRALLOC_THREADS )
     tralloc_error result = _tralloc_mutex_lock ( &_tralloc_move_mutex );
     if ( result != 0 ) {
         return result;
@@ -294,7 +294,7 @@ tralloc_error _tralloc_debug_callback_before_move_chunk ( _tralloc_chunk * chunk
     void * data = _tralloc_before_move_data;
     tralloc_debug_callback_before_move function = _tralloc_before_move_callback;
 
-#   if defined(TRALLOC_THREADS)
+#   if defined ( TRALLOC_THREADS )
     result = _tralloc_mutex_unlock ( &_tralloc_move_mutex );
     if ( result != 0 ) {
         return result;
@@ -310,7 +310,7 @@ tralloc_error _tralloc_debug_callback_before_move_chunk ( _tralloc_chunk * chunk
 tralloc_error _tralloc_debug_callback_after_move_chunk ( _tralloc_chunk * chunk, _tralloc_chunk * old_parent_chunk )
 {
 
-#   if defined(TRALLOC_THREADS)
+#   if defined ( TRALLOC_THREADS )
     tralloc_error result = _tralloc_mutex_lock ( &_tralloc_move_mutex );
     if ( result != 0 ) {
         return result;
@@ -320,7 +320,7 @@ tralloc_error _tralloc_debug_callback_after_move_chunk ( _tralloc_chunk * chunk,
     void * data = _tralloc_after_move_data;
     tralloc_debug_callback_after_move function = _tralloc_after_move_callback;
 
-#   if defined(TRALLOC_THREADS)
+#   if defined ( TRALLOC_THREADS )
     result = _tralloc_mutex_unlock ( &_tralloc_move_mutex );
     if ( result != 0 ) {
         return result;
@@ -334,7 +334,7 @@ tralloc_error _tralloc_debug_callback_after_move_chunk ( _tralloc_chunk * chunk,
 }
 
 
-#if defined(TRALLOC_THREADS)
+#if defined ( TRALLOC_THREADS )
 static _tralloc_mutex _tralloc_free_mutex = PTHREAD_MUTEX_INITIALIZER;
 #endif
 
@@ -363,7 +363,7 @@ tralloc_error tralloc_debug_callback_set_free_data (
 {
     tralloc_error error = 0;
     
-#   if defined(TRALLOC_THREADS)
+#   if defined ( TRALLOC_THREADS )
     tralloc_error result = _tralloc_mutex_lock ( &_tralloc_free_mutex );
     if ( result != 0 ) {
         error = result;
@@ -377,7 +377,7 @@ tralloc_error tralloc_debug_callback_set_free_data (
     _tralloc_before_refuse_to_free_chunk_data   = before_refuse_to_free_chunk;
     _tralloc_after_refuse_to_free_chunk_data    = after_refuse_to_free_chunk;
 
-#   if defined(TRALLOC_THREADS)
+#   if defined ( TRALLOC_THREADS )
     result = _tralloc_mutex_unlock ( &_tralloc_free_mutex );
     if ( result != 0 ) {
         error = result;
@@ -398,7 +398,7 @@ tralloc_error tralloc_debug_callback_set_free_functions (
 {
     tralloc_error error = 0;
     
-#   if defined(TRALLOC_THREADS)
+#   if defined ( TRALLOC_THREADS )
     tralloc_error result = _tralloc_mutex_lock ( &_tralloc_free_mutex );
     if ( result != 0 ) {
         error = result;
@@ -412,7 +412,7 @@ tralloc_error tralloc_debug_callback_set_free_functions (
     _tralloc_before_refuse_to_free_chunk_callback   = before_refuse_to_free_chunk;
     _tralloc_after_refuse_to_free_chunk_callback    = after_refuse_to_free_chunk;
 
-#   if defined(TRALLOC_THREADS)
+#   if defined ( TRALLOC_THREADS )
     result = _tralloc_mutex_unlock ( &_tralloc_free_mutex );
     if ( result != 0 ) {
         error = result;
@@ -426,7 +426,7 @@ tralloc_error _tralloc_debug_callback_before_free_subtree ( _tralloc_chunk * chu
 {
     tralloc_error error = 0, result;
 
-#   if defined(TRALLOC_THREADS)
+#   if defined ( TRALLOC_THREADS )
     result = _tralloc_mutex_lock ( &_tralloc_free_mutex );
     if ( result != 0 ) {
         error = result;
@@ -436,7 +436,7 @@ tralloc_error _tralloc_debug_callback_before_free_subtree ( _tralloc_chunk * chu
     void * data = _tralloc_before_free_subtree_data;
     tralloc_debug_callback_before_free_subtree function = _tralloc_before_free_subtree_callback;
 
-#   if defined(TRALLOC_THREADS)
+#   if defined ( TRALLOC_THREADS )
     result = _tralloc_mutex_unlock ( &_tralloc_free_mutex );
     if ( result != 0 ) {
         error = result;
@@ -456,7 +456,7 @@ tralloc_error _tralloc_debug_callback_before_free_chunk ( _tralloc_chunk * chunk
 {
     tralloc_error error = 0, result;
 
-#   if defined(TRALLOC_THREADS)
+#   if defined ( TRALLOC_THREADS )
     result = _tralloc_mutex_lock ( &_tralloc_free_mutex );
     if ( result != 0 ) {
         error = result;
@@ -466,7 +466,7 @@ tralloc_error _tralloc_debug_callback_before_free_chunk ( _tralloc_chunk * chunk
     void * data = _tralloc_before_free_chunk_data;
     tralloc_debug_callback_before_free_chunk function = _tralloc_before_free_chunk_callback;
 
-#   if defined(TRALLOC_THREADS)
+#   if defined ( TRALLOC_THREADS )
     result = _tralloc_mutex_unlock ( &_tralloc_free_mutex );
     if ( result != 0 ) {
         error = result;
@@ -486,7 +486,7 @@ tralloc_error _tralloc_debug_callback_before_refuse_to_free_subtree ( _tralloc_c
 {
     tralloc_error error = 0, result;
 
-#   if defined(TRALLOC_THREADS)
+#   if defined ( TRALLOC_THREADS )
     result = _tralloc_mutex_lock ( &_tralloc_free_mutex );
     if ( result != 0 ) {
         error = result;
@@ -496,7 +496,7 @@ tralloc_error _tralloc_debug_callback_before_refuse_to_free_subtree ( _tralloc_c
     void * data = _tralloc_before_refuse_to_free_subtree_data;
     tralloc_debug_callback_before_refuse_to_free_subtree function = _tralloc_before_refuse_to_free_subtree_callback;
 
-#   if defined(TRALLOC_THREADS)
+#   if defined ( TRALLOC_THREADS )
     result = _tralloc_mutex_unlock ( &_tralloc_free_mutex );
     if ( result != 0 ) {
         error = result;
@@ -516,7 +516,7 @@ tralloc_error _tralloc_debug_callback_after_refuse_to_free_subtree ( _tralloc_ch
 {
     tralloc_error error = 0, result;
 
-#   if defined(TRALLOC_THREADS)
+#   if defined ( TRALLOC_THREADS )
     result = _tralloc_mutex_lock ( &_tralloc_free_mutex );
     if ( result != 0 ) {
         error = result;
@@ -526,7 +526,7 @@ tralloc_error _tralloc_debug_callback_after_refuse_to_free_subtree ( _tralloc_ch
     void * data = _tralloc_after_refuse_to_free_subtree_data;
     tralloc_debug_callback_after_refuse_to_free_subtree function = _tralloc_after_refuse_to_free_subtree_callback;
 
-#   if defined(TRALLOC_THREADS)
+#   if defined ( TRALLOC_THREADS )
     result = _tralloc_mutex_unlock ( &_tralloc_free_mutex );
     if ( result != 0 ) {
         error = result;
@@ -546,7 +546,7 @@ tralloc_error _tralloc_debug_callback_before_refuse_to_free_chunk ( _tralloc_chu
 {
     tralloc_error error = 0, result;
 
-#   if defined(TRALLOC_THREADS)
+#   if defined ( TRALLOC_THREADS )
     result = _tralloc_mutex_lock ( &_tralloc_free_mutex );
     if ( result != 0 ) {
         error = result;
@@ -556,7 +556,7 @@ tralloc_error _tralloc_debug_callback_before_refuse_to_free_chunk ( _tralloc_chu
     void * data = _tralloc_before_refuse_to_free_chunk_data;
     tralloc_debug_callback_before_refuse_to_free_chunk function = _tralloc_before_refuse_to_free_chunk_callback;
 
-#   if defined(TRALLOC_THREADS)
+#   if defined ( TRALLOC_THREADS )
     result = _tralloc_mutex_unlock ( &_tralloc_free_mutex );
     if ( result != 0 ) {
         error = result;
@@ -576,7 +576,7 @@ tralloc_error _tralloc_debug_callback_after_refuse_to_free_chunk ( _tralloc_chun
 {
     tralloc_error error = 0, result;
 
-#   if defined(TRALLOC_THREADS)
+#   if defined ( TRALLOC_THREADS )
     result = _tralloc_mutex_lock ( &_tralloc_free_mutex );
     if ( result != 0 ) {
         error = result;
@@ -586,7 +586,7 @@ tralloc_error _tralloc_debug_callback_after_refuse_to_free_chunk ( _tralloc_chun
     void * data = _tralloc_after_refuse_to_free_chunk_data;
     tralloc_debug_callback_after_refuse_to_free_chunk function = _tralloc_after_refuse_to_free_chunk_callback;
 
-#   if defined(TRALLOC_THREADS)
+#   if defined ( TRALLOC_THREADS )
     result = _tralloc_mutex_unlock ( &_tralloc_free_mutex );
     if ( result != 0 ) {
         error = result;

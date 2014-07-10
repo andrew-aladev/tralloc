@@ -11,7 +11,7 @@
 
 tralloc_error _tralloc_debug_before_add_chunk ( _tralloc_chunk * parent_chunk, tralloc_extensions extensions, size_t chunk_length, size_t length );
 
-#if defined(TRALLOC_DEBUG_LOG)
+#if defined ( TRALLOC_DEBUG_LOG )
 tralloc_error _tralloc_debug_after_add_chunk ( _tralloc_chunk * chunk, size_t chunk_length, size_t length, const char * file, size_t line );
 #else
 tralloc_error _tralloc_debug_after_add_chunk ( _tralloc_chunk * chunk, size_t chunk_length, size_t length );

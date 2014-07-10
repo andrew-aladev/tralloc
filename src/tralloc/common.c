@@ -14,7 +14,7 @@ size_t tralloc_predict_chunk_length ( tralloc_extensions _TRALLOC_UNUSED ( exten
 {
     size_t offset = 0;
 
-#   if defined(TRALLOC_POOL)
+#   if defined ( TRALLOC_POOL )
     if ( extensions & TRALLOC_EXTENSION_POOL ) {
         offset += sizeof ( _tralloc_pool );
     } else if ( extensions & TRALLOC_EXTENSION_POOL_CHILD ) {
@@ -22,7 +22,7 @@ size_t tralloc_predict_chunk_length ( tralloc_extensions _TRALLOC_UNUSED ( exten
     }
 #   endif
 
-#   if defined(TRALLOC_REFERENCE)
+#   if defined ( TRALLOC_REFERENCE )
     if ( extensions & TRALLOC_EXTENSION_REFERENCES ) {
         offset += sizeof ( _tralloc_references );
     }
@@ -31,19 +31,19 @@ size_t tralloc_predict_chunk_length ( tralloc_extensions _TRALLOC_UNUSED ( exten
     }
 #   endif
 
-#   if defined(TRALLOC_DESTRUCTOR)
+#   if defined ( TRALLOC_DESTRUCTOR )
     if ( extensions & TRALLOC_EXTENSION_DESTRUCTORS ) {
         offset += sizeof ( _tralloc_destructors );
     }
 #   endif
 
-#   if defined(TRALLOC_LENGTH)
+#   if defined ( TRALLOC_LENGTH )
     if ( extensions & TRALLOC_EXTENSION_LENGTH ) {
         offset += sizeof ( _tralloc_length );
     }
 #   endif
 
-#   if defined(TRALLOC_THREADS)
+#   if defined ( TRALLOC_THREADS )
     if ( extensions & TRALLOC_EXTENSION_LOCK_SUBTREE ) {
         offset += sizeof ( _tralloc_mutex );
     }
@@ -56,7 +56,7 @@ size_t tralloc_predict_chunk_length ( tralloc_extensions _TRALLOC_UNUSED ( exten
 }
 
 
-#if defined(TRALLOC_EXTENSIONS)
+#if defined ( TRALLOC_EXTENSIONS )
 
 // Extension is the one bit of the extensions, "extension & extensions" can be false.
 // Function returns offset of the extension's structure from the bottom.
@@ -64,7 +64,7 @@ size_t _tralloc_get_offset_for_extension ( tralloc_extensions extensions, _trall
 {
     size_t offset = 0;
 
-#   if defined(TRALLOC_THREADS)
+#   if defined ( TRALLOC_THREADS )
     if ( extensions & TRALLOC_EXTENSION_LOCK_SUBTREE ) {
         offset += sizeof ( _tralloc_mutex );
     }
@@ -80,7 +80,7 @@ size_t _tralloc_get_offset_for_extension ( tralloc_extensions extensions, _trall
     }
 #   endif
 
-#   if defined(TRALLOC_LENGTH)
+#   if defined ( TRALLOC_LENGTH )
     if ( extensions & TRALLOC_EXTENSION_LENGTH ) {
         offset += sizeof ( _tralloc_length );
     }
@@ -89,7 +89,7 @@ size_t _tralloc_get_offset_for_extension ( tralloc_extensions extensions, _trall
     }
 #   endif
 
-#   if defined(TRALLOC_DESTRUCTOR)
+#   if defined ( TRALLOC_DESTRUCTOR )
     if ( extensions & TRALLOC_EXTENSION_DESTRUCTORS ) {
         offset += sizeof ( _tralloc_destructors );
     }
@@ -98,7 +98,7 @@ size_t _tralloc_get_offset_for_extension ( tralloc_extensions extensions, _trall
     }
 #   endif
 
-#   if defined(TRALLOC_REFERENCE)
+#   if defined ( TRALLOC_REFERENCE )
     // First is reference, than references. It is important.
 
     if ( extensions & TRALLOC_EXTENSION_REFERENCE ) {
@@ -116,7 +116,7 @@ size_t _tralloc_get_offset_for_extension ( tralloc_extensions extensions, _trall
     }
 #   endif
 
-#   if defined(TRALLOC_POOL)
+#   if defined ( TRALLOC_POOL )
     if ( extensions & TRALLOC_EXTENSION_POOL ) {
         offset += sizeof ( _tralloc_pool );
     } else if ( extensions & TRALLOC_EXTENSION_POOL_CHILD ) {

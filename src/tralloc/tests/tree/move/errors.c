@@ -7,7 +7,7 @@
 #include <tralloc/tree.h>
 
 
-#if defined(TRALLOC_DEBUG_THREADS)
+#if defined ( TRALLOC_DEBUG_THREADS )
 
 typedef struct test_tree_move_errors_data_type {
     tralloc_context * parent_1;
@@ -250,7 +250,7 @@ tralloc_bool test_tree_move_errors ( tralloc_context * ctx )
         return TRALLOC_FALSE;
     }
 
-#   if defined(TRALLOC_DEBUG_THREADS)
+#   if defined ( TRALLOC_DEBUG_THREADS )
     if (
         !_test_tree_move_errors_subtree  ( ctx ) ||
         !_test_tree_move_errors_children ( ctx )

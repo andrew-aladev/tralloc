@@ -9,7 +9,7 @@
 #include "../types.h"
 
 
-#if defined(TRALLOC_DEBUG_LOG)
+#if defined ( TRALLOC_DEBUG_LOG )
 const char * tralloc_debug_get_string_for_error ( tralloc_error error );
 #endif
 

@@ -5,7 +5,7 @@
 
 #include <tralloc/tests/destructor/common.h>
 
-#if defined(TRALLOC_DEBUG_STATS)
+#if defined ( TRALLOC_DEBUG_STATS )
 #   include <tralloc/debug/stats.h>
 #endif
 
@@ -17,7 +17,7 @@ int main ()
         return result;
     }
 
-#   if defined(TRALLOC_DEBUG_STATS)
+#   if defined ( TRALLOC_DEBUG_STATS )
     size_t length;
     if (
         tralloc_debug_stats_get_chunks_count           ( &length ) != 0 || length != 0 ||

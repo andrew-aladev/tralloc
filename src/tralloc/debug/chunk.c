@@ -5,7 +5,7 @@
 
 #include <tralloc/debug/chunk.h>
 
-#if defined(TRALLOC_THREADS)
+#if defined ( TRALLOC_THREADS )
 #   include <tralloc/threads/spinlock.h>
 #endif
 
@@ -13,7 +13,7 @@
 tralloc_error _tralloc_debug_get_length ( _tralloc_chunk * chunk, size_t * length )
 {
 
-#   if defined(TRALLOC_THREADS)
+#   if defined ( TRALLOC_THREADS )
     tralloc_error result = _tralloc_spinlock_lock ( &chunk->length_lock );
     if ( result != 0 ) {
         return result;
@@ -22,7 +22,7 @@ tralloc_error _tralloc_debug_get_length ( _tralloc_chunk * chunk, size_t * lengt
 
     * length = chunk->length;
 
-#   if defined(TRALLOC_THREADS)
+#   if defined ( TRALLOC_THREADS )
     result = _tralloc_spinlock_unlock ( &chunk->length_lock );
     if ( result != 0 ) {
         return result;
@@ -35,7 +35,7 @@ tralloc_error _tralloc_debug_get_length ( _tralloc_chunk * chunk, size_t * lengt
 tralloc_error _tralloc_debug_set_length ( _tralloc_chunk * chunk, size_t length )
 {
 
-#   if defined(TRALLOC_THREADS)
+#   if defined ( TRALLOC_THREADS )
     tralloc_error result = _tralloc_spinlock_lock ( &chunk->length_lock );
     if ( result != 0 ) {
         return result;
@@ -44,7 +44,7 @@ tralloc_error _tralloc_debug_set_length ( _tralloc_chunk * chunk, size_t length 
 
     chunk->length = length;
 
-#   if defined(TRALLOC_THREADS)
+#   if defined ( TRALLOC_THREADS )
     result = _tralloc_spinlock_unlock ( &chunk->length_lock );
     if ( result != 0 ) {
         return result;

@@ -7,7 +7,7 @@
 #include <tralloc/tree.h>
 
 
-#if defined(TRALLOC_DEBUG_THREADS)
+#if defined ( TRALLOC_DEBUG_THREADS )
 
 // Thread creates several contexts on parent.
 static
@@ -76,7 +76,7 @@ tralloc_bool test_tree_alloc_errors ( tralloc_context * _TRALLOC_UNUSED ( ctx ) 
         return TRALLOC_FALSE;
     }
 
-#   if defined(TRALLOC_EXTENSIONS)
+#   if defined ( TRALLOC_EXTENSIONS )
 
     if (
         tralloc_new_with_extensions       ( NULL, NULL, 0, 0 ) != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL ||
@@ -86,7 +86,7 @@ tralloc_bool test_tree_alloc_errors ( tralloc_context * _TRALLOC_UNUSED ( ctx ) 
         return TRALLOC_FALSE;
     }
     
-#   if defined(TRALLOC_DEBUG_THREADS)
+#   if defined ( TRALLOC_DEBUG_THREADS )
     if ( !_test_tree_alloc_errors_children ( ctx ) ) {
         return TRALLOC_FALSE;
     }
