@@ -53,6 +53,10 @@ include (CheckLTO)
 check_lto ()
 include (CheckPthread)
 check_pthread ()
+include (CheckPthreadMutex)
+check_pthread_mutex ()
+include (CheckPthreadSpinlock)
+check_pthread_spinlock ()
 
 find_package (Asciidoc)
 
