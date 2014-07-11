@@ -8,7 +8,6 @@
 #include <tralloc/common.h>
 
 #if defined ( TRALLOC_DEBUG )
-#   include <tralloc/debug/chunk.h>
 #   include <tralloc/debug/events.h>
 #endif
 
@@ -49,12 +48,11 @@ tralloc_error tralloc_realloc ( tralloc_context ** chunk_context, size_t length 
     tralloc_error _TRALLOC_UNUSED ( result );
 
 #   if defined ( TRALLOC_DEBUG )
+    size_t old_length = old_chunk->length;
+
     // Debug should care about thread safety of operations with "old_chunk" by itself.
-    size_t old_length;
-    if (
-        ( result = _tralloc_debug_get_length ( old_chunk, &old_length ) ) != 0 ||
-        ( result = _tralloc_debug_before_resize_chunk ( old_chunk ) )     != 0
-    ) {
+    result = _tralloc_debug_before_resize_chunk ( old_chunk );
+    if ( result != 0 ) {
         return result;
     }
 #   endif
@@ -201,3 +199,4 @@ tralloc_error tralloc_realloc ( tralloc_context ** chunk_context, size_t length 
 
     return 0;
 }
+

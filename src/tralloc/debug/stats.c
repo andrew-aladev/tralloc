@@ -4,7 +4,6 @@
 // You should have received a copy of the GNU General Lesser Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
 #include <tralloc/debug/stats.h>
-#include <tralloc/debug/chunk.h>
 
 #if defined ( TRALLOC_THREADS )
 #   include <tralloc/threads/mutex.h>
@@ -258,7 +257,6 @@ tralloc_error _tralloc_debug_stats_after_resize_chunk ( size_t old_length, size_
 tralloc_error _tralloc_debug_stats_before_free_chunk ( _tralloc_chunk * chunk )
 {
     tralloc_error error = 0, result;
-    size_t length;
 
     result = _tralloc_subtract_chunks_count ( 1 );
     if ( result != 0 ) {
@@ -270,12 +268,7 @@ tralloc_error _tralloc_debug_stats_before_free_chunk ( _tralloc_chunk * chunk )
         error = result;
     }
 
-    result = _tralloc_debug_get_length ( chunk, &length );
-    if ( result != 0 ) {
-        error = result;
-    }
-
-    result = _tralloc_subtract_chunks_length ( length );
+    result = _tralloc_subtract_chunks_length ( chunk->length );
     if ( result != 0 ) {
         error = result;
     }

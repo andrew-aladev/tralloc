@@ -4,12 +4,7 @@
 // You should have received a copy of the GNU General Lesser Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
 #include <tralloc/debug/events.h>
-#include <tralloc/debug/chunk.h>
 #include <tralloc/macro.h>
-
-#if defined ( TRALLOC_THREADS )
-#   include <tralloc/threads/spinlock.h>
-#endif
 
 #if defined ( TRALLOC_DEBUG_STATS )
 #   include <tralloc/debug/stats.h>
@@ -54,17 +49,10 @@ tralloc_error _tralloc_debug_after_add_chunk ( _tralloc_chunk * chunk, size_t ch
 tralloc_error _tralloc_debug_after_add_chunk ( _tralloc_chunk * chunk, size_t chunk_length, size_t length )
 #endif
 {
+    tralloc_error _TRALLOC_UNUSED ( result );
+    
     chunk->chunk_length = chunk_length;
     chunk->length       = length;
-
-    tralloc_error result;
-
-#   if defined ( TRALLOC_THREADS )
-    result = _tralloc_spinlock_new ( &chunk->length_lock );
-    if ( result != 0 ) {
-        return result;
-    }
-#   endif
 
 #   if defined ( TRALLOC_DEBUG_LOG )
     chunk->initialized_in_file = strdup ( file );
@@ -136,15 +124,14 @@ tralloc_error _tralloc_debug_before_resize_chunk ( _tralloc_chunk * _TRALLOC_UNU
 
 tralloc_error _tralloc_debug_after_resize_chunk ( _tralloc_chunk * chunk, size_t old_length, size_t length )
 {
-    tralloc_error result = _tralloc_debug_set_length ( chunk, length );
-    if ( result != 0 ) {
-        return result;
-    }
+    tralloc_error _TRALLOC_UNUSED ( result );
+    
+    chunk->length = length;
 
 #   if defined ( TRALLOC_DEBUG_THREADS )
     result = _tralloc_debug_threads_after_resize_chunk ( chunk );
     if ( result != 0 ) {
-        _tralloc_debug_set_length ( chunk, old_length );
+        chunk->length = old_length;
         return result;
     }
 #   endif
@@ -152,7 +139,7 @@ tralloc_error _tralloc_debug_after_resize_chunk ( _tralloc_chunk * chunk, size_t
 #   if defined ( TRALLOC_DEBUG_STATS )
     result = _tralloc_debug_stats_after_resize_chunk ( old_length, length );
     if ( result != 0 ) {
-        _tralloc_debug_set_length ( chunk, old_length );
+        chunk->length = old_length;
         return result;
     }
 #   endif
@@ -160,7 +147,7 @@ tralloc_error _tralloc_debug_after_resize_chunk ( _tralloc_chunk * chunk, size_t
 #   if defined ( TRALLOC_DEBUG_CALLBACKS )
     result = _tralloc_debug_callback_after_resize_chunk ( chunk, old_length );
     if ( result != 0 ) {
-        _tralloc_debug_set_length ( chunk, old_length );
+        chunk->length = old_length;
         return result;
     }
 #   endif
@@ -259,13 +246,6 @@ tralloc_error _tralloc_debug_before_free_chunk ( _tralloc_chunk * chunk )
 #   if defined ( TRALLOC_DEBUG_LOG )
     if ( chunk->initialized_in_file != NULL ) {
         free ( chunk->initialized_in_file );
-    }
-#   endif
-
-#   if defined ( TRALLOC_THREADS )
-    result = _tralloc_spinlock_free ( &chunk->length_lock );
-    if ( result != 0 ) {
-        error = result;
     }
 #   endif
 

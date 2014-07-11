@@ -30,10 +30,14 @@
 #   define _TRALLOC_INCLUDED_FROM_THREADS_CHUNK_C
 
 // for threads/mutex.c
-#   define _TRALLOC_INCLUDED_FROM_THREADS_MUTEX_C
+#   if defined ( TRALLOC_HAVE_PTHREAD_MUTEX )
+#       define _TRALLOC_INCLUDED_FROM_THREADS_MUTEX_C
+#   endif
 
 // for threads/spinlock.c
-#   define _TRALLOC_INCLUDED_FROM_THREADS_SPINLOCK_C
+#   if defined ( TRALLOC_HAVE_PTHREAD_SPINLOCK )
+#       define _TRALLOC_INCLUDED_FROM_THREADS_SPINLOCK_C
+#   endif
 
 #endif
 
