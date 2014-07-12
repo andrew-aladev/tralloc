@@ -14,7 +14,7 @@ Thread safety.
 Supported platforms
 -------------------
 
-GNU/Linux, GNU/Hurd and microcontrollers are supported. Cygwin and MinGW are not supported but it works.
+Posix systems are supported.
 
 
 Debug build
