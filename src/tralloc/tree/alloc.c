@@ -14,7 +14,7 @@
 
 #if defined ( TRALLOC_THREADS )
 #   include <tralloc/threads/chunk.h>
-#   include <tralloc/threads/mutex.h>
+#   include <tralloc/threads/lock.h>
 #endif
 
 #if defined ( TRALLOC_LENGTH )
@@ -86,48 +86,24 @@ tralloc_error _tralloc_new_with_extensions_with_allocator ( tralloc_context * pa
         parent_chunk = _tralloc_get_chunk_from_context ( parent_context );
     }
 
-    size_t extensions_length = 0;
-
 #   if defined ( TRALLOC_THREADS )
-    // Chunk can have both "TRALLOC_EXTENSION_LOCK_SUBTREE" and "TRALLOC_EXTENSION_LOCK_CHILDREN".
-
-    tralloc_bool have_lock_subtree = extensions & TRALLOC_EXTENSION_LOCK_SUBTREE;
-    if ( have_lock_subtree ) {
-        extensions_length += sizeof ( _tralloc_mutex );
-    }
-
-    tralloc_bool have_lock_children = extensions & TRALLOC_EXTENSION_LOCK_CHILDREN;
-    if ( have_lock_children ) {
-        extensions_length += sizeof ( _tralloc_mutex );
-    }
+    tralloc_bool have_subtree_lock  = extensions & TRALLOC_EXTENSION_LOCK_SUBTREE;
+    tralloc_bool have_children_lock = extensions & TRALLOC_EXTENSION_LOCK_CHILDREN;
 #   endif
 
 #   if defined ( TRALLOC_LENGTH )
     tralloc_bool have_length = extensions & TRALLOC_EXTENSION_LENGTH;
-    if ( have_length ) {
-        extensions_length += sizeof ( _tralloc_length );
-    }
 #   endif
 
 #   if defined ( TRALLOC_DESTRUCTOR )
     tralloc_bool have_destructors = extensions & TRALLOC_EXTENSION_DESTRUCTORS;
-    if ( have_destructors ) {
-        extensions_length += sizeof ( _tralloc_destructors );
-    }
 #   endif
 
 #   if defined ( TRALLOC_REFERENCE )
     // Chunk can have both "TRALLOC_EXTENSION_REFERENCES" and "TRALLOC_EXTENSION_REFERENCE".
 
     tralloc_bool have_references = extensions & TRALLOC_EXTENSION_REFERENCES;
-    if ( have_references ) {
-        extensions_length += sizeof ( _tralloc_references );
-    }
-
-    tralloc_bool have_reference = extensions & TRALLOC_EXTENSION_REFERENCE;
-    if ( have_reference ) {
-        extensions_length += sizeof ( _tralloc_reference );
-    }
+    tralloc_bool have_reference  = extensions & TRALLOC_EXTENSION_REFERENCE;
 #   endif
 
 #   if defined ( TRALLOC_POOL )
@@ -139,17 +115,15 @@ tralloc_error _tralloc_new_with_extensions_with_allocator ( tralloc_context * pa
     tralloc_bool have_pool_child;
 
     if ( have_pool ) {
-        have_pool_child   = TRALLOC_FALSE;
-        extensions        &= ~ ( TRALLOC_EXTENSION_POOL_CHILD );
-        extensions_length += sizeof ( _tralloc_pool );
+        have_pool_child = TRALLOC_FALSE;
+        extensions      &= ~ ( TRALLOC_EXTENSION_POOL_CHILD );
     } else {
         if (
             parent_chunk != NULL &&
             ( parent_pool = _tralloc_pool_child_get_pool_from_chunk ( parent_chunk ) ) != NULL
         ) {
-            have_pool_child   = TRALLOC_TRUE;
-            extensions        |= TRALLOC_EXTENSION_POOL_CHILD;
-            extensions_length += sizeof ( _tralloc_pool_child );
+            have_pool_child = TRALLOC_TRUE;
+            extensions      |= TRALLOC_EXTENSION_POOL_CHILD;
         } else {
             have_pool_child = TRALLOC_FALSE;
             extensions      &= ~ ( TRALLOC_EXTENSION_POOL_CHILD );
@@ -157,8 +131,9 @@ tralloc_error _tralloc_new_with_extensions_with_allocator ( tralloc_context * pa
     }
 #   endif
 
-    size_t chunk_length = sizeof ( _tralloc_chunk ) + extensions_length;
-    size_t total_length = chunk_length + length;
+    size_t extensions_length = _tralloc_get_extensions_length ( extensions );
+    size_t chunk_length      = sizeof ( _tralloc_chunk ) + extensions_length;
+    size_t total_length      = chunk_length + length;
 
 #   if defined ( TRALLOC_POOL )
     if ( have_pool_child ) {
@@ -210,23 +185,25 @@ tralloc_error _tralloc_new_with_extensions_with_allocator ( tralloc_context * pa
 #   endif
 
 #   if defined ( TRALLOC_POOL )
+    _tralloc_pool_child * pool_child;
     if ( have_pool_child ) {
-        _tralloc_pool_child_new_chunk ( chunk, parent_pool, total_length, prev_pool_child, next_pool_child );
+        pool_child = _tralloc_get_pool_child_from_chunk ( chunk );
+        _tralloc_new_pool_child ( pool_child, parent_pool, total_length, prev_pool_child, next_pool_child );
     }
 #   endif
 
 #   if defined ( TRALLOC_THREADS )
-    _tralloc_mutex * subtree_mutex;
-    if ( have_lock_subtree ) {
-        subtree_mutex = _tralloc_get_subtree_mutex_from_chunk ( chunk );
-        result = _tralloc_mutex_new ( subtree_mutex );
+    void * subtree_lock;
+    if ( have_subtree_lock ) {
+        subtree_lock = _tralloc_get_subtree_lock_from_chunk ( chunk );
+        result = _tralloc_new_subtree_lock ( subtree_lock );
         if ( result != 0 ) {
             // It is time to do emergency exit.
 
             // Memory has been allocated in the pool or global memory, it should be freed.
 #           if defined ( TRALLOC_POOL )
             if ( have_pool_child ) {
-                _tralloc_pool_child_free_chunk ( chunk );
+                _tralloc_free_pool_child ( pool_child );
             } else {
                 free ( memory );
             }
@@ -238,22 +215,22 @@ tralloc_error _tralloc_new_with_extensions_with_allocator ( tralloc_context * pa
         }
     }
 
-    _tralloc_mutex * children_mutex;
-    if ( have_lock_children ) {
-        children_mutex = _tralloc_get_children_mutex_from_chunk ( chunk );
-        result = _tralloc_mutex_new ( children_mutex );
+    void * children_lock;
+    if ( have_children_lock ) {
+        children_lock = _tralloc_get_children_lock_from_chunk ( chunk );
+        result = _tralloc_new_children_lock ( children_lock );
         if ( result != 0 ) {
             // It is time to do emergency exit.
 
             // Subtree mutex of "chunk" has been allocated, it should be freed.
-            if ( have_lock_subtree ) {
-                _tralloc_mutex_free ( subtree_mutex );
+            if ( have_subtree_lock ) {
+                _tralloc_free_subtree_lock ( subtree_lock );
             }
 
             // Memory has been allocated in the pool or global memory, it should be freed.
 #           if defined ( TRALLOC_POOL )
             if ( have_pool_child ) {
-                _tralloc_pool_child_free_chunk ( chunk );
+                _tralloc_free_pool_child ( pool_child );
             } else {
                 free ( memory );
             }
@@ -268,28 +245,36 @@ tralloc_error _tralloc_new_with_extensions_with_allocator ( tralloc_context * pa
 
 #   if defined ( TRALLOC_LENGTH )
     if ( have_length ) {
-        _tralloc_length_set ( chunk, length );
+        _tralloc_set_length ( chunk, length );
     }
 #   endif
 
 #   if defined ( TRALLOC_DESTRUCTOR )
+    _tralloc_destructors * destructors;
     if ( have_destructors ) {
-        _tralloc_destructors_new_chunk ( chunk );
+        destructors = _tralloc_get_destructors_from_chunk ( chunk );
+        _tralloc_new_destructors ( destructors );
     }
 #   endif
 
 #   if defined ( TRALLOC_REFERENCE )
+    _tralloc_references * references;
     if ( have_references ) {
-        _tralloc_references_new_chunk ( chunk );
+        references = _tralloc_get_references_from_chunk ( chunk );
+        _tralloc_new_references ( references );
     }
+    _tralloc_reference * reference;
     if ( have_reference ) {
-        _tralloc_reference_new_chunk ( chunk );
+        reference = _tralloc_get_reference_from_chunk ( chunk );
+        _tralloc_new_reference ( reference );
     }
 #   endif
 
 #   if defined ( TRALLOC_POOL )
+    _tralloc_pool * pool;
     if ( have_pool ) {
-        _tralloc_pool_new_chunk ( chunk, length );
+        pool = _tralloc_get_pool_from_chunk ( chunk );
+        _tralloc_new_pool ( pool, length );
     }
 #   endif
 
@@ -300,7 +285,7 @@ tralloc_error _tralloc_new_with_extensions_with_allocator ( tralloc_context * pa
 
 #   if defined ( TRALLOC_THREADS )
     tralloc_bool parent_have_children_lock;
-    _tralloc_mutex * parent_children_mutex;
+    void * parent_children_lock;
 #   endif
 
     if ( parent_chunk != NULL ) {
@@ -310,46 +295,46 @@ tralloc_error _tralloc_new_with_extensions_with_allocator ( tralloc_context * pa
 #       if defined ( TRALLOC_DEBUG_THREADS )
         // Locks from extensions are inactive in debug threads mode.
         parent_have_children_lock = TRALLOC_TRUE;
-        parent_children_mutex = &parent_chunk->children_mutex;
+        parent_children_lock = &parent_chunk->children_lock;
 #       else
         parent_have_children_lock = parent_chunk->extensions & TRALLOC_EXTENSION_LOCK_CHILDREN;
         if ( parent_have_children_lock ) {
-            parent_children_mutex = _tralloc_get_children_mutex_from_chunk ( parent_chunk );
+            parent_children_lock = _tralloc_get_children_lock_from_chunk ( parent_chunk );
         }
 #       endif
 
         if ( parent_have_children_lock ) {
-            result = _tralloc_mutex_lock ( parent_children_mutex );
+            result = _tralloc_wrlock_children ( parent_children_lock );
             if ( result != 0 ) {
                 // It is time to do emergency exit.
 
                 // Subtree mutex of "chunk" has been allocated, it should be freed.
-                if ( have_lock_subtree ) {
-                    _tralloc_mutex_free ( subtree_mutex );
+                if ( have_subtree_lock ) {
+                    _tralloc_free_subtree_lock ( subtree_lock );
                 }
                 // Children mutex of "chunk" has been allocated, it should be freed.
-                if ( have_lock_children ) {
-                    _tralloc_mutex_free ( children_mutex );
+                if ( have_children_lock ) {
+                    _tralloc_free_children_lock ( children_lock );
                 }
 
 #               if defined ( TRALLOC_DESTRUCTOR )
                 // Destructors of "chunk" has been allocated, it should be freed.
                 if ( have_destructors ) {
-                    _tralloc_destructors_free_chunk ( chunk );
+                    _tralloc_free_destructors ( destructors );
                 }
 #               endif
 
 #               if defined ( TRALLOC_REFERENCE )
                 // Reference of "chunk" has been allocated, it should be freed.
                 if ( have_reference ) {
-                    _tralloc_reference_free_chunk ( chunk );
+                    _tralloc_free_reference ( reference );
                 }
 #               endif
 
                 // Memory has been allocated in the pool or global memory, it should be freed.
 #               if defined ( TRALLOC_POOL )
                 if ( have_pool_child ) {
-                    _tralloc_pool_child_free_chunk ( chunk );
+                    _tralloc_free_pool_child ( pool_child );
                 } else {
                     free ( memory );
                 }
@@ -366,7 +351,7 @@ tralloc_error _tralloc_new_with_extensions_with_allocator ( tralloc_context * pa
 
 #       if defined ( TRALLOC_THREADS )
         if ( parent_have_children_lock ) {
-            result = _tralloc_mutex_unlock ( parent_children_mutex );
+            result = _tralloc_unlock_children ( parent_children_lock );
             if ( result != 0 ) {
                 // It is time to do emergency exit.
                 // "parent_children_mutex" have locked status.
@@ -375,32 +360,32 @@ tralloc_error _tralloc_new_with_extensions_with_allocator ( tralloc_context * pa
                 _tralloc_attach_chunk ( chunk, NULL );
 
                 // Subtree mutex of "chunk" has been allocated, it should be freed.
-                if ( have_lock_subtree ) {
-                    _tralloc_mutex_free ( subtree_mutex );
+                if ( have_subtree_lock ) {
+                    _tralloc_free_subtree_lock ( subtree_lock );
                 }
                 // Children mutex of "chunk" has been allocated, it should be freed.
-                if ( have_lock_children ) {
-                    _tralloc_mutex_free ( children_mutex );
+                if ( have_children_lock ) {
+                    _tralloc_free_children_lock ( children_lock );
                 }
 
 #               if defined ( TRALLOC_DESTRUCTOR )
                 // Destructors of "chunk" has been allocated, it should be freed.
                 if ( have_destructors ) {
-                    _tralloc_destructors_free_chunk ( chunk );
+                    _tralloc_free_destructors ( destructors );
                 }
 #               endif
 
 #               if defined ( TRALLOC_REFERENCE )
                 // Reference of "chunk" has been allocated, it should be freed.
                 if ( have_reference ) {
-                    _tralloc_reference_free_chunk ( chunk );
+                    _tralloc_free_reference ( reference );
                 }
 #               endif
 
                 // Memory has been allocated in the pool or global memory, it should be freed.
 #               if defined ( TRALLOC_POOL )
                 if ( have_pool_child ) {
-                    _tralloc_pool_child_free_chunk ( chunk );
+                    _tralloc_free_pool_child ( pool_child );
                 } else {
                     free ( memory );
                 }
@@ -433,7 +418,7 @@ tralloc_error _tralloc_new_with_extensions_with_allocator ( tralloc_context * pa
 
 #           if defined ( TRALLOC_THREADS )
             if ( parent_have_children_lock ) {
-                result = _tralloc_mutex_lock ( parent_children_mutex );
+                result = _tralloc_wrlock_children ( parent_children_lock );
                 if ( result != 0 ) {
                     // It is not possible to delete chunk directly.
                     // Chunk will be deleted normally by it's parent.
@@ -447,40 +432,40 @@ tralloc_error _tralloc_new_with_extensions_with_allocator ( tralloc_context * pa
 
 #           if defined ( TRALLOC_THREADS )
             if ( parent_have_children_lock ) {
-                _tralloc_mutex_unlock ( parent_children_mutex );
+                _tralloc_unlock_children ( parent_children_lock );
             }
 #           endif
         }
 
 #       if defined ( TRALLOC_THREADS )
         // Subtree mutex of "chunk" has been allocated, it should be freed.
-        if ( have_lock_subtree ) {
-            _tralloc_mutex_free ( subtree_mutex );
+        if ( have_subtree_lock ) {
+            _tralloc_free_subtree_lock ( subtree_lock );
         }
         // Children mutex of "chunk" has been allocated, it should be freed.
-        if ( have_lock_children ) {
-            _tralloc_mutex_free ( children_mutex );
+        if ( have_children_lock ) {
+            _tralloc_free_children_lock ( children_lock );
         }
 #       endif
 
 #       if defined ( TRALLOC_DESTRUCTOR )
         // Destructors of "chunk" has been allocated, it should be freed.
         if ( have_destructors ) {
-            _tralloc_destructors_free_chunk ( chunk );
+            _tralloc_free_destructors ( destructors );
         }
 #       endif
 
 #       if defined ( TRALLOC_REFERENCE )
         // Reference of "chunk" has been allocated, it should be freed.
         if ( have_reference ) {
-            _tralloc_reference_free_chunk ( chunk );
+            _tralloc_free_reference ( reference );
         }
 #       endif
 
         // Memory has been allocated in the pool or global memory, it should be freed.
 #       if defined ( TRALLOC_POOL )
         if ( have_pool_child ) {
-            _tralloc_pool_child_free_chunk ( chunk );
+            _tralloc_free_pool_child ( pool_child );
         } else {
             free ( memory );
         }

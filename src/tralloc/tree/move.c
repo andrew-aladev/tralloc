@@ -9,7 +9,7 @@
 
 #if defined ( TRALLOC_THREADS )
 #   include <tralloc/threads/chunk.h>
-#   include <tralloc/threads/mutex.h>
+#   include <tralloc/threads/lock.h>
 #endif
 
 #if defined ( TRALLOC_DEBUG )

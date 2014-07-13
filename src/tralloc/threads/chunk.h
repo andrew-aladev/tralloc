@@ -17,15 +17,15 @@
 
 
 _TRALLOC_INLINE
-_tralloc_mutex * _tralloc_get_subtree_mutex_from_chunk ( _tralloc_chunk * chunk )
+void * _tralloc_get_subtree_lock_from_chunk ( _tralloc_chunk * chunk )
 {
-    return ( _tralloc_mutex * ) ( ( uintptr_t ) chunk - _tralloc_get_offset_for_extension ( chunk->extensions, TRALLOC_EXTENSION_LOCK_SUBTREE ) );
+    return ( void * ) ( ( uintptr_t ) chunk - _tralloc_get_offset_for_extension ( chunk->extensions, TRALLOC_EXTENSION_LOCK_SUBTREE ) );
 }
 
 _TRALLOC_INLINE
-_tralloc_mutex * _tralloc_get_children_mutex_from_chunk ( _tralloc_chunk * chunk )
+void * _tralloc_get_children_lock_from_chunk ( _tralloc_chunk * chunk )
 {
-    return ( _tralloc_mutex * ) ( ( uintptr_t ) chunk - _tralloc_get_offset_for_extension ( chunk->extensions, TRALLOC_EXTENSION_LOCK_CHILDREN ) );
+    return ( void * ) ( ( uintptr_t ) chunk - _tralloc_get_offset_for_extension ( chunk->extensions, TRALLOC_EXTENSION_LOCK_CHILDREN ) );
 }
 
 

@@ -29,15 +29,8 @@
 // for threads/chunk.c
 #   define _TRALLOC_INCLUDED_FROM_THREADS_CHUNK_C
 
-// for threads/mutex.c
-#   if defined ( TRALLOC_HAVE_PTHREAD_MUTEX )
-#       define _TRALLOC_INCLUDED_FROM_THREADS_MUTEX_C
-#   endif
-
-// for threads/spinlock.c
-#   if defined ( TRALLOC_HAVE_PTHREAD_SPINLOCK )
-#       define _TRALLOC_INCLUDED_FROM_THREADS_SPINLOCK_C
-#   endif
+// for threads/lock.c
+#   define _TRALLOC_INCLUDED_FROM_THREADS_LOCK_C
 
 #endif
 
