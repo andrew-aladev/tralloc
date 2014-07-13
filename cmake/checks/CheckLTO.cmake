@@ -3,11 +3,14 @@ function (check_lto)
         return ()
     endif ()
     
+    include (CheckVerbose)
+    check_verbose ()
+    
     try_compile (
         CHECK_LTO_COMPILE_RESULT
-        "${PROJECT_BINARY_DIR}/CMakeTmp/LTO"
-        "${PROJECT_SOURCE_DIR}/cmake/checks/LTO" "check_LTO"
-        CMAKE_FLAGS "-DCMAKE_C_FLAGS:STRING = ${CMAKE_C_FLAGS} -flto -fuse-linker-plugin" "-DCMAKE_LD_FLAGS:STRING = ${CMAKE_LD_FLAGS} -flto -fuse-linker-plugin"
+        "${PROJECT_BINARY_DIR}/CMakeTmp/basic"
+        "${PROJECT_SOURCE_DIR}/cmake/checks/basic" "check_basic"
+        CMAKE_FLAGS "-DCMAKE_C_FLAGS:STRING = ${CMAKE_C_FLAGS} ${VERBOSE_CFLAGS} -flto -fuse-linker-plugin" "-DCMAKE_LD_FLAGS:STRING = ${CMAKE_LD_FLAGS} -flto -fuse-linker-plugin"
     )
     if (${CHECK_LTO_COMPILE_RESULT})
         set (TRALLOC_HAVE_LTO true CACHE STRING "Status of LTO support")

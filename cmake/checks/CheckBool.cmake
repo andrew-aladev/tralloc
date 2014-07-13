@@ -3,10 +3,14 @@ function (check_bool)
         return ()
     endif ()
     
+    include (CheckVerbose)
+    check_verbose ()
+    
     try_compile (
         CHECK_BOOL_COMPILE_RESULT
         "${PROJECT_BINARY_DIR}/CMakeTmp/bool"
         "${PROJECT_SOURCE_DIR}/cmake/checks/bool" "check_bool"
+        CMAKE_FLAGS "-DCMAKE_C_FLAGS:STRING = ${CMAKE_C_FLAGS} ${VERBOSE_CFLAGS}"
     )
     if (${CHECK_BOOL_COMPILE_RESULT})
         set (TRALLOC_HAVE_BOOL true CACHE STRING "Status of Bool support")

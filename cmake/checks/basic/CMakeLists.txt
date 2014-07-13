@@ -1,7 +1,5 @@
 cmake_minimum_required (VERSION "2.8")
-project ("check_LTO" "C")
-
-set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -pedantic -Wall -Wextra")
+project ("check_basic" "C")
 
 add_executable (
     "main"

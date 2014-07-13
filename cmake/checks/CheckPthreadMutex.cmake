@@ -3,7 +3,9 @@ function (check_pthread_mutex)
         return ()
     endif ()
     
+    include (CheckVerbose)
     include (CheckPthread)
+    check_verbose ()
     check_pthread ()
     
     if (NOT ${TRALLOC_HAVE_PTHREAD})
@@ -16,7 +18,7 @@ function (check_pthread_mutex)
         CHECK_PTHREAD_MUTEX_COMPILE_RESULT
         "${PROJECT_BINARY_DIR}/CMakeTmp/pthread_mutex"
         "${PROJECT_SOURCE_DIR}/cmake/checks/pthread_mutex" "check_pthread_mutex"
-        CMAKE_FLAGS "-DCMAKE_C_FLAGS:STRING = ${CMAKE_C_FLAGS} ${PTHREAD_CFLAGS}" "-DCMAKE_LD_FLAGS:STRING = ${CMAKE_LD_FLAGS} ${PTHREAD_LDLAGS}"
+        CMAKE_FLAGS "-DCMAKE_C_FLAGS:STRING = ${CMAKE_C_FLAGS} ${VERBOSE_CFLAGS} ${PTHREAD_CFLAGS}" "-DCMAKE_LD_FLAGS:STRING = ${CMAKE_LD_FLAGS} ${PTHREAD_LDLAGS}"
     )
     if (${CHECK_PTHREAD_MUTEX_COMPILE_RESULT})
         set (TRALLOC_HAVE_PTHREAD_MUTEX true CACHE STRING "Status of pthread_mutex support")
