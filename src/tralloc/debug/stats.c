@@ -6,12 +6,114 @@
 #include <tralloc/debug/stats.h>
 
 #if defined ( TRALLOC_THREADS )
-#   include <tralloc/threads/mutex.h>
+#   include <stdlib.h>
+#endif
+
+#if defined ( TRALLOC_DEBUG_LOG )
+#   include <stdio.h>
 #endif
 
 
 #if defined ( TRALLOC_THREADS )
-static _tralloc_mutex _tralloc_chunks_count_mutex = PTHREAD_MUTEX_INITIALIZER;
+
+#if TRALLOC_DEBUG_STATS_LOCK_TYPE == TRALLOC_THREADS_RWLOCK
+static pthread_rwlock_t _tralloc_chunks_count_lock           = PTHREAD_RWLOCK_INITIALIZER;
+static pthread_rwlock_t _tralloc_chunks_overhead_length_lock = PTHREAD_RWLOCK_INITIALIZER;
+static pthread_rwlock_t _tralloc_chunks_length_lock          = PTHREAD_RWLOCK_INITIALIZER;
+#elif TRALLOC_DEBUG_STATS_LOCK_TYPE == TRALLOC_THREADS_MUTEX
+static pthread_mutex_t _tralloc_chunks_count_lock           = PTHREAD_MUTEX_INITIALIZER;
+static pthread_mutex_t _tralloc_chunks_overhead_length_lock = PTHREAD_MUTEX_INITIALIZER;
+static pthread_mutex_t _tralloc_chunks_length_lock          = PTHREAD_MUTEX_INITIALIZER;
+#elif TRALLOC_DEBUG_STATS_LOCK_TYPE == TRALLOC_THREADS_SPINLOCK
+static pthread_spinlock_t _tralloc_chunks_count_lock;
+static pthread_spinlock_t _tralloc_chunks_overhead_length_lock;
+static pthread_spinlock_t _tralloc_chunks_length_lock;
+
+__attribute__ ( ( constructor ) )
+void lock_constructor ()
+{
+    if (
+        pthread_spin_init ( &_tralloc_chunks_count_lock, 0 )           != 0 ||
+        pthread_spin_init ( &_tralloc_chunks_overhead_length_lock, 0 ) != 0 ||
+        pthread_spin_init ( &_tralloc_chunks_length_lock, 0 )          != 0
+    ) {
+#       if defined ( TRALLOC_DEBUG_LOG )
+        fprintf (
+            stderr,
+            "%s:%zu error: %s\n",
+            __FILE__,
+            __LINE__,
+            "static spinlock was failed to be initialized"
+        );
+#       endif
+        exit ( TRALLOC_ERROR_SPINLOCK_FAILED );
+    }
+}
+__attribute__ ( ( destructor ) )
+void lock_destructor ()
+{
+    if (
+        pthread_spin_destroy ( &_tralloc_chunks_count_lock )           != 0 ||
+        pthread_spin_destroy ( &_tralloc_chunks_overhead_length_lock ) != 0 ||
+        pthread_spin_destroy ( &_tralloc_chunks_length_lock )          != 0
+    ) {
+#       if defined ( TRALLOC_DEBUG_LOG )
+        fprintf (
+            stderr,
+            "%s:%zu error: %s\n",
+            __FILE__,
+            __LINE__,
+            "static spinlock was failed to be destroyed"
+        );
+#       endif
+        exit ( TRALLOC_ERROR_SPINLOCK_FAILED );
+    }
+}
+#endif
+
+static inline
+tralloc_error _tralloc_chunks_wrlock ( void * lock )
+{
+
+#   if TRALLOC_DEBUG_STATS_LOCK_TYPE == TRALLOC_THREADS_RWLOCK
+    return pthread_rwlock_wrlock ( ( pthread_rwlock_t * ) lock );
+#   elif TRALLOC_DEBUG_STATS_LOCK_TYPE == TRALLOC_THREADS_MUTEX
+    return pthread_mutex_lock ( ( pthread_mutex_t * ) lock );
+#   elif TRALLOC_DEBUG_STATS_LOCK_TYPE == TRALLOC_THREADS_SPINLOCK
+    return pthread_spin_lock ( ( pthread_spinlock_t * ) lock );
+#   endif
+
+    return 0;
+}
+static inline
+tralloc_error _tralloc_chunks_rdlock ( void * lock )
+{
+
+#   if TRALLOC_DEBUG_STATS_LOCK_TYPE == TRALLOC_THREADS_RWLOCK
+    return pthread_rwlock_rdlock ( ( pthread_rwlock_t * ) lock );
+#   elif TRALLOC_DEBUG_STATS_LOCK_TYPE == TRALLOC_THREADS_MUTEX
+    return pthread_mutex_lock ( ( pthread_mutex_t * ) lock );
+#   elif TRALLOC_DEBUG_STATS_LOCK_TYPE == TRALLOC_THREADS_SPINLOCK
+    return pthread_spin_lock ( ( pthread_spinlock_t * ) lock );
+#   endif
+
+    return 0;
+}
+static inline
+tralloc_error _tralloc_chunks_unlock ( void * lock )
+{
+
+#   if TRALLOC_DEBUG_STATS_LOCK_TYPE == TRALLOC_THREADS_RWLOCK
+    return pthread_rwlock_unlock ( ( pthread_rwlock_t * ) lock );
+#   elif TRALLOC_DEBUG_STATS_LOCK_TYPE == TRALLOC_THREADS_MUTEX
+    return pthread_mutex_unlock ( ( pthread_mutex_t * ) lock );
+#   elif TRALLOC_DEBUG_STATS_LOCK_TYPE == TRALLOC_THREADS_SPINLOCK
+    return pthread_spin_unlock ( ( pthread_spinlock_t * ) lock );
+#   endif
+
+    return 0;
+}
+
 #endif
 
 static size_t _tralloc_chunks_count = 0;
@@ -19,8 +121,9 @@ static size_t _tralloc_chunks_count = 0;
 static inline
 tralloc_error _tralloc_add_chunks_count ( size_t length )
 {
+
 #   if defined ( TRALLOC_THREADS )
-    tralloc_error result = _tralloc_mutex_lock ( &_tralloc_chunks_count_mutex );
+    tralloc_error result = _tralloc_chunks_wrlock ( &_tralloc_chunks_count_lock );
     if ( result != 0 ) {
         return result;
     }
@@ -29,7 +132,7 @@ tralloc_error _tralloc_add_chunks_count ( size_t length )
     _tralloc_chunks_count += length;
 
 #   if defined ( TRALLOC_THREADS )
-    result = _tralloc_mutex_unlock ( &_tralloc_chunks_count_mutex );
+    result = _tralloc_chunks_unlock ( &_tralloc_chunks_count_lock );
     if ( result != 0 ) {
         return result;
     }
@@ -43,7 +146,7 @@ tralloc_error _tralloc_subtract_chunks_count ( size_t length )
 {
 
 #   if defined ( TRALLOC_THREADS )
-    tralloc_error result = _tralloc_mutex_lock ( &_tralloc_chunks_count_mutex );
+    tralloc_error result = _tralloc_chunks_wrlock ( &_tralloc_chunks_count_lock );
     if ( result != 0 ) {
         return result;
     }
@@ -52,7 +155,7 @@ tralloc_error _tralloc_subtract_chunks_count ( size_t length )
     _tralloc_chunks_count -= length;
 
 #   if defined ( TRALLOC_THREADS )
-    result = _tralloc_mutex_unlock ( &_tralloc_chunks_count_mutex );
+    result = _tralloc_chunks_unlock ( &_tralloc_chunks_count_lock );
     if ( result != 0 ) {
         return result;
     }
@@ -65,7 +168,7 @@ tralloc_error tralloc_debug_stats_get_chunks_count ( size_t * length )
 {
 
 #   if defined ( TRALLOC_THREADS )
-    tralloc_error result = _tralloc_mutex_lock ( &_tralloc_chunks_count_mutex );
+    tralloc_error result = _tralloc_chunks_rdlock ( &_tralloc_chunks_count_lock );
     if ( result != 0 ) {
         return result;
     }
@@ -74,7 +177,7 @@ tralloc_error tralloc_debug_stats_get_chunks_count ( size_t * length )
     * length = _tralloc_chunks_count;
 
 #   if defined ( TRALLOC_THREADS )
-    result = _tralloc_mutex_unlock ( &_tralloc_chunks_count_mutex );
+    result = _tralloc_chunks_unlock ( &_tralloc_chunks_count_lock );
     if ( result != 0 ) {
         return result;
     }
@@ -84,17 +187,13 @@ tralloc_error tralloc_debug_stats_get_chunks_count ( size_t * length )
 }
 
 
-#if defined ( TRALLOC_THREADS )
-static _tralloc_mutex _tralloc_chunks_overhead_length_mutex = PTHREAD_MUTEX_INITIALIZER;
-#endif
-
 static size_t _tralloc_chunks_overhead_length = 0;
 
 tralloc_error _tralloc_debug_stats_add_chunks_overhead_length ( size_t length )
 {
 
 #   if defined ( TRALLOC_THREADS )
-    tralloc_error result = _tralloc_mutex_lock ( &_tralloc_chunks_overhead_length_mutex );
+    tralloc_error result = _tralloc_chunks_wrlock ( &_tralloc_chunks_overhead_length_lock );
     if ( result != 0 ) {
         return result;
     }
@@ -103,7 +202,7 @@ tralloc_error _tralloc_debug_stats_add_chunks_overhead_length ( size_t length )
     _tralloc_chunks_overhead_length += length;
 
 #   if defined ( TRALLOC_THREADS )
-    result = _tralloc_mutex_unlock ( &_tralloc_chunks_overhead_length_mutex );
+    result = _tralloc_chunks_unlock ( &_tralloc_chunks_overhead_length_lock );
     if ( result != 0 ) {
         return result;
     }
@@ -116,7 +215,7 @@ tralloc_error _tralloc_debug_stats_subtract_chunks_overhead_length ( size_t leng
 {
 
 #   if defined ( TRALLOC_THREADS )
-    tralloc_error result = _tralloc_mutex_lock ( &_tralloc_chunks_overhead_length_mutex );
+    tralloc_error result = _tralloc_chunks_wrlock ( &_tralloc_chunks_overhead_length_lock );
     if ( result != 0 ) {
         return result;
     }
@@ -125,7 +224,7 @@ tralloc_error _tralloc_debug_stats_subtract_chunks_overhead_length ( size_t leng
     _tralloc_chunks_overhead_length -= length;
 
 #   if defined ( TRALLOC_THREADS )
-    result = _tralloc_mutex_unlock ( &_tralloc_chunks_overhead_length_mutex );
+    result = _tralloc_chunks_unlock ( &_tralloc_chunks_overhead_length_lock );
     if ( result != 0 ) {
         return result;
     }
@@ -138,7 +237,7 @@ tralloc_error tralloc_debug_stats_get_chunks_overhead_length ( size_t * length )
 {
 
 #   if defined ( TRALLOC_THREADS )
-    tralloc_error result = _tralloc_mutex_lock ( &_tralloc_chunks_overhead_length_mutex );
+    tralloc_error result = _tralloc_chunks_rdlock ( &_tralloc_chunks_overhead_length_lock );
     if ( result != 0 ) {
         return result;
     }
@@ -147,7 +246,7 @@ tralloc_error tralloc_debug_stats_get_chunks_overhead_length ( size_t * length )
     * length = _tralloc_chunks_overhead_length;
 
 #   if defined ( TRALLOC_THREADS )
-    result = _tralloc_mutex_unlock ( &_tralloc_chunks_overhead_length_mutex );
+    result = _tralloc_chunks_unlock ( &_tralloc_chunks_overhead_length_lock );
     if ( result != 0 ) {
         return result;
     }
@@ -157,10 +256,6 @@ tralloc_error tralloc_debug_stats_get_chunks_overhead_length ( size_t * length )
 }
 
 
-#if defined ( TRALLOC_THREADS )
-static _tralloc_mutex _tralloc_chunks_length_mutex = PTHREAD_MUTEX_INITIALIZER;
-#endif
-
 static size_t _tralloc_chunks_length = 0;
 
 static inline
@@ -168,7 +263,7 @@ tralloc_error _tralloc_add_chunks_length ( size_t length )
 {
 
 #   if defined ( TRALLOC_THREADS )
-    tralloc_error result = _tralloc_mutex_lock ( &_tralloc_chunks_length_mutex );
+    tralloc_error result = _tralloc_chunks_wrlock ( &_tralloc_chunks_length_lock );
     if ( result != 0 ) {
         return result;
     }
@@ -177,7 +272,7 @@ tralloc_error _tralloc_add_chunks_length ( size_t length )
     _tralloc_chunks_length += length;
 
 #   if defined ( TRALLOC_THREADS )
-    result = _tralloc_mutex_unlock ( &_tralloc_chunks_length_mutex );
+    result = _tralloc_chunks_unlock ( &_tralloc_chunks_length_lock );
     if ( result != 0 ) {
         return result;
     }
@@ -191,7 +286,7 @@ tralloc_error _tralloc_subtract_chunks_length ( size_t length )
 {
 
 #   if defined ( TRALLOC_THREADS )
-    tralloc_error result = _tralloc_mutex_lock ( &_tralloc_chunks_length_mutex );
+    tralloc_error result = _tralloc_chunks_wrlock ( &_tralloc_chunks_length_lock );
     if ( result != 0 ) {
         return result;
     }
@@ -200,7 +295,7 @@ tralloc_error _tralloc_subtract_chunks_length ( size_t length )
     _tralloc_chunks_length -= length;
 
 #   if defined ( TRALLOC_THREADS )
-    result = _tralloc_mutex_unlock ( &_tralloc_chunks_length_mutex );
+    result = _tralloc_chunks_unlock ( &_tralloc_chunks_length_lock );
     if ( result != 0 ) {
         return result;
     }
@@ -213,7 +308,7 @@ tralloc_error tralloc_debug_stats_get_chunks_length ( size_t * length )
 {
 
 #   if defined ( TRALLOC_THREADS )
-    tralloc_error result = _tralloc_mutex_lock ( &_tralloc_chunks_length_mutex );
+    tralloc_error result = _tralloc_chunks_rdlock ( &_tralloc_chunks_length_lock );
     if ( result != 0 ) {
         return result;
     }
@@ -222,7 +317,7 @@ tralloc_error tralloc_debug_stats_get_chunks_length ( size_t * length )
     * length = _tralloc_chunks_length;
 
 #   if defined ( TRALLOC_THREADS )
-    result = _tralloc_mutex_unlock ( &_tralloc_chunks_length_mutex );
+    result = _tralloc_chunks_unlock ( &_tralloc_chunks_length_lock );
     if ( result != 0 ) {
         return result;
     }
