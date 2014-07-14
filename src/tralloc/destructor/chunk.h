@@ -23,14 +23,13 @@ _tralloc_destructors * _tralloc_get_destructors_from_chunk ( _tralloc_chunk * ch
 }
 
 _TRALLOC_INLINE
-void _tralloc_destructors_new_chunk ( _tralloc_chunk * chunk )
+void _tralloc_new_destructors ( _tralloc_destructors * destructors )
 {
-    _tralloc_destructors * destructors = _tralloc_get_destructors_from_chunk ( chunk );
-    destructors->first_destructor      = NULL;
-    destructors->last_destructor       = NULL;
+    destructors->first_destructor = NULL;
+    destructors->last_destructor  = NULL;
 }
 
-tralloc_error _tralloc_destructors_free_chunk ( _tralloc_chunk * chunk );
+tralloc_error _tralloc_free_destructors ( _tralloc_destructors * destructors, tralloc_context * context );
 
 
 #endif

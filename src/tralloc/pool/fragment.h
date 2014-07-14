@@ -18,7 +18,7 @@
 
 
 _TRALLOC_INLINE
-_tralloc_pool_fragment * _tralloc_pool_fragment_new_memory ( void * memory, size_t length )
+_tralloc_pool_fragment * _tralloc_new_pool_fragment ( void * memory, size_t length )
 {
     if ( length < sizeof ( _tralloc_pool_fragment ) ) {
         return NULL;
@@ -33,15 +33,15 @@ _tralloc_pool_fragment * _tralloc_pool_fragment_new_memory ( void * memory, size
     return fragment;
 }
 
-void _tralloc_pool_fragment_attach ( _tralloc_pool * pool, _tralloc_pool_fragment * fragment, _tralloc_pool_fragment * prev, _tralloc_pool_fragment * next );
-void _tralloc_pool_fragment_detach ( _tralloc_pool * pool, _tralloc_pool_fragment * fragment );
+void _tralloc_attach_pool_fragment ( _tralloc_pool * pool, _tralloc_pool_fragment * fragment, _tralloc_pool_fragment * prev, _tralloc_pool_fragment * next );
+void _tralloc_detach_pool_fragment ( _tralloc_pool * pool, _tralloc_pool_fragment * fragment );
 
 void _tralloc_pool_fragment_increased ( _tralloc_pool * pool, _tralloc_pool_fragment * fragment );
 void _tralloc_pool_fragment_decreased ( _tralloc_pool * pool, _tralloc_pool_fragment * fragment );
 
-_tralloc_pool_child * _tralloc_pool_fragment_alloc                ( _tralloc_pool * pool, _tralloc_pool_fragment * fragment, size_t length );
-void                  _tralloc_pool_fragment_resize_by_prev_child ( _tralloc_pool_child * pool_child, size_t target_length, size_t next_length );
-void                  _tralloc_pool_fragment_free_child           ( _tralloc_pool_child * pool_child, size_t prev_length,   size_t next_length );
+_tralloc_pool_child * _tralloc_alloc_from_pool_fragment               ( _tralloc_pool * pool, _tralloc_pool_fragment * fragment, size_t length );
+void                  _tralloc_resize_pool_fragment_by_prev_child     ( _tralloc_pool_child * pool_child, size_t target_length, size_t next_length );
+void                  _tralloc_merge_pool_fragments_around_pool_child ( _tralloc_pool_child * pool_child, size_t prev_length,   size_t next_length );
 
 
 #endif

@@ -14,14 +14,8 @@
 #include <stdlib.h>
 
 
-tralloc_error _tralloc_destructors_free_chunk ( _tralloc_chunk * chunk )
+tralloc_error _tralloc_free_destructors ( _tralloc_destructors * destructors, tralloc_context * context )
 {
-    _tralloc_destructors * destructors = _tralloc_get_destructors_from_chunk ( chunk );
-    if ( destructors == NULL ) {
-        return 0;
-    }
-
-    tralloc_context * chunk_context  = _tralloc_get_context_from_chunk ( chunk );
     _tralloc_destructor * destructor = destructors->first_destructor;
     if ( destructor == NULL ) {
         return 0;
@@ -38,7 +32,7 @@ tralloc_error _tralloc_destructors_free_chunk ( _tralloc_chunk * chunk )
     while ( destructor != NULL ) {
         function = destructor->function;
         if ( function != NULL ) {
-            if ( ( result = function ( chunk_context, destructor->user_data ) ) != 0 ) {
+            if ( ( result = function ( context, destructor->user_data ) ) != 0 ) {
                 error = result;
             }
         }

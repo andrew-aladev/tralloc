@@ -17,19 +17,17 @@
 
 
 _TRALLOC_INLINE
-void _tralloc_references_new_chunk ( _tralloc_chunk * chunk )
+void _tralloc_new_references ( _tralloc_references * references, tralloc_extensions extensions )
 {
-    _tralloc_references * references = _tralloc_get_references_from_chunk ( chunk );
     references->first_reference = NULL;
-    references->extensions      = chunk->extensions;
+    references->extensions      = extensions;
     references->autofree        = TRALLOC_FALSE;
 }
 
 _TRALLOC_INLINE
-void _tralloc_references_update_chunk ( _tralloc_chunk * chunk )
+void _tralloc_update_references ( _tralloc_references * references )
 {
-    _tralloc_references * references = _tralloc_get_references_from_chunk ( chunk );
-    _tralloc_reference  * reference  = references->first_reference;
+    _tralloc_reference  * reference = references->first_reference;
     while ( reference != NULL ) {
         reference->references = references;
         reference = reference->next;
@@ -37,9 +35,8 @@ void _tralloc_references_update_chunk ( _tralloc_chunk * chunk )
 }
 
 _TRALLOC_INLINE
-tralloc_bool _tralloc_references_can_free_chunk ( _tralloc_chunk * chunk )
+tralloc_bool _tralloc_can_free_references ( _tralloc_references * references )
 {
-    _tralloc_references * references = _tralloc_get_references_from_chunk ( chunk );
     if ( references->first_reference == NULL ) {
         return TRALLOC_TRUE;
     } else {
@@ -51,9 +48,8 @@ tralloc_bool _tralloc_references_can_free_chunk ( _tralloc_chunk * chunk )
 }
 
 _TRALLOC_INLINE
-tralloc_bool _tralloc_references_can_free_chunk_children ( _tralloc_chunk * chunk )
+tralloc_bool _tralloc_references_can_free_children (  _tralloc_references * references )
 {
-    _tralloc_references * references = _tralloc_get_references_from_chunk ( chunk );
     if ( references->first_reference == NULL ) {
         return TRALLOC_TRUE;
     } else {

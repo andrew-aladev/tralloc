@@ -18,10 +18,10 @@
 #endif
 
 
-void _tralloc_pool_new_chunk ( _tralloc_chunk * chunk, size_t length );
+void _tralloc_new_pool ( _tralloc_pool * pool, void * memory, tralloc_extensions extensions, size_t length );
 
 _TRALLOC_INLINE
-tralloc_bool _tralloc_pool_can_alloc ( _tralloc_pool * pool, size_t length )
+tralloc_bool _tralloc_can_alloc_from_pool ( _tralloc_pool * pool, size_t length )
 {
     _tralloc_pool_fragment * fragment = pool->max_fragment;
     if ( fragment == NULL || length > fragment->length ) {
@@ -31,12 +31,11 @@ tralloc_bool _tralloc_pool_can_alloc ( _tralloc_pool * pool, size_t length )
     }
 }
 
-void _tralloc_pool_alloc ( _tralloc_pool * pool, void ** memory, size_t length, tralloc_bool zero, _tralloc_pool_child ** prev_pool_child, _tralloc_pool_child ** next_pool_child );
+void _tralloc_alloc_from_pool ( _tralloc_pool * pool, void ** memory, size_t length, tralloc_bool zero, _tralloc_pool_child ** prev_pool_child, _tralloc_pool_child ** next_pool_child );
 
 _TRALLOC_INLINE
-tralloc_bool _tralloc_pool_can_free_chunk ( _tralloc_chunk * chunk )
+tralloc_bool _tralloc_can_free_pool ( _tralloc_pool * pool )
 {
-    _tralloc_pool * pool = _tralloc_get_pool_from_chunk ( chunk );
     if ( pool->first_child == NULL ) {
         return TRALLOC_TRUE;
     } else {
@@ -48,7 +47,7 @@ tralloc_bool _tralloc_pool_can_free_chunk ( _tralloc_chunk * chunk )
 }
 
 _TRALLOC_INLINE
-tralloc_bool _tralloc_pool_can_free_chunk_children ( _tralloc_chunk * _TRALLOC_UNUSED ( chunk ) )
+tralloc_bool _tralloc_pool_can_free_children ( _tralloc_pool * _TRALLOC_UNUSED ( pool ) )
 {
     return TRALLOC_TRUE;
 }

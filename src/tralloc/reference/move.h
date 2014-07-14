@@ -9,7 +9,7 @@
 #include "../types.h"
 
 
-tralloc_error tralloc_move_reference   ( tralloc_context * child_context, tralloc_context * parent_context );
+tralloc_error tralloc_move_reference ( tralloc_context * child_context, tralloc_context * parent_context );
 
 
 #endif

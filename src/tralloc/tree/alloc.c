@@ -137,7 +137,7 @@ tralloc_error _tralloc_new_with_extensions_with_allocator ( tralloc_context * pa
 
 #   if defined ( TRALLOC_POOL )
     if ( have_pool_child ) {
-        if ( !_tralloc_pool_can_alloc ( parent_pool, total_length ) ) {
+        if ( !_tralloc_can_alloc_from_pool ( parent_pool, total_length ) ) {
             // "parent_pool" can't alloc "total_length" bytes.
             // "TRALLOC_EXTENSION_POOL_CHILD" for new chunk should be disabled.
 
@@ -164,7 +164,7 @@ tralloc_error _tralloc_new_with_extensions_with_allocator ( tralloc_context * pa
 #   if defined ( TRALLOC_POOL )
     _tralloc_pool_child * prev_pool_child, * next_pool_child;
     if ( have_pool_child ) {
-        _tralloc_pool_alloc ( parent_pool, &memory, total_length, allocator == _tralloc_calloc, &prev_pool_child, &next_pool_child );
+        _tralloc_alloc_from_pool ( parent_pool, &memory, total_length, allocator == _tralloc_calloc, &prev_pool_child, &next_pool_child );
     } else {
         result = allocator ( &memory, total_length );
         if ( result != 0 ) {
@@ -178,7 +178,8 @@ tralloc_error _tralloc_new_with_extensions_with_allocator ( tralloc_context * pa
     }
 #   endif
 
-    _tralloc_chunk * chunk = ( _tralloc_chunk * ) ( ( uintptr_t ) memory + extensions_length );
+    _tralloc_chunk * chunk    = ( _tralloc_chunk * ) ( ( uintptr_t ) memory + extensions_length );
+    tralloc_context * context = _tralloc_get_context_from_chunk ( chunk );
 
 #   if defined ( TRALLOC_EXTENSIONS )
     chunk->extensions = extensions;
@@ -261,7 +262,7 @@ tralloc_error _tralloc_new_with_extensions_with_allocator ( tralloc_context * pa
     _tralloc_references * references;
     if ( have_references ) {
         references = _tralloc_get_references_from_chunk ( chunk );
-        _tralloc_new_references ( references );
+        _tralloc_new_references ( references, extensions );
     }
     _tralloc_reference * reference;
     if ( have_reference ) {
@@ -274,7 +275,7 @@ tralloc_error _tralloc_new_with_extensions_with_allocator ( tralloc_context * pa
     _tralloc_pool * pool;
     if ( have_pool ) {
         pool = _tralloc_get_pool_from_chunk ( chunk );
-        _tralloc_new_pool ( pool, length );
+        _tralloc_new_pool ( pool, context, extensions, length );
     }
 #   endif
 
@@ -320,7 +321,7 @@ tralloc_error _tralloc_new_with_extensions_with_allocator ( tralloc_context * pa
 #               if defined ( TRALLOC_DESTRUCTOR )
                 // Destructors of "chunk" has been allocated, it should be freed.
                 if ( have_destructors ) {
-                    _tralloc_free_destructors ( destructors );
+                    _tralloc_free_destructors ( destructors, context );
                 }
 #               endif
 
@@ -371,7 +372,7 @@ tralloc_error _tralloc_new_with_extensions_with_allocator ( tralloc_context * pa
 #               if defined ( TRALLOC_DESTRUCTOR )
                 // Destructors of "chunk" has been allocated, it should be freed.
                 if ( have_destructors ) {
-                    _tralloc_free_destructors ( destructors );
+                    _tralloc_free_destructors ( destructors, context );
                 }
 #               endif
 
@@ -451,7 +452,7 @@ tralloc_error _tralloc_new_with_extensions_with_allocator ( tralloc_context * pa
 #       if defined ( TRALLOC_DESTRUCTOR )
         // Destructors of "chunk" has been allocated, it should be freed.
         if ( have_destructors ) {
-            _tralloc_free_destructors ( destructors );
+            _tralloc_free_destructors ( destructors, context );
         }
 #       endif
 
@@ -477,7 +478,7 @@ tralloc_error _tralloc_new_with_extensions_with_allocator ( tralloc_context * pa
     }
 #   endif
 
-    * child_context = _tralloc_get_context_from_chunk ( chunk );
+    * child_context = context;
     return 0;
 }
 

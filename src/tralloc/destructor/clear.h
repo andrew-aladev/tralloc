@@ -9,7 +9,7 @@
 #include "../types.h"
 
 
-tralloc_error tralloc_clear_destructors  ( tralloc_context * chunk_context );
+tralloc_error tralloc_clear_destructors ( tralloc_context * chunk_context );
 
 
 #endif

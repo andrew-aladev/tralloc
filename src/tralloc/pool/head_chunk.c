@@ -10,24 +10,23 @@
 #include <string.h>
 
 
-void _tralloc_pool_new_chunk ( _tralloc_chunk * chunk, size_t length )
+void _tralloc_pool_new_chunk ( _tralloc_pool * pool, void * memory, tralloc_extensions extensions, size_t length )
 {
-    _tralloc_pool * pool = _tralloc_get_pool_from_chunk ( chunk );
     pool->first_child  = NULL;
-    pool->extensions   = chunk->extensions;
-    pool->memory       = _tralloc_get_context_from_chunk ( chunk );
-    pool->max_fragment = _tralloc_pool_fragment_new_memory ( pool->memory, length );
+    pool->extensions   = extensions;
+    pool->memory       = memory;
+    pool->max_fragment = _tralloc_new_pool_fragment ( pool->memory, length );
     pool->length       = length;
     pool->autofree     = TRALLOC_FALSE;
 }
 
-void _tralloc_pool_alloc ( _tralloc_pool * pool, void ** memory, size_t length, tralloc_bool zero, _tralloc_pool_child ** prev_pool_child, _tralloc_pool_child ** next_pool_child )
+void _tralloc_alloc_from_pool ( _tralloc_pool * pool, void ** memory, size_t length, tralloc_bool zero, _tralloc_pool_child ** prev_pool_child, _tralloc_pool_child ** next_pool_child )
 {
     _tralloc_pool_fragment * fragment = pool->max_fragment;
     * prev_pool_child = fragment->prev_child;
     * next_pool_child = fragment->next_child;
 
-    * memory = ( void * ) _tralloc_pool_fragment_alloc ( pool, fragment, length );
+    * memory = ( void * ) _tralloc_alloc_from_pool_fragment ( pool, fragment, length );
 
     if ( zero ) {
         memset ( * memory, 0, length );

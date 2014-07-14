@@ -59,15 +59,15 @@ _TRALLOC_INLINE
 tralloc_error _tralloc_rdlock_subtree ( void * lock )
 {
 #   if TRALLOC_SUBTREE_LOCK_TYPE == TRALLOC_THREADS_RWLOCK
-    if ( pthread_rwlock_rdlock ( ( pthread_rwlock_t * ) lock, NULL ) != 0 ) {
+    if ( pthread_rwlock_rdlock ( ( pthread_rwlock_t * ) lock ) != 0 ) {
         return TRALLOC_ERROR_RWLOCK_FAILED;
     }
 #   elif TRALLOC_SUBTREE_LOCK_TYPE == TRALLOC_THREADS_MUTEX
-    if ( pthread_mutex_lock ( ( pthread_mutex_t * ) lock, NULL ) != 0 ) {
+    if ( pthread_mutex_lock ( ( pthread_mutex_t * ) lock ) != 0 ) {
         return TRALLOC_ERROR_MUTEX_FAILED;
     }
 #   elif TRALLOC_SUBTREE_LOCK_TYPE == TRALLOC_THREADS_SPINLOCK
-    if ( pthread_spin_lock ( ( pthread_spinlock_t * ) lock, 0 ) != 0 ) {
+    if ( pthread_spin_lock ( ( pthread_spinlock_t * ) lock ) != 0 ) {
         return TRALLOC_ERROR_SPINLOCK_FAILED;
     }
 #   endif
@@ -78,15 +78,15 @@ _TRALLOC_INLINE
 tralloc_error _tralloc_rdlock_children ( void * lock )
 {
 #   if TRALLOC_CHILDREN_LOCK_TYPE == TRALLOC_THREADS_RWLOCK
-    if ( pthread_rwlock_rdlock ( ( pthread_rwlock_t * ) lock, NULL ) != 0 ) {
+    if ( pthread_rwlock_rdlock ( ( pthread_rwlock_t * ) lock ) != 0 ) {
         return TRALLOC_ERROR_RWLOCK_FAILED;
     }
 #   elif TRALLOC_CHILDREN_LOCK_TYPE == TRALLOC_THREADS_MUTEX
-    if ( pthread_mutex_lock ( ( pthread_mutex_t * ) lock, NULL ) != 0 ) {
+    if ( pthread_mutex_lock ( ( pthread_mutex_t * ) lock ) != 0 ) {
         return TRALLOC_ERROR_MUTEX_FAILED;
     }
 #   elif TRALLOC_CHILDREN_LOCK_TYPE == TRALLOC_THREADS_SPINLOCK
-    if ( pthread_spin_lock ( ( pthread_spinlock_t * ) lock, 0 ) != 0 ) {
+    if ( pthread_spin_lock ( ( pthread_spinlock_t * ) lock ) != 0 ) {
         return TRALLOC_ERROR_SPINLOCK_FAILED;
     }
 #   endif
@@ -98,15 +98,15 @@ _TRALLOC_INLINE
 tralloc_error _tralloc_wrlock_subtree ( void * lock )
 {
 #   if TRALLOC_SUBTREE_LOCK_TYPE == TRALLOC_THREADS_RWLOCK
-    if ( pthread_rwlock_wrlock ( ( pthread_rwlock_t * ) lock, NULL ) != 0 ) {
+    if ( pthread_rwlock_wrlock ( ( pthread_rwlock_t * ) lock ) != 0 ) {
         return TRALLOC_ERROR_RWLOCK_FAILED;
     }
 #   elif TRALLOC_SUBTREE_LOCK_TYPE == TRALLOC_THREADS_MUTEX
-    if ( pthread_mutex_lock ( ( pthread_mutex_t * ) lock, NULL ) != 0 ) {
+    if ( pthread_mutex_lock ( ( pthread_mutex_t * ) lock ) != 0 ) {
         return TRALLOC_ERROR_MUTEX_FAILED;
     }
 #   elif TRALLOC_SUBTREE_LOCK_TYPE == TRALLOC_THREADS_SPINLOCK
-    if ( pthread_spin_lock ( ( pthread_spinlock_t * ) lock, 0 ) != 0 ) {
+    if ( pthread_spin_lock ( ( pthread_spinlock_t * ) lock ) != 0 ) {
         return TRALLOC_ERROR_SPINLOCK_FAILED;
     }
 #   endif
@@ -117,15 +117,15 @@ _TRALLOC_INLINE
 tralloc_error _tralloc_wrlock_children ( void * lock )
 {
 #   if TRALLOC_CHILDREN_LOCK_TYPE == TRALLOC_THREADS_RWLOCK
-    if ( pthread_rwlock_wrlock ( ( pthread_rwlock_t * ) lock, NULL ) != 0 ) {
+    if ( pthread_rwlock_wrlock ( ( pthread_rwlock_t * ) lock ) != 0 ) {
         return TRALLOC_ERROR_RWLOCK_FAILED;
     }
 #   elif TRALLOC_CHILDREN_LOCK_TYPE == TRALLOC_THREADS_MUTEX
-    if ( pthread_mutex_lock ( ( pthread_mutex_t * ) lock, NULL ) != 0 ) {
+    if ( pthread_mutex_lock ( ( pthread_mutex_t * ) lock ) != 0 ) {
         return TRALLOC_ERROR_MUTEX_FAILED;
     }
 #   elif TRALLOC_CHILDREN_LOCK_TYPE == TRALLOC_THREADS_SPINLOCK
-    if ( pthread_spin_lock ( ( pthread_spinlock_t * ) lock, 0 ) != 0 ) {
+    if ( pthread_spin_lock ( ( pthread_spinlock_t * ) lock ) != 0 ) {
         return TRALLOC_ERROR_SPINLOCK_FAILED;
     }
 #   endif
@@ -137,15 +137,15 @@ _TRALLOC_INLINE
 tralloc_error _tralloc_unlock_subtree ( void * lock )
 {
 #   if TRALLOC_SUBTREE_LOCK_TYPE == TRALLOC_THREADS_RWLOCK
-    if ( pthread_rwlock_unlock ( ( pthread_rwlock_t * ) lock, NULL ) != 0 ) {
+    if ( pthread_rwlock_unlock ( ( pthread_rwlock_t * ) lock ) != 0 ) {
         return TRALLOC_ERROR_RWLOCK_FAILED;
     }
 #   elif TRALLOC_SUBTREE_LOCK_TYPE == TRALLOC_THREADS_MUTEX
-    if ( pthread_mutex_unlock ( ( pthread_mutex_t * ) lock, NULL ) != 0 ) {
+    if ( pthread_mutex_unlock ( ( pthread_mutex_t * ) lock ) != 0 ) {
         return TRALLOC_ERROR_MUTEX_FAILED;
     }
 #   elif TRALLOC_SUBTREE_LOCK_TYPE == TRALLOC_THREADS_SPINLOCK
-    if ( pthread_spin_unlock ( ( pthread_spinlock_t * ) lock, 0 ) != 0 ) {
+    if ( pthread_spin_unlock ( ( pthread_spinlock_t * ) lock ) != 0 ) {
         return TRALLOC_ERROR_SPINLOCK_FAILED;
     }
 #   endif
@@ -156,15 +156,15 @@ _TRALLOC_INLINE
 tralloc_error _tralloc_unlock_children ( void * lock )
 {
 #   if TRALLOC_CHILDREN_LOCK_TYPE == TRALLOC_THREADS_RWLOCK
-    if ( pthread_rwlock_unlock ( ( pthread_rwlock_t * ) lock, NULL ) != 0 ) {
+    if ( pthread_rwlock_unlock ( ( pthread_rwlock_t * ) lock ) != 0 ) {
         return TRALLOC_ERROR_RWLOCK_FAILED;
     }
 #   elif TRALLOC_CHILDREN_LOCK_TYPE == TRALLOC_THREADS_MUTEX
-    if ( pthread_mutex_unlock ( ( pthread_mutex_t * ) lock, NULL ) != 0 ) {
+    if ( pthread_mutex_unlock ( ( pthread_mutex_t * ) lock ) != 0 ) {
         return TRALLOC_ERROR_MUTEX_FAILED;
     }
 #   elif TRALLOC_CHILDREN_LOCK_TYPE == TRALLOC_THREADS_SPINLOCK
-    if ( pthread_spin_unlock ( ( pthread_spinlock_t * ) lock, 0 ) != 0 ) {
+    if ( pthread_spin_unlock ( ( pthread_spinlock_t * ) lock ) != 0 ) {
         return TRALLOC_ERROR_SPINLOCK_FAILED;
     }
 #   endif

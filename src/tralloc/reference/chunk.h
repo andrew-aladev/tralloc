@@ -17,16 +17,15 @@
 
 
 _TRALLOC_INLINE
-void _tralloc_reference_new_chunk ( _tralloc_chunk * chunk )
+void _tralloc_new_reference ( _tralloc_reference * reference )
 {
-    _tralloc_reference * reference = _tralloc_get_reference_from_chunk ( chunk );
     reference->references = NULL;
     reference->next       = NULL;
     reference->prev       = NULL;
 }
 
-void          _tralloc_reference_update_chunk ( _tralloc_chunk * reference_chunk );
-tralloc_error _tralloc_reference_free_chunk   ( _tralloc_chunk * chunk );
+void          _tralloc_update_reference ( _tralloc_reference * reference );
+tralloc_error _tralloc_free_reference   ( _tralloc_reference * reference );
 
 
 #endif

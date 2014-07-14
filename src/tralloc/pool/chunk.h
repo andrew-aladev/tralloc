@@ -33,7 +33,7 @@ _tralloc_pool * _tralloc_pool_child_get_pool_from_chunk ( _tralloc_chunk * chunk
 // Function returns size of empty space ( >= 0 ).
 // There is no warranty, that this size will be enough for "_tralloc_pool_fragment".
 _TRALLOC_INLINE
-size_t _tralloc_pool_child_get_prev_fragment_length ( _tralloc_pool_child * pool_child )
+size_t _tralloc_get_prev_fragment_length_from_pool_child ( _tralloc_pool_child * pool_child )
 {
     _tralloc_pool_child * prev = pool_child->prev;
     if ( prev == NULL ) {
@@ -48,7 +48,7 @@ size_t _tralloc_pool_child_get_prev_fragment_length ( _tralloc_pool_child * pool
 // Function returns size of empty space ( >= 0 ).
 // There is no warranty, that this size will be enough for "_tralloc_pool_fragment".
 _TRALLOC_INLINE
-size_t _tralloc_pool_child_get_next_fragment_length ( _tralloc_pool_child * pool_child )
+size_t _tralloc_get_next_fragment_length_from_pool_child ( _tralloc_pool_child * pool_child )
 {
     _tralloc_pool_child * next = pool_child->next;
     if ( next == NULL ) {
@@ -60,10 +60,9 @@ size_t _tralloc_pool_child_get_next_fragment_length ( _tralloc_pool_child * pool
     }
 }
 
-void                  _tralloc_pool_child_new_chunk  ( _tralloc_chunk * chunk, _tralloc_pool * pool, size_t length, _tralloc_pool_child * prev, _tralloc_pool_child * next );
-_tralloc_pool_child * _tralloc_pool_child_resize     ( _tralloc_pool_child * pool_child, size_t target_length );
-tralloc_error         _tralloc_pool_child_free_chunk ( _tralloc_chunk * chunk );
+void                  _tralloc_new_pool_child    ( _tralloc_pool_child * pool_child, _tralloc_pool * pool, size_t length, _tralloc_pool_child * prev, _tralloc_pool_child * next );
+_tralloc_pool_child * _tralloc_resize_pool_child ( _tralloc_pool_child * pool_child, size_t target_length );
+tralloc_error         _tralloc_free_pool_child   ( _tralloc_pool_child * pool_child );
 
 
 #endif
-

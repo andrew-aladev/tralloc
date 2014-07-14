@@ -8,11 +8,10 @@
 #include <tralloc/tree/free.h>
 
 
-void _tralloc_reference_update_chunk ( _tralloc_chunk * chunk )
+void _tralloc_update_reference ( _tralloc_reference * reference )
 {
-    _tralloc_reference * reference = _tralloc_get_reference_from_chunk ( chunk );
-    _tralloc_reference * prev      = reference->prev;
-    _tralloc_reference * next      = reference->next;
+    _tralloc_reference * prev = reference->prev;
+    _tralloc_reference * next = reference->next;
 
     if ( prev != NULL ) {
         prev->next = reference;
@@ -28,11 +27,10 @@ void _tralloc_reference_update_chunk ( _tralloc_chunk * chunk )
     }
 }
 
-tralloc_error _tralloc_reference_free_chunk ( _tralloc_chunk * chunk )
+tralloc_error _tralloc_free_reference ( _tralloc_reference * reference )
 {
-    _tralloc_reference * reference = _tralloc_get_reference_from_chunk ( chunk );
-    _tralloc_reference * prev      = reference->prev;
-    _tralloc_reference * next      = reference->next;
+    _tralloc_reference * prev = reference->prev;
+    _tralloc_reference * next = reference->next;
 
     if ( prev == NULL ) {
         _tralloc_references * references = reference->references;
