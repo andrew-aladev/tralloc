@@ -19,12 +19,12 @@
 tralloc_error _tralloc_free_subtree ( _tralloc_chunk * chunk );
 
 _TRALLOC_INLINE
-tralloc_error tralloc_free ( tralloc_context * chunk_context )
+tralloc_error tralloc_free ( tralloc_context * context )
 {
-    if ( chunk_context == NULL ) {
+    if ( context == NULL ) {
         return TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL;
     }
-    return _tralloc_free_subtree ( _tralloc_get_chunk_from_context ( chunk_context ) );
+    return _tralloc_free_subtree ( _tralloc_get_chunk_from_context ( context ) );
 }
 
 
