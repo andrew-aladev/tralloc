@@ -4,8 +4,7 @@
 // You should have received a copy of the GNU General Lesser Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
 #include <tralloc/reference/move.h>
-#include <tralloc/reference/common.h>
-#include <tralloc/common.h>
+#include <tralloc/reference/chunk.h>
 
 
 static inline

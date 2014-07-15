@@ -9,7 +9,7 @@
 #include "../types.h"
 
 
-tralloc_error tralloc_clear_references ( tralloc_context * chunk_context );
+tralloc_error tralloc_clear_references ( tralloc_context * context );
 
 
 #endif

@@ -6,6 +6,7 @@
 #define _TRALLOC_INCLUDED_FROM_TREE_ALLOC_C
 #include <tralloc/tree/alloc.h>
 #include <tralloc/tree/chunk.h>
+#include <tralloc/common.h>
 
 #if defined ( TRALLOC_DEBUG )
 #   include <tralloc/debug/events.h>
@@ -26,8 +27,9 @@
 #endif
 
 #if defined ( TRALLOC_REFERENCE )
-#   include <tralloc/reference/head_chunk.h>
 #   include <tralloc/reference/chunk.h>
+#   include <tralloc/reference/references.h>
+#   include <tralloc/reference/reference.h>
 #endif
 
 #if defined ( TRALLOC_POOL )

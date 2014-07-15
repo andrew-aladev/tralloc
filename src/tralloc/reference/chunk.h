@@ -6,7 +6,7 @@
 #if !defined ( TRALLOC_REFERENCE_CHUNK_H )
 #define TRALLOC_REFERENCE_CHUNK_H
 
-#include "common.h"
+#include "../common.h"
 
 #undef _TRALLOC_INLINE
 #if defined ( _TRALLOC_INCLUDED_FROM_REFERENCE_CHUNK_C )
@@ -17,15 +17,22 @@
 
 
 _TRALLOC_INLINE
-void _tralloc_new_reference ( _tralloc_reference * reference )
+_tralloc_references * _tralloc_get_references_from_chunk ( _tralloc_chunk * chunk )
 {
-    reference->references = NULL;
-    reference->next       = NULL;
-    reference->prev       = NULL;
+    return ( _tralloc_references * ) ( ( uintptr_t ) chunk - _tralloc_get_offset_for_extension ( chunk->extensions, TRALLOC_EXTENSION_REFERENCES ) );
 }
 
-void          _tralloc_update_reference ( _tralloc_reference * reference );
-tralloc_error _tralloc_free_reference   ( _tralloc_reference * reference );
+_TRALLOC_INLINE
+_tralloc_reference * _tralloc_get_reference_from_chunk ( _tralloc_chunk * chunk )
+{
+    return ( _tralloc_reference * ) ( ( uintptr_t ) chunk - _tralloc_get_offset_for_extension ( chunk->extensions, TRALLOC_EXTENSION_REFERENCE ) );
+}
+
+_TRALLOC_INLINE
+_tralloc_chunk * _tralloc_get_chunk_from_references ( _tralloc_references * references )
+{
+    return ( _tralloc_chunk * ) ( ( uintptr_t ) references + _tralloc_get_offset_for_extension ( references->extensions, TRALLOC_EXTENSION_REFERENCES ) );
+}
 
 
 #endif

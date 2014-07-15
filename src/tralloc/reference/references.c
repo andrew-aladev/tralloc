@@ -3,5 +3,5 @@
 // tralloc is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Lesser Public License for more details.
 // You should have received a copy of the GNU General Lesser Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
-#define _TRALLOC_INCLUDED_FROM_REFERENCE_COMMON_C
-#include <tralloc/reference/common.h>
+#define _TRALLOC_INCLUDED_FROM_REFERENCE_REFERENCES_C
+#include <tralloc/reference/references.h>

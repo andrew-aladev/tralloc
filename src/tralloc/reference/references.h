@@ -3,13 +3,14 @@
 // tralloc is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Lesser Public License for more details.
 // You should have received a copy of the GNU General Lesser Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
-#if !defined ( TRALLOC_REFERENCE_HEAD_CHUNK_H )
-#define TRALLOC_REFERENCE_HEAD_CHUNK_H
+#if !defined ( TRALLOC_REFERENCE_REFERENCES_H )
+#define TRALLOC_REFERENCE_REFERENCES_H
 
-#include "common.h"
+#include "../types.h"
+#include "../macro.h"
 
 #undef _TRALLOC_INLINE
-#if defined ( _TRALLOC_INCLUDED_FROM_REFERENCE_HEAD_CHUNK_C )
+#if defined ( _TRALLOC_INCLUDED_FROM_REFERENCE_REFERENCES_C )
 #    define _TRALLOC_INLINE _TRALLOC_INLINE_IN_OBJECT
 #else
 #    define _TRALLOC_INLINE _TRALLOC_INLINE_IN_HEADER
@@ -56,5 +57,6 @@ tralloc_bool _tralloc_references_can_free_children (  _tralloc_references * refe
         return TRALLOC_FALSE;
     }
 }
+
 
 #endif

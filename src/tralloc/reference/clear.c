@@ -4,16 +4,16 @@
 // You should have received a copy of the GNU General Lesser Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
 #include <tralloc/reference/clear.h>
-#include <tralloc/reference/common.h>
+#include <tralloc/reference/chunk.h>
 #include <tralloc/common.h>
 
 
-tralloc_error tralloc_clear_references ( tralloc_context * chunk_context )
+tralloc_error tralloc_clear_references ( tralloc_context * context )
 {
-    if ( chunk_context == NULL ) {
+    if ( context == NULL ) {
         return TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL;
     }
-    _tralloc_chunk * chunk = _tralloc_get_chunk_from_context ( chunk_context );
+    _tralloc_chunk * chunk = _tralloc_get_chunk_from_context ( context );
 
     if ( ! ( chunk->extensions & TRALLOC_EXTENSION_REFERENCES ) ) {
         return TRALLOC_ERROR_NO_SUCH_EXTENSION;
