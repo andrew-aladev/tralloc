@@ -1,0 +1,11 @@
+install (FILES "children.h" "subtree.h" DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/${CURRENT_INCLUDEDIR}")
+set (SOURCES ${SOURCES}
+    "${CMAKE_CURRENT_SOURCE_DIR}/children.c"
+    "${CMAKE_CURRENT_SOURCE_DIR}/subtree.c"
+)
+
+if (${TRALLOC_DEBUG})
+    add_subdirectory ("debug")
+endif ()
+
+set (SOURCES ${SOURCES} PARENT_SCOPE)

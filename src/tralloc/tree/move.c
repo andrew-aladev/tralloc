@@ -9,7 +9,8 @@
 
 #if defined ( TRALLOC_THREADS )
 #   include <tralloc/threads/chunk.h>
-#   include <tralloc/threads/lock.h>
+#   include <tralloc/threads/lock/subtree.h>
+#   include <tralloc/threads/lock/children.h>
 #endif
 
 #if defined ( TRALLOC_DEBUG )

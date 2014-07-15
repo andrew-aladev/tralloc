@@ -10,7 +10,7 @@
 #include <string.h>
 
 
-void _tralloc_pool_new_chunk ( _tralloc_pool * pool, void * memory, tralloc_extensions extensions, size_t length )
+void _tralloc_new_pool ( _tralloc_pool * pool, void * memory, tralloc_extensions extensions, size_t length )
 {
     pool->first_child  = NULL;
     pool->extensions   = extensions;

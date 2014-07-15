@@ -1,4 +1,8 @@
 install (FILES "chunk.h" DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/${CURRENT_INCLUDEDIR}")
 set (SOURCES ${SOURCES}
     "${CMAKE_CURRENT_SOURCE_DIR}/chunk.c"
-PARENT_SCOPE)
+)
+
+add_subdirectory ("lock")
+
+set (SOURCES ${SOURCES} PARENT_SCOPE)

@@ -18,8 +18,10 @@
 #   include <tralloc/debug/threads.h>
 #endif
 
-#include <stdlib.h>
-#include <string.h>
+#if defined ( TRALLOC_DEBUG_LOG )
+#   include <stdlib.h>
+#   include <string.h>
+#endif
 
 
 tralloc_error _tralloc_debug_before_add_chunk ( _tralloc_chunk * _TRALLOC_UNUSED ( parent_chunk ), tralloc_extensions _TRALLOC_UNUSED ( extensions ), size_t _TRALLOC_UNUSED ( chunk_length ), size_t _TRALLOC_UNUSED ( length ) )

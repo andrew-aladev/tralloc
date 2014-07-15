@@ -7,7 +7,9 @@
 #include <tralloc/debug/common.h>
 #include <tralloc/common.h>
 
-#include <tralloc/threads/mutex.h>
+#include <tralloc/threads/lock/subtree.h>
+#include <tralloc/threads/lock/children.h>
+#include <tralloc/threads/lock/debug/threads.h>
 
 #if defined ( TRALLOC_DEBUG_LOG )
 #   include <stdio.h>
@@ -17,7 +19,7 @@
 static inline
 tralloc_error _tralloc_check_subtree_lock ( _tralloc_chunk * chunk, pthread_t thread_id )
 {
-    tralloc_error result = _tralloc_mutex_lock ( &chunk->thread_usage_mutex );
+    tralloc_error result = _tralloc_wrlock_debug_threads ( &chunk->thread_usage_lock );
     if ( result != 0 ) {
         return result;
     }
@@ -46,11 +48,11 @@ tralloc_error _tralloc_check_subtree_lock ( _tralloc_chunk * chunk, pthread_t th
         );
 #       endif
 
-        _tralloc_mutex_unlock ( &chunk->thread_usage_mutex );
+        _tralloc_unlock_debug_threads ( &chunk->thread_usage_lock );
         return TRALLOC_ERROR_NO_SUBTREE_LOCK;
     }
 
-    result = _tralloc_mutex_unlock ( &chunk->thread_usage_mutex );
+    result = _tralloc_unlock_debug_threads ( &chunk->thread_usage_lock );
     if ( result != 0 ) {
         return result;
     }
@@ -60,7 +62,7 @@ tralloc_error _tralloc_check_subtree_lock ( _tralloc_chunk * chunk, pthread_t th
 static inline
 tralloc_error _tralloc_check_children_lock ( _tralloc_chunk * chunk, pthread_t thread_id )
 {
-    tralloc_error result = _tralloc_mutex_lock ( &chunk->thread_usage_mutex );
+    tralloc_error result = _tralloc_wrlock_debug_threads ( &chunk->thread_usage_lock );
     if ( result != 0 ) {
         return result;
     }
@@ -89,11 +91,11 @@ tralloc_error _tralloc_check_children_lock ( _tralloc_chunk * chunk, pthread_t t
         );
 #       endif
 
-        _tralloc_mutex_unlock ( &chunk->thread_usage_mutex );
+        _tralloc_unlock_debug_threads ( &chunk->thread_usage_lock );
         return TRALLOC_ERROR_NO_CHILDREN_LOCK;
     }
 
-    result = _tralloc_mutex_unlock ( &chunk->thread_usage_mutex );
+    result = _tralloc_unlock_debug_threads ( &chunk->thread_usage_lock );
     if ( result != 0 ) {
         return result;
     }
@@ -121,9 +123,9 @@ tralloc_error _tralloc_debug_threads_after_add_chunk ( _tralloc_chunk * chunk )
 
     tralloc_error result;
     if (
-        ( result = _tralloc_mutex_new ( &chunk->thread_usage_mutex ) ) != 0 ||
-        ( result = _tralloc_mutex_new ( &chunk->subtree_mutex )      ) != 0 ||
-        ( result = _tralloc_mutex_new ( &chunk->children_mutex )     ) != 0
+        ( result = _tralloc_new_debug_threads_lock ( &chunk->thread_usage_lock ) ) != 0 ||
+        ( result = _tralloc_new_subtree_lock       ( &chunk->subtree_lock )      ) != 0 ||
+        ( result = _tralloc_new_children_lock      ( &chunk->children_lock )     ) != 0
     ) {
         return result;
     }
@@ -132,13 +134,13 @@ tralloc_error _tralloc_debug_threads_after_add_chunk ( _tralloc_chunk * chunk )
 
 tralloc_error _tralloc_debug_threads_before_move_chunk ( _tralloc_chunk * chunk )
 {
-    tralloc_error result = _tralloc_mutex_lock ( &chunk->subtree_mutex );
+    tralloc_error result = _tralloc_rdlock_subtree ( &chunk->subtree_lock );
     if ( result != 0 ) {
         return result;
     }
 
     _tralloc_chunk * parent_chunk = chunk->parent;
-    result = _tralloc_mutex_unlock ( &chunk->subtree_mutex );
+    result = _tralloc_unlock_subtree ( &chunk->subtree_lock );
     if ( result != 0 ) {
         return result;
     }
@@ -162,13 +164,13 @@ tralloc_error _tralloc_debug_threads_before_move_chunk ( _tralloc_chunk * chunk 
 
 tralloc_error _tralloc_debug_threads_after_move_chunk ( _tralloc_chunk * chunk )
 {
-    tralloc_error result = _tralloc_mutex_lock ( &chunk->subtree_mutex );
+    tralloc_error result = _tralloc_rdlock_subtree ( &chunk->subtree_lock );
     if ( result != 0 ) {
         return result;
     }
 
     _tralloc_chunk * parent_chunk = chunk->parent;
-    result = _tralloc_mutex_unlock ( &chunk->subtree_mutex );
+    result = _tralloc_unlock_subtree ( &chunk->subtree_lock );
     if ( result != 0 ) {
         return result;
     }
@@ -240,13 +242,13 @@ tralloc_error _tralloc_debug_threads_before_free_subtree ( _tralloc_chunk * chun
     // Free operation can not take part in threads competition, because pointer will become invalid after this operation.
     // So chunk should not be checked.
 
-    tralloc_error result = _tralloc_mutex_lock ( &chunk->subtree_mutex );
+    tralloc_error result = _tralloc_rdlock_subtree ( &chunk->subtree_lock );
     if ( result != 0 ) {
         return result;
     }
 
     _tralloc_chunk * parent_chunk = chunk->parent;
-    result = _tralloc_mutex_unlock ( &chunk->subtree_mutex );
+    result = _tralloc_unlock_subtree ( &chunk->subtree_lock );
     if ( result != 0 ) {
         return result;
     }
@@ -264,15 +266,15 @@ tralloc_error _tralloc_debug_threads_before_free_chunk ( _tralloc_chunk * chunk 
 {
     tralloc_error error = 0;
 
-    tralloc_error result = _tralloc_mutex_free ( &chunk->thread_usage_mutex );
+    tralloc_error result = _tralloc_free_debug_threads_lock ( &chunk->thread_usage_lock );
     if ( result != 0 ) {
         error = result;
     }
-    result = _tralloc_mutex_free ( &chunk->subtree_mutex );
+    result = _tralloc_free_subtree_lock ( &chunk->subtree_lock );
     if ( result != 0 ) {
         error = result;
     }
-    result = _tralloc_mutex_free ( &chunk->children_mutex );
+    result = _tralloc_free_children_lock ( &chunk->children_lock );
     if ( result != 0 ) {
         error = result;
     }

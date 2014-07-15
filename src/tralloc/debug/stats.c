@@ -6,6 +6,7 @@
 #include <tralloc/debug/stats.h>
 
 #if defined ( TRALLOC_THREADS )
+#   include <tralloc/threads/lock/debug/stats.h>
 #   include <stdlib.h>
 #endif
 
@@ -71,50 +72,8 @@ void lock_destructor ()
 }
 #endif
 
-static inline
-tralloc_error _tralloc_chunks_wrlock ( void * lock )
-{
-
-#   if TRALLOC_DEBUG_STATS_LOCK_TYPE == TRALLOC_THREADS_RWLOCK
-    return pthread_rwlock_wrlock ( ( pthread_rwlock_t * ) lock );
-#   elif TRALLOC_DEBUG_STATS_LOCK_TYPE == TRALLOC_THREADS_MUTEX
-    return pthread_mutex_lock ( ( pthread_mutex_t * ) lock );
-#   elif TRALLOC_DEBUG_STATS_LOCK_TYPE == TRALLOC_THREADS_SPINLOCK
-    return pthread_spin_lock ( ( pthread_spinlock_t * ) lock );
-#   endif
-
-    return 0;
-}
-static inline
-tralloc_error _tralloc_chunks_rdlock ( void * lock )
-{
-
-#   if TRALLOC_DEBUG_STATS_LOCK_TYPE == TRALLOC_THREADS_RWLOCK
-    return pthread_rwlock_rdlock ( ( pthread_rwlock_t * ) lock );
-#   elif TRALLOC_DEBUG_STATS_LOCK_TYPE == TRALLOC_THREADS_MUTEX
-    return pthread_mutex_lock ( ( pthread_mutex_t * ) lock );
-#   elif TRALLOC_DEBUG_STATS_LOCK_TYPE == TRALLOC_THREADS_SPINLOCK
-    return pthread_spin_lock ( ( pthread_spinlock_t * ) lock );
-#   endif
-
-    return 0;
-}
-static inline
-tralloc_error _tralloc_chunks_unlock ( void * lock )
-{
-
-#   if TRALLOC_DEBUG_STATS_LOCK_TYPE == TRALLOC_THREADS_RWLOCK
-    return pthread_rwlock_unlock ( ( pthread_rwlock_t * ) lock );
-#   elif TRALLOC_DEBUG_STATS_LOCK_TYPE == TRALLOC_THREADS_MUTEX
-    return pthread_mutex_unlock ( ( pthread_mutex_t * ) lock );
-#   elif TRALLOC_DEBUG_STATS_LOCK_TYPE == TRALLOC_THREADS_SPINLOCK
-    return pthread_spin_unlock ( ( pthread_spinlock_t * ) lock );
-#   endif
-
-    return 0;
-}
-
 #endif
+
 
 static size_t _tralloc_chunks_count = 0;
 
@@ -123,7 +82,7 @@ tralloc_error _tralloc_add_chunks_count ( size_t length )
 {
 
 #   if defined ( TRALLOC_THREADS )
-    tralloc_error result = _tralloc_chunks_wrlock ( &_tralloc_chunks_count_lock );
+    tralloc_error result = _tralloc_wrlock_debug_stats ( &_tralloc_chunks_count_lock );
     if ( result != 0 ) {
         return result;
     }
@@ -132,7 +91,7 @@ tralloc_error _tralloc_add_chunks_count ( size_t length )
     _tralloc_chunks_count += length;
 
 #   if defined ( TRALLOC_THREADS )
-    result = _tralloc_chunks_unlock ( &_tralloc_chunks_count_lock );
+    result = _tralloc_unlock_debug_stats ( &_tralloc_chunks_count_lock );
     if ( result != 0 ) {
         return result;
     }
@@ -146,7 +105,7 @@ tralloc_error _tralloc_subtract_chunks_count ( size_t length )
 {
 
 #   if defined ( TRALLOC_THREADS )
-    tralloc_error result = _tralloc_chunks_wrlock ( &_tralloc_chunks_count_lock );
+    tralloc_error result = _tralloc_wrlock_debug_stats ( &_tralloc_chunks_count_lock );
     if ( result != 0 ) {
         return result;
     }
@@ -155,7 +114,7 @@ tralloc_error _tralloc_subtract_chunks_count ( size_t length )
     _tralloc_chunks_count -= length;
 
 #   if defined ( TRALLOC_THREADS )
-    result = _tralloc_chunks_unlock ( &_tralloc_chunks_count_lock );
+    result = _tralloc_unlock_debug_stats ( &_tralloc_chunks_count_lock );
     if ( result != 0 ) {
         return result;
     }
@@ -168,7 +127,7 @@ tralloc_error tralloc_debug_stats_get_chunks_count ( size_t * length )
 {
 
 #   if defined ( TRALLOC_THREADS )
-    tralloc_error result = _tralloc_chunks_rdlock ( &_tralloc_chunks_count_lock );
+    tralloc_error result = _tralloc_rdlock_debug_stats ( &_tralloc_chunks_count_lock );
     if ( result != 0 ) {
         return result;
     }
@@ -177,7 +136,7 @@ tralloc_error tralloc_debug_stats_get_chunks_count ( size_t * length )
     * length = _tralloc_chunks_count;
 
 #   if defined ( TRALLOC_THREADS )
-    result = _tralloc_chunks_unlock ( &_tralloc_chunks_count_lock );
+    result = _tralloc_unlock_debug_stats ( &_tralloc_chunks_count_lock );
     if ( result != 0 ) {
         return result;
     }
@@ -193,7 +152,7 @@ tralloc_error _tralloc_debug_stats_add_chunks_overhead_length ( size_t length )
 {
 
 #   if defined ( TRALLOC_THREADS )
-    tralloc_error result = _tralloc_chunks_wrlock ( &_tralloc_chunks_overhead_length_lock );
+    tralloc_error result = _tralloc_wrlock_debug_stats ( &_tralloc_chunks_overhead_length_lock );
     if ( result != 0 ) {
         return result;
     }
@@ -202,7 +161,7 @@ tralloc_error _tralloc_debug_stats_add_chunks_overhead_length ( size_t length )
     _tralloc_chunks_overhead_length += length;
 
 #   if defined ( TRALLOC_THREADS )
-    result = _tralloc_chunks_unlock ( &_tralloc_chunks_overhead_length_lock );
+    result = _tralloc_unlock_debug_stats ( &_tralloc_chunks_overhead_length_lock );
     if ( result != 0 ) {
         return result;
     }
@@ -215,7 +174,7 @@ tralloc_error _tralloc_debug_stats_subtract_chunks_overhead_length ( size_t leng
 {
 
 #   if defined ( TRALLOC_THREADS )
-    tralloc_error result = _tralloc_chunks_wrlock ( &_tralloc_chunks_overhead_length_lock );
+    tralloc_error result = _tralloc_wrlock_debug_stats ( &_tralloc_chunks_overhead_length_lock );
     if ( result != 0 ) {
         return result;
     }
@@ -224,7 +183,7 @@ tralloc_error _tralloc_debug_stats_subtract_chunks_overhead_length ( size_t leng
     _tralloc_chunks_overhead_length -= length;
 
 #   if defined ( TRALLOC_THREADS )
-    result = _tralloc_chunks_unlock ( &_tralloc_chunks_overhead_length_lock );
+    result = _tralloc_unlock_debug_stats ( &_tralloc_chunks_overhead_length_lock );
     if ( result != 0 ) {
         return result;
     }
@@ -237,7 +196,7 @@ tralloc_error tralloc_debug_stats_get_chunks_overhead_length ( size_t * length )
 {
 
 #   if defined ( TRALLOC_THREADS )
-    tralloc_error result = _tralloc_chunks_rdlock ( &_tralloc_chunks_overhead_length_lock );
+    tralloc_error result = _tralloc_rdlock_debug_stats ( &_tralloc_chunks_overhead_length_lock );
     if ( result != 0 ) {
         return result;
     }
@@ -246,7 +205,7 @@ tralloc_error tralloc_debug_stats_get_chunks_overhead_length ( size_t * length )
     * length = _tralloc_chunks_overhead_length;
 
 #   if defined ( TRALLOC_THREADS )
-    result = _tralloc_chunks_unlock ( &_tralloc_chunks_overhead_length_lock );
+    result = _tralloc_unlock_debug_stats ( &_tralloc_chunks_overhead_length_lock );
     if ( result != 0 ) {
         return result;
     }
@@ -263,7 +222,7 @@ tralloc_error _tralloc_add_chunks_length ( size_t length )
 {
 
 #   if defined ( TRALLOC_THREADS )
-    tralloc_error result = _tralloc_chunks_wrlock ( &_tralloc_chunks_length_lock );
+    tralloc_error result = _tralloc_wrlock_debug_stats ( &_tralloc_chunks_length_lock );
     if ( result != 0 ) {
         return result;
     }
@@ -272,7 +231,7 @@ tralloc_error _tralloc_add_chunks_length ( size_t length )
     _tralloc_chunks_length += length;
 
 #   if defined ( TRALLOC_THREADS )
-    result = _tralloc_chunks_unlock ( &_tralloc_chunks_length_lock );
+    result = _tralloc_unlock_debug_stats ( &_tralloc_chunks_length_lock );
     if ( result != 0 ) {
         return result;
     }
@@ -286,7 +245,7 @@ tralloc_error _tralloc_subtract_chunks_length ( size_t length )
 {
 
 #   if defined ( TRALLOC_THREADS )
-    tralloc_error result = _tralloc_chunks_wrlock ( &_tralloc_chunks_length_lock );
+    tralloc_error result = _tralloc_wrlock_debug_stats ( &_tralloc_chunks_length_lock );
     if ( result != 0 ) {
         return result;
     }
@@ -295,7 +254,7 @@ tralloc_error _tralloc_subtract_chunks_length ( size_t length )
     _tralloc_chunks_length -= length;
 
 #   if defined ( TRALLOC_THREADS )
-    result = _tralloc_chunks_unlock ( &_tralloc_chunks_length_lock );
+    result = _tralloc_unlock_debug_stats ( &_tralloc_chunks_length_lock );
     if ( result != 0 ) {
         return result;
     }
@@ -308,7 +267,7 @@ tralloc_error tralloc_debug_stats_get_chunks_length ( size_t * length )
 {
 
 #   if defined ( TRALLOC_THREADS )
-    tralloc_error result = _tralloc_chunks_rdlock ( &_tralloc_chunks_length_lock );
+    tralloc_error result = _tralloc_rdlock_debug_stats ( &_tralloc_chunks_length_lock );
     if ( result != 0 ) {
         return result;
     }
@@ -317,7 +276,7 @@ tralloc_error tralloc_debug_stats_get_chunks_length ( size_t * length )
     * length = _tralloc_chunks_length;
 
 #   if defined ( TRALLOC_THREADS )
-    result = _tralloc_chunks_unlock ( &_tralloc_chunks_length_lock );
+    result = _tralloc_unlock_debug_stats ( &_tralloc_chunks_length_lock );
     if ( result != 0 ) {
         return result;
     }

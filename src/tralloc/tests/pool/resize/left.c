@@ -5,7 +5,7 @@
 
 #include <tralloc/tests/pool/common.h>
 #include <tralloc/tree.h>
-#include <tralloc/pool/common.h>
+#include <tralloc/pool/chunk.h>
 
 
 static inline

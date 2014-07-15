@@ -5,7 +5,7 @@
 
 #include <tralloc/tests/pool/resize/common.h>
 #include <tralloc/tree.h>
-#include <tralloc/pool/common.h>
+#include <tralloc/pool/chunk.h>
 
 
 tralloc_bool test_pool_resize_order ( tralloc_context * ctx )

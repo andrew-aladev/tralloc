@@ -6,7 +6,7 @@
 #include <tralloc/tests/reference/common.h>
 #include <tralloc/tree.h>
 #include <tralloc/reference.h>
-#include <tralloc/reference/common.h>
+#include <tralloc/reference/chunk.h>
 
 
 tralloc_bool test_reference_free_subtree ( test_reference_tree * tr )
