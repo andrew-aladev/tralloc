@@ -6,7 +6,6 @@
 #define _TRALLOC_INCLUDED_FROM_TREE_ALLOC_C
 #include <tralloc/tree/alloc.h>
 #include <tralloc/tree/chunk.h>
-#include <tralloc/common.h>
 
 #if defined ( TRALLOC_DEBUG )
 #   include <tralloc/debug/events.h>
@@ -23,6 +22,7 @@
 
 #if defined ( TRALLOC_DESTRUCTOR )
 #   include <tralloc/destructor/chunk.h>
+#   include <tralloc/destructor/destructors.h>
 #endif
 
 #if defined ( TRALLOC_REFERENCE )
@@ -32,7 +32,8 @@
 
 #if defined ( TRALLOC_POOL )
 #   include <tralloc/pool/chunk.h>
-#   include <tralloc/pool/head_chunk.h>
+#   include <tralloc/pool/pool.h>
+#   include <tralloc/pool/pool_child.h>
 #endif
 
 #include <stdlib.h>
@@ -246,7 +247,8 @@ tralloc_error _tralloc_new_with_extensions_with_allocator ( tralloc_context * pa
 
 #   if defined ( TRALLOC_LENGTH )
     if ( have_length ) {
-        _tralloc_set_length ( chunk, length );
+        _tralloc_length * length_ptr = _tralloc_get_length_from_chunk ( chunk );
+        * length_ptr = length;
     }
 #   endif
 

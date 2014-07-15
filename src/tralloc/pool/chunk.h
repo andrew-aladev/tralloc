@@ -6,7 +6,6 @@
 #if !defined ( TRALLOC_POOL_CHUNK_H )
 #define TRALLOC_POOL_CHUNK_H
 
-#include "common.h"
 #include "../common.h"
 
 #undef _TRALLOC_INLINE
@@ -16,6 +15,24 @@
 #    define _TRALLOC_INLINE _TRALLOC_INLINE_IN_HEADER
 #endif
 
+
+_TRALLOC_INLINE
+_tralloc_pool_child * _tralloc_get_pool_child_from_chunk ( _tralloc_chunk * chunk )
+{
+    return ( _tralloc_pool_child * ) ( ( uintptr_t ) chunk - _tralloc_get_offset_for_extension ( chunk->extensions, TRALLOC_EXTENSION_POOL_CHILD ) );
+}
+
+_TRALLOC_INLINE
+_tralloc_pool * _tralloc_get_pool_from_chunk ( _tralloc_chunk * chunk )
+{
+    return ( _tralloc_pool * ) ( ( uintptr_t ) chunk - _tralloc_get_offset_for_extension ( chunk->extensions, TRALLOC_EXTENSION_POOL ) );
+}
+
+_TRALLOC_INLINE
+_tralloc_chunk * _tralloc_get_chunk_from_pool ( _tralloc_pool * pool )
+{
+    return ( _tralloc_chunk * ) ( ( uintptr_t ) pool + _tralloc_get_offset_for_extension ( pool->extensions, TRALLOC_EXTENSION_POOL ) );
+}
 
 _TRALLOC_INLINE
 _tralloc_pool * _tralloc_pool_child_get_pool_from_chunk ( _tralloc_chunk * chunk )
@@ -29,40 +46,6 @@ _tralloc_pool * _tralloc_pool_child_get_pool_from_chunk ( _tralloc_chunk * chunk
         return NULL;
     }
 }
-
-// Function returns size of empty space ( >= 0 ).
-// There is no warranty, that this size will be enough for "_tralloc_pool_fragment".
-_TRALLOC_INLINE
-size_t _tralloc_get_prev_fragment_length_from_pool_child ( _tralloc_pool_child * pool_child )
-{
-    _tralloc_pool_child * prev = pool_child->prev;
-    if ( prev == NULL ) {
-        // Returning size of empty space between pool memory's start and first "pool_child".
-        return ( uintptr_t ) pool_child - ( uintptr_t ) pool_child->pool->memory;
-    } else {
-        // Returning size of empty space between prev and current pool_childs.
-        return ( uintptr_t ) pool_child - ( uintptr_t ) prev - prev->length;
-    }
-}
-
-// Function returns size of empty space ( >= 0 ).
-// There is no warranty, that this size will be enough for "_tralloc_pool_fragment".
-_TRALLOC_INLINE
-size_t _tralloc_get_next_fragment_length_from_pool_child ( _tralloc_pool_child * pool_child )
-{
-    _tralloc_pool_child * next = pool_child->next;
-    if ( next == NULL ) {
-        // Returning size of empty space between last "pool_child" and pool memory's end.
-        return ( uintptr_t ) pool_child->pool->memory + pool_child->pool->length - ( uintptr_t ) pool_child - pool_child->length;
-    } else {
-        // Returning size of empty space between current and next "pool_child"s.
-        return ( uintptr_t ) next - ( uintptr_t ) pool_child - pool_child->length;
-    }
-}
-
-void                  _tralloc_new_pool_child    ( _tralloc_pool_child * pool_child, _tralloc_pool * pool, size_t length, _tralloc_pool_child * prev, _tralloc_pool_child * next );
-_tralloc_pool_child * _tralloc_resize_pool_child ( _tralloc_pool_child * pool_child, size_t target_length );
-tralloc_error         _tralloc_free_pool_child   ( _tralloc_pool_child * pool_child );
 
 
 #endif

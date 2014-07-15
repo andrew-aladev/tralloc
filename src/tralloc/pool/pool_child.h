@@ -3,5 +3,15 @@
 // tralloc is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Lesser Public License for more details.
 // You should have received a copy of the GNU General Lesser Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
-#define _TRALLOC_INCLUDED_FROM_POOL_COMMON_C
-#include <tralloc/pool/common.h>
+#if !defined ( TRALLOC_POOL_POOL_CHILD_H )
+#define TRALLOC_POOL_POOL_CHILD_H
+
+#include "../types.h"
+
+
+void                  _tralloc_new_pool_child    ( _tralloc_pool_child * pool_child, _tralloc_pool * pool, size_t length, _tralloc_pool_child * prev, _tralloc_pool_child * next );
+_tralloc_pool_child * _tralloc_resize_pool_child ( _tralloc_pool_child * pool_child, size_t target_length );
+tralloc_error         _tralloc_free_pool_child   ( _tralloc_pool_child * pool_child );
+
+
+#endif

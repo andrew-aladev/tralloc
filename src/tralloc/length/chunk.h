@@ -22,12 +22,5 @@ _tralloc_length * _tralloc_get_length_from_chunk ( _tralloc_chunk * chunk )
     return ( _tralloc_length * ) ( ( uintptr_t ) chunk - _tralloc_get_offset_for_extension ( chunk->extensions, TRALLOC_EXTENSION_LENGTH ) );
 }
 
-_TRALLOC_INLINE
-void _tralloc_set_length ( _tralloc_chunk * chunk, size_t length )
-{
-    _tralloc_length * length_ptr = _tralloc_get_length_from_chunk ( chunk );
-    * length_ptr = length;
-}
-
 
 #endif

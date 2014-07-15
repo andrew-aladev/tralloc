@@ -27,7 +27,7 @@
 
 #if defined ( TRALLOC_POOL )
 #   include <tralloc/pool/chunk.h>
-#   include <tralloc/pool/head_chunk.h>
+#   include <tralloc/pool/pool.h>
 #endif
 
 #include <stdlib.h>

@@ -22,14 +22,5 @@ _tralloc_destructors * _tralloc_get_destructors_from_chunk ( _tralloc_chunk * ch
     return ( _tralloc_destructors * ) ( ( uintptr_t ) chunk - _tralloc_get_offset_for_extension ( chunk->extensions, TRALLOC_EXTENSION_DESTRUCTORS ) );
 }
 
-_TRALLOC_INLINE
-void _tralloc_new_destructors ( _tralloc_destructors * destructors )
-{
-    destructors->first_destructor = NULL;
-    destructors->last_destructor  = NULL;
-}
-
-tralloc_error _tralloc_free_destructors ( _tralloc_destructors * destructors, tralloc_context * context );
-
 
 #endif

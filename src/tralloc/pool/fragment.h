@@ -33,11 +33,8 @@ _tralloc_pool_fragment * _tralloc_new_pool_fragment ( void * memory, size_t leng
     return fragment;
 }
 
-void _tralloc_attach_pool_fragment ( _tralloc_pool * pool, _tralloc_pool_fragment * fragment, _tralloc_pool_fragment * prev, _tralloc_pool_fragment * next );
-void _tralloc_detach_pool_fragment ( _tralloc_pool * pool, _tralloc_pool_fragment * fragment );
-
-void _tralloc_pool_fragment_increased ( _tralloc_pool * pool, _tralloc_pool_fragment * fragment );
-void _tralloc_pool_fragment_decreased ( _tralloc_pool * pool, _tralloc_pool_fragment * fragment );
+void _tralloc_attach_pool_fragment ( _tralloc_pool * pool, _tralloc_pool_fragment * current, _tralloc_pool_fragment * prev, _tralloc_pool_fragment * next );
+void _tralloc_detach_pool_fragment ( _tralloc_pool * pool, _tralloc_pool_fragment * current );
 
 _tralloc_pool_child * _tralloc_alloc_from_pool_fragment               ( _tralloc_pool * pool, _tralloc_pool_fragment * fragment, size_t length );
 void                  _tralloc_resize_pool_fragment_by_prev_child     ( _tralloc_pool_child * pool_child, size_t target_length, size_t next_length );

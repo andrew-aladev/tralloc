@@ -5,89 +5,46 @@
 
 #include <tralloc/config.h>
 
-// for common.c
 #define _TRALLOC_INCLUDED_FROM_COMMON_C
-
-// for tree/alloc.c
 #define _TRALLOC_INCLUDED_FROM_TREE_ALLOC_C
-
-// for tree/free.c
 #define _TRALLOC_INCLUDED_FROM_TREE_FREE_C
 
-// for helpers/string.c
 #define _TRALLOC_INCLUDED_FROM_HELPERS_STRING_C
 
 #if defined ( TRALLOC_FILE )
-
-// for helpers/file.c
 #   define _TRALLOC_INCLUDED_FROM_HELPERS_FILE_C
-
 #endif
 
 #if defined ( TRALLOC_THREADS )
-
-// for threads/chunk.c
 #   define _TRALLOC_INCLUDED_FROM_THREADS_CHUNK_C
-
-// for threads/lock.c
 #   define _TRALLOC_INCLUDED_FROM_THREADS_LOCK_C
-
 #endif
 
 #if defined ( TRALLOC_LENGTH )
-
-// for length/chunk.c
 #   define _TRALLOC_INCLUDED_FROM_LENGTH_CHUNK_C
-
 #endif
 
 #if defined ( TRALLOC_DESTRUCTOR )
-
-// for destructor/chunk.c
 #   define _TRALLOC_INCLUDED_FROM_DESTRUCTOR_CHUNK_C
-
-// for destructor/delete.c
 #   define _TRALLOC_INCLUDED_FROM_DESTRUCTOR_DELETE_C
-
+#   define _TRALLOC_INCLUDED_FROM_DESTRUCTOR_DESTRUCTORS_C
 #endif
 
 #if defined ( TRALLOC_REFERENCE )
-
-// for reference/chunk.c
 #   define _TRALLOC_INCLUDED_FROM_REFERENCE_CHUNK_C
-
-// for reference/common.c
 #   define _TRALLOC_INCLUDED_FROM_REFERENCE_COMMON_C
-
-// for reference/head_chunk.c
 #   define _TRALLOC_INCLUDED_FROM_REFERENCE_HEAD_CHUNK_C
-
-// for threads/chunk.c
 #   define _TRALLOC_INCLUDED_FROM_THREADS_CHUNK_C
-
 #endif
 
 #if defined ( TRALLOC_POOL )
-
-// for pool/chunk.c
 #   define _TRALLOC_INCLUDED_FROM_POOL_CHUNK_C
-
-// for pool/common.c
-#   define _TRALLOC_INCLUDED_FROM_POOL_COMMON_C
-
-// for pool/fragment.c
 #   define _TRALLOC_INCLUDED_FROM_POOL_FRAGMENT_C
-
-// for pool/head_chunk.c
-#   define _TRALLOC_INCLUDED_FROM_POOL_HEAD_CHUNK_C
-
+#   define _TRALLOC_INCLUDED_FROM_POOL_POOL_C
 #endif
 
 #if defined ( TRALLOC_UTILS_BUFFER )
-
-// for utils/buffer.c
 #   define _TRALLOC_INCLUDED_FROM_UTILS_BUFFER_C
-
 #endif
 
 // all .c files can be appended after this line

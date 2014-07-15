@@ -3,9 +3,8 @@
 // tralloc is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Lesser Public License for more details.
 // You should have received a copy of the GNU General Lesser Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
-#include <tralloc/destructor/clear.h>
-#include <tralloc/destructor/chunk.h>
-#include <tralloc/common.h>
+#define _TRALLOC_INCLUDED_FROM_DESTRUCTOR_DESTRUCTORS_C
+#include <tralloc/destructor/destructors.h>
 
 #if defined ( TRALLOC_DEBUG )
 #   include <tralloc/debug/stats.h>
@@ -14,19 +13,9 @@
 #include <stdlib.h>
 
 
-tralloc_error tralloc_clear_destructors ( tralloc_context * context )
+tralloc_error _tralloc_free_destructors ( _tralloc_destructors * destructors, tralloc_context * context )
 {
-    if ( context == NULL ) {
-        return TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL;
-    }
-    _tralloc_chunk * chunk = _tralloc_get_chunk_from_context ( context );
-
-    if ( ! ( chunk->extensions & TRALLOC_EXTENSION_DESTRUCTORS ) ) {
-        return TRALLOC_ERROR_NO_SUCH_EXTENSION;
-    }
-
-    _tralloc_destructors * destructors = _tralloc_get_destructors_from_chunk ( chunk );
-    _tralloc_destructor * destructor   = destructors->first_destructor;
+    _tralloc_destructor * destructor = destructors->first_destructor;
     if ( destructor == NULL ) {
         return 0;
     }
@@ -35,8 +24,18 @@ tralloc_error tralloc_clear_destructors ( tralloc_context * context )
     size_t destructors_count = 0;
 #   endif
 
+    tralloc_error result, error = 0;
     _tralloc_destructor * next_destructor;
+    tralloc_destructor_function function;
+
     while ( destructor != NULL ) {
+        function = destructor->function;
+        if ( function != NULL ) {
+            if ( ( result = function ( context, destructor->user_data ) ) != 0 ) {
+                error = result;
+            }
+        }
+
         next_destructor = destructor->next;
         free ( destructor );
         destructor = next_destructor;
@@ -45,15 +44,13 @@ tralloc_error tralloc_clear_destructors ( tralloc_context * context )
         destructors_count ++;
 #       endif
     }
-    destructors->first_destructor = NULL;
-    destructors->last_destructor  = NULL;
 
 #   if defined ( TRALLOC_DEBUG_STATS )
-    tralloc_error result = _tralloc_debug_stats_subtract_chunks_overhead_length ( sizeof ( _tralloc_destructor ) * destructors_count );
+    result = _tralloc_debug_stats_subtract_chunks_overhead_length ( sizeof ( _tralloc_destructor ) * destructors_count );
     if ( result != 0 ) {
-        return result;
+        error = result;
     }
 #   endif
 
-    return 0;
+    return error;
 }

@@ -3,13 +3,14 @@
 // tralloc is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Lesser Public License for more details.
 // You should have received a copy of the GNU General Lesser Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
-#if !defined ( TRALLOC_POOL_COMMON_H )
-#define TRALLOC_POOL_COMMON_H
+#if !defined ( TRALLOC_DESTRUCTOR_DESTRUCTORS_H )
+#define TRALLOC_DESTRUCTOR_DESTRUCTORS_H
 
-#include "../common.h"
+#include "../types.h"
+#include "../macro.h"
 
 #undef _TRALLOC_INLINE
-#if defined ( _TRALLOC_INCLUDED_FROM_POOL_COMMON_C )
+#if defined ( _TRALLOC_INCLUDED_FROM_DESTRUCTOR_DESTRUCTORS_C )
 #    define _TRALLOC_INLINE _TRALLOC_INLINE_IN_OBJECT
 #else
 #    define _TRALLOC_INLINE _TRALLOC_INLINE_IN_HEADER
@@ -17,22 +18,13 @@
 
 
 _TRALLOC_INLINE
-_tralloc_pool_child * _tralloc_get_pool_child_from_chunk ( _tralloc_chunk * chunk )
+void _tralloc_new_destructors ( _tralloc_destructors * destructors )
 {
-    return ( _tralloc_pool_child * ) ( ( uintptr_t ) chunk - _tralloc_get_offset_for_extension ( chunk->extensions, TRALLOC_EXTENSION_POOL_CHILD ) );
+    destructors->first_destructor = NULL;
+    destructors->last_destructor  = NULL;
 }
 
-_TRALLOC_INLINE
-_tralloc_pool * _tralloc_get_pool_from_chunk ( _tralloc_chunk * chunk )
-{
-    return ( _tralloc_pool * ) ( ( uintptr_t ) chunk - _tralloc_get_offset_for_extension ( chunk->extensions, TRALLOC_EXTENSION_POOL ) );
-}
-
-_TRALLOC_INLINE
-_tralloc_chunk * _tralloc_get_chunk_from_pool ( _tralloc_pool * pool )
-{
-    return ( _tralloc_chunk * ) ( ( uintptr_t ) pool + _tralloc_get_offset_for_extension ( pool->extensions, TRALLOC_EXTENSION_POOL ) );
-}
+tralloc_error _tralloc_free_destructors ( _tralloc_destructors * destructors, tralloc_context * context );
 
 
 #endif

@@ -9,8 +9,8 @@
 #include "../types.h"
 
 
-tralloc_error tralloc_append_destructor  ( tralloc_context * chunk_context, tralloc_destructor_function function, void * user_data );
-tralloc_error tralloc_prepend_destructor ( tralloc_context * chunk_context, tralloc_destructor_function function, void * user_data );
+tralloc_error tralloc_append_destructor  ( tralloc_context * context, tralloc_destructor_function function, void * user_data );
+tralloc_error tralloc_prepend_destructor ( tralloc_context * context, tralloc_destructor_function function, void * user_data );
 
 
 #endif

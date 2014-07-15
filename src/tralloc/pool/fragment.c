@@ -39,6 +39,7 @@ void _tralloc_detach_pool_fragment ( _tralloc_pool * pool, _tralloc_pool_fragmen
     }
 }
 
+static inline
 void _tralloc_update_pool_fragment ( _tralloc_pool * pool, _tralloc_pool_fragment * current )
 {
     _tralloc_pool_fragment * prev = current->prev;
@@ -54,6 +55,7 @@ void _tralloc_update_pool_fragment ( _tralloc_pool * pool, _tralloc_pool_fragmen
     }
 }
 
+static inline
 // Function inserts "fragment" to the fragment's list if it has been increased.
 void _tralloc_pool_fragment_increased ( _tralloc_pool * pool, _tralloc_pool_fragment * current )
 {
@@ -71,6 +73,7 @@ void _tralloc_pool_fragment_increased ( _tralloc_pool * pool, _tralloc_pool_frag
     }
 }
 
+static inline
 // Function inserts "fragment" to the fragment's list if it has been decreased.
 void _tralloc_pool_fragment_decreased ( _tralloc_pool * pool, _tralloc_pool_fragment * current )
 {

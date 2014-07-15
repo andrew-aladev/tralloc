@@ -15,12 +15,12 @@
 #include <stdlib.h>
 
 
-tralloc_error _tralloc_delete_destructors_by_comparator ( tralloc_context * chunk_context, _tralloc_destructor_comparator comparator, tralloc_destructor_function function, void * user_data )
+tralloc_error _tralloc_delete_destructors_by_comparator ( tralloc_context * context, _tralloc_destructor_comparator comparator, tralloc_destructor_function function, void * user_data )
 {
-    if ( chunk_context == NULL ) {
+    if ( context == NULL ) {
         return TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL;
     }
-    _tralloc_chunk * chunk = _tralloc_get_chunk_from_context ( chunk_context );
+    _tralloc_chunk * chunk = _tralloc_get_chunk_from_context ( context );
 
     if ( ! ( chunk->extensions & TRALLOC_EXTENSION_DESTRUCTORS ) ) {
         return TRALLOC_ERROR_NO_SUCH_EXTENSION;
