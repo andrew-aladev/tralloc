@@ -3,6 +3,8 @@ set (SOURCES
     "${CMAKE_CURRENT_SOURCE_DIR}/common.c"
 )
 
+set (HEADERS)
+
 if (${TRALLOC_DEBUG})
     set (HEADERS ${HEADERS} "debug.h")
 endif ()
@@ -15,6 +17,8 @@ endif()
 if (${TRALLOC_REFERENCE})
     set (HEADERS ${HEADERS} "reference.h")
 endif ()
+
+install (FILES ${HEADERS} DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/${CURRENT_INCLUDEDIR}")
 
 set (INCLUDEDIR ${CURRENT_INCLUDEDIR})
 
@@ -53,8 +57,6 @@ if (${TRALLOC_UTILS})
     set (CURRENT_INCLUDEDIR "${INCLUDEDIR}/utils")
     add_subdirectory ("utils")
 endif ()
-
-install (FILES ${HEADERS} DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/${CURRENT_INCLUDEDIR}")
 
 configure_file ("${CMAKE_CURRENT_SOURCE_DIR}/config.h.in" "${CMAKE_CURRENT_SOURCE_DIR}/config.h")
 

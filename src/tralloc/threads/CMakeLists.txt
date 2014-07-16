@@ -3,6 +3,7 @@ set (SOURCES ${SOURCES}
     "${CMAKE_CURRENT_SOURCE_DIR}/chunk.c"
 )
 
+set (CURRENT_INCLUDEDIR "${CURRENT_INCLUDEDIR}/lock")
 add_subdirectory ("lock")
 
 set (SOURCES ${SOURCES} PARENT_SCOPE)

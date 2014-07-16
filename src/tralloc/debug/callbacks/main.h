@@ -3,10 +3,10 @@
 // tralloc is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Lesser Public License for more details.
 // You should have received a copy of the GNU General Lesser Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
-#if !defined ( TRALLOC_DEBUG_CALLBACKS_H )
-#define TRALLOC_DEBUG_CALLBACKS_H
+#if !defined ( TRALLOC_DEBUG_CALLBACKS_MAIN_H )
+#define TRALLOC_DEBUG_CALLBACKS_MAIN_H
 
-#include "../types.h"
+#include "../../types.h"
 
 
 typedef tralloc_error ( * tralloc_debug_callback_before_add ) ( void * data, _tralloc_chunk * parent_chunk, tralloc_extensions extensions, size_t chunk_length, size_t length );
