@@ -6,10 +6,7 @@
 #include <tralloc/tree.h>
 #include <tralloc/helpers/string.h>
 #include <tralloc/reference.h>
-
-#if defined(TRALLOC_DEBUG_STATS)
-#   include <tralloc/debug/stats.h>
-#endif
+#include <tralloc/debug.h>
 
 
 int main ()

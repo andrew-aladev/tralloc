@@ -28,10 +28,7 @@
 #endif
 
 #include <tralloc/tree.h>
-
-#if defined ( TRALLOC_DEBUG_STATS )
-#   include <tralloc/debug/stats.h>
-#endif
+#include <tralloc/debug.h>
 
 
 int main ()

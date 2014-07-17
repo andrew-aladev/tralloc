@@ -45,26 +45,10 @@ size_t _tralloc_get_extensions_length ( tralloc_extensions _TRALLOC_UNUSED ( ext
 
 #   if defined ( TRALLOC_THREADS )
     if ( extensions & TRALLOC_EXTENSION_LOCK_CHILDREN ) {
-
-#       if TRALLOC_CHILDREN_LOCK_TYPE == TRALLOC_THREADS_RWLOCK
-        extensions_length += sizeof ( pthread_rwlock_t );
-#       elif TRALLOC_CHILDREN_LOCK_TYPE == TRALLOC_THREADS_MUTEX
-        extensions_length += sizeof ( pthread_mutex_t );
-#       elif TRALLOC_CHILDREN_LOCK_TYPE == TRALLOC_THREADS_SPINLOCK
-        extensions_length += sizeof ( pthread_spinlock_t );
-#       endif
-
+        extensions_length += sizeof ( _tralloc_children_lock );
     }
     if ( extensions & TRALLOC_EXTENSION_LOCK_SUBTREE ) {
-
-#       if TRALLOC_SUBTREE_LOCK_TYPE == TRALLOC_THREADS_RWLOCK
-        extensions_length += sizeof ( pthread_rwlock_t );
-#       elif TRALLOC_SUBTREE_LOCK_TYPE == TRALLOC_THREADS_MUTEX
-        extensions_length += sizeof ( pthread_mutex_t );
-#       elif TRALLOC_SUBTREE_LOCK_TYPE == TRALLOC_THREADS_SPINLOCK
-        extensions_length += sizeof ( pthread_spinlock_t );
-#       endif
-
+        extensions_length += sizeof ( _tralloc_subtree_lock );
     }
 #   endif
 
@@ -81,14 +65,7 @@ size_t _tralloc_get_offset_for_extension ( tralloc_extensions extensions, _trall
 
 #   if defined ( TRALLOC_THREADS )
     if ( extensions & TRALLOC_EXTENSION_LOCK_SUBTREE ) {
-
-#       if TRALLOC_SUBTREE_LOCK_TYPE == TRALLOC_THREADS_RWLOCK
-        offset += sizeof ( pthread_rwlock_t );
-#       elif TRALLOC_SUBTREE_LOCK_TYPE == TRALLOC_THREADS_MUTEX
-        offset += sizeof ( pthread_mutex_t );
-#       elif TRALLOC_SUBTREE_LOCK_TYPE == TRALLOC_THREADS_SPINLOCK
-        offset += sizeof ( pthread_spinlock_t );
-#       endif
+        offset += sizeof ( _tralloc_subtree_lock );
 
     }
     if ( extension == TRALLOC_EXTENSION_LOCK_SUBTREE ) {
@@ -96,15 +73,7 @@ size_t _tralloc_get_offset_for_extension ( tralloc_extensions extensions, _trall
     }
 
     if ( extensions & TRALLOC_EXTENSION_LOCK_CHILDREN ) {
-
-#       if TRALLOC_CHILDREN_LOCK_TYPE == TRALLOC_THREADS_RWLOCK
-        offset += sizeof ( pthread_rwlock_t );
-#       elif TRALLOC_CHILDREN_LOCK_TYPE == TRALLOC_THREADS_MUTEX
-        offset += sizeof ( pthread_mutex_t );
-#       elif TRALLOC_CHILDREN_LOCK_TYPE == TRALLOC_THREADS_SPINLOCK
-        offset += sizeof ( pthread_spinlock_t );
-#       endif
-
+        offset += sizeof ( _tralloc_children_lock );
     }
     if ( extension == TRALLOC_EXTENSION_LOCK_CHILDREN ) {
         return offset;

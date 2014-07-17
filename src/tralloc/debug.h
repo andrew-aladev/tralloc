@@ -10,15 +10,15 @@
 #include "debug/common.h"
 
 #if defined ( TRALLOC_DEBUG_STATS )
-#   include "debug/stats.h"
+#   include "debug/stats/main.h"
 #endif
 
 #if defined ( TRALLOC_DEBUG_CALLBACKS )
-#   include "debug/callbacks.h"
+#   include "debug/callbacks/main.h"
 #endif
 
 #if defined ( TRALLOC_DEBUG_THREADS )
-#   include "debug/threads.h"
+#   include "debug/threads/main.h"
 #endif
 
 

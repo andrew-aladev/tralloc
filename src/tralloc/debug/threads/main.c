@@ -3,13 +3,13 @@
 // tralloc is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Lesser Public License for more details.
 // You should have received a copy of the GNU General Lesser Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
-#include <tralloc/debug/threads.h>
+#include <tralloc/debug/threads/main.h>
+#include <tralloc/debug/threads/lock.h>
 #include <tralloc/debug/common.h>
 #include <tralloc/common.h>
 
 #include <tralloc/threads/lock/subtree.h>
 #include <tralloc/threads/lock/children.h>
-#include <tralloc/threads/lock/debug/threads.h>
 
 #if defined ( TRALLOC_DEBUG_LOG )
 #   include <stdio.h>

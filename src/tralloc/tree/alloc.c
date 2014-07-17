@@ -198,7 +198,7 @@ tralloc_error _tralloc_new_with_extensions_with_allocator ( tralloc_context * pa
 #   endif
 
 #   if defined ( TRALLOC_THREADS )
-    void * subtree_lock;
+    _tralloc_subtree_lock * subtree_lock;
     if ( have_subtree_lock ) {
         subtree_lock = _tralloc_get_subtree_lock_from_chunk ( chunk );
         result = _tralloc_new_subtree_lock ( subtree_lock );
@@ -220,7 +220,7 @@ tralloc_error _tralloc_new_with_extensions_with_allocator ( tralloc_context * pa
         }
     }
 
-    void * children_lock;
+    _tralloc_children_lock * children_lock;
     if ( have_children_lock ) {
         children_lock = _tralloc_get_children_lock_from_chunk ( chunk );
         result = _tralloc_new_children_lock ( children_lock );
@@ -291,7 +291,7 @@ tralloc_error _tralloc_new_with_extensions_with_allocator ( tralloc_context * pa
 
 #   if defined ( TRALLOC_THREADS )
     tralloc_bool parent_have_children_lock;
-    void * parent_children_lock;
+    _tralloc_children_lock * parent_children_lock;
 #   endif
 
     if ( parent_chunk != NULL ) {

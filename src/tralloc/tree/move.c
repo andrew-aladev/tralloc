@@ -72,7 +72,7 @@ tralloc_error tralloc_move ( tralloc_context * child_context, tralloc_context * 
 
 #   if defined ( TRALLOC_THREADS )
     tralloc_bool have_subtree_lock;
-    void * subtree_lock;
+    _tralloc_subtree_lock * subtree_lock;
 
 #   if defined ( TRALLOC_DEBUG_THREADS )
     // Locks from extensions are inactive in debug threads mode.
@@ -122,8 +122,8 @@ tralloc_error tralloc_move ( tralloc_context * child_context, tralloc_context * 
 #   if defined ( TRALLOC_THREADS )
     tralloc_bool parent_1_have_children_lock;
     tralloc_bool parent_2_have_children_lock;
-    void * parent_1_children_lock;
-    void * parent_2_children_lock;
+    _tralloc_children_lock * parent_1_children_lock;
+    _tralloc_children_lock * parent_2_children_lock;
 
 #   if defined ( TRALLOC_DEBUG_THREADS )
     // Locks from extensions are inactive in debug threads mode.

@@ -7,78 +7,23 @@
 #define TRALLOC_DEBUG_CALLBACKS_LOCK_H
 
 #include "../../types.h"
-#include "../../macro.h"
-
-#undef _TRALLOC_INLINE
-#if defined ( _TRALLOC_INCLUDED_FROM_DEBUG_CALLBACKS_LOCK_C )
-#    define _TRALLOC_INLINE _TRALLOC_INLINE_IN_OBJECT
-#else
-#    define _TRALLOC_INLINE _TRALLOC_INLINE_IN_HEADER
-#endif
 
 
-_TRALLOC_INLINE
-tralloc_error _tralloc_rdlock_debug_callbacks ( void * lock )
-{
+tralloc_error _tralloc_debug_callback_rdlock_add ();
+tralloc_error _tralloc_debug_callback_wrlock_add ();
+tralloc_error _tralloc_debug_callback_unlock_add ();
 
-#   if TRALLOC_DEBUG_CALLBACKS_LOCK_TYPE == TRALLOC_THREADS_RWLOCK
-    if ( pthread_rwlock_rdlock ( ( pthread_rwlock_t * ) lock ) != 0 ) {
-        return TRALLOC_ERROR_RWLOCK_FAILED;
-    }
-#   elif TRALLOC_DEBUG_CALLBACKS_LOCK_TYPE == TRALLOC_THREADS_MUTEX
-    if ( pthread_mutex_lock ( ( pthread_mutex_t * ) lock ) != 0 ) {
-        return TRALLOC_ERROR_MUTEX_FAILED;
-    }
-#   elif TRALLOC_DEBUG_CALLBACKS_LOCK_TYPE == TRALLOC_THREADS_SPINLOCK
-    if ( pthread_spin_lock ( ( pthread_spinlock_t * ) lock ) != 0 ) {
-        return TRALLOC_ERROR_SPINLOCK_FAILED;
-    }
-#   endif
+tralloc_error _tralloc_debug_callback_rdlock_move ();
+tralloc_error _tralloc_debug_callback_wrlock_move ();
+tralloc_error _tralloc_debug_callback_unlock_move ();
 
-    return 0;
-}
+tralloc_error _tralloc_debug_callback_rdlock_resize ();
+tralloc_error _tralloc_debug_callback_wrlock_resize ();
+tralloc_error _tralloc_debug_callback_unlock_resize ();
 
-_TRALLOC_INLINE
-tralloc_error _tralloc_wrlock_debug_callbacks ( void * lock )
-{
-
-#   if TRALLOC_DEBUG_CALLBACKS_LOCK_TYPE == TRALLOC_THREADS_RWLOCK
-    if ( pthread_rwlock_wrlock ( ( pthread_rwlock_t * ) lock ) != 0 ) {
-        return TRALLOC_ERROR_RWLOCK_FAILED;
-    }
-#   elif TRALLOC_DEBUG_CALLBACKS_LOCK_TYPE == TRALLOC_THREADS_MUTEX
-    if ( pthread_mutex_lock ( ( pthread_mutex_t * ) lock ) != 0 ) {
-        return TRALLOC_ERROR_MUTEX_FAILED;
-    }
-#   elif TRALLOC_DEBUG_CALLBACKS_LOCK_TYPE == TRALLOC_THREADS_SPINLOCK
-    if ( pthread_spin_lock ( ( pthread_spinlock_t * ) lock ) != 0 ) {
-        return TRALLOC_ERROR_SPINLOCK_FAILED;
-    }
-#   endif
-
-    return 0;
-}
-
-_TRALLOC_INLINE
-tralloc_error _tralloc_unlock_debug_callbacks ( void * lock )
-{
-
-#   if TRALLOC_DEBUG_CALLBACKS_LOCK_TYPE == TRALLOC_THREADS_RWLOCK
-    if ( pthread_rwlock_unlock ( ( pthread_rwlock_t * ) lock ) != 0 ) {
-        return TRALLOC_ERROR_RWLOCK_FAILED;
-    }
-#   elif TRALLOC_DEBUG_CALLBACKS_LOCK_TYPE == TRALLOC_THREADS_MUTEX
-    if ( pthread_mutex_unlock ( ( pthread_mutex_t * ) lock ) != 0 ) {
-        return TRALLOC_ERROR_MUTEX_FAILED;
-    }
-#   elif TRALLOC_DEBUG_CALLBACKS_LOCK_TYPE == TRALLOC_THREADS_SPINLOCK
-    if ( pthread_spin_unlock ( ( pthread_spinlock_t * ) lock ) != 0 ) {
-        return TRALLOC_ERROR_SPINLOCK_FAILED;
-    }
-#   endif
-
-    return 0;
-}
+tralloc_error _tralloc_debug_callback_rdlock_free ();
+tralloc_error _tralloc_debug_callback_wrlock_free ();
+tralloc_error _tralloc_debug_callback_unlock_free ();
 
 
 #endif

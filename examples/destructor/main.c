@@ -5,10 +5,7 @@
 
 #include <tralloc/tree.h>
 #include <tralloc/destructor.h>
-
-#if defined(TRALLOC_DEBUG_STATS)
-#   include <tralloc/debug/stats.h>
-#endif
+#include <tralloc/debug.h>
 
 
 tralloc_error empty_destructor ( tralloc_context * _TRALLOC_UNUSED ( context ), void * _TRALLOC_UNUSED ( user_data ) )

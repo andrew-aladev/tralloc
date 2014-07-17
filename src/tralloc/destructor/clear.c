@@ -8,7 +8,7 @@
 #include <tralloc/common.h>
 
 #if defined ( TRALLOC_DEBUG )
-#   include <tralloc/debug/stats.h>
+#   include <tralloc/debug/stats/main.h>
 #endif
 
 #include <stdlib.h>

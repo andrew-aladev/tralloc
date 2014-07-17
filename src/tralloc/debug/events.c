@@ -7,15 +7,15 @@
 #include <tralloc/macro.h>
 
 #if defined ( TRALLOC_DEBUG_STATS )
-#   include <tralloc/debug/stats.h>
+#   include <tralloc/debug/stats/main.h>
 #endif
 
 #if defined ( TRALLOC_DEBUG_CALLBACKS )
-#   include <tralloc/debug/callbacks.h>
+#   include <tralloc/debug/callbacks/main.h>
 #endif
 
 #if defined ( TRALLOC_DEBUG_THREADS )
-#   include <tralloc/debug/threads.h>
+#   include <tralloc/debug/threads/main.h>
 #endif
 
 #if defined ( TRALLOC_DEBUG_LOG )

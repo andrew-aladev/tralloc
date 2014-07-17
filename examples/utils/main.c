@@ -4,13 +4,10 @@
 // You should have received a copy of the GNU General Lesser Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
 #include <tralloc/tree.h>
+#include <tralloc/debug.h>
 
 #if defined(TRALLOC_UTILS_BUFFER)
 #   include <tralloc/utils/buffer.h>
-#endif
-
-#if defined(TRALLOC_DEBUG_STATS)
-#   include <tralloc/debug/stats.h>
 #endif
 
 #include <string.h>
