@@ -91,7 +91,7 @@ static inline
 tralloc_error _tralloc_free_chunk ( _tralloc_chunk * chunk )
 {
     tralloc_error error = 0, _TRALLOC_UNUSED ( result );
-    tralloc_context * context = _tralloc_get_context_from_chunk ( chunk );
+    tralloc_context * _TRALLOC_UNUSED ( context ) = _tralloc_get_context_from_chunk ( chunk );
 
 #   if defined ( TRALLOC_THREADS )
     if ( chunk->extensions & TRALLOC_EXTENSION_LOCK_SUBTREE ) {
@@ -148,8 +148,13 @@ tralloc_error _tralloc_free_chunk ( _tralloc_chunk * chunk )
     }
 #   endif
 
+#   if defined ( TRALLOC_EXTENSIONS )
     void * memory = ( void * ) ( ( uintptr_t ) chunk - _tralloc_get_extensions_length ( chunk->extensions ) );
     free ( memory );
+#   else
+    free ( chunk );
+#   endif
+
     return error;
 }
 

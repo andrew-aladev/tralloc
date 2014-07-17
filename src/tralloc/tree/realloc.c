@@ -68,7 +68,12 @@ tralloc_error tralloc_realloc ( tralloc_context ** chunk_context, size_t length 
     }
 #   endif
 
+#   if defined ( TRALLOC_EXTENSIONS )
     size_t extensions_length = _tralloc_get_extensions_length ( old_chunk->extensions );
+#   else
+    size_t extensions_length = 0;
+#   endif
+
     size_t total_length = sizeof ( _tralloc_chunk ) + extensions_length + length;
     void * old_memory   = ( void * ) ( ( uintptr_t ) old_chunk - extensions_length );
     void * new_memory;
