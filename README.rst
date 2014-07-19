@@ -40,8 +40,8 @@ Extensions and features enable/disable
      $ cmake .. \
         -DTRALLOC_THREADS=0      \
         -DTRALLOC_LENGTH=0       \
-        -DTRALLOC_DESTRUCTOR=0   \
-        -DTRALLOC_REFERENCE=0    \
+        -DTRALLOC_DESTRUCTORS=0  \
+        -DTRALLOC_REFERENCES=0   \
         -DTRALLOC_POOL=0         \
         -DTRALLOC_UTILS_BUFFER=0 \
         \

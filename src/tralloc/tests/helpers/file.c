@@ -7,7 +7,7 @@
 #include <tralloc/tree.h>
 #include <tralloc/helpers/string.h>
 #include <tralloc/helpers/file.h>
-#include <tralloc/destructor.h>
+#include <tralloc/destructors.h>
 
 #include <sys/stat.h>
 #include <unistd.h>

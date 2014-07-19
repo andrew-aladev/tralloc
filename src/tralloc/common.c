@@ -22,7 +22,7 @@ size_t _tralloc_get_extensions_length ( tralloc_extensions _TRALLOC_UNUSED ( ext
     }
 #   endif
 
-#   if defined ( TRALLOC_REFERENCE )
+#   if defined ( TRALLOC_REFERENCES )
     if ( extensions & TRALLOC_EXTENSION_REFERENCES ) {
         extensions_length += sizeof ( _tralloc_references );
     }
@@ -31,7 +31,7 @@ size_t _tralloc_get_extensions_length ( tralloc_extensions _TRALLOC_UNUSED ( ext
     }
 #   endif
 
-#   if defined ( TRALLOC_DESTRUCTOR )
+#   if defined ( TRALLOC_DESTRUCTORS )
     if ( extensions & TRALLOC_EXTENSION_DESTRUCTORS ) {
         extensions_length += sizeof ( _tralloc_destructors );
     }
@@ -89,7 +89,7 @@ size_t _tralloc_get_offset_for_extension ( tralloc_extensions extensions, _trall
     }
 #   endif
 
-#   if defined ( TRALLOC_DESTRUCTOR )
+#   if defined ( TRALLOC_DESTRUCTORS )
     if ( extensions & TRALLOC_EXTENSION_DESTRUCTORS ) {
         offset += sizeof ( _tralloc_destructors );
     }
@@ -98,7 +98,7 @@ size_t _tralloc_get_offset_for_extension ( tralloc_extensions extensions, _trall
     }
 #   endif
 
-#   if defined ( TRALLOC_REFERENCE )
+#   if defined ( TRALLOC_REFERENCES )
     // First is reference, than references. It is important.
 
     if ( extensions & TRALLOC_EXTENSION_REFERENCE ) {

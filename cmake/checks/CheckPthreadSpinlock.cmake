@@ -19,7 +19,6 @@ function (check_pthread_spinlock)
         "${PROJECT_BINARY_DIR}/CMakeTmp/pthread_spinlock"
         "${PROJECT_SOURCE_DIR}/cmake/checks/pthread_spinlock" "check_pthread_spinlock"
         CMAKE_FLAGS "-DCMAKE_C_FLAGS:STRING = ${CMAKE_C_FLAGS} ${VERBOSE_CFLAGS} ${PTHREAD_CFLAGS}" "-DCMAKE_LD_FLAGS:STRING = ${CMAKE_LD_FLAGS} ${PTHREAD_LDLAGS}"
-        OUTPUT_VARIABLE OUTPUT
     )
     if (${CHECK_PTHREAD_SPINLOCK_COMPILE_RESULT})
         set (TRALLOC_HAVE_PTHREAD_SPINLOCK true CACHE STRING "Status of pthread_spinlock support")

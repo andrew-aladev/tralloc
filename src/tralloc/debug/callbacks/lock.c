@@ -7,6 +7,7 @@
 
 #if defined ( TRALLOC_DEBUG_LOG )
 #   include <stdio.h>
+#   include <stdlib.h>
 #endif
 
 
@@ -30,7 +31,7 @@ static _tralloc_debug_callbacks_lock _tralloc_debug_callback_resize_lock;
 static _tralloc_debug_callbacks_lock _tralloc_debug_callback_free_lock;
 
 __attribute__ ( ( constructor ) )
-void lock_constructor ()
+void _tralloc_debug_callbacks_lock_constructor ()
 {
     if (
         pthread_spin_init ( &_tralloc_debug_callback_add_lock, 0 )    != 0 ||
@@ -41,7 +42,7 @@ void lock_constructor ()
 #       if defined ( TRALLOC_DEBUG_LOG )
         fprintf (
             stderr,
-            "%s:%zu error: %s\n",
+            "%s:%d error: %s\n",
             __FILE__,
             __LINE__,
             "static spinlock was failed to be initialized"
@@ -52,7 +53,7 @@ void lock_constructor ()
 }
 
 __attribute__ ( ( destructor ) )
-void lock_destructor ()
+void _tralloc_debug_callbacks_lock_destructor ()
 {
     if (
         pthread_spin_destroy ( &_tralloc_debug_callback_add_lock )    != 0 ||
@@ -63,7 +64,7 @@ void lock_destructor ()
 #       if defined ( TRALLOC_DEBUG_LOG )
         fprintf (
             stderr,
-            "%s:%zu error: %s\n",
+            "%s:%d error: %s\n",
             __FILE__,
             __LINE__,
             "static spinlock was failed to be destroyed"

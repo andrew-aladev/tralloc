@@ -22,15 +22,15 @@
 #   include <tralloc/length/chunk.h>
 #endif
 
-#if defined ( TRALLOC_DESTRUCTOR )
-#   include <tralloc/destructor/chunk.h>
-#   include <tralloc/destructor/destructors.h>
+#if defined ( TRALLOC_DESTRUCTORS )
+#   include <tralloc/destructors/chunk.h>
+#   include <tralloc/destructors/destructors.h>
 #endif
 
-#if defined ( TRALLOC_REFERENCE )
-#   include <tralloc/reference/chunk.h>
-#   include <tralloc/reference/references.h>
-#   include <tralloc/reference/reference.h>
+#if defined ( TRALLOC_REFERENCES )
+#   include <tralloc/references/chunk.h>
+#   include <tralloc/references/references.h>
+#   include <tralloc/references/reference.h>
 #endif
 
 #if defined ( TRALLOC_POOL )
@@ -99,11 +99,11 @@ tralloc_error _tralloc_new_with_extensions_with_allocator ( tralloc_context * pa
     tralloc_bool have_length = extensions & TRALLOC_EXTENSION_LENGTH;
 #   endif
 
-#   if defined ( TRALLOC_DESTRUCTOR )
+#   if defined ( TRALLOC_DESTRUCTORS )
     tralloc_bool have_destructors = extensions & TRALLOC_EXTENSION_DESTRUCTORS;
 #   endif
 
-#   if defined ( TRALLOC_REFERENCE )
+#   if defined ( TRALLOC_REFERENCES )
     // Chunk can have both "TRALLOC_EXTENSION_REFERENCES" and "TRALLOC_EXTENSION_REFERENCE".
 
     tralloc_bool have_references = extensions & TRALLOC_EXTENSION_REFERENCES;
@@ -255,7 +255,7 @@ tralloc_error _tralloc_new_with_extensions_with_allocator ( tralloc_context * pa
     }
 #   endif
 
-#   if defined ( TRALLOC_DESTRUCTOR )
+#   if defined ( TRALLOC_DESTRUCTORS )
     _tralloc_destructors * destructors;
     if ( have_destructors ) {
         destructors = _tralloc_get_destructors_from_chunk ( chunk );
@@ -263,7 +263,7 @@ tralloc_error _tralloc_new_with_extensions_with_allocator ( tralloc_context * pa
     }
 #   endif
 
-#   if defined ( TRALLOC_REFERENCE )
+#   if defined ( TRALLOC_REFERENCES )
     _tralloc_references * references;
     if ( have_references ) {
         references = _tralloc_get_references_from_chunk ( chunk );
@@ -323,14 +323,14 @@ tralloc_error _tralloc_new_with_extensions_with_allocator ( tralloc_context * pa
                     _tralloc_free_children_lock ( children_lock );
                 }
 
-#               if defined ( TRALLOC_DESTRUCTOR )
+#               if defined ( TRALLOC_DESTRUCTORS )
                 // Destructors of "chunk" has been allocated, it should be freed.
                 if ( have_destructors ) {
                     _tralloc_free_destructors ( destructors, context );
                 }
 #               endif
 
-#               if defined ( TRALLOC_REFERENCE )
+#               if defined ( TRALLOC_REFERENCES )
                 // Reference of "chunk" has been allocated, it should be freed.
                 if ( have_reference ) {
                     _tralloc_free_reference ( reference );
@@ -374,14 +374,14 @@ tralloc_error _tralloc_new_with_extensions_with_allocator ( tralloc_context * pa
                     _tralloc_free_children_lock ( children_lock );
                 }
 
-#               if defined ( TRALLOC_DESTRUCTOR )
+#               if defined ( TRALLOC_DESTRUCTORS )
                 // Destructors of "chunk" has been allocated, it should be freed.
                 if ( have_destructors ) {
                     _tralloc_free_destructors ( destructors, context );
                 }
 #               endif
 
-#               if defined ( TRALLOC_REFERENCE )
+#               if defined ( TRALLOC_REFERENCES )
                 // Reference of "chunk" has been allocated, it should be freed.
                 if ( have_reference ) {
                     _tralloc_free_reference ( reference );
@@ -454,14 +454,14 @@ tralloc_error _tralloc_new_with_extensions_with_allocator ( tralloc_context * pa
         }
 #       endif
 
-#       if defined ( TRALLOC_DESTRUCTOR )
+#       if defined ( TRALLOC_DESTRUCTORS )
         // Destructors of "chunk" has been allocated, it should be freed.
         if ( have_destructors ) {
             _tralloc_free_destructors ( destructors, context );
         }
 #       endif
 
-#       if defined ( TRALLOC_REFERENCE )
+#       if defined ( TRALLOC_REFERENCES )
         // Reference of "chunk" has been allocated, it should be freed.
         if ( have_reference ) {
             _tralloc_free_reference ( reference );

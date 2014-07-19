@@ -14,12 +14,12 @@ int main ()
     if ( tralloc_new_empty ( NULL, &ctx ) != 0 ) {
         return 1;
     }
-    uint16_t * data;
+    uint8_t * data;
     size_t length;
     if (
-        tralloc_new_with_extensions ( ctx, ( tralloc_context ** ) &data, TRALLOC_EXTENSION_LENGTH, sizeof ( uint16_t ) * 10 ) != 0 ||
+        tralloc_new_with_extensions ( ctx, ( tralloc_context ** ) &data, TRALLOC_EXTENSION_LENGTH, sizeof ( uint8_t ) * 10 ) != 0 ||
         tralloc_get_length ( data, &length ) != 0 ||
-        length != sizeof ( uint16_t ) * 10
+        length != sizeof ( uint8_t ) * 10
     ) {
         tralloc_free ( ctx );
         return 3;

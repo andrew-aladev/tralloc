@@ -17,15 +17,15 @@
 #   include <tralloc/threads/lock/children.h>
 #endif
 
-#if defined ( TRALLOC_DESTRUCTOR )
-#   include <tralloc/destructor/chunk.h>
-#   include <tralloc/destructor/destructors.h>
+#if defined ( TRALLOC_DESTRUCTORS )
+#   include <tralloc/destructors/chunk.h>
+#   include <tralloc/destructors/destructors.h>
 #endif
 
-#if defined ( TRALLOC_REFERENCE )
-#   include <tralloc/reference/chunk.h>
-#   include <tralloc/reference/references.h>
-#   include <tralloc/reference/reference.h>
+#if defined ( TRALLOC_REFERENCES )
+#   include <tralloc/references/chunk.h>
+#   include <tralloc/references/references.h>
+#   include <tralloc/references/reference.h>
 #endif
 
 #if defined ( TRALLOC_POOL )
@@ -41,7 +41,7 @@ static inline
 tralloc_bool _tralloc_can_free_chunk ( _tralloc_chunk * _TRALLOC_UNUSED ( chunk ) )
 {
 
-#   if defined ( TRALLOC_REFERENCE )
+#   if defined ( TRALLOC_REFERENCES )
     if ( chunk->extensions & TRALLOC_EXTENSION_REFERENCES ) {
         _tralloc_references * references = _tralloc_get_references_from_chunk ( chunk );
         if ( ! _tralloc_can_free_references ( references ) ) {
@@ -66,7 +66,7 @@ static inline
 tralloc_bool _tralloc_can_free_chunk_children ( _tralloc_chunk * _TRALLOC_UNUSED ( chunk ) )
 {
 
-#   if defined ( TRALLOC_REFERENCE )
+#   if defined ( TRALLOC_REFERENCES )
     if ( chunk->extensions & TRALLOC_EXTENSION_REFERENCES ) {
         _tralloc_references * references = _tralloc_get_references_from_chunk ( chunk );
         if ( ! _tralloc_references_can_free_children ( references ) ) {
@@ -111,7 +111,7 @@ tralloc_error _tralloc_free_chunk ( _tralloc_chunk * chunk )
     }
 #   endif
 
-#   if defined ( TRALLOC_DESTRUCTOR )
+#   if defined ( TRALLOC_DESTRUCTORS )
     if ( chunk->extensions & TRALLOC_EXTENSION_DESTRUCTORS ) {
         _tralloc_destructors * destructors = _tralloc_get_destructors_from_chunk ( chunk );
         result = _tralloc_free_destructors ( destructors, context );
@@ -121,7 +121,7 @@ tralloc_error _tralloc_free_chunk ( _tralloc_chunk * chunk )
     }
 #   endif
 
-#   if defined ( TRALLOC_REFERENCE )
+#   if defined ( TRALLOC_REFERENCES )
     if ( chunk->extensions & TRALLOC_EXTENSION_REFERENCE ) {
         _tralloc_reference * reference = _tralloc_get_reference_from_chunk ( chunk );
         result = _tralloc_free_reference ( reference );

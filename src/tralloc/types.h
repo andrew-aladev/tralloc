@@ -73,11 +73,11 @@ enum {
     TRALLOC_EXTENSION_LENGTH = 1,
 #   endif
 
-#   if defined ( TRALLOC_DESTRUCTOR )
+#   if defined ( TRALLOC_DESTRUCTORS )
     TRALLOC_EXTENSION_DESTRUCTORS = 1 << 1,
 #   endif
 
-#   if defined ( TRALLOC_REFERENCE )
+#   if defined ( TRALLOC_REFERENCES )
     TRALLOC_EXTENSION_REFERENCE  = 1 << 2,
     TRALLOC_EXTENSION_REFERENCES = 1 << 3,
 #   endif
@@ -102,7 +102,7 @@ typedef uint8_t tralloc_extensions;
 typedef size_t _tralloc_length;
 #endif
 
-#if defined ( TRALLOC_DESTRUCTOR )
+#if defined ( TRALLOC_DESTRUCTORS )
 typedef tralloc_error ( * tralloc_destructor_function ) ( tralloc_context * chunk_context, void * user_data );
 
 typedef struct _tralloc_destructor_type {
@@ -120,7 +120,7 @@ typedef struct _tralloc_destructors_type {
 } _tralloc_destructors;
 #endif
 
-#if defined ( TRALLOC_REFERENCE )
+#if defined ( TRALLOC_REFERENCES )
 typedef struct _tralloc_reference_type {
     struct _tralloc_references_type * references;
     struct _tralloc_reference_type * prev;

@@ -15,10 +15,10 @@
 #   include <tralloc/length/chunk.h>
 #endif
 
-#if defined ( TRALLOC_REFERENCE )
-#   include <tralloc/reference/chunk.h>
-#   include <tralloc/reference/references.h>
-#   include <tralloc/reference/reference.h>
+#if defined ( TRALLOC_REFERENCES )
+#   include <tralloc/references/chunk.h>
+#   include <tralloc/references/references.h>
+#   include <tralloc/references/reference.h>
 #endif
 
 #if defined ( TRALLOC_POOL )
@@ -54,7 +54,7 @@ tralloc_error tralloc_realloc ( tralloc_context ** chunk_context, size_t length 
     tralloc_bool have_length = old_chunk->extensions & TRALLOC_EXTENSION_LENGTH;
 #   endif
 
-#   if defined ( TRALLOC_REFERENCE )
+#   if defined ( TRALLOC_REFERENCES )
     tralloc_bool have_references = old_chunk->extensions & TRALLOC_EXTENSION_REFERENCES;
     tralloc_bool have_reference  = old_chunk->extensions & TRALLOC_EXTENSION_REFERENCE;
 #   endif
@@ -151,7 +151,7 @@ tralloc_error tralloc_realloc ( tralloc_context ** chunk_context, size_t length 
         }
 #       endif
 
-#       if defined ( TRALLOC_REFERENCE )
+#       if defined ( TRALLOC_REFERENCES )
         if ( have_references ) {
             _tralloc_references * references = _tralloc_get_references_from_chunk ( new_chunk );
             _tralloc_update_references ( references );

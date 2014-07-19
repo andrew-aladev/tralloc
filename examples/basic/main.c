@@ -13,10 +13,10 @@ int main ()
     if ( tralloc_new_empty ( NULL, &ctx ) != 0 ) {
         return 1;
     }
-    int16_t * numbers;
+    int8_t * numbers;
     char * string;
     if (
-        tralloc_new_zero ( ctx, ( tralloc_context ** ) &numbers, sizeof ( int16_t ) * 5 ) != 0 ||
+        tralloc_new_zero ( ctx, ( tralloc_context ** ) &numbers, sizeof ( int8_t ) * 5 ) != 0 ||
         tralloc_new ( ctx, ( tralloc_context ** ) &string, sizeof ( char ) * 10 ) != 0
     ) {
         tralloc_free ( ctx );
@@ -27,7 +27,7 @@ int main ()
         return 3;
     }
     if (
-        tralloc_realloc ( ( tralloc_context ** ) &numbers, sizeof ( int16_t ) * 3 ) != 0 ||
+        tralloc_realloc ( ( tralloc_context ** ) &numbers, sizeof ( int8_t ) * 3 ) != 0 ||
         tralloc_realloc ( ( tralloc_context ** ) &string,  sizeof ( char ) * 20 )   != 0
     ) {
         tralloc_free ( ctx );

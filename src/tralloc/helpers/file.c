@@ -7,7 +7,7 @@
 #include <tralloc/helpers/file.h>
 #include <tralloc/tree/alloc.h>
 #include <tralloc/tree/free.h>
-#include <tralloc/destructor/append.h>
+#include <tralloc/destructors/append.h>
 
 #include <unistd.h>
 

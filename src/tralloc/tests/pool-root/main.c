@@ -7,8 +7,8 @@
 #include <tralloc/tests/helpers/common.h>
 #include <tralloc/tests/pool/common.h>
 
-#if defined ( TRALLOC_DESTRUCTOR )
-#   include <tralloc/tests/destructor/common.h>
+#if defined ( TRALLOC_DESTRUCTORS )
+#   include <tralloc/tests/destructors/common.h>
 #endif
 
 #if defined ( TRALLOC_DEBUG_CALLBACKS )
@@ -19,8 +19,8 @@
 #   include <tralloc/tests/length/common.h>
 #endif
 
-#if defined ( TRALLOC_REFERENCE )
-#   include <tralloc/tests/reference/common.h>
+#if defined ( TRALLOC_REFERENCES )
+#   include <tralloc/tests/references/common.h>
 #endif
 
 #if defined ( TRALLOC_UTILS )
@@ -51,8 +51,8 @@ int main ()
         return result;
     }
 
-#   if defined ( TRALLOC_DESTRUCTOR )
-    result = test_destructor ( pool_data );
+#   if defined ( TRALLOC_DESTRUCTORS )
+    result = test_destructors ( pool_data );
     if ( result != 0 ) {
         return result;
     }
@@ -72,8 +72,8 @@ int main ()
     }
 #   endif
 
-#   if defined ( TRALLOC_REFERENCE )
-    result = test_reference ( pool_data );
+#   if defined ( TRALLOC_REFERENCES )
+    result = test_references ( pool_data );
     if ( result != 0 ) {
         return result;
     }

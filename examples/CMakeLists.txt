@@ -1,7 +1,7 @@
 add_subdirectory ("basic")
 
-if (${TRALLOC_DESTRUCTOR})
-    add_subdirectory ("destructor")
+if (${TRALLOC_DESTRUCTORS})
+    add_subdirectory ("destructors")
 endif ()
 
 add_subdirectory ("helpers")
@@ -10,8 +10,8 @@ if (${TRALLOC_LENGTH})
     add_subdirectory ("length")
 endif ()
 
-if (${TRALLOC_REFERENCE})
-    add_subdirectory ("reference")
+if (${TRALLOC_REFERENCES})
+    add_subdirectory ("references")
 endif ()
 
 if (${TRALLOC_POOL})
