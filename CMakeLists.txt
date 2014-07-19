@@ -17,11 +17,12 @@ set (TRALLOC_DEBUG_STATS     true CACHE BOOL "stats in debug feature")
 set (TRALLOC_DEBUG_LOG       true CACHE BOOL "log in debug feature")
 
 # You can force these locks to be "rwlock", "mutex" or "spinlock".
-set (TRALLOC_SUBTREE_LOCK_TYPE         "rwlock" CACHE STRING "type of subtree lock")
-set (TRALLOC_CHILDREN_LOCK_TYPE        "rwlock" CACHE STRING "type of children lock")
-set (TRALLOC_DEBUG_STATS_LOCK_TYPE     "rwlock" CACHE STRING "type of debug stats lock")
-set (TRALLOC_DEBUG_THREADS_LOCK_TYPE   "rwlock" CACHE STRING "type of debug threads lock")
-set (TRALLOC_DEBUG_CALLBACKS_LOCK_TYPE "rwlock" CACHE STRING "type of debug callbacks lock")
+set (TRALLOC_SUBTREE_LOCK_TYPE         "rwlock"   CACHE STRING "type of subtree lock")
+set (TRALLOC_CHILDREN_LOCK_TYPE        "rwlock"   CACHE STRING "type of children lock")
+set (TRALLOC_POOL_LOCK_TYPE            "rwlock"   CACHE STRING "type of pool lock")
+set (TRALLOC_DEBUG_STATS_LOCK_TYPE     "spinlock" CACHE STRING "type of debug stats lock")
+set (TRALLOC_DEBUG_THREADS_LOCK_TYPE   "spinlock" CACHE STRING "type of debug threads lock")
+set (TRALLOC_DEBUG_CALLBACKS_LOCK_TYPE "spinlock" CACHE STRING "type of debug callbacks lock")
 
 set (TRALLOC_SHARED   true CACHE BOOL "build shared libs")
 set (TRALLOC_STATIC   true CACHE BOOL "build static libs")
@@ -29,8 +30,8 @@ set (TRALLOC_MAN      true CACHE BOOL "create man")
 set (TRALLOC_TESTS    true CACHE BOOL "build tests")
 set (TRALLOC_EXAMPLES true CACHE BOOL "build examples")
 
-# Use this feature only for release. One big source file is inconvenient for debug.
-set (TRALLOC_COLLECT_SOURCES false CACHE BOOL "collect all .c files in one to make compilation faster")
+# Use this feature only for release. One big source file is inconvenient for debug, but it's compilation is extremely fast.
+set (TRALLOC_COLLECT_SOURCES false CACHE BOOL "collect all .c files in one (per target) to make compilation faster")
 
 
 if (NOT DEFINED CMAKE_INSTALL_LIBDIR)
@@ -76,20 +77,57 @@ check_pthread_spinlock ()
 find_package (Asciidoc)
 
 if (${TRALLOC_THREADS})
+    if (${TRALLOC_HAVE_PTHREAD_RWLOCK})
+        set (AVAILABLE_LOCK "rwlock")
+    elseif (${TRALLOC_HAVE_PTHREAD_MUTEX})
+        set (AVAILABLE_LOCK "mutex")
+    elseif (${TRALLOC_HAVE_PTHREAD_SPINLOCK})
+        set (AVAILABLE_LOCK "spinlock")
+    endif ()
+
     if (NOT ${TRALLOC_HAVE_PTHREAD})
         message (WARNING "TRALLOC_THREADS is disabled, because you have no pthread.")
         set (TRALLOC_THREADS false)
-    elseif (NOT ${TRALLOC_HAVE_PTHREAD_RWLOCK} AND NOT ${TRALLOC_HAVE_PTHREAD_MUTEX} AND NOT ${TRALLOC_HAVE_PTHREAD_SPINLOCK})
+    elseif (NOT DEFINED AVAILABLE_LOCK)
         message (WARNING "TRALLOC_THREADS is disabled, because you have no rwlock, mutex and spinlock.")
         set (TRALLOC_THREADS false)
     endif ()
+endif ()
+
+set (LOCK_TYPES
+    TRALLOC_SUBTREE_LOCK_TYPE
+    TRALLOC_CHILDREN_LOCK_TYPE
+    TRALLOC_POOL_LOCK_TYPE
+    TRALLOC_DEBUG_STATS_LOCK_TYPE
+    TRALLOC_DEBUG_THREADS_LOCK_TYPE
+    TRALLOC_DEBUG_CALLBACKS_LOCK_TYPE
+)
+
+if (${TRALLOC_THREADS})
+    foreach (LOCK_TYPE ${LOCK_TYPES})
+        if (
+            (NOT ${TRALLOC_HAVE_PTHREAD_RWLOCK}   AND ${LOCK_TYPE} STREQUAL "rwlock") OR
+            (NOT ${TRALLOC_HAVE_PTHREAD_MUTEX}    AND ${LOCK_TYPE} STREQUAL "mutex")  OR
+            (NOT ${TRALLOC_HAVE_PTHREAD_SPINLOCK} AND ${LOCK_TYPE} STREQUAL "spinlock")
+        )
+            message (WARNING "${LOCK_TYPE} is set to \"${AVAILABLE_LOCK}\", because you have no \"${${LOCK_TYPE}}\".")
+            set (${LOCK_TYPE} ${AVAILABLE_LOCK})
+        elseif (
+            NOT ${LOCK_TYPE} STREQUAL "rwlock" AND
+            NOT ${LOCK_TYPE} STREQUAL "mutex"  AND
+            NOT ${LOCK_TYPE} STREQUAL "spinlock"
+        )
+            message (WARNING "${LOCK_TYPE} is set to \"${AVAILABLE_LOCK}\", because \"${${LOCK_TYPE}}\" is unknown.")
+            set (${LOCK_TYPE} ${AVAILABLE_LOCK})
+        endif ()
+    endforeach ()
 endif ()
 
 set (TRALLOC_THREADS_RWLOCK   1)
 set (TRALLOC_THREADS_MUTEX    2)
 set (TRALLOC_THREADS_SPINLOCK 3)
 
-foreach (LOCK_TYPE TRALLOC_SUBTREE_LOCK_TYPE TRALLOC_CHILDREN_LOCK_TYPE TRALLOC_DEBUG_STATS_LOCK_TYPE TRALLOC_DEBUG_THREADS_LOCK_TYPE TRALLOC_DEBUG_CALLBACKS_LOCK_TYPE)
+foreach (LOCK_TYPE ${LOCK_TYPES})
     if (${${LOCK_TYPE}} STREQUAL "rwlock")
         set (${LOCK_TYPE} ${TRALLOC_THREADS_RWLOCK})
     elseif (${${LOCK_TYPE}} STREQUAL "mutex")
@@ -97,30 +135,9 @@ foreach (LOCK_TYPE TRALLOC_SUBTREE_LOCK_TYPE TRALLOC_CHILDREN_LOCK_TYPE TRALLOC_
     elseif (${${LOCK_TYPE}} STREQUAL "spinlock")
         set (${LOCK_TYPE} ${TRALLOC_THREADS_SPINLOCK})
     else ()
-        unset (${LOCK_TYPE})
+        unset (${LOCK_TYPE} CACHE)
     endif ()
 endforeach ()
-
-if (${TRALLOC_THREADS})
-    if (${TRALLOC_HAVE_PTHREAD_RWLOCK})
-        set (AVAILABLE_LOCK ${TRALLOC_THREADS_RWLOCK})
-    elseif (${TRALLOC_HAVE_PTHREAD_MUTEX})
-        set (AVAILABLE_LOCK ${TRALLOC_THREADS_MUTEX})
-    elseif (${TRALLOC_HAVE_PTHREAD_SPINLOCK})
-        set (AVAILABLE_LOCK ${TRALLOC_THREADS_SPINLOCK})
-    endif ()
-    
-    foreach (LOCK_TYPE TRALLOC_SUBTREE_LOCK_TYPE TRALLOC_CHILDREN_LOCK_TYPE TRALLOC_DEBUG_STATS_LOCK_TYPE TRALLOC_DEBUG_THREADS_LOCK_TYPE TRALLOC_DEBUG_CALLBACKS_LOCK_TYPE)
-        if (
-            NOT ${TRALLOC_HAVE_PTHREAD_RWLOCK}   AND ${LOCK_TYPE} MATCHES ${TRALLOC_THREADS_RWLOCK} OR
-            NOT ${TRALLOC_HAVE_PTHREAD_MUTEX}    AND ${LOCK_TYPE} MATCHES ${TRALLOC_THREADS_MUTEX}  OR
-            NOT ${TRALLOC_HAVE_PTHREAD_SPINLOCK} AND ${LOCK_TYPE} MATCHES ${TRALLOC_THREADS_SPINLOCK}
-        )
-            message (WARNING "${LOCK_TYPE} is set to ${AVAILABLE_LOCK}, because you have no ${${LOCK_TYPE}}.")
-            set (${LOCK_TYPE} ${AVAILABLE_LOCK})
-        endif ()
-    endforeach ()
-endif ()
 
 if (${TRALLOC_DESTRUCTORS} AND ${TRALLOC_HAVE_FILE})
     set (TRALLOC_FILE true)

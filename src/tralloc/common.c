@@ -8,7 +8,7 @@
 
 
 // Extension's structures are situated in the memory in the following order :
-//   pool / pool_child, references, reference, destructors, length, children_lock, subtree_lock.
+//   pool / pool_child, pool lock, references, reference, destructors, length, children_lock, subtree_lock.
 
 size_t _tralloc_get_extensions_length ( tralloc_extensions _TRALLOC_UNUSED ( extensions ) )
 {
@@ -20,6 +20,13 @@ size_t _tralloc_get_extensions_length ( tralloc_extensions _TRALLOC_UNUSED ( ext
     } else if ( extensions & TRALLOC_EXTENSION_POOL_CHILD ) {
         extensions_length += sizeof ( _tralloc_pool_child );
     }
+
+#   if defined ( TRALLOC_THREADS )
+    if ( extensions & TRALLOC_EXTENSION_LOCK_POOL ) {
+        extensions_length += sizeof ( _tralloc_pool_lock );
+    }
+#   endif
+
 #   endif
 
 #   if defined ( TRALLOC_REFERENCES )
@@ -117,6 +124,16 @@ size_t _tralloc_get_offset_for_extension ( tralloc_extensions extensions, _trall
 #   endif
 
 #   if defined ( TRALLOC_POOL )
+
+#   if defined ( TRALLOC_THREADS )
+    if ( extensions & TRALLOC_EXTENSION_LOCK_POOL ) {
+        offset += sizeof ( _tralloc_pool_lock );
+    }
+    if ( extension == TRALLOC_EXTENSION_LOCK_POOL ) {
+        return offset;
+    }
+#   endif
+
     if ( extensions & TRALLOC_EXTENSION_POOL ) {
         offset += sizeof ( _tralloc_pool );
     } else if ( extensions & TRALLOC_EXTENSION_POOL_CHILD ) {

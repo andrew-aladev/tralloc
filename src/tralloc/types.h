@@ -90,13 +90,54 @@ enum {
 #   if defined ( TRALLOC_THREADS )
     TRALLOC_EXTENSION_LOCK_SUBTREE  = 1 << 6,
     TRALLOC_EXTENSION_LOCK_CHILDREN = 1 << 7,
+
+#   if defined ( TRALLOC_POOL )
+    TRALLOC_EXTENSION_LOCK_POOL = 1 << 8,
+#   endif
+
 #   endif
 
 };
-typedef uint8_t _tralloc_extension;
+typedef uint16_t _tralloc_extension;
 #endif
 
-typedef uint8_t tralloc_extensions;
+typedef uint16_t tralloc_extensions;
+
+#if defined ( TRALLOC_THREADS )
+
+#if TRALLOC_SUBTREE_LOCK_TYPE == TRALLOC_THREADS_RWLOCK
+typedef pthread_rwlock_t _tralloc_subtree_lock;
+#elif TRALLOC_SUBTREE_LOCK_TYPE == TRALLOC_THREADS_MUTEX
+typedef pthread_mutex_t _tralloc_subtree_lock;
+#elif TRALLOC_SUBTREE_LOCK_TYPE == TRALLOC_THREADS_SPINLOCK
+typedef pthread_spinlock_t _tralloc_subtree_lock;
+#endif
+
+#if TRALLOC_CHILDREN_LOCK_TYPE == TRALLOC_THREADS_RWLOCK
+typedef pthread_rwlock_t _tralloc_children_lock;
+#elif TRALLOC_CHILDREN_LOCK_TYPE == TRALLOC_THREADS_MUTEX
+typedef pthread_mutex_t _tralloc_children_lock;
+#elif TRALLOC_CHILDREN_LOCK_TYPE == TRALLOC_THREADS_SPINLOCK
+typedef pthread_spinlock_t _tralloc_children_lock;
+#endif
+
+#if TRALLOC_POOL_LOCK_TYPE == TRALLOC_THREADS_RWLOCK
+typedef pthread_rwlock_t _tralloc_pool_lock;
+#elif TRALLOC_POOL_LOCK_TYPE == TRALLOC_THREADS_MUTEX
+typedef pthread_mutex_t _tralloc_pool_lock;
+#elif TRALLOC_POOL_LOCK_TYPE == TRALLOC_THREADS_SPINLOCK
+typedef pthread_spinlock_t _tralloc_pool_lock;
+#endif
+
+#if TRALLOC_DEBUG_THREADS_LOCK_TYPE == TRALLOC_THREADS_RWLOCK
+typedef pthread_rwlock_t _tralloc_debug_threads_lock;
+#elif TRALLOC_DEBUG_THREADS_LOCK_TYPE == TRALLOC_THREADS_MUTEX
+typedef pthread_mutex_t _tralloc_debug_threads_lock;
+#elif TRALLOC_DEBUG_THREADS_LOCK_TYPE == TRALLOC_THREADS_SPINLOCK
+typedef pthread_spinlock_t _tralloc_debug_threads_lock;
+#endif
+
+#endif
 
 #if defined ( TRALLOC_LENGTH )
 typedef size_t _tralloc_length;
@@ -169,40 +210,17 @@ typedef struct _tralloc_pool_type {
     void * memory;
     size_t length;
     tralloc_bool autofree;
+
+#   if defined ( TRALLOC_DEBUG_THREADS )
+    _tralloc_pool_lock lock;
+#   endif
+
 } _tralloc_pool;
-#endif
-
-#if defined ( TRALLOC_THREADS )
-
-#if TRALLOC_DEBUG_THREADS_LOCK_TYPE == TRALLOC_THREADS_RWLOCK
-typedef pthread_rwlock_t _tralloc_debug_threads_lock;
-#elif TRALLOC_DEBUG_THREADS_LOCK_TYPE == TRALLOC_THREADS_MUTEX
-typedef pthread_mutex_t _tralloc_debug_threads_lock;
-#elif TRALLOC_DEBUG_THREADS_LOCK_TYPE == TRALLOC_THREADS_SPINLOCK
-typedef pthread_spinlock_t _tralloc_debug_threads_lock;
-#endif
-
-#if TRALLOC_SUBTREE_LOCK_TYPE == TRALLOC_THREADS_RWLOCK
-typedef pthread_rwlock_t _tralloc_subtree_lock;
-#elif TRALLOC_SUBTREE_LOCK_TYPE == TRALLOC_THREADS_MUTEX
-typedef pthread_mutex_t _tralloc_subtree_lock;
-#elif TRALLOC_SUBTREE_LOCK_TYPE == TRALLOC_THREADS_SPINLOCK
-typedef pthread_spinlock_t _tralloc_subtree_lock;
-#endif
-
-#if TRALLOC_CHILDREN_LOCK_TYPE == TRALLOC_THREADS_RWLOCK
-typedef pthread_rwlock_t _tralloc_children_lock;
-#elif TRALLOC_CHILDREN_LOCK_TYPE == TRALLOC_THREADS_MUTEX
-typedef pthread_mutex_t _tralloc_children_lock;
-#elif TRALLOC_CHILDREN_LOCK_TYPE == TRALLOC_THREADS_SPINLOCK
-typedef pthread_spinlock_t _tralloc_children_lock;
-#endif
-
 #endif
 
 #if defined ( TRALLOC_DEBUG_THREADS )
 enum {
-    _TRALLOC_NOT_USED_BY_THREADS,
+    _TRALLOC_NOT_USED_BY_THREADS = 0,
     _TRALLOC_USED_BY_SINGLE_THREAD,
     _TRALLOC_USED_BY_MULTIPLE_THREADS
 };
@@ -250,6 +268,7 @@ typedef struct _tralloc_chunk_type {
 
     // In debug threads mode each chunk have locks without respect to extensions.
     // Locks from extensions are inactive.
+
     _tralloc_subtree_lock subtree_lock;
     _tralloc_children_lock children_lock;
 
