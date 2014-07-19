@@ -38,30 +38,38 @@ Extensions and features enable/disable
     ::
     
      $ cmake .. \
-        -DTRALLOC_THREADS=0      \
-        -DTRALLOC_LENGTH=0       \
-        -DTRALLOC_DESTRUCTORS=0  \
-        -DTRALLOC_REFERENCES=0   \
-        -DTRALLOC_POOL=0         \
-        -DTRALLOC_UTILS_BUFFER=0 \
+        -DTRALLOC_THREADS=0/1      \
+        -DTRALLOC_LENGTH=0/1       \
+        -DTRALLOC_DESTRUCTORS=0/1  \
+        -DTRALLOC_REFERENCES=0/1   \
+        -DTRALLOC_POOL=0/1         \
+        -DTRALLOC_UTILS_BUFFER=0/1 \
         \
-        -DTRALLOC_DEBUG_THREADS=0   \
-        -DTRALLOC_DEBUG_CALLBACKS=0 \
-        -DTRALLOC_DEBUG_STATS=0     \
-        -DTRALLOC_DEBUG_LOG=0       \
+        -DTRALLOC_DEBUG_THREADS=0/1   \
+        -DTRALLOC_DEBUG_CALLBACKS=0/1 \
+        -DTRALLOC_DEBUG_STATS=0/1     \
+        -DTRALLOC_DEBUG_LOG=0/1       \
         \
-        -DTRALLOC_SHARED=0   \
-        -DTRALLOC_STATIC=0   \
-        -DTRALLOC_MAN=0      \
-        -DTRALLOC_TESTS=0    \
-        -DTRALLOC_EXAMPLES=0 \
+        -DTRALLOC_SUBTREE_LOCK_TYPE="rwlock/mutex/spinlock"         \
+        -DTRALLOC_CHILDREN_LOCK_TYPE="rwlock/mutex/spinlock"        \
+        -DTRALLOC_DEBUG_STATS_LOCK_TYPE="rwlock/mutex/spinlock"     \
+        -DTRALLOC_DEBUG_THREADS_LOCK_TYPE="rwlock/mutex/spinlock"   \
+        -DTRALLOC_DEBUG_CALLBACKS_LOCK_TYPE="rwlock/mutex/spinlock" \
         \
-        -DTRALLOC_COLLECT_SOURCES=0
+        -DTRALLOC_SHARED=0/1   \
+        -DTRALLOC_STATIC=0/1   \
+        -DTRALLOC_MAN=0/1      \
+        -DTRALLOC_TESTS=0/1    \
+        -DTRALLOC_EXAMPLES=0/1 \
+        \
+        -DTRALLOC_COLLECT_SOURCES=0/1
 
 You can test all possible combinations of extensions and features
 
     ::
     
+     $ NO_TESTS=1 ../combinations.sh
+     $ ALL_COMBINATIONS=1 ../combinations.sh
      $ ../combinations.sh -DCMAKE_BUILD_TYPE="DEBUG"
      $ ../combinations.sh -DCMAKE_BUILD_TYPE="RELEASE"
 
