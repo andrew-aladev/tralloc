@@ -8,8 +8,8 @@
 #include <tralloc/debug/common.h>
 #include <tralloc/common.h>
 
-#include <tralloc/threads/lock/subtree.h>
-#include <tralloc/threads/lock/children.h>
+#include <tralloc/tree/locks/subtree.h>
+#include <tralloc/tree/locks/children.h>
 
 #if defined ( TRALLOC_DEBUG_LOG )
 #   include <stdio.h>
@@ -17,39 +17,40 @@
 
 
 static inline
-tralloc_error _tralloc_check_subtree_lock ( _tralloc_chunk * chunk, pthread_t thread_id )
+tralloc_error _tralloc_debug_threads_check_usage_of_extension (
+    _tralloc_chunk * chunk,
+    pthread_t thread_id,
+    _tralloc_extension extension,
+    tralloc_error error,
+    _tralloc_thread_usage_status * usage_status,
+    pthread_t * used_by_thread
+)
 {
     tralloc_error result = _tralloc_wrlock_debug_threads ( &chunk->thread_usage_lock );
     if ( result != 0 ) {
         return result;
     }
 
-    if ( chunk->subtree_usage_status == _TRALLOC_NOT_USED_BY_THREADS ) {
-        chunk->subtree_usage_status   = _TRALLOC_USED_BY_SINGLE_THREAD;
-        chunk->subtree_used_by_thread = thread_id;
-    } else if (
-        chunk->subtree_usage_status == _TRALLOC_USED_BY_SINGLE_THREAD &&
-        !pthread_equal ( chunk->subtree_used_by_thread, thread_id )
-    ) {
-        chunk->subtree_usage_status = _TRALLOC_USED_BY_MULTIPLE_THREADS;
+    if ( * usage_status == _TRALLOC_NOT_USED_BY_THREADS ) {
+        * usage_status   = _TRALLOC_USED_BY_SINGLE_THREAD;
+        * used_by_thread = thread_id;
+    } else if ( * usage_status == _TRALLOC_USED_BY_SINGLE_THREAD && !pthread_equal ( * used_by_thread, thread_id ) ) {
+        * usage_status = _TRALLOC_USED_BY_MULTIPLE_THREADS;
     }
 
-    if (
-        chunk->subtree_usage_status == _TRALLOC_USED_BY_MULTIPLE_THREADS &&
-        ! ( chunk->extensions & TRALLOC_EXTENSION_LOCK_SUBTREE )
-    ) {
+    if ( * usage_status == _TRALLOC_USED_BY_MULTIPLE_THREADS && ! ( chunk->extensions & extension ) ) {
 #       if defined ( TRALLOC_DEBUG_LOG )
         fprintf (
             stderr,
             "%s:%zu error: %s\n",
             chunk->initialized_in_file,
             chunk->initialized_at_line,
-            tralloc_debug_get_string_for_error ( TRALLOC_ERROR_NO_SUBTREE_LOCK )
+            tralloc_debug_get_string_for_error ( error )
         );
 #       endif
 
         _tralloc_unlock_debug_threads ( &chunk->thread_usage_lock );
-        return TRALLOC_ERROR_NO_SUBTREE_LOCK;
+        return error;
     }
 
     result = _tralloc_unlock_debug_threads ( &chunk->thread_usage_lock );
@@ -60,46 +61,29 @@ tralloc_error _tralloc_check_subtree_lock ( _tralloc_chunk * chunk, pthread_t th
 }
 
 static inline
-tralloc_error _tralloc_check_children_lock ( _tralloc_chunk * chunk, pthread_t thread_id )
+tralloc_error _tralloc_debug_threads_check_usage_of_subtree ( _tralloc_chunk * chunk, pthread_t thread_id )
 {
-    tralloc_error result = _tralloc_wrlock_debug_threads ( &chunk->thread_usage_lock );
-    if ( result != 0 ) {
-        return result;
-    }
+    return _tralloc_debug_threads_check_usage_of_extension (
+               chunk,
+               thread_id,
+               TRALLOC_EXTENSION_LOCK_SUBTREE,
+               TRALLOC_ERROR_NO_SUBTREE_LOCK,
+               &chunk->subtree_usage_status,
+               &chunk->subtree_used_by_thread
+           );
+}
 
-    if ( chunk->children_usage_status == _TRALLOC_NOT_USED_BY_THREADS ) {
-        chunk->children_usage_status   = _TRALLOC_USED_BY_SINGLE_THREAD;
-        chunk->children_used_by_thread = thread_id;
-    } else if (
-        chunk->children_usage_status == _TRALLOC_USED_BY_SINGLE_THREAD &&
-        !pthread_equal ( chunk->children_used_by_thread, thread_id )
-    ) {
-        chunk->children_usage_status = _TRALLOC_USED_BY_MULTIPLE_THREADS;
-    }
-
-    if (
-        chunk->children_usage_status == _TRALLOC_USED_BY_MULTIPLE_THREADS &&
-        ! ( chunk->extensions & TRALLOC_EXTENSION_LOCK_CHILDREN )
-    ) {
-#       if defined ( TRALLOC_DEBUG_LOG )
-        fprintf (
-            stderr,
-            "%s:%zu error: %s\n",
-            chunk->initialized_in_file,
-            chunk->initialized_at_line,
-            tralloc_debug_get_string_for_error ( TRALLOC_ERROR_NO_CHILDREN_LOCK )
-        );
-#       endif
-
-        _tralloc_unlock_debug_threads ( &chunk->thread_usage_lock );
-        return TRALLOC_ERROR_NO_CHILDREN_LOCK;
-    }
-
-    result = _tralloc_unlock_debug_threads ( &chunk->thread_usage_lock );
-    if ( result != 0 ) {
-        return result;
-    }
-    return 0;
+static inline
+tralloc_error _tralloc_debug_threads_check_usage_of_children ( _tralloc_chunk * chunk, pthread_t thread_id )
+{
+    return _tralloc_debug_threads_check_usage_of_extension (
+               chunk,
+               thread_id,
+               TRALLOC_EXTENSION_LOCK_CHILDREN,
+               TRALLOC_ERROR_NO_CHILDREN_LOCK,
+               &chunk->children_usage_status,
+               &chunk->children_used_by_thread
+           );
 }
 
 tralloc_error _tralloc_debug_threads_before_add_chunk ( _tralloc_chunk * parent_chunk, tralloc_extensions _TRALLOC_UNUSED ( extensions ) )
@@ -111,7 +95,7 @@ tralloc_error _tralloc_debug_threads_before_add_chunk ( _tralloc_chunk * parent_
         // Some chunk wants to attach to "chunk->parent" from thread_1.
         // Other chunk from "chunk->parent"'s children list wants to process other operation from thread_2.
         // In this case "chunk->parent" should have children lock.
-        return _tralloc_check_children_lock ( parent_chunk, pthread_self() );
+        return _tralloc_debug_threads_check_usage_of_children ( parent_chunk, pthread_self() );
     }
     return 0;
 }
@@ -151,7 +135,7 @@ tralloc_error _tralloc_debug_threads_before_move_chunk ( _tralloc_chunk * chunk 
         // "chunk" from "parent_chunk"'s children list wants to process move operation from thread_1.
         // Other chunk from "parent_chunk"'s children list wants to process other operation from thread_2.
         // In this case "parent_chunk" should have children lock.
-        result = _tralloc_check_children_lock ( parent_chunk, thread_id );
+        result = _tralloc_debug_threads_check_usage_of_children ( parent_chunk, thread_id );
         if ( result != 0 ) {
             return result;
         }
@@ -159,7 +143,7 @@ tralloc_error _tralloc_debug_threads_before_move_chunk ( _tralloc_chunk * chunk 
 
     // "chunk" wants to process move operation to different "parent_chunk"s from different threads.
     // In this case "chunk" should have subtree lock.
-    return _tralloc_check_subtree_lock ( chunk, thread_id );
+    return _tralloc_debug_threads_check_usage_of_subtree ( chunk, thread_id );
 }
 
 tralloc_error _tralloc_debug_threads_after_move_chunk ( _tralloc_chunk * chunk )
@@ -179,7 +163,7 @@ tralloc_error _tralloc_debug_threads_after_move_chunk ( _tralloc_chunk * chunk )
         // "chunk" from new "parent_chunk"'s children list wants to end move operation from thread_1.
         // Other chunk from new "parent_chunk"'s children list wants to process other operation from thread_2.
         // In this case new "parent_chunk" should have children lock.
-        return _tralloc_check_children_lock ( parent_chunk, pthread_self() );
+        return _tralloc_debug_threads_check_usage_of_children ( parent_chunk, pthread_self() );
     }
     return 0;
 }
@@ -257,7 +241,7 @@ tralloc_error _tralloc_debug_threads_before_free_subtree ( _tralloc_chunk * chun
         // "chunk" from "parent_chunk"'s children will be freed from thread_1.
         // Other chunk from "parent_chunk"'s children list wants to process other operation from thread_2.
         // In this case "parent_chunk" should have children lock.
-        return _tralloc_check_children_lock ( parent_chunk, pthread_self() );
+        return _tralloc_debug_threads_check_usage_of_children ( parent_chunk, pthread_self() );
     }
     return 0;
 }
@@ -289,7 +273,7 @@ tralloc_error _tralloc_debug_threads_before_refuse_to_free_subtree ( _tralloc_ch
 
     // "chunk" wants to process move operation to NULL from different threads.
     // In this case "chunk" should have subtree lock.
-    return _tralloc_check_subtree_lock ( chunk, pthread_self() );
+    return _tralloc_debug_threads_check_usage_of_subtree ( chunk, pthread_self() );
 }
 
 tralloc_error _tralloc_debug_threads_before_refuse_to_free_chunk ( _tralloc_chunk * chunk )
@@ -299,5 +283,5 @@ tralloc_error _tralloc_debug_threads_before_refuse_to_free_chunk ( _tralloc_chun
 
     // "chunk" wants to process move operation to NULL from different threads.
     // In this case "chunk" should have subtree lock.
-    return _tralloc_check_subtree_lock ( chunk, pthread_self() );
+    return _tralloc_debug_threads_check_usage_of_subtree ( chunk, pthread_self() );
 }

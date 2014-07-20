@@ -2,6 +2,4 @@ install (FILES "children.h" "subtree.h" DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}
 set (SOURCES ${SOURCES}
     "${CMAKE_CURRENT_SOURCE_DIR}/children.c"
     "${CMAKE_CURRENT_SOURCE_DIR}/subtree.c"
-)
-
-set (SOURCES ${SOURCES} PARENT_SCOPE)
+PARENT_SCOPE)

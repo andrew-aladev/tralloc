@@ -5,4 +5,11 @@ set (SOURCES ${SOURCES}
     "${CMAKE_CURRENT_SOURCE_DIR}/free.c"
     "${CMAKE_CURRENT_SOURCE_DIR}/move.c"
     "${CMAKE_CURRENT_SOURCE_DIR}/realloc.c"
-PARENT_SCOPE)
+)
+
+if (${TRALLOC_THREADS})
+    set (CURRENT_INCLUDEDIR "${INCLUDEDIR}/locks")
+    add_subdirectory ("locks")
+endif ()
+
+set (SOURCES ${SOURCES} PARENT_SCOPE)

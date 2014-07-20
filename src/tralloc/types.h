@@ -210,11 +210,6 @@ typedef struct _tralloc_pool_type {
     void * memory;
     size_t length;
     tralloc_bool autofree;
-
-#   if defined ( TRALLOC_DEBUG_THREADS )
-    _tralloc_pool_lock lock;
-#   endif
-
 } _tralloc_pool;
 #endif
 
@@ -259,11 +254,14 @@ typedef struct _tralloc_chunk_type {
 
 #   if defined ( TRALLOC_DEBUG_THREADS )
 
-    // "subtree_used_by_thread", "subtree_usage_status", "children_used_by_thread" and "children_usage_status" will be locked for thread safety by "thread_usage_lock".
+    // "subtree_used_by_thread", "subtree_usage_status", "children_used_by_thread" and "children_usage_status"
+    //      will be locked for thread safety by "thread_usage_lock".
     pthread_t subtree_used_by_thread;
     pthread_t children_used_by_thread;
+    pthread_t pool_used_by_thread;
     _tralloc_thread_usage_status subtree_usage_status;
     _tralloc_thread_usage_status children_usage_status;
+    _tralloc_thread_usage_status pool_usage_status;
     _tralloc_debug_threads_lock thread_usage_lock;
 
     // In debug threads mode each chunk have locks without respect to extensions.
@@ -271,6 +269,10 @@ typedef struct _tralloc_chunk_type {
 
     _tralloc_subtree_lock subtree_lock;
     _tralloc_children_lock children_lock;
+
+#   if defined ( TRALLOC_DEBUG_THREADS )
+    _tralloc_pool_lock pool_lock;
+#   endif
 
 #   endif
 

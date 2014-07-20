@@ -12,9 +12,8 @@
 #endif
 
 #if defined ( TRALLOC_THREADS )
-#   include <tralloc/threads/chunk.h>
-#   include <tralloc/threads/lock/subtree.h>
-#   include <tralloc/threads/lock/children.h>
+#   include <tralloc/tree/locks/subtree.h>
+#   include <tralloc/tree/locks/children.h>
 #endif
 
 #if defined ( TRALLOC_DESTRUCTORS )

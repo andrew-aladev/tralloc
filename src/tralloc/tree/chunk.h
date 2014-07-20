@@ -6,8 +6,31 @@
 #if !defined ( TRALLOC_TREE_CHUNK_H )
 #define TRALLOC_TREE_CHUNK_H
 
-#include "../types.h"
+#include "../common.h"
 
+#undef _TRALLOC_INLINE
+#if defined ( _TRALLOC_INCLUDED_FROM_TREE_CHUNK_C )
+#    define _TRALLOC_INLINE _TRALLOC_INLINE_IN_OBJECT
+#else
+#    define _TRALLOC_INLINE _TRALLOC_INLINE_IN_HEADER
+#endif
+
+
+#if defined ( TRALLOC_THREADS )
+
+_TRALLOC_INLINE
+void * _tralloc_get_subtree_lock_from_chunk ( _tralloc_chunk * chunk )
+{
+    return ( void * ) ( ( uintptr_t ) chunk - _tralloc_get_offset_for_extension ( chunk->extensions, TRALLOC_EXTENSION_LOCK_SUBTREE ) );
+}
+
+_TRALLOC_INLINE
+void * _tralloc_get_children_lock_from_chunk ( _tralloc_chunk * chunk )
+{
+    return ( void * ) ( ( uintptr_t ) chunk - _tralloc_get_offset_for_extension ( chunk->extensions, TRALLOC_EXTENSION_LOCK_CHILDREN ) );
+}
+
+#endif
 
 void _tralloc_update_chunk ( _tralloc_chunk * chunk );
 
