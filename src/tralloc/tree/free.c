@@ -31,6 +31,9 @@
 #   include <tralloc/pool/chunk.h>
 #   include <tralloc/pool/pool.h>
 #   include <tralloc/pool/pool_child.h>
+#   if defined ( TRALLOC_THREADS )
+#       include <tralloc/pool/lock.h>
+#   endif
 #endif
 
 #include <stdlib.h>
@@ -93,8 +96,9 @@ tralloc_error _tralloc_free_chunk ( _tralloc_chunk * chunk )
     tralloc_context * _TRALLOC_UNUSED ( context ) = _tralloc_get_context_from_chunk ( chunk );
 
 #   if defined ( TRALLOC_THREADS )
+
     if ( chunk->extensions & TRALLOC_EXTENSION_LOCK_SUBTREE ) {
-        void * subtree_lock = _tralloc_get_subtree_lock_from_chunk ( chunk );
+        _tralloc_subtree_lock * subtree_lock = _tralloc_get_subtree_lock_from_chunk ( chunk );
         result = _tralloc_free_subtree_lock ( subtree_lock );
         if ( result != 0 ) {
             error = result;
@@ -102,12 +106,23 @@ tralloc_error _tralloc_free_chunk ( _tralloc_chunk * chunk )
     }
 
     if ( chunk->extensions & TRALLOC_EXTENSION_LOCK_CHILDREN ) {
-        void * children_lock = _tralloc_get_children_lock_from_chunk ( chunk );
+        _tralloc_children_lock * children_lock = _tralloc_get_children_lock_from_chunk ( chunk );
         result = _tralloc_free_children_lock ( children_lock );
         if ( result != 0 ) {
             error = result;
         }
     }
+
+#   if defined ( TRALLOC_POOL )
+    if ( chunk->extensions & TRALLOC_EXTENSION_LOCK_POOL ) {
+        _tralloc_pool_lock * pool_lock = _tralloc_get_pool_lock_from_chunk ( chunk );
+        result = _tralloc_free_pool_lock ( pool_lock );
+        if ( result != 0 ) {
+            error = result;
+        }
+    }
+#   endif
+
 #   endif
 
 #   if defined ( TRALLOC_DESTRUCTORS )

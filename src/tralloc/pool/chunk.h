@@ -50,9 +50,9 @@ _tralloc_pool * _tralloc_pool_child_get_pool_from_chunk ( _tralloc_chunk * chunk
 #if defined ( TRALLOC_THREADS )
 
 _TRALLOC_INLINE
-void * _tralloc_get_pool_lock_from_chunk ( _tralloc_chunk * chunk )
+_tralloc_pool_lock * _tralloc_get_pool_lock_from_chunk ( _tralloc_chunk * chunk )
 {
-    return ( void * ) ( ( uintptr_t ) chunk - _tralloc_get_offset_for_extension ( chunk->extensions, TRALLOC_EXTENSION_LOCK_POOL ) );
+    return ( _tralloc_pool_lock * ) ( ( uintptr_t ) chunk - _tralloc_get_offset_for_extension ( chunk->extensions, TRALLOC_EXTENSION_LOCK_POOL ) );
 }
 
 #endif

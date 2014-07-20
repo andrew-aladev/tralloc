@@ -19,15 +19,15 @@
 #if defined ( TRALLOC_THREADS )
 
 _TRALLOC_INLINE
-void * _tralloc_get_subtree_lock_from_chunk ( _tralloc_chunk * chunk )
+_tralloc_subtree_lock * _tralloc_get_subtree_lock_from_chunk ( _tralloc_chunk * chunk )
 {
-    return ( void * ) ( ( uintptr_t ) chunk - _tralloc_get_offset_for_extension ( chunk->extensions, TRALLOC_EXTENSION_LOCK_SUBTREE ) );
+    return ( _tralloc_subtree_lock * ) ( ( uintptr_t ) chunk - _tralloc_get_offset_for_extension ( chunk->extensions, TRALLOC_EXTENSION_LOCK_SUBTREE ) );
 }
 
 _TRALLOC_INLINE
-void * _tralloc_get_children_lock_from_chunk ( _tralloc_chunk * chunk )
+_tralloc_children_lock * _tralloc_get_children_lock_from_chunk ( _tralloc_chunk * chunk )
 {
-    return ( void * ) ( ( uintptr_t ) chunk - _tralloc_get_offset_for_extension ( chunk->extensions, TRALLOC_EXTENSION_LOCK_CHILDREN ) );
+    return ( _tralloc_children_lock * ) ( ( uintptr_t ) chunk - _tralloc_get_offset_for_extension ( chunk->extensions, TRALLOC_EXTENSION_LOCK_CHILDREN ) );
 }
 
 #endif

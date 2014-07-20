@@ -11,6 +11,11 @@
 #include <tralloc/tree/locks/subtree.h>
 #include <tralloc/tree/locks/children.h>
 
+#if defined ( TRALLOC_POOL )
+#   include <tralloc/pool/chunk.h>
+#   include <tralloc/pool/lock.h>
+#endif
+
 #if defined ( TRALLOC_DEBUG_LOG )
 #   include <stdio.h>
 #endif
@@ -86,16 +91,46 @@ tralloc_error _tralloc_debug_threads_check_usage_of_children ( _tralloc_chunk * 
            );
 }
 
+static inline
+tralloc_error _tralloc_debug_threads_check_usage_of_pool ( _tralloc_chunk * chunk, pthread_t thread_id )
+{
+    return _tralloc_debug_threads_check_usage_of_extension (
+               chunk,
+               thread_id,
+               TRALLOC_EXTENSION_LOCK_POOL,
+               TRALLOC_ERROR_NO_POOL_LOCK,
+               &chunk->children_usage_status,
+               &chunk->children_used_by_thread
+           );
+}
+
 tralloc_error _tralloc_debug_threads_before_add_chunk ( _tralloc_chunk * parent_chunk, tralloc_extensions _TRALLOC_UNUSED ( extensions ) )
 {
     // Add operation can not take part in threads competition, because it runs in single thread and returns pointer to data only after operation.
     // So chunk should not be checked.
 
     if ( parent_chunk != NULL ) {
-        // Some chunk wants to attach to "chunk->parent" from thread_1.
+        pthread_t thread_id = pthread_self();
+
+#       if defined ( TRALLOC_POOL )
+        // Some chunk wants to be attached to pool from thread_1.
+        // Other chunk from pool's children list wants to process other operation from thread_2.
+        // In this case pool should have pool lock.
+
+        _tralloc_pool * pool = _tralloc_pool_child_get_pool_from_chunk ( parent_chunk );
+        if ( pool != NULL ) {
+            _tralloc_chunk * pool_chunk = _tralloc_get_chunk_from_pool ( pool );
+            tralloc_error result = _tralloc_debug_threads_check_usage_of_pool ( pool_chunk, thread_id );
+            if ( result != 0 ) {
+                return result;
+            }
+        }
+#       endif
+
+        // Some chunk wants to be attached to "chunk->parent" from thread_1.
         // Other chunk from "chunk->parent"'s children list wants to process other operation from thread_2.
         // In this case "chunk->parent" should have children lock.
-        return _tralloc_debug_threads_check_usage_of_children ( parent_chunk, pthread_self() );
+        return _tralloc_debug_threads_check_usage_of_children ( parent_chunk, thread_id );
     }
     return 0;
 }
@@ -109,7 +144,8 @@ tralloc_error _tralloc_debug_threads_after_add_chunk ( _tralloc_chunk * chunk )
     if (
         ( result = _tralloc_new_debug_threads_lock ( &chunk->thread_usage_lock ) ) != 0 ||
         ( result = _tralloc_new_subtree_lock       ( &chunk->subtree_lock )      ) != 0 ||
-        ( result = _tralloc_new_children_lock      ( &chunk->children_lock )     ) != 0
+        ( result = _tralloc_new_children_lock      ( &chunk->children_lock )     ) != 0 ||
+        ( result = _tralloc_new_pool_lock          ( &chunk->pool_lock )         ) != 0
     ) {
         return result;
     }
@@ -259,6 +295,10 @@ tralloc_error _tralloc_debug_threads_before_free_chunk ( _tralloc_chunk * chunk 
         error = result;
     }
     result = _tralloc_free_children_lock ( &chunk->children_lock );
+    if ( result != 0 ) {
+        error = result;
+    }
+    result = _tralloc_free_pool_lock ( &chunk->pool_lock );
     if ( result != 0 ) {
         error = result;
     }
