@@ -106,12 +106,15 @@ tralloc_error _tralloc_alloc ( tralloc_context * parent_context, tralloc_context
         parent_chunk = _tralloc_get_chunk_from_context ( parent_context );
 
 #       if defined ( TRALLOC_POOL )
-        parent_pool = _tralloc_pool_child_get_pool_from_chunk ( parent_chunk );
+        parent_pool = _tralloc_get_closest_pool_from_chunk ( parent_chunk );
 #       endif
     }
 
 #   if defined ( TRALLOC_DEBUG )
     tralloc_extensions forced_extensions = 0;
+    // "forced_extensions ^= EXTENSION" means "toggle forced extension":
+    // If "EXTENSION" was not forced - it becomes forced
+    // If "EXTENSION" was forced     - it becomes not forced
 #   endif
 
 #   if defined ( TRALLOC_THREADS )
@@ -122,7 +125,7 @@ tralloc_error _tralloc_alloc ( tralloc_context * parent_context, tralloc_context
         // "TRALLOC_EXTENSION_LOCK_SUBTREE" will be forced enabled.
         have_subtree_lock   = TRALLOC_TRUE;
         options->extensions |= TRALLOC_EXTENSION_LOCK_SUBTREE;
-        forced_extensions   |= TRALLOC_EXTENSION_LOCK_SUBTREE;
+        forced_extensions   ^= TRALLOC_EXTENSION_LOCK_SUBTREE;
     }
 #   endif
 
@@ -133,7 +136,7 @@ tralloc_error _tralloc_alloc ( tralloc_context * parent_context, tralloc_context
         // "TRALLOC_EXTENSION_LOCK_CHILDREN" will be forced enabled.
         have_children_lock  = TRALLOC_TRUE;
         options->extensions |= TRALLOC_EXTENSION_LOCK_CHILDREN;
-        forced_extensions   |= TRALLOC_EXTENSION_LOCK_CHILDREN;
+        forced_extensions   ^= TRALLOC_EXTENSION_LOCK_CHILDREN;
     }
 #   endif
 
@@ -162,10 +165,10 @@ tralloc_error _tralloc_alloc ( tralloc_context * parent_context, tralloc_context
         if ( have_pool_child ) {
             // "TRALLOC_EXTENSION_POOL_CHILD" will be forced disabled.
             have_pool_child     = TRALLOC_FALSE;
-            options->extensions &= ~ ( TRALLOC_EXTENSION_POOL_CHILD );
+            options->extensions &= ~TRALLOC_EXTENSION_POOL_CHILD;
 
 #           if defined ( TRALLOC_DEBUG )
-            forced_extensions |= TRALLOC_EXTENSION_POOL_CHILD;
+            forced_extensions ^= TRALLOC_EXTENSION_POOL_CHILD;
 #           endif
         }
     } else {
@@ -176,16 +179,16 @@ tralloc_error _tralloc_alloc ( tralloc_context * parent_context, tralloc_context
                 options->extensions |= TRALLOC_EXTENSION_POOL_CHILD;
 
 #               if defined ( TRALLOC_DEBUG )
-                forced_extensions |= TRALLOC_EXTENSION_POOL_CHILD;
+                forced_extensions ^= TRALLOC_EXTENSION_POOL_CHILD;
 #               endif
             }
         } else {
             if ( have_pool_child ) {
                 have_pool_child     = TRALLOC_FALSE;
-                options->extensions &= ~ ( TRALLOC_EXTENSION_POOL_CHILD );
+                options->extensions &= ~TRALLOC_EXTENSION_POOL_CHILD;
 
 #               if defined ( TRALLOC_DEBUG )
-                forced_extensions |= TRALLOC_EXTENSION_POOL_CHILD;
+                forced_extensions ^= TRALLOC_EXTENSION_POOL_CHILD;
 #               endif
             }
         }
@@ -194,14 +197,28 @@ tralloc_error _tralloc_alloc ( tralloc_context * parent_context, tralloc_context
 #   if defined ( TRALLOC_THREADS )
     tralloc_bool have_pool_lock = options->extensions & TRALLOC_EXTENSION_LOCK_POOL;
 
-#   if defined ( TRALLOC_DEBUG_THREADS )
-    if ( !have_pool_lock ) {
-        // "TRALLOC_EXTENSION_LOCK_POOL" will be forced enabled.
-        have_pool_lock      = TRALLOC_TRUE;
-        options->extensions |= TRALLOC_EXTENSION_LOCK_POOL;
-        forced_extensions   |= TRALLOC_EXTENSION_LOCK_POOL;
+    if ( have_pool ) {
+
+#       if defined ( TRALLOC_DEBUG_THREADS )
+        if ( !have_pool_lock ) {
+            // "TRALLOC_EXTENSION_LOCK_POOL" will be forced enabled.
+            have_pool_lock      = TRALLOC_TRUE;
+            options->extensions |= TRALLOC_EXTENSION_LOCK_POOL;
+            forced_extensions   ^= TRALLOC_EXTENSION_LOCK_POOL;
+        }
+#       endif
+
+    } else {
+        if ( have_pool_lock ) {
+            // "TRALLOC_EXTENSION_LOCK_POOL" will be forced disabled.
+            have_pool_lock      = TRALLOC_FALSE;
+            options->extensions &= ~TRALLOC_EXTENSION_LOCK_POOL;
+
+#           if defined ( TRALLOC_DEBUG )
+            forced_extensions ^= TRALLOC_EXTENSION_LOCK_POOL;
+#           endif
+        }
     }
-#   endif
 
 #   endif
 
@@ -215,10 +232,14 @@ tralloc_error _tralloc_alloc ( tralloc_context * parent_context, tralloc_context
     if ( have_pool_child ) {
         if ( !_tralloc_can_alloc_from_pool ( parent_pool, total_length ) ) {
             // "parent_pool" can't alloc "total_length" bytes.
-            // "TRALLOC_EXTENSION_POOL_CHILD" for new chunk should be disabled.
+            // "TRALLOC_EXTENSION_POOL_CHILD" will be forced disabled.
 
             have_pool_child     = TRALLOC_FALSE;
-            options->extensions &= ~ ( TRALLOC_EXTENSION_POOL_CHILD );
+            options->extensions &= ~TRALLOC_EXTENSION_POOL_CHILD;
+
+#           if defined ( TRALLOC_DEBUG )
+            forced_extensions ^= TRALLOC_EXTENSION_LOCK_POOL;
+#           endif
 
             extensions_length -= sizeof ( _tralloc_pool_child );
             chunk_length      -= sizeof ( _tralloc_pool_child );
@@ -629,58 +650,6 @@ tralloc_error _tralloc_alloc ( tralloc_context * parent_context, tralloc_context
 }
 
 
-#if defined ( TRALLOC_DEBUG_LOG )
-
-static inline
-tralloc_error _tralloc_debug_log_prepare ( const char * file, size_t line, tralloc_context * parent_context, tralloc_context ** child_context, size_t length, _tralloc_alloc_options * options )
-{
-    options->file = file;
-    options->line = line;
-
-#   if defined ( TRALLOC_EXTENSIONS )
-    options->extensions = 0;
-#   endif
-
-    return _tralloc_alloc ( parent_context, child_context, length, options );
-}
-tralloc_error _tralloc_debug_log_new ( const char * file, size_t line, tralloc_context * parent_context, tralloc_context ** child_context, size_t length )
-{
-    _tralloc_alloc_options options;
-    options.zero = false;
-    return _tralloc_debug_log_prepare ( file, line, parent_context, child_context, length, &options );
-}
-tralloc_error _tralloc_debug_log_new_zero ( const char * file, size_t line, tralloc_context * parent_context, tralloc_context ** child_context, size_t length )
-{
-    _tralloc_alloc_options options;
-    options.zero = true;
-    return _tralloc_debug_log_prepare ( file, line, parent_context, child_context, length, &options );
-}
-
-#if defined ( TRALLOC_EXTENSIONS )
-static inline
-tralloc_error _tralloc_debug_log_prepare_with_extensions ( const char * file, size_t line, tralloc_context * parent_context, tralloc_context ** child_context, size_t length, tralloc_extensions extensions, _tralloc_alloc_options * options )
-{
-    options->file       = file;
-    options->line       = line;
-    options->extensions = extensions;
-    return _tralloc_alloc ( parent_context, child_context, length, options );
-}
-tralloc_error _tralloc_debug_log_new_with_extensions ( const char * file, size_t line, tralloc_context * parent_context, tralloc_context ** child_context, size_t length, tralloc_extensions extensions )
-{
-    _tralloc_alloc_options options;
-    options.zero = false;
-    return _tralloc_debug_log_prepare_with_extensions ( file, line, parent_context, child_context, length, extensions, &options );
-}
-tralloc_error _tralloc_debug_log_new_zero_with_extensions ( const char * file, size_t line, tralloc_context * parent_context, tralloc_context ** child_context, size_t length, tralloc_extensions extensions )
-{
-    _tralloc_alloc_options options;
-    options.zero = true;
-    return _tralloc_debug_log_prepare_with_extensions ( file, line, parent_context, child_context, length, extensions, &options );
-}
-#endif
-
-#else
-
 static inline
 tralloc_error _tralloc_prepare ( tralloc_context * parent_context, tralloc_context ** child_context, size_t length, _tralloc_alloc_options * options )
 {
@@ -691,6 +660,62 @@ tralloc_error _tralloc_prepare ( tralloc_context * parent_context, tralloc_conte
 
     return _tralloc_alloc ( parent_context, child_context, length, options );
 }
+
+#if defined ( TRALLOC_EXTENSIONS )
+static inline
+tralloc_error _tralloc_prepare_with_extensions ( tralloc_context * parent_context, tralloc_context ** child_context, size_t length, tralloc_extensions extensions, _tralloc_alloc_options * options )
+{
+    options->extensions = extensions;
+    return _tralloc_alloc ( parent_context, child_context, length, options );
+}
+#endif
+
+#if defined ( TRALLOC_DEBUG_LOG )
+
+static inline
+tralloc_error _tralloc_debug_log_prepare ( tralloc_context * parent_context, tralloc_context ** child_context, size_t length, _tralloc_alloc_options * options, const char * file, size_t line )
+{
+    options->file = file;
+    options->line = line;
+    return _tralloc_prepare ( parent_context, child_context, length, options );
+}
+tralloc_error _tralloc_debug_log_new ( tralloc_context * parent_context, tralloc_context ** child_context, size_t length, const char * file, size_t line )
+{
+    _tralloc_alloc_options options;
+    options.zero = false;
+    return _tralloc_debug_log_prepare ( parent_context, child_context, length, &options, file, line );
+}
+tralloc_error _tralloc_debug_log_new_zero ( tralloc_context * parent_context, tralloc_context ** child_context, size_t length, const char * file, size_t line )
+{
+    _tralloc_alloc_options options;
+    options.zero = true;
+    return _tralloc_debug_log_prepare ( parent_context, child_context, length, &options, file, line );
+}
+
+#if defined ( TRALLOC_EXTENSIONS )
+static inline
+tralloc_error _tralloc_debug_log_prepare_with_extensions ( tralloc_context * parent_context, tralloc_context ** child_context, size_t length, tralloc_extensions extensions, _tralloc_alloc_options * options, const char * file, size_t line )
+{
+    options->file = file;
+    options->line = line;
+    return _tralloc_prepare_with_extensions ( parent_context, child_context, length, extensions, options );
+}
+tralloc_error _tralloc_debug_log_new_with_extensions ( tralloc_context * parent_context, tralloc_context ** child_context, size_t length, tralloc_extensions extensions, const char * file, size_t line )
+{
+    _tralloc_alloc_options options;
+    options.zero = false;
+    return _tralloc_debug_log_prepare_with_extensions ( parent_context, child_context, length, extensions, &options, file, line );
+}
+tralloc_error _tralloc_debug_log_new_zero_with_extensions ( tralloc_context * parent_context, tralloc_context ** child_context, size_t length, tralloc_extensions extensions, const char * file, size_t line )
+{
+    _tralloc_alloc_options options;
+    options.zero = true;
+    return _tralloc_debug_log_prepare_with_extensions ( parent_context, child_context, length, extensions, &options, file, line );
+}
+#endif
+
+#else
+
 tralloc_error tralloc_new ( tralloc_context * parent_context, tralloc_context ** child_context, size_t length )
 {
     _tralloc_alloc_options options;
@@ -705,12 +730,6 @@ tralloc_error tralloc_new_zero ( tralloc_context * parent_context, tralloc_conte
 }
 
 #if defined ( TRALLOC_EXTENSIONS )
-static inline
-tralloc_error _tralloc_prepare_with_extensions ( tralloc_context * parent_context, tralloc_context ** child_context, size_t length, tralloc_extensions extensions, _tralloc_alloc_options * options )
-{
-    options->extensions = extensions;
-    return _tralloc_alloc ( parent_context, child_context, length, options );
-}
 tralloc_error tralloc_new_with_extensions ( tralloc_context * parent_context, tralloc_context ** child_context, size_t length, tralloc_extensions extensions )
 {
     _tralloc_alloc_options options;

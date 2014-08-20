@@ -17,6 +17,7 @@
 #endif
 
 
+#if defined ( TRALLOC_EXTENSIONS )
 size_t _tralloc_get_extensions_length ( tralloc_extensions extensions );
 
 // Function returns size of extensions and chunk.
@@ -26,7 +27,6 @@ size_t tralloc_predict_chunk_length ( tralloc_extensions extensions )
     return _tralloc_get_extensions_length ( extensions ) + sizeof ( _tralloc_chunk );
 }
 
-#if defined ( TRALLOC_EXTENSIONS )
 size_t _tralloc_get_offset_for_extension ( tralloc_extensions extensions, _tralloc_extension extension );
 #endif
 

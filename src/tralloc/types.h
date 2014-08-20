@@ -244,6 +244,7 @@ typedef struct _tralloc_chunk_type {
     // So original extensions can be found by "extensions" ^ "forced_extensions"
     
     // If parent is pool or pool child - pool child will be enabled, otherwise it will be disabled.
+    // Pool child will be disabled if related pool can't alloc it.
     // Pool lock will be disabled if pool is not enabled.
     // Subtree, children and pool locks will be enabled if TRALLOC_DEBUG_THREADS is defined.
     

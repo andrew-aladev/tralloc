@@ -118,7 +118,7 @@ tralloc_error _tralloc_debug_threads_before_add_chunk ( _tralloc_chunk * parent_
         // Other chunk from pool's children list wants to process other operation from thread_2.
         // In this case pool should have pool lock.
 
-        _tralloc_pool * pool = _tralloc_pool_child_get_pool_from_chunk ( parent_chunk );
+        _tralloc_pool * pool = _tralloc_get_closest_pool_from_chunk ( parent_chunk );
         if ( pool != NULL ) {
             _tralloc_chunk * pool_chunk = _tralloc_get_chunk_from_pool ( pool );
             tralloc_error result = _tralloc_debug_threads_check_usage_of_pool ( pool_chunk, thread_id );

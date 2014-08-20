@@ -19,32 +19,32 @@
 
 #if defined ( TRALLOC_DEBUG_LOG )
 
-tralloc_error _tralloc_debug_log_new      ( const char * file, size_t line, tralloc_context * parent_context, tralloc_context ** child_context, size_t length );
-tralloc_error _tralloc_debug_log_new_zero ( const char * file, size_t line, tralloc_context * parent_context, tralloc_context ** child_context, size_t length );
+tralloc_error _tralloc_debug_log_new      ( tralloc_context * parent_context, tralloc_context ** child_context, size_t length, const char * file, size_t line );
+tralloc_error _tralloc_debug_log_new_zero ( tralloc_context * parent_context, tralloc_context ** child_context, size_t length, const char * file, size_t line );
 
 _TRALLOC_INLINE
-tralloc_error _tralloc_debug_log_new_empty ( const char * file, size_t line, tralloc_context * parent_context, tralloc_context ** child_context )
+tralloc_error _tralloc_debug_log_new_empty ( tralloc_context * parent_context, tralloc_context ** child_context, const char * file, size_t line )
 {
-    return _tralloc_debug_log_new ( file, line, parent_context, child_context, 0 );
+    return _tralloc_debug_log_new ( parent_context, child_context, 0, file, line );
 }
 
 #if defined ( TRALLOC_EXTENSIONS )
-tralloc_error _tralloc_debug_log_new_with_extensions      ( const char * file, size_t line, tralloc_context * parent_context, tralloc_context ** child_context, size_t length, tralloc_extensions extensions );
-tralloc_error _tralloc_debug_log_new_zero_with_extensions ( const char * file, size_t line, tralloc_context * parent_context, tralloc_context ** child_context, size_t length, tralloc_extensions extensions );
+tralloc_error _tralloc_debug_log_new_with_extensions      ( tralloc_context * parent_context, tralloc_context ** child_context, size_t length, tralloc_extensions extensions, const char * file, size_t line );
+tralloc_error _tralloc_debug_log_new_zero_with_extensions ( tralloc_context * parent_context, tralloc_context ** child_context, size_t length, tralloc_extensions extensions, const char * file, size_t line );
 
 _TRALLOC_INLINE
-tralloc_error _tralloc_debug_log_new_empty_with_extensions ( const char * file, size_t line, tralloc_context * parent_context, tralloc_context ** child_context, tralloc_extensions extensions )
+tralloc_error _tralloc_debug_log_new_empty_with_extensions ( tralloc_context * parent_context, tralloc_context ** child_context, tralloc_extensions extensions, const char * file, size_t line )
 {
-    return _tralloc_debug_log_new_with_extensions ( file, line, parent_context, child_context, 0, extensions );
+    return _tralloc_debug_log_new_with_extensions ( parent_context, child_context, 0, extensions, file, line );
 }
 #endif
 
-#define tralloc_new_with_extensions(...)       _tralloc_debug_log_new_with_extensions       (__FILE__, __LINE__, __VA_ARGS__)
-#define tralloc_new(...)                       _tralloc_debug_log_new                       (__FILE__, __LINE__, __VA_ARGS__)
-#define tralloc_new_zero_with_extensions(...)  _tralloc_debug_log_new_zero_with_extensions  (__FILE__, __LINE__, __VA_ARGS__)
-#define tralloc_new_zero(...)                  _tralloc_debug_log_new_zero                  (__FILE__, __LINE__, __VA_ARGS__)
-#define tralloc_new_empty(...)                 _tralloc_debug_log_new_empty                 (__FILE__, __LINE__, __VA_ARGS__)
-#define tralloc_new_empty_with_extensions(...) _tralloc_debug_log_new_empty_with_extensions (__FILE__, __LINE__, __VA_ARGS__)
+#define tralloc_new_with_extensions(...)       _tralloc_debug_log_new_with_extensions       (__VA_ARGS__, __FILE__, __LINE__)
+#define tralloc_new(...)                       _tralloc_debug_log_new                       (__VA_ARGS__, __FILE__, __LINE__)
+#define tralloc_new_zero_with_extensions(...)  _tralloc_debug_log_new_zero_with_extensions  (__VA_ARGS__, __FILE__, __LINE__)
+#define tralloc_new_zero(...)                  _tralloc_debug_log_new_zero                  (__VA_ARGS__, __FILE__, __LINE__)
+#define tralloc_new_empty(...)                 _tralloc_debug_log_new_empty                 (__VA_ARGS__, __FILE__, __LINE__)
+#define tralloc_new_empty_with_extensions(...) _tralloc_debug_log_new_empty_with_extensions (__VA_ARGS__, __FILE__, __LINE__)
 
 #else
 
