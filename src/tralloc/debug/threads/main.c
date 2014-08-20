@@ -99,8 +99,8 @@ tralloc_error _tralloc_debug_threads_check_usage_of_pool ( _tralloc_chunk * chun
                thread_id,
                TRALLOC_EXTENSION_LOCK_POOL,
                TRALLOC_ERROR_NO_POOL_LOCK,
-               &chunk->children_usage_status,
-               &chunk->children_used_by_thread
+               &chunk->pool_usage_status,
+               &chunk->pool_used_by_thread
            );
 }
 
