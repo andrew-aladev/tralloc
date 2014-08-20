@@ -238,6 +238,21 @@ typedef struct _tralloc_chunk_type {
 #   endif
 
 #   if defined ( TRALLOC_DEBUG )
+    
+#   if defined ( TRALLOC_EXTENSIONS )
+    // Some extensions can be forced.
+    // If bit is 1 - extension value is forced, otherwise extension equals original extension.
+    // So original extensions can be found by "extensions" ^ "forced_extensions"
+    
+    // If parent is pool or pool child - pool child will be enabled, otherwise it will be disabled.
+    // Pool lock will be disabled if pool is not enabled.
+    // Subtree, children and pool locks will be enabled if TRALLOC_DEBUG_THREADS is defined.
+    
+    // "forced_extensions" should not be locked for thread safety.
+    // It will be written only in alloc function. Other functions will read it.
+    tralloc_extensions forced_extensions;
+#   endif
+    
     // "chunk_length" should not be locked for thread safety.
     // It will be written only in alloc function. Other functions will read it.
     size_t chunk_length;
