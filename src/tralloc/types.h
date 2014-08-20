@@ -100,9 +100,8 @@ enum {
 
 };
 typedef uint16_t _tralloc_extension;
-#endif
-
 typedef uint16_t tralloc_extensions;
+#endif
 
 #if defined ( TRALLOC_THREADS )
 

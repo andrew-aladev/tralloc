@@ -13,7 +13,7 @@
 
 tralloc_error _tralloc_strndup_with_extensions ( tralloc_context * parent_context, char ** child_context, tralloc_extensions extensions, const char * str, size_t length )
 {
-    tralloc_error result = tralloc_new_with_extensions ( parent_context, ( tralloc_context ** ) child_context, extensions, sizeof ( char ) * ( length + 1 ) );
+    tralloc_error result = tralloc_new_with_extensions ( parent_context, ( tralloc_context ** ) child_context, sizeof ( char ) * ( length + 1 ), extensions );
     if ( result != 0 ) {
         return result;
     }
@@ -34,7 +34,7 @@ tralloc_error tralloc_vasprintf_with_extensions ( tralloc_context * parent_conte
         return TRALLOC_ERROR_PRINTF_FAILED;
     }
 
-    tralloc_error result = tralloc_new_with_extensions ( parent_context, ( tralloc_context ** ) child_context, extensions, sizeof ( char ) * ( predicted_length + 1 ) );
+    tralloc_error result = tralloc_new_with_extensions ( parent_context, ( tralloc_context ** ) child_context, sizeof ( char ) * ( predicted_length + 1 ), extensions );
     if ( result != 0 ) {
         return result;
     }

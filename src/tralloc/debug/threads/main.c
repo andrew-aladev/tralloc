@@ -43,7 +43,8 @@ tralloc_error _tralloc_debug_threads_check_usage_of_extension (
         * usage_status = _TRALLOC_USED_BY_MULTIPLE_THREADS;
     }
 
-    if ( * usage_status == _TRALLOC_USED_BY_MULTIPLE_THREADS && ! ( chunk->extensions & extension ) ) {
+    tralloc_extensions original_extensions = chunk->extensions ^ chunk->forced_extensions;
+    if ( * usage_status == _TRALLOC_USED_BY_MULTIPLE_THREADS && ! ( original_extensions & extension ) ) {
 #       if defined ( TRALLOC_DEBUG_LOG )
         fprintf (
             stderr,

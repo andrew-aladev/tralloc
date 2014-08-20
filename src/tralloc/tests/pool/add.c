@@ -51,7 +51,7 @@ tralloc_bool test_pool_add_strict ( tralloc_context * ctx )
     size_t pool_data_length = tralloc_predict_chunk_length ( TRALLOC_EXTENSION_POOL_CHILD ) + sizeof ( uint8_t ) * 5;
 
     tralloc_context * pool_data;
-    if ( tralloc_new_with_extensions ( ctx, &pool_data, TRALLOC_EXTENSION_POOL, pool_data_length ) != 0 ) {
+    if ( tralloc_new_with_extensions ( ctx, &pool_data, pool_data_length, TRALLOC_EXTENSION_POOL ) != 0 ) {
         return TRALLOC_FALSE;
     }
     _tralloc_chunk * pool_chunk = _tralloc_get_chunk_from_context ( pool_data );
@@ -113,7 +113,7 @@ tralloc_bool test_pool_add_much ( tralloc_context * ctx )
     size_t pool_data_length = data_1_length + sizeof ( _tralloc_pool_fragment );
 
     tralloc_context * pool_data;
-    if ( tralloc_new_with_extensions ( ctx, &pool_data, TRALLOC_EXTENSION_POOL, pool_data_length ) != 0 ) {
+    if ( tralloc_new_with_extensions ( ctx, &pool_data, pool_data_length, TRALLOC_EXTENSION_POOL ) != 0 ) {
         return TRALLOC_FALSE;
     }
     _tralloc_chunk * pool_chunk = _tralloc_get_chunk_from_context ( pool_data );
@@ -182,7 +182,7 @@ tralloc_bool test_pool_add_zero ( tralloc_context * ctx )
     tralloc_context * pool_data;
     uint8_t * data_1;
     if (
-        tralloc_new_with_extensions ( ctx, &pool_data, TRALLOC_EXTENSION_POOL, pool_data_length ) != 0 ||
+        tralloc_new_with_extensions ( ctx, &pool_data, pool_data_length, TRALLOC_EXTENSION_POOL ) != 0 ||
         tralloc_new_zero ( pool_data, ( tralloc_context ** ) &data_1, sizeof ( uint8_t ) * 3 ) != 0
     ) {
         return TRALLOC_FALSE;
@@ -213,7 +213,7 @@ tralloc_bool test_pool_add_normal ( tralloc_context * ctx )
     uint8_t * data_1, * data_2;
     if (
         tralloc_new_empty ( ctx, &new_ctx ) != 0 ||
-        tralloc_new_with_extensions ( new_ctx, &pool_data, TRALLOC_EXTENSION_POOL, pool_data_length ) != 0 ||
+        tralloc_new_with_extensions ( new_ctx, &pool_data, pool_data_length, TRALLOC_EXTENSION_POOL ) != 0 ||
         tralloc_new ( pool_data, ( tralloc_context ** ) &data_1, sizeof ( uint8_t ) * 5 ) != 0 ||
         tralloc_new ( pool_data, ( tralloc_context ** ) &data_2, sizeof ( uint8_t ) * 3 ) != 0
     ) {

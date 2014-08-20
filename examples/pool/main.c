@@ -15,7 +15,7 @@ int main ()
     tralloc_context * pool_ctx;
     uint8_t * data_1, * data_2;
     if (
-        tralloc_new_with_extensions ( NULL, &pool_ctx, TRALLOC_EXTENSION_POOL, data_1_length + data_2_length ) != 0 ||
+        tralloc_new_with_extensions ( NULL, &pool_ctx, data_1_length + data_2_length, TRALLOC_EXTENSION_POOL ) != 0 ||
         tralloc_new      ( pool_ctx, ( tralloc_context ** ) & data_1, sizeof ( uint8_t ) * 200 ) != 0 ||
         tralloc_new_zero ( data_1,   ( tralloc_context ** ) & data_2, sizeof ( uint8_t ) * 100 ) != 0
     ) {

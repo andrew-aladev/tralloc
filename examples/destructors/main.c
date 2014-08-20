@@ -34,7 +34,7 @@ int main ()
         return 1;
     }
     int * number;
-    if ( tralloc_new_with_extensions ( ctx, ( tralloc_context ** ) &number, TRALLOC_EXTENSION_DESTRUCTORS, sizeof ( int ) ) != 0 ) {
+    if ( tralloc_new_with_extensions ( ctx, ( tralloc_context ** ) &number, sizeof ( int ), TRALLOC_EXTENSION_DESTRUCTORS ) != 0 ) {
         tralloc_free ( ctx );
         return 2;
     }
