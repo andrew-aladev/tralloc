@@ -5,6 +5,7 @@
 
 #define _TRALLOC_INCLUDED_FROM_TREE_ALLOC_C
 #include <tralloc/tree/alloc.h>
+#include <tralloc/tree/free.h>
 #include <tralloc/tree/chunk.h>
 #include <tralloc/common.h>
 
@@ -87,6 +88,9 @@ typedef struct _tralloc_alloc_chunk_environment_type {
 
 #   if defined ( TRALLOC_POOL )
     _tralloc_pool * parent_pool;
+    _tralloc_pool_child * prev_pool_child;
+    _tralloc_pool_child * next_pool_child;
+
     tralloc_bool have_pool;
     tralloc_bool have_pool_child;
 
@@ -99,9 +103,8 @@ typedef struct _tralloc_alloc_chunk_environment_type {
     size_t extensions_length;
 } _tralloc_alloc_chunk_environment;
 
-static inline
-void
-_tralloc_alloc_prepare_chunk_environment ( _tralloc_chunk * parent_chunk, tralloc_extensions extensions, size_t total_length, _tralloc_alloc_chunk_environment * environment )
+static
+void _tralloc_alloc_prepare_chunk_environment ( _tralloc_chunk * parent_chunk, tralloc_extensions extensions, size_t total_length, _tralloc_alloc_chunk_environment * environment )
 {
     environment->extensions = extensions;
 
@@ -204,7 +207,6 @@ _tralloc_alloc_prepare_chunk_environment ( _tralloc_chunk * parent_chunk, trallo
             environment->forced_extensions ^= TRALLOC_EXTENSION_LOCK_POOL;
         }
 #       endif
-
     } else {
         if ( environment->have_pool_lock ) {
             // "TRALLOC_EXTENSION_LOCK_POOL" will be forced disabled.
@@ -267,7 +269,87 @@ tralloc_error _tralloc_calloc ( void ** data, size_t length )
     }
 }
 
-static inline
+static
+tralloc_error _tralloc_alloc_initialize_extensions ( _tralloc_chunk * chunk, _tralloc_alloc_chunk_environment * environment, size_t total_length, size_t length )
+{
+    tralloc_error result;
+
+#   if defined ( TRALLOC_THREADS )
+    _tralloc_subtree_lock * subtree_lock;
+    if ( environment->have_subtree_lock ) {
+        subtree_lock = _tralloc_get_subtree_lock_from_chunk ( chunk );
+        result = _tralloc_new_subtree_lock ( subtree_lock );
+        if ( result != 0 ) {
+            return result;
+        }
+    }
+
+    _tralloc_children_lock * children_lock;
+    if ( environment->have_children_lock ) {
+        children_lock = _tralloc_get_children_lock_from_chunk ( chunk );
+        result = _tralloc_new_children_lock ( children_lock );
+        if ( result != 0 ) {
+            if ( environment->have_subtree_lock ) {
+                _tralloc_free_subtree_lock ( subtree_lock );
+            }
+            return result;
+        }
+    }
+
+#   if defined ( TRALLOC_POOL )
+    _tralloc_pool_lock * pool_lock;
+    if ( environment->have_pool_lock ) {
+        pool_lock = _tralloc_get_pool_lock_from_chunk ( chunk );
+        result = _tralloc_new_pool_lock ( pool_lock );
+        if ( result != 0 ) {
+            if ( environment->have_subtree_lock ) {
+                _tralloc_free_subtree_lock ( subtree_lock );
+            }
+            if ( environment->have_children_lock ) {
+                _tralloc_free_children_lock ( children_lock );
+            }
+            return result;
+        }
+    }
+#   endif
+
+#   endif
+
+#   if defined ( TRALLOC_POOL )
+    if ( environment->have_pool ) {
+        _tralloc_new_pool ( _tralloc_get_pool_from_chunk ( chunk ), _tralloc_get_context_from_chunk ( chunk ), environment->extensions, length );
+    } else if ( environment->have_pool_child ) {
+        _tralloc_new_pool_child ( _tralloc_get_pool_child_from_chunk ( chunk ), environment->parent_pool, total_length, environment->prev_pool_child, environment->next_pool_child );
+    }
+#   endif
+
+#   if defined ( TRALLOC_LENGTH )
+    if ( environment->have_length ) {
+        _tralloc_length * length_ptr = _tralloc_get_length_from_chunk ( chunk );
+        * length_ptr = length;
+    }
+#   endif
+
+#   if defined ( TRALLOC_DESTRUCTORS )
+    if ( environment->have_destructors ) {
+        _tralloc_new_destructors ( _tralloc_get_destructors_from_chunk ( chunk ) );
+    }
+#   endif
+
+#   if defined ( TRALLOC_REFERENCES )
+    if ( environment->have_references ) {
+        _tralloc_new_references ( _tralloc_get_references_from_chunk ( chunk ), environment->extensions );
+    }
+
+    if ( environment->have_reference ) {
+        _tralloc_new_reference ( _tralloc_get_reference_from_chunk ( chunk ) );
+    }
+#   endif
+
+    return 0;
+}
+
+static
 tralloc_error _tralloc_alloc ( tralloc_context * parent_context, tralloc_context ** child_context, size_t length, _tralloc_alloc_options * options )
 {
     if ( child_context == NULL ) {
@@ -304,9 +386,8 @@ tralloc_error _tralloc_alloc ( tralloc_context * parent_context, tralloc_context
     void * memory;
 
 #   if defined ( TRALLOC_POOL )
-    _tralloc_pool_child * prev_pool_child, * next_pool_child;
     if ( environment.have_pool_child ) {
-        _tralloc_alloc_from_pool ( environment.parent_pool, &memory, total_length, options->zero, &prev_pool_child, &next_pool_child );
+        _tralloc_alloc_from_pool ( environment.parent_pool, &memory, total_length, options->zero, &environment.prev_pool_child, &environment.next_pool_child );
     } else {
         if ( options->zero ) {
             result = _tralloc_calloc ( &memory, total_length );
@@ -344,139 +425,27 @@ tralloc_error _tralloc_alloc ( tralloc_context * parent_context, tralloc_context
 #   endif
 #   endif
 
-#   if defined ( TRALLOC_POOL )
-    _tralloc_pool_child * pool_child;
-    if ( environment.have_pool_child ) {
-        pool_child = _tralloc_get_pool_child_from_chunk ( chunk );
-        _tralloc_new_pool_child ( pool_child, environment.parent_pool, total_length, prev_pool_child, next_pool_child );
-    }
-#   endif
+    result = _tralloc_alloc_initialize_extensions ( chunk, &environment, total_length, length );
+    if ( result != 0 ) {
 
-#   if defined ( TRALLOC_THREADS )
-    _tralloc_subtree_lock * subtree_lock;
-    if ( environment.have_subtree_lock ) {
-        subtree_lock = _tralloc_get_subtree_lock_from_chunk ( chunk );
-        result = _tralloc_new_subtree_lock ( subtree_lock );
-        if ( result != 0 ) {
-            // It is time to do emergency exit.
-
-            // Memory has been allocated in the pool or global memory, it should be freed.
-#           if defined ( TRALLOC_POOL )
-            if ( environment.have_pool_child ) {
-                _tralloc_free_pool_child ( pool_child );
-            } else {
-                free ( memory );
-            }
-#           else
-            free ( memory );
-#           endif
-
+#       if defined ( TRALLOC_POOL )
+        if ( environment.have_pool_child ) {
+            _tralloc_free_pool_child ( _tralloc_get_pool_child_from_chunk ( chunk ) );
             return result;
         }
+#       endif
+
+        free ( memory );
+        return result;
     }
-
-    _tralloc_children_lock * children_lock;
-    if ( environment.have_children_lock ) {
-        children_lock = _tralloc_get_children_lock_from_chunk ( chunk );
-        result = _tralloc_new_children_lock ( children_lock );
-        if ( result != 0 ) {
-            // It is time to do emergency exit.
-
-            // Subtree lock of "chunk" has been allocated, it should be freed.
-            if ( environment.have_subtree_lock ) {
-                _tralloc_free_subtree_lock ( subtree_lock );
-            }
-
-            // Memory has been allocated in the pool or global memory, it should be freed.
-#           if defined ( TRALLOC_POOL )
-            if ( environment.have_pool_child ) {
-                _tralloc_free_pool_child ( pool_child );
-            } else {
-                free ( memory );
-            }
-#           else
-            free ( memory );
-#           endif
-
-            return result;
-        }
-    }
-
-#   if defined ( TRALLOC_POOL )
-    _tralloc_pool_lock * pool_lock;
-    if ( environment.have_pool_lock ) {
-        pool_lock = _tralloc_get_pool_lock_from_chunk ( chunk );
-        result = _tralloc_new_pool_lock ( pool_lock );
-        if ( result != 0 ) {
-            // It is time to do emergency exit.
-
-            // Subtree lock of "chunk" has been allocated, it should be freed.
-            if ( environment.have_subtree_lock ) {
-                _tralloc_free_subtree_lock ( subtree_lock );
-            }
-            // Children lock of "chunk" has been allocated, it should be freed.
-            if ( environment.have_children_lock ) {
-                _tralloc_free_children_lock ( children_lock );
-            }
-
-            // Memory has been allocated in the pool or global memory, it should be freed.
-#           if defined ( TRALLOC_POOL )
-            if ( environment.have_pool_child ) {
-                _tralloc_free_pool_child ( pool_child );
-            } else {
-                free ( memory );
-            }
-#           else
-            free ( memory );
-#           endif
-
-            return result;
-        }
-    }
-#   endif
-
-#   endif
-
-#   if defined ( TRALLOC_LENGTH )
-    if ( environment.have_length ) {
-        _tralloc_length * length_ptr = _tralloc_get_length_from_chunk ( chunk );
-        * length_ptr = length;
-    }
-#   endif
-
-#   if defined ( TRALLOC_DESTRUCTORS )
-    _tralloc_destructors * destructors;
-    if ( environment.have_destructors ) {
-        destructors = _tralloc_get_destructors_from_chunk ( chunk );
-        _tralloc_new_destructors ( destructors );
-    }
-#   endif
-
-#   if defined ( TRALLOC_REFERENCES )
-    _tralloc_references * references;
-    if ( environment.have_references ) {
-        references = _tralloc_get_references_from_chunk ( chunk );
-        _tralloc_new_references ( references, environment.extensions );
-    }
-    _tralloc_reference * reference;
-    if ( environment.have_reference ) {
-        reference = _tralloc_get_reference_from_chunk ( chunk );
-        _tralloc_new_reference ( reference );
-    }
-#   endif
-
-#   if defined ( TRALLOC_POOL )
-    _tralloc_pool * pool;
-    if ( environment.have_pool ) {
-        pool = _tralloc_get_pool_from_chunk ( chunk );
-        _tralloc_new_pool ( pool, context, environment.extensions, length );
-    }
-#   endif
 
     chunk->parent      = NULL;
     chunk->first_child = NULL;
     chunk->prev        = NULL;
     chunk->next        = NULL;
+
+    // Now "chunk" is fully initialized.
+    // It should be freed by using "_tralloc_free_chunk" function if error occured.
 
 #   if defined ( TRALLOC_THREADS )
     tralloc_bool parent_have_children_lock;
@@ -486,64 +455,12 @@ tralloc_error _tralloc_alloc ( tralloc_context * parent_context, tralloc_context
     if ( parent_chunk != NULL ) {
 
 #       if defined ( TRALLOC_THREADS )
-
-#       if defined ( TRALLOC_DEBUG_THREADS )
-        // Locks from extensions are inactive in debug threads mode.
-        parent_have_children_lock = TRALLOC_TRUE;
-        parent_children_lock = &parent_chunk->children_lock;
-#       else
         parent_have_children_lock = parent_chunk->extensions & TRALLOC_EXTENSION_LOCK_CHILDREN;
         if ( parent_have_children_lock ) {
             parent_children_lock = _tralloc_get_children_lock_from_chunk ( parent_chunk );
-        }
-#       endif
-
-        if ( parent_have_children_lock ) {
             result = _tralloc_wrlock_children ( parent_children_lock );
             if ( result != 0 ) {
-                // It is time to do emergency exit.
-
-                // Subtree lock of "chunk" has been allocated, it should be freed.
-                if ( environment.have_subtree_lock ) {
-                    _tralloc_free_subtree_lock ( subtree_lock );
-                }
-                // Children lock of "chunk" has been allocated, it should be freed.
-                if ( environment.have_children_lock ) {
-                    _tralloc_free_children_lock ( children_lock );
-                }
-
-#               if defined ( TRALLOC_POOL )
-                // Pool lock of "chunk" has been allocated, it should be freed.
-                if ( environment.have_pool_lock ) {
-                    _tralloc_free_pool_lock ( pool_lock );
-                }
-#               endif
-
-#               if defined ( TRALLOC_DESTRUCTORS )
-                // Destructors of "chunk" has been allocated, it should be freed.
-                if ( environment.have_destructors ) {
-                    _tralloc_free_destructors ( destructors, context );
-                }
-#               endif
-
-#               if defined ( TRALLOC_REFERENCES )
-                // Reference of "chunk" has been allocated, it should be freed.
-                if ( environment.have_reference ) {
-                    _tralloc_free_reference ( reference );
-                }
-#               endif
-
-                // Memory has been allocated in the pool or global memory, it should be freed.
-#               if defined ( TRALLOC_POOL )
-                if ( environment.have_pool_child ) {
-                    _tralloc_free_pool_child ( pool_child );
-                } else {
-                    free ( memory );
-                }
-#               else
-                free ( memory );
-#               endif
-
+                _tralloc_free_chunk ( chunk );
                 return result;
             }
         }
@@ -555,58 +472,13 @@ tralloc_error _tralloc_alloc ( tralloc_context * parent_context, tralloc_context
         if ( parent_have_children_lock ) {
             result = _tralloc_unlock_children ( parent_children_lock );
             if ( result != 0 ) {
-                // It is time to do emergency exit.
-                // "parent_children_lock" have locked status.
-
                 // Chunk should be detached.
                 _tralloc_attach_chunk ( chunk, NULL );
-
-                // Subtree lock of "chunk" has been allocated, it should be freed.
-                if ( environment.have_subtree_lock ) {
-                    _tralloc_free_subtree_lock ( subtree_lock );
-                }
-                // Children lock of "chunk" has been allocated, it should be freed.
-                if ( environment.have_children_lock ) {
-                    _tralloc_free_children_lock ( children_lock );
-                }
-
-#               if defined ( TRALLOC_POOL )
-                // Pool lock of "chunk" has been allocated, it should be freed.
-                if ( environment.have_pool_lock ) {
-                    _tralloc_free_pool_lock ( pool_lock );
-                }
-#               endif
-
-#               if defined ( TRALLOC_DESTRUCTORS )
-                // Destructors of "chunk" has been allocated, it should be freed.
-                if ( environment.have_destructors ) {
-                    _tralloc_free_destructors ( destructors, context );
-                }
-#               endif
-
-#               if defined ( TRALLOC_REFERENCES )
-                // Reference of "chunk" has been allocated, it should be freed.
-                if ( environment.have_reference ) {
-                    _tralloc_free_reference ( reference );
-                }
-#               endif
-
-                // Memory has been allocated in the pool or global memory, it should be freed.
-#               if defined ( TRALLOC_POOL )
-                if ( environment.have_pool_child ) {
-                    _tralloc_free_pool_child ( pool_child );
-                } else {
-                    free ( memory );
-                }
-#               else
-                free ( memory );
-#               endif
-
+                _tralloc_free_chunk ( chunk );
                 return result;
             }
         }
 #       endif
-
     }
 
 #   if defined ( TRALLOC_DEBUG )
@@ -619,24 +491,24 @@ tralloc_error _tralloc_alloc ( tralloc_context * parent_context, tralloc_context
 #   endif
 
     if ( result != 0 ) {
-        // It is time to do emergency exit.
-
-        tralloc_error _TRALLOC_UNUSED ( error ) = result;
+        tralloc_error error = result;
 
         if ( parent_chunk != NULL ) {
+            // Chunk should be detached.
 
 #           if defined ( TRALLOC_THREADS )
             if ( parent_have_children_lock ) {
                 result = _tralloc_wrlock_children ( parent_children_lock );
                 if ( result != 0 ) {
-                    // It is not possible to delete chunk directly.
+                    // "chunk" is a child of "parent_chunk".
+                    // But "parent_children_lock" should be locked before detach operation.
+                    // So it is not possible to delete chunk now.
                     // Chunk will be deleted normally by it's parent.
                     return error;
                 }
             }
 #           endif
 
-            // Chunk should be detached.
             _tralloc_attach_chunk ( chunk, NULL );
 
 #           if defined ( TRALLOC_THREADS )
@@ -646,52 +518,8 @@ tralloc_error _tralloc_alloc ( tralloc_context * parent_context, tralloc_context
 #           endif
         }
 
-#       if defined ( TRALLOC_THREADS )
-
-        // Subtree lock of "chunk" has been allocated, it should be freed.
-        if ( environment.have_subtree_lock ) {
-            _tralloc_free_subtree_lock ( subtree_lock );
-        }
-        // Children lock of "chunk" has been allocated, it should be freed.
-        if ( environment.have_children_lock ) {
-            _tralloc_free_children_lock ( children_lock );
-        }
-
-#       if defined ( TRALLOC_POOL )
-        // Pool lock of "chunk" has been allocated, it should be freed.
-        if ( environment.have_pool_lock ) {
-            _tralloc_free_pool_lock ( pool_lock );
-        }
-#       endif
-
-#       endif
-
-#       if defined ( TRALLOC_DESTRUCTORS )
-        // Destructors of "chunk" has been allocated, it should be freed.
-        if ( environment.have_destructors ) {
-            _tralloc_free_destructors ( destructors, context );
-        }
-#       endif
-
-#       if defined ( TRALLOC_REFERENCES )
-        // Reference of "chunk" has been allocated, it should be freed.
-        if ( environment.have_reference ) {
-            _tralloc_free_reference ( reference );
-        }
-#       endif
-
-        // Memory has been allocated in the pool or global memory, it should be freed.
-#       if defined ( TRALLOC_POOL )
-        if ( environment.have_pool_child ) {
-            _tralloc_free_pool_child ( pool_child );
-        } else {
-            free ( memory );
-        }
-#       else
-        free ( memory );
-#       endif
-
-        return result;
+        _tralloc_free_chunk ( chunk );
+        return error;
     }
 #   endif
 
@@ -701,7 +529,7 @@ tralloc_error _tralloc_alloc ( tralloc_context * parent_context, tralloc_context
 
 
 static inline
-tralloc_error _tralloc_prepare ( tralloc_context * parent_context, tralloc_context ** child_context, size_t length, _tralloc_alloc_options * options )
+tralloc_error _tralloc_forward_to_alloc ( tralloc_context * parent_context, tralloc_context ** child_context, size_t length, _tralloc_alloc_options * options )
 {
 
 #   if defined ( TRALLOC_EXTENSIONS )
@@ -713,7 +541,7 @@ tralloc_error _tralloc_prepare ( tralloc_context * parent_context, tralloc_conte
 
 #if defined ( TRALLOC_EXTENSIONS )
 static inline
-tralloc_error _tralloc_prepare_with_extensions ( tralloc_context * parent_context, tralloc_context ** child_context, size_t length, tralloc_extensions extensions, _tralloc_alloc_options * options )
+tralloc_error _tralloc_forward_to_alloc_with_extensions ( tralloc_context * parent_context, tralloc_context ** child_context, size_t length, tralloc_extensions extensions, _tralloc_alloc_options * options )
 {
     options->extensions = extensions;
     return _tralloc_alloc ( parent_context, child_context, length, options );
@@ -723,44 +551,44 @@ tralloc_error _tralloc_prepare_with_extensions ( tralloc_context * parent_contex
 #if defined ( TRALLOC_DEBUG_LOG )
 
 static inline
-tralloc_error _tralloc_debug_log_prepare ( tralloc_context * parent_context, tralloc_context ** child_context, size_t length, _tralloc_alloc_options * options, const char * file, size_t line )
+tralloc_error _tralloc_debug_log_forward_to_alloc ( tralloc_context * parent_context, tralloc_context ** child_context, size_t length, _tralloc_alloc_options * options, const char * file, size_t line )
 {
     options->file = file;
     options->line = line;
-    return _tralloc_prepare ( parent_context, child_context, length, options );
+    return _tralloc_forward_to_alloc ( parent_context, child_context, length, options );
 }
 tralloc_error _tralloc_debug_log_new ( tralloc_context * parent_context, tralloc_context ** child_context, size_t length, const char * file, size_t line )
 {
     _tralloc_alloc_options options;
     options.zero = false;
-    return _tralloc_debug_log_prepare ( parent_context, child_context, length, &options, file, line );
+    return _tralloc_debug_log_forward_to_alloc ( parent_context, child_context, length, &options, file, line );
 }
 tralloc_error _tralloc_debug_log_new_zero ( tralloc_context * parent_context, tralloc_context ** child_context, size_t length, const char * file, size_t line )
 {
     _tralloc_alloc_options options;
     options.zero = true;
-    return _tralloc_debug_log_prepare ( parent_context, child_context, length, &options, file, line );
+    return _tralloc_debug_log_forward_to_alloc ( parent_context, child_context, length, &options, file, line );
 }
 
 #if defined ( TRALLOC_EXTENSIONS )
 static inline
-tralloc_error _tralloc_debug_log_prepare_with_extensions ( tralloc_context * parent_context, tralloc_context ** child_context, size_t length, tralloc_extensions extensions, _tralloc_alloc_options * options, const char * file, size_t line )
+tralloc_error _tralloc_debug_log_forward_to_alloc_with_extensions ( tralloc_context * parent_context, tralloc_context ** child_context, size_t length, tralloc_extensions extensions, _tralloc_alloc_options * options, const char * file, size_t line )
 {
     options->file = file;
     options->line = line;
-    return _tralloc_prepare_with_extensions ( parent_context, child_context, length, extensions, options );
+    return _tralloc_forward_to_alloc_with_extensions ( parent_context, child_context, length, extensions, options );
 }
 tralloc_error _tralloc_debug_log_new_with_extensions ( tralloc_context * parent_context, tralloc_context ** child_context, size_t length, tralloc_extensions extensions, const char * file, size_t line )
 {
     _tralloc_alloc_options options;
     options.zero = false;
-    return _tralloc_debug_log_prepare_with_extensions ( parent_context, child_context, length, extensions, &options, file, line );
+    return _tralloc_debug_log_forward_to_alloc_with_extensions ( parent_context, child_context, length, extensions, &options, file, line );
 }
 tralloc_error _tralloc_debug_log_new_zero_with_extensions ( tralloc_context * parent_context, tralloc_context ** child_context, size_t length, tralloc_extensions extensions, const char * file, size_t line )
 {
     _tralloc_alloc_options options;
     options.zero = true;
-    return _tralloc_debug_log_prepare_with_extensions ( parent_context, child_context, length, extensions, &options, file, line );
+    return _tralloc_debug_log_forward_to_alloc_with_extensions ( parent_context, child_context, length, extensions, &options, file, line );
 }
 #endif
 
@@ -770,13 +598,13 @@ tralloc_error tralloc_new ( tralloc_context * parent_context, tralloc_context **
 {
     _tralloc_alloc_options options;
     options.zero = false;
-    return _tralloc_prepare ( parent_context, child_context, length, &options );
+    return _tralloc_forward_to_alloc ( parent_context, child_context, length, &options );
 }
 tralloc_error tralloc_new_zero ( tralloc_context * parent_context, tralloc_context ** child_context, size_t length )
 {
     _tralloc_alloc_options options;
     options.zero = true;
-    return _tralloc_prepare ( parent_context, child_context, length, &options );
+    return _tralloc_forward_to_alloc ( parent_context, child_context, length, &options );
 }
 
 #if defined ( TRALLOC_EXTENSIONS )
@@ -784,13 +612,13 @@ tralloc_error tralloc_new_with_extensions ( tralloc_context * parent_context, tr
 {
     _tralloc_alloc_options options;
     options.zero = false;
-    return _tralloc_prepare_with_extensions ( parent_context, child_context, length, extensions, &options );
+    return _tralloc_forward_to_alloc_with_extensions ( parent_context, child_context, length, extensions, &options );
 }
 tralloc_error tralloc_new_zero_with_extensions ( tralloc_context * parent_context, tralloc_context ** child_context, size_t length, tralloc_extensions extensions )
 {
     _tralloc_alloc_options options;
     options.zero = true;
-    return _tralloc_prepare_with_extensions ( parent_context, child_context, length, extensions, &options );
+    return _tralloc_forward_to_alloc_with_extensions ( parent_context, child_context, length, extensions, &options );
 }
 #endif
 

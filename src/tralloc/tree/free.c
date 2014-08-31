@@ -89,14 +89,11 @@ tralloc_bool _tralloc_can_free_chunk_children ( _tralloc_chunk * _TRALLOC_UNUSED
     return TRALLOC_TRUE;
 }
 
-static inline
 tralloc_error _tralloc_free_chunk ( _tralloc_chunk * chunk )
 {
     tralloc_error error = 0, _TRALLOC_UNUSED ( result );
-    tralloc_context * _TRALLOC_UNUSED ( context ) = _tralloc_get_context_from_chunk ( chunk );
 
 #   if defined ( TRALLOC_THREADS )
-
     if ( chunk->extensions & TRALLOC_EXTENSION_LOCK_SUBTREE ) {
         _tralloc_subtree_lock * subtree_lock = _tralloc_get_subtree_lock_from_chunk ( chunk );
         result = _tralloc_free_subtree_lock ( subtree_lock );
@@ -128,7 +125,7 @@ tralloc_error _tralloc_free_chunk ( _tralloc_chunk * chunk )
 #   if defined ( TRALLOC_DESTRUCTORS )
     if ( chunk->extensions & TRALLOC_EXTENSION_DESTRUCTORS ) {
         _tralloc_destructors * destructors = _tralloc_get_destructors_from_chunk ( chunk );
-        result = _tralloc_free_destructors ( destructors, context );
+        result = _tralloc_free_destructors ( destructors, _tralloc_get_context_from_chunk ( chunk ) );
         if ( result != 0 ) {
             error = result;
         }
@@ -153,21 +150,19 @@ tralloc_error _tralloc_free_chunk ( _tralloc_chunk * chunk )
         if ( result != 0 ) {
             error = result;
         }
-    }
-#   endif
-
-#   if defined ( TRALLOC_POOL )
-    if ( have_pool_child ) {
+        // Chunk has been already freed.
         return error;
     }
 #   endif
 
+    uintptr_t memory = ( uintptr_t ) chunk;
 #   if defined ( TRALLOC_EXTENSIONS )
-    void * memory = ( void * ) ( ( uintptr_t ) chunk - _tralloc_get_extensions_length ( chunk->extensions ) );
-    free ( memory );
+    memory -= _tralloc_get_extensions_length ( chunk->extensions );
 #   else
-    free ( chunk );
+
 #   endif
+
+    free ( ( void * ) memory );
 
     return error;
 }
