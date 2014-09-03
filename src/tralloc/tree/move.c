@@ -70,21 +70,10 @@ tralloc_error tralloc_move ( tralloc_context * child_context, tralloc_context * 
 #   endif
 
 #   if defined ( TRALLOC_THREADS )
-    tralloc_bool have_subtree_lock;
+    tralloc_bool have_subtree_lock = chunk->extensions & TRALLOC_EXTENSION_LOCK_SUBTREE;
     _tralloc_subtree_lock * subtree_lock;
-
-#   if defined ( TRALLOC_DEBUG_THREADS )
-    // Locks from extensions are inactive in debug threads mode.
-    have_subtree_lock = TRALLOC_TRUE;
-    subtree_lock = &chunk->subtree_lock;
-#   else
-    have_subtree_lock = chunk->extensions & TRALLOC_EXTENSION_LOCK_SUBTREE;
     if ( have_subtree_lock ) {
         subtree_lock = _tralloc_get_subtree_lock_from_chunk ( chunk );
-    }
-#   endif
-
-    if ( have_subtree_lock ) {
         result = _tralloc_wrlock_subtree ( subtree_lock );
         if ( result != 0 ) {
             return result;
@@ -124,28 +113,6 @@ tralloc_error tralloc_move ( tralloc_context * child_context, tralloc_context * 
     _tralloc_children_lock * parent_1_children_lock;
     _tralloc_children_lock * parent_2_children_lock;
 
-#   if defined ( TRALLOC_DEBUG_THREADS )
-    // Locks from extensions are inactive in debug threads mode.
-    if ( old_parent_chunk < new_parent_chunk ) {
-        parent_1_have_children_lock = old_parent_chunk != NULL;
-        if ( parent_1_have_children_lock ) {
-            parent_1_children_lock = &old_parent_chunk->children_lock;
-        }
-        parent_2_have_children_lock = new_parent_chunk != NULL;
-        if ( parent_2_have_children_lock ) {
-            parent_2_children_lock = &new_parent_chunk->children_lock;
-        }
-    } else {
-        parent_1_have_children_lock = new_parent_chunk != NULL;
-        if ( parent_1_have_children_lock ) {
-            parent_1_children_lock = &new_parent_chunk->children_lock;
-        }
-        parent_2_have_children_lock = old_parent_chunk != NULL;
-        if ( parent_2_have_children_lock ) {
-            parent_2_children_lock = &old_parent_chunk->children_lock;
-        }
-    }
-#   else
     if ( old_parent_chunk < new_parent_chunk ) {
         parent_1_have_children_lock = old_parent_chunk != NULL && ( old_parent_chunk->extensions & TRALLOC_EXTENSION_LOCK_CHILDREN );
         if ( parent_1_have_children_lock ) {
@@ -165,7 +132,6 @@ tralloc_error tralloc_move ( tralloc_context * child_context, tralloc_context * 
             parent_2_children_lock = _tralloc_get_children_lock_from_chunk ( old_parent_chunk );
         }
     }
-#   endif
 
     if ( parent_1_have_children_lock ) {
         result = _tralloc_wrlock_children ( parent_1_children_lock );

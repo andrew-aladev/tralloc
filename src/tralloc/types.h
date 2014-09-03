@@ -231,45 +231,36 @@ typedef struct _tralloc_chunk_type {
     struct _tralloc_chunk_type * first_child;
 
 #   if defined ( TRALLOC_EXTENSIONS )
-    // "extensions" should not be locked for thread safety.
+    // "extensions" and "forced_extensions" should not be locked for thread safety.
     // It will be written only in alloc function. Other functions will read it.
     tralloc_extensions extensions;
-#   endif
 
 #   if defined ( TRALLOC_DEBUG )
-    
-#   if defined ( TRALLOC_EXTENSIONS )
     // Some extensions can be forced.
     // If bit is 1 - extension value is forced, otherwise extension equals original extension.
     // So original extensions can be found by "extensions" ^ "forced_extensions"
-    
+
     // If parent is pool or pool child - pool child will be enabled, otherwise it will be disabled.
     // Pool child will be disabled if related pool can't alloc it.
     // Pool lock will be disabled if pool is not enabled.
     // Subtree, children and pool locks will be enabled if TRALLOC_DEBUG_THREADS is defined.
-    
-    // "forced_extensions" should not be locked for thread safety.
-    // It will be written only in alloc function. Other functions will read it.
     tralloc_extensions forced_extensions;
 #   endif
-    
-    // "chunk_length" should not be locked for thread safety.
+
+#   endif
+
+#   if defined ( TRALLOC_DEBUG )
+    // "chunk_length", "length", "initialized_in_file" and "initialized_at_line" should not be locked for thread safety.
     // It will be written only in alloc function. Other functions will read it.
     size_t chunk_length;
-
-    // "chunk_length" should not be locked for thread safety.
-    // It will be written only in alloc and realloc functions. Other functions will read it.
     size_t length;
 
 #   if defined ( TRALLOC_DEBUG_LOG )
-    // "initialized_in_file" and "initialized_at_line" should not be locked for thread safety.
-    // It will be written only in alloc function. Other functions will read it.
     char * initialized_in_file;
     size_t initialized_at_line;
 #   endif
 
 #   if defined ( TRALLOC_DEBUG_THREADS )
-
     // "subtree_used_by_thread", "subtree_usage_status", "children_used_by_thread" and "children_usage_status"
     //      will be locked for thread safety by "thread_usage_lock".
     pthread_t subtree_used_by_thread;
@@ -278,18 +269,8 @@ typedef struct _tralloc_chunk_type {
     _tralloc_thread_usage_status subtree_usage_status;
     _tralloc_thread_usage_status children_usage_status;
     _tralloc_thread_usage_status pool_usage_status;
+
     _tralloc_debug_threads_lock thread_usage_lock;
-
-    // In debug threads mode each chunk have locks without respect to extensions.
-    // Locks from extensions are inactive.
-
-    _tralloc_subtree_lock subtree_lock;
-    _tralloc_children_lock children_lock;
-
-#   if defined ( TRALLOC_DEBUG_THREADS )
-    _tralloc_pool_lock pool_lock;
-#   endif
-
 #   endif
 
 #   endif
