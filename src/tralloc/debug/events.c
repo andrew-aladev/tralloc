@@ -46,15 +46,15 @@ tralloc_error _tralloc_debug_before_add_chunk ( _tralloc_chunk * _TRALLOC_UNUSED
 }
 
 #if defined ( TRALLOC_DEBUG_LOG )
-tralloc_error _tralloc_debug_after_add_chunk ( _tralloc_chunk * chunk, size_t chunk_length, size_t data_length, const char * file, size_t line )
+tralloc_error _tralloc_debug_after_add_chunk ( _tralloc_chunk * chunk, size_t length, size_t data_length, const char * file, size_t line )
 #else
-tralloc_error _tralloc_debug_after_add_chunk ( _tralloc_chunk * chunk, size_t chunk_length, size_t data_length )
+tralloc_error _tralloc_debug_after_add_chunk ( _tralloc_chunk * chunk, size_t length, size_t data_length )
 #endif
 {
     tralloc_error _TRALLOC_UNUSED ( result );
     
-    chunk->chunk_length = chunk_length;
-    chunk->data_length  = data_length;
+    chunk->length      = length;
+    chunk->data_length = data_length;
 
 #   if defined ( TRALLOC_DEBUG_LOG )
     chunk->initialized_in_file = strdup ( file );
@@ -77,7 +77,7 @@ tralloc_error _tralloc_debug_after_add_chunk ( _tralloc_chunk * chunk, size_t ch
 #   endif
 
 #   if defined ( TRALLOC_DEBUG_STATS )
-    result = _tralloc_debug_stats_after_add_chunk ( chunk_length, data_length );
+    result = _tralloc_debug_stats_after_add_chunk ( length, data_length );
     if ( result != 0 ) {
 
 #       if defined ( TRALLOC_DEBUG_LOG )
@@ -89,7 +89,7 @@ tralloc_error _tralloc_debug_after_add_chunk ( _tralloc_chunk * chunk, size_t ch
 #   endif
 
 #   if defined ( TRALLOC_DEBUG_CALLBACKS )
-    result = _tralloc_debug_callback_after_add_chunk ( chunk, chunk_length, data_length );
+    result = _tralloc_debug_callback_after_add_chunk ( chunk, length, data_length );
     if ( result != 0 ) {
 
 #       if defined ( TRALLOC_DEBUG_LOG )
