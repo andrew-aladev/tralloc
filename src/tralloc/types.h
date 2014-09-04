@@ -253,7 +253,7 @@ typedef struct _tralloc_chunk_type {
     // "chunk_length", "length", "initialized_in_file" and "initialized_at_line" should not be locked for thread safety.
     // It will be written only in alloc function. Other functions will read it.
     size_t chunk_length;
-    size_t length;
+    size_t data_length;
 
 #   if defined ( TRALLOC_DEBUG_LOG )
     char * initialized_in_file;

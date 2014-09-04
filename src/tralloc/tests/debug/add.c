@@ -82,11 +82,11 @@ tralloc_bool test_debug_add ( tralloc_context * ctx )
     if (
         dynarr_get_length ( history ) != 3            ||
         ( chunk = dynarr_get ( history, 0 ) ) == NULL ||
-        chunk != a_chunk || chunk->length != sizeof ( int ) * 2      ||
+        chunk != a_chunk || chunk->data_length != sizeof ( int ) * 2 ||
         ( chunk = dynarr_get ( history, 1 ) ) == NULL ||
-        chunk != b_chunk || chunk->length != sizeof ( char ) * 3     ||
+        chunk != b_chunk || chunk->data_length != sizeof ( char ) * 3 ||
         ( chunk = dynarr_get ( history, 2 ) ) == NULL ||
-        chunk != c_chunk || chunk->length != sizeof ( float ) * 4    ||
+        chunk != c_chunk || chunk->data_length != sizeof ( float ) * 4 ||
 
         tralloc_free ( a ) != 0 ||
         tralloc_free ( b ) != 0

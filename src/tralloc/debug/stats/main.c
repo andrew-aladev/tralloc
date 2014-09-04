@@ -257,7 +257,7 @@ tralloc_error _tralloc_debug_stats_before_free_chunk ( _tralloc_chunk * chunk )
         error = result;
     }
 
-    result = _tralloc_debug_stats_subtract_chunks_length ( chunk->length );
+    result = _tralloc_debug_stats_subtract_chunks_length ( chunk->data_length );
     if ( result != 0 ) {
         error = result;
     }
