@@ -46,7 +46,7 @@ tralloc_error _tralloc_free_destructors ( _tralloc_destructors * destructors, tr
     }
 
 #   if defined ( TRALLOC_DEBUG_STATS )
-    result = _tralloc_debug_stats_subtract_chunks_overhead_length ( sizeof ( _tralloc_destructor ) * destructors_count );
+    result = _tralloc_debug_stats_subtract_overhead_length ( sizeof ( _tralloc_destructor ) * destructors_count );
     if ( result != 0 ) {
         error = result;
     }

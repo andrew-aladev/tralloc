@@ -31,7 +31,7 @@ tralloc_error tralloc_append_destructor ( tralloc_context * context, tralloc_des
     }
 
 #   if defined ( TRALLOC_DEBUG_STATS )
-    tralloc_error result = _tralloc_debug_stats_add_chunks_overhead_length ( sizeof ( _tralloc_destructor ) );
+    tralloc_error result = _tralloc_debug_stats_add_overhead_length ( sizeof ( _tralloc_destructor ) );
     if ( result != 0 ) {
         free ( destructor );
         return result;
@@ -72,7 +72,7 @@ tralloc_error tralloc_prepend_destructor ( tralloc_context * context, tralloc_de
     }
 
 #   if defined ( TRALLOC_DEBUG_STATS )
-    tralloc_error result = _tralloc_debug_stats_add_chunks_overhead_length ( sizeof ( _tralloc_destructor ) );
+    tralloc_error result = _tralloc_debug_stats_add_overhead_length ( sizeof ( _tralloc_destructor ) );
     if ( result != 0 ) {
         free ( destructor );
         return result;

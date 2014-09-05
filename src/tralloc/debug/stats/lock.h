@@ -13,13 +13,13 @@ tralloc_error _tralloc_debug_stats_rdlock_chunks_count ();
 tralloc_error _tralloc_debug_stats_wrlock_chunks_count ();
 tralloc_error _tralloc_debug_stats_unlock_chunks_count ();
 
-tralloc_error _tralloc_debug_stats_rdlock_chunks_overhead_length ();
-tralloc_error _tralloc_debug_stats_wrlock_chunks_overhead_length ();
-tralloc_error _tralloc_debug_stats_unlock_chunks_overhead_length ();
+tralloc_error _tralloc_debug_stats_rdlock_overhead_length ();
+tralloc_error _tralloc_debug_stats_wrlock_overhead_length ();
+tralloc_error _tralloc_debug_stats_unlock_overhead_length ();
 
-tralloc_error _tralloc_debug_stats_rdlock_chunks_length ();
-tralloc_error _tralloc_debug_stats_wrlock_chunks_length ();
-tralloc_error _tralloc_debug_stats_unlock_chunks_length ();
+tralloc_error _tralloc_debug_stats_rdlock_data_length ();
+tralloc_error _tralloc_debug_stats_wrlock_data_length ();
+tralloc_error _tralloc_debug_stats_unlock_data_length ();
 
 
 #endif

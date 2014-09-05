@@ -49,7 +49,7 @@ tralloc_error tralloc_clear_destructors ( tralloc_context * context )
     destructors->last_destructor  = NULL;
 
 #   if defined ( TRALLOC_DEBUG_STATS )
-    tralloc_error result = _tralloc_debug_stats_subtract_chunks_overhead_length ( sizeof ( _tralloc_destructor ) * destructors_count );
+    tralloc_error result = _tralloc_debug_stats_subtract_overhead_length ( sizeof ( _tralloc_destructor ) * destructors_count );
     if ( result != 0 ) {
         return result;
     }
