@@ -11,14 +11,14 @@
 #include <stdio.h>
 
 
-tralloc_error _tralloc_strndup_with_extensions ( tralloc_context * parent_context, char ** child_context, tralloc_extensions extensions, const char * str, size_t length )
+tralloc_error _tralloc_strndup_with_extensions ( tralloc_context * parent_context, char ** child_context, tralloc_extensions extensions, const char * str, size_t str_length )
 {
-    tralloc_error result = tralloc_new_with_extensions ( parent_context, ( tralloc_context ** ) child_context, sizeof ( char ) * ( length + 1 ), extensions );
+    tralloc_error result = tralloc_new_with_extensions ( parent_context, ( tralloc_context ** ) child_context, sizeof ( char ) * ( str_length + 1 ), extensions );
     if ( result != 0 ) {
         return result;
     }
-    memmove ( * child_context, str, length );
-    ( * child_context ) [length] = '\0';
+    memmove ( * child_context, str, str_length );
+    ( * child_context ) [str_length] = '\0';
     return 0;
 }
 
@@ -28,20 +28,20 @@ tralloc_error tralloc_vasprintf_with_extensions ( tralloc_context * parent_conte
     va_list arguments_copy;
 
     va_copy ( arguments_copy, arguments );
-    int predicted_length = vsnprintf ( NULL, 0, format, arguments_copy );
+    int predicted_str_length = vsnprintf ( NULL, 0, format, arguments_copy );
     va_end ( arguments_copy );
-    if ( predicted_length <= 0 ) {
+    if ( predicted_str_length <= 0 ) {
         return TRALLOC_ERROR_PRINTF_FAILED;
     }
 
-    tralloc_error result = tralloc_new_with_extensions ( parent_context, ( tralloc_context ** ) child_context, sizeof ( char ) * ( predicted_length + 1 ), extensions );
+    tralloc_error result = tralloc_new_with_extensions ( parent_context, ( tralloc_context ** ) child_context, sizeof ( char ) * ( predicted_str_length + 1 ), extensions );
     if ( result != 0 ) {
         return result;
     }
     va_copy ( arguments_copy, arguments );
-    int length = vsnprintf ( * child_context, predicted_length + 1, format, arguments_copy );
+    int str_length = vsnprintf ( * child_context, predicted_str_length + 1, format, arguments_copy );
     va_end ( arguments_copy );
-    if ( length != predicted_length ) {
+    if ( str_length != predicted_str_length ) {
         tralloc_free ( * child_context );
         return TRALLOC_ERROR_PRINTF_FAILED;
     }

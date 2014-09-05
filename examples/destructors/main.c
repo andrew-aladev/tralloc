@@ -61,8 +61,8 @@ int main ()
     }
 
 #   if defined(TRALLOC_DEBUG_STATS)
-    size_t length;
-    if ( tralloc_debug_stats_get_chunks_count ( &length ) != 0 || length != 0 ) {
+    size_t chunks_count;
+    if ( tralloc_debug_stats_get_chunks_count ( &chunks_count ) != 0 || chunks_count != 0 ) {
         return 255;
     }
 #   endif

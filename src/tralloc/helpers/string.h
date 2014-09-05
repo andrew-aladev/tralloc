@@ -19,24 +19,24 @@
 #endif
 
 
-tralloc_error _tralloc_strndup_with_extensions ( tralloc_context * parent_context, char ** child_context, tralloc_extensions extensions, const char * str, size_t length );
+tralloc_error _tralloc_strndup_with_extensions ( tralloc_context * parent_context, char ** child_context, tralloc_extensions extensions, const char * str, size_t str_length );
 
 _TRALLOC_INLINE
-tralloc_error tralloc_strndup_with_extensions ( tralloc_context * parent_context, char ** child_context, tralloc_extensions extensions, const char * str, size_t length )
+tralloc_error tralloc_strndup_with_extensions ( tralloc_context * parent_context, char ** child_context, tralloc_extensions extensions, const char * str, size_t str_length )
 {
     if ( str == NULL ) {
         return TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL;
     }
-    return _tralloc_strndup_with_extensions ( parent_context, child_context, extensions, str, length );
+    return _tralloc_strndup_with_extensions ( parent_context, child_context, extensions, str, str_length );
 }
 
 _TRALLOC_INLINE
-tralloc_error tralloc_strndup ( tralloc_context * parent_context, char ** child_context, const char * str, size_t length )
+tralloc_error tralloc_strndup ( tralloc_context * parent_context, char ** child_context, const char * str, size_t str_length )
 {
     if ( str == NULL ) {
         return TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL;
     }
-    return _tralloc_strndup_with_extensions ( parent_context, child_context, 0, str, length );
+    return _tralloc_strndup_with_extensions ( parent_context, child_context, 0, str, str_length );
 }
 
 _TRALLOC_INLINE

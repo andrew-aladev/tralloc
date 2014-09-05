@@ -9,16 +9,16 @@
 #include "../../types.h"
 
 
-tralloc_error _tralloc_debug_stats_after_add_chunk    ( size_t chunk_length, size_t length );
-tralloc_error _tralloc_debug_stats_after_resize_chunk ( size_t old_length, size_t length );
+tralloc_error _tralloc_debug_stats_after_add_chunk    ( size_t chunk_length, size_t data_length );
+tralloc_error _tralloc_debug_stats_after_resize_chunk ( size_t old_data_length, size_t data_length );
 tralloc_error _tralloc_debug_stats_before_free_chunk  ( _tralloc_chunk * chunk );
 
-tralloc_error _tralloc_debug_stats_add_chunks_overhead_length      ( size_t length );
-tralloc_error _tralloc_debug_stats_subtract_chunks_overhead_length ( size_t length );
+tralloc_error _tralloc_debug_stats_add_chunks_overhead_length      ( size_t overhead_length );
+tralloc_error _tralloc_debug_stats_subtract_chunks_overhead_length ( size_t overhead_length );
 
-tralloc_error tralloc_debug_stats_get_chunks_count           ( size_t * length );
-tralloc_error tralloc_debug_stats_get_chunks_overhead_length ( size_t * length );
-tralloc_error tralloc_debug_stats_get_chunks_length          ( size_t * length );
+tralloc_error tralloc_debug_stats_get_chunks_count           ( size_t * chunks_count );
+tralloc_error tralloc_debug_stats_get_chunks_overhead_length ( size_t * overhead_length );
+tralloc_error tralloc_debug_stats_get_chunks_length          ( size_t * data_length );
 
 
 #endif

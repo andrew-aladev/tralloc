@@ -13,19 +13,19 @@
 
 typedef struct test_debug_resize_info_t {
     _tralloc_chunk * chunk;
-    size_t old_length;
+    size_t old_data_length;
 } test_debug_resize_info;
 
 static
-tralloc_error test_debug_after_resize ( void * user_data, _tralloc_chunk * chunk, size_t old_length )
+tralloc_error test_debug_after_resize ( void * user_data, _tralloc_chunk * chunk, size_t old_data_length )
 {
     dynarr * history = ( dynarr * ) user_data;
     test_debug_resize_info * info = malloc ( sizeof ( test_debug_resize_info ) );
     if ( info == NULL ) {
         return TRALLOC_ERROR_MALLOC_FAILED;
     }
-    info->chunk      = chunk;
-    info->old_length = old_length;
+    info->chunk           = chunk;
+    info->old_data_length = old_data_length;
     if ( dynarr_append ( history, info ) != 0 ) {
         free ( info );
         return TRALLOC_ERROR_MALLOC_FAILED;
@@ -101,11 +101,11 @@ tralloc_bool test_debug_resize ( tralloc_context * ctx )
     if (
         dynarr_get_length ( history ) != 3 ||
         ( info = dynarr_get ( history, 0 ) ) == NULL ||
-        info->chunk != b_chunk || info->old_length != sizeof ( char ) * 3 || info->chunk->data_length != sizeof ( char ) * 8 ||
+        info->chunk != b_chunk || info->old_data_length != sizeof ( char ) * 3 || info->chunk->data_length != sizeof ( char ) * 8 ||
         ( info = dynarr_get ( history, 1 ) ) == NULL ||
-        info->chunk != a_chunk || info->old_length != sizeof ( int ) * 2 || info->chunk->data_length != sizeof ( int ) * 9 ||
+        info->chunk != a_chunk || info->old_data_length != sizeof ( int ) * 2 || info->chunk->data_length != sizeof ( int ) * 9 ||
         ( info = dynarr_get ( history, 2 ) ) == NULL ||
-        info->chunk != c_chunk || info->old_length != sizeof ( float ) * 4 || info->chunk->data_length != sizeof ( float ) * 10 ||
+        info->chunk != c_chunk || info->old_data_length != sizeof ( float ) * 4 || info->chunk->data_length != sizeof ( float ) * 10 ||
 
         tralloc_free ( a ) != 0 ||
         tralloc_free ( b ) != 0

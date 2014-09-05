@@ -29,7 +29,7 @@
 
 // <-- empty bytes --> <-- valid_data  --> <-- empty bytes -->
 // <----------------------- capacity ------------------------>
-// <---- offset -----> <---- length ----->
+// <---- offset -----> <---- length -----> -------------------
 
 typedef struct _tralloc_buffer_type {
     uint8_t * data;

@@ -13,7 +13,7 @@
 static size_t _tralloc_debug_stats_chunks_count = 0;
 
 static inline
-tralloc_error _tralloc_debug_stats_add_chunks_count ( size_t length )
+tralloc_error _tralloc_debug_stats_add_chunks_count ( size_t chunks_count )
 {
 
 #   if defined ( TRALLOC_THREADS )
@@ -23,7 +23,7 @@ tralloc_error _tralloc_debug_stats_add_chunks_count ( size_t length )
     }
 #   endif
 
-    _tralloc_debug_stats_chunks_count += length;
+    _tralloc_debug_stats_chunks_count += chunks_count;
 
 #   if defined ( TRALLOC_THREADS )
     result = _tralloc_debug_stats_unlock_chunks_count ();
@@ -36,7 +36,7 @@ tralloc_error _tralloc_debug_stats_add_chunks_count ( size_t length )
 }
 
 static inline
-tralloc_error _tralloc_debug_stats_subtract_chunks_count ( size_t length )
+tralloc_error _tralloc_debug_stats_subtract_chunks_count ( size_t chunks_count )
 {
 
 #   if defined ( TRALLOC_THREADS )
@@ -46,7 +46,7 @@ tralloc_error _tralloc_debug_stats_subtract_chunks_count ( size_t length )
     }
 #   endif
 
-    _tralloc_debug_stats_chunks_count -= length;
+    _tralloc_debug_stats_chunks_count -= chunks_count;
 
 #   if defined ( TRALLOC_THREADS )
     result = _tralloc_debug_stats_unlock_chunks_count ();
@@ -58,7 +58,7 @@ tralloc_error _tralloc_debug_stats_subtract_chunks_count ( size_t length )
     return 0;
 }
 
-tralloc_error tralloc_debug_stats_get_chunks_count ( size_t * length )
+tralloc_error tralloc_debug_stats_get_chunks_count ( size_t * chunks_count )
 {
 
 #   if defined ( TRALLOC_THREADS )
@@ -68,7 +68,7 @@ tralloc_error tralloc_debug_stats_get_chunks_count ( size_t * length )
     }
 #   endif
 
-    * length = _tralloc_debug_stats_chunks_count;
+    * chunks_count = _tralloc_debug_stats_chunks_count;
 
 #   if defined ( TRALLOC_THREADS )
     result = _tralloc_debug_stats_unlock_chunks_count ();
@@ -83,7 +83,7 @@ tralloc_error tralloc_debug_stats_get_chunks_count ( size_t * length )
 
 static size_t _tralloc_debug_stats_chunks_overhead_length = 0;
 
-tralloc_error _tralloc_debug_stats_add_chunks_overhead_length ( size_t length )
+tralloc_error _tralloc_debug_stats_add_chunks_overhead_length ( size_t overhead_length )
 {
 
 #   if defined ( TRALLOC_THREADS )
@@ -93,7 +93,7 @@ tralloc_error _tralloc_debug_stats_add_chunks_overhead_length ( size_t length )
     }
 #   endif
 
-    _tralloc_debug_stats_chunks_overhead_length += length;
+    _tralloc_debug_stats_chunks_overhead_length += overhead_length;
 
 #   if defined ( TRALLOC_THREADS )
     result = _tralloc_debug_stats_unlock_chunks_overhead_length ();
@@ -105,7 +105,7 @@ tralloc_error _tralloc_debug_stats_add_chunks_overhead_length ( size_t length )
     return 0;
 }
 
-tralloc_error _tralloc_debug_stats_subtract_chunks_overhead_length ( size_t length )
+tralloc_error _tralloc_debug_stats_subtract_chunks_overhead_length ( size_t overhead_length )
 {
 
 #   if defined ( TRALLOC_THREADS )
@@ -115,7 +115,7 @@ tralloc_error _tralloc_debug_stats_subtract_chunks_overhead_length ( size_t leng
     }
 #   endif
 
-    _tralloc_debug_stats_chunks_overhead_length -= length;
+    _tralloc_debug_stats_chunks_overhead_length -= overhead_length;
 
 #   if defined ( TRALLOC_THREADS )
     result = _tralloc_debug_stats_unlock_chunks_overhead_length ();
@@ -127,7 +127,7 @@ tralloc_error _tralloc_debug_stats_subtract_chunks_overhead_length ( size_t leng
     return 0;
 }
 
-tralloc_error tralloc_debug_stats_get_chunks_overhead_length ( size_t * length )
+tralloc_error tralloc_debug_stats_get_chunks_overhead_length ( size_t * overhead_length )
 {
 
 #   if defined ( TRALLOC_THREADS )
@@ -137,7 +137,7 @@ tralloc_error tralloc_debug_stats_get_chunks_overhead_length ( size_t * length )
     }
 #   endif
 
-    * length = _tralloc_debug_stats_chunks_overhead_length;
+    * overhead_length = _tralloc_debug_stats_chunks_overhead_length;
 
 #   if defined ( TRALLOC_THREADS )
     result = _tralloc_debug_stats_unlock_chunks_overhead_length ();
@@ -153,7 +153,7 @@ tralloc_error tralloc_debug_stats_get_chunks_overhead_length ( size_t * length )
 static size_t _tralloc_debug_stats_chunks_length = 0;
 
 static inline
-tralloc_error _tralloc_debug_stats_add_chunks_length ( size_t length )
+tralloc_error _tralloc_debug_stats_add_chunks_length ( size_t data_length )
 {
 
 #   if defined ( TRALLOC_THREADS )
@@ -163,7 +163,7 @@ tralloc_error _tralloc_debug_stats_add_chunks_length ( size_t length )
     }
 #   endif
 
-    _tralloc_debug_stats_chunks_length += length;
+    _tralloc_debug_stats_chunks_length += data_length;
 
 #   if defined ( TRALLOC_THREADS )
     result = _tralloc_debug_stats_unlock_chunks_length ();
@@ -176,7 +176,7 @@ tralloc_error _tralloc_debug_stats_add_chunks_length ( size_t length )
 }
 
 static inline
-tralloc_error _tralloc_debug_stats_subtract_chunks_length ( size_t length )
+tralloc_error _tralloc_debug_stats_subtract_chunks_length ( size_t data_length )
 {
 
 #   if defined ( TRALLOC_THREADS )
@@ -186,7 +186,7 @@ tralloc_error _tralloc_debug_stats_subtract_chunks_length ( size_t length )
     }
 #   endif
 
-    _tralloc_debug_stats_chunks_length -= length;
+    _tralloc_debug_stats_chunks_length -= data_length;
 
 #   if defined ( TRALLOC_THREADS )
     result = _tralloc_debug_stats_unlock_chunks_length ();
@@ -198,7 +198,7 @@ tralloc_error _tralloc_debug_stats_subtract_chunks_length ( size_t length )
     return 0;
 }
 
-tralloc_error tralloc_debug_stats_get_chunks_length ( size_t * length )
+tralloc_error tralloc_debug_stats_get_chunks_length ( size_t * data_length )
 {
 
 #   if defined ( TRALLOC_THREADS )
@@ -208,7 +208,7 @@ tralloc_error tralloc_debug_stats_get_chunks_length ( size_t * length )
     }
 #   endif
 
-    * length = _tralloc_debug_stats_chunks_length;
+    * data_length = _tralloc_debug_stats_chunks_length;
 
 #   if defined ( TRALLOC_THREADS )
     result = _tralloc_debug_stats_unlock_chunks_length ();
@@ -220,25 +220,25 @@ tralloc_error tralloc_debug_stats_get_chunks_length ( size_t * length )
     return 0;
 }
 
-tralloc_error _tralloc_debug_stats_after_add_chunk ( size_t chunk_length, size_t length )
+tralloc_error _tralloc_debug_stats_after_add_chunk ( size_t chunk_length, size_t data_length )
 {
     tralloc_error result;
     if (
         ( result = _tralloc_debug_stats_add_chunks_count ( 1 ) ) != 0 ||
         ( result = _tralloc_debug_stats_add_chunks_overhead_length ( chunk_length ) ) != 0 ||
-        ( result = _tralloc_debug_stats_add_chunks_length ( length ) ) != 0
+        ( result = _tralloc_debug_stats_add_chunks_length ( data_length ) ) != 0
     ) {
         return result;
     }
     return 0;
 }
 
-tralloc_error _tralloc_debug_stats_after_resize_chunk ( size_t old_length, size_t length )
+tralloc_error _tralloc_debug_stats_after_resize_chunk ( size_t old_data_length, size_t data_length )
 {
-    if ( length > old_length ) {
-        return _tralloc_debug_stats_add_chunks_length ( length - old_length );
-    } else if ( length < old_length ) {
-        return _tralloc_debug_stats_subtract_chunks_length ( old_length - length );
+    if ( data_length > old_data_length ) {
+        return _tralloc_debug_stats_add_chunks_length ( data_length - old_data_length );
+    } else if ( data_length < old_data_length ) {
+        return _tralloc_debug_stats_subtract_chunks_length ( old_data_length - data_length );
     }
     return 0;
 }

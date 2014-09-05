@@ -244,7 +244,7 @@ void _tralloc_alloc_prepare_extensions_environment ( _tralloc_chunk * parent_chu
 }
 
 static
-tralloc_error _tralloc_alloc_initialize_extensions ( _tralloc_chunk * chunk, _tralloc_alloc_extensions_environment * ext_env, size_t total_length, size_t length )
+tralloc_error _tralloc_alloc_initialize_extensions ( _tralloc_chunk * chunk, _tralloc_alloc_extensions_environment * ext_env, size_t total_length, size_t data_length )
 {
     tralloc_error result;
 
@@ -291,7 +291,7 @@ tralloc_error _tralloc_alloc_initialize_extensions ( _tralloc_chunk * chunk, _tr
 
 #   if defined ( TRALLOC_POOL )
     if ( ext_env->have_pool ) {
-        _tralloc_new_pool ( _tralloc_get_pool_from_chunk ( chunk ), _tralloc_get_context_from_chunk ( chunk ), ext_env->extensions, length );
+        _tralloc_new_pool ( _tralloc_get_pool_from_chunk ( chunk ), _tralloc_get_context_from_chunk ( chunk ), ext_env->extensions, data_length );
     } else if ( ext_env->have_pool_child ) {
         _tralloc_new_pool_child ( _tralloc_get_pool_child_from_chunk ( chunk ), ext_env->parent_pool, total_length, ext_env->prev_pool_child, ext_env->next_pool_child );
     }
@@ -300,7 +300,7 @@ tralloc_error _tralloc_alloc_initialize_extensions ( _tralloc_chunk * chunk, _tr
 #   if defined ( TRALLOC_LENGTH )
     if ( ext_env->have_length ) {
         _tralloc_length * length_ptr = _tralloc_get_length_from_chunk ( chunk );
-        * length_ptr = length;
+        * length_ptr = data_length;
     }
 #   endif
 
@@ -326,9 +326,9 @@ tralloc_error _tralloc_alloc_initialize_extensions ( _tralloc_chunk * chunk, _tr
 #endif
 
 static inline
-tralloc_error _tralloc_malloc ( void ** data, size_t length )
+tralloc_error _tralloc_malloc ( void ** data, size_t total_length )
 {
-    void * _data = malloc ( length );
+    void * _data = malloc ( total_length );
     if ( _data == NULL ) {
         return TRALLOC_ERROR_MALLOC_FAILED;
     } else {
@@ -338,9 +338,9 @@ tralloc_error _tralloc_malloc ( void ** data, size_t length )
 }
 
 static inline
-tralloc_error _tralloc_calloc ( void ** data, size_t length )
+tralloc_error _tralloc_calloc ( void ** data, size_t total_length )
 {
-    void * _data = calloc ( 1, length );
+    void * _data = calloc ( 1, total_length );
     if ( _data == NULL ) {
         return TRALLOC_ERROR_CALLOC_FAILED;
     } else {
@@ -350,7 +350,7 @@ tralloc_error _tralloc_calloc ( void ** data, size_t length )
 }
 
 static
-tralloc_error _tralloc_alloc ( tralloc_context * parent_context, tralloc_context ** child_context, size_t length, _tralloc_alloc_options * opts )
+tralloc_error _tralloc_alloc ( tralloc_context * parent_context, tralloc_context ** child_context, size_t data_length, _tralloc_alloc_options * opts )
 {
     if ( child_context == NULL ) {
         return TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL;
@@ -364,7 +364,7 @@ tralloc_error _tralloc_alloc ( tralloc_context * parent_context, tralloc_context
     }
 
     size_t chunk_length = sizeof ( _tralloc_chunk );
-    size_t total_length = chunk_length + length;
+    size_t total_length = chunk_length + data_length;
 
 #   if defined ( TRALLOC_EXTENSIONS )
     _tralloc_alloc_extensions_environment ext_env;
@@ -377,7 +377,7 @@ tralloc_error _tralloc_alloc ( tralloc_context * parent_context, tralloc_context
 
 #   if defined ( TRALLOC_DEBUG )
     // Debug should care about thread safety of operations with "parent_chunk" by itself.
-    result = _tralloc_debug_before_add_chunk ( parent_chunk, ext_env.extensions, chunk_length, length );
+    result = _tralloc_debug_before_add_chunk ( parent_chunk, ext_env.extensions, chunk_length, data_length );
     if ( result != 0 ) {
         return result;
     }
@@ -426,7 +426,7 @@ tralloc_error _tralloc_alloc ( tralloc_context * parent_context, tralloc_context
 #   endif
 
 #   if defined ( TRALLOC_EXTENSIONS )
-    result = _tralloc_alloc_initialize_extensions ( chunk, &ext_env, total_length, length );
+    result = _tralloc_alloc_initialize_extensions ( chunk, &ext_env, total_length, data_length );
     if ( result != 0 ) {
 
 #       if defined ( TRALLOC_POOL )
@@ -487,9 +487,9 @@ tralloc_error _tralloc_alloc ( tralloc_context * parent_context, tralloc_context
 
     // Debug should care about thread safety of operations with "chunk" by itself.
 #   if defined ( TRALLOC_DEBUG_LOG )
-    result = _tralloc_debug_after_add_chunk ( chunk, chunk_length, length, opts->file, opts->line );
+    result = _tralloc_debug_after_add_chunk ( chunk, chunk_length, data_length, opts->file, opts->line );
 #   else
-    result = _tralloc_debug_after_add_chunk ( chunk, chunk_length, length );
+    result = _tralloc_debug_after_add_chunk ( chunk, chunk_length, data_length );
 #   endif
 
     if ( result != 0 ) {
@@ -531,96 +531,96 @@ tralloc_error _tralloc_alloc ( tralloc_context * parent_context, tralloc_context
 
 
 static inline
-tralloc_error _tralloc_forward_to_alloc ( tralloc_context * parent_context, tralloc_context ** child_context, size_t length, _tralloc_alloc_options * opts )
+tralloc_error _tralloc_forward_to_alloc ( tralloc_context * parent_context, tralloc_context ** child_context, size_t data_length, _tralloc_alloc_options * opts )
 {
 
 #   if defined ( TRALLOC_EXTENSIONS )
     opts->extensions = 0;
 #   endif
 
-    return _tralloc_alloc ( parent_context, child_context, length, opts );
+    return _tralloc_alloc ( parent_context, child_context, data_length, opts );
 }
 
 #if defined ( TRALLOC_EXTENSIONS )
 static inline
-tralloc_error _tralloc_forward_to_alloc_with_extensions ( tralloc_context * parent_context, tralloc_context ** child_context, size_t length, tralloc_extensions extensions, _tralloc_alloc_options * opts )
+tralloc_error _tralloc_forward_to_alloc_with_extensions ( tralloc_context * parent_context, tralloc_context ** child_context, size_t data_length, tralloc_extensions extensions, _tralloc_alloc_options * opts )
 {
     opts->extensions = extensions;
-    return _tralloc_alloc ( parent_context, child_context, length, opts );
+    return _tralloc_alloc ( parent_context, child_context, data_length, opts );
 }
 #endif
 
 #if defined ( TRALLOC_DEBUG_LOG )
 
 static inline
-tralloc_error _tralloc_debug_log_forward_to_alloc ( tralloc_context * parent_context, tralloc_context ** child_context, size_t length, _tralloc_alloc_options * opts, const char * file, size_t line )
+tralloc_error _tralloc_debug_log_forward_to_alloc ( tralloc_context * parent_context, tralloc_context ** child_context, size_t data_length, _tralloc_alloc_options * opts, const char * file, size_t line )
 {
     opts->file = file;
     opts->line = line;
-    return _tralloc_forward_to_alloc ( parent_context, child_context, length, opts );
+    return _tralloc_forward_to_alloc ( parent_context, child_context, data_length, opts );
 }
-tralloc_error _tralloc_debug_log_new ( tralloc_context * parent_context, tralloc_context ** child_context, size_t length, const char * file, size_t line )
+tralloc_error _tralloc_debug_log_new ( tralloc_context * parent_context, tralloc_context ** child_context, size_t data_length, const char * file, size_t line )
 {
     _tralloc_alloc_options opts;
     opts.zero = false;
-    return _tralloc_debug_log_forward_to_alloc ( parent_context, child_context, length, &opts, file, line );
+    return _tralloc_debug_log_forward_to_alloc ( parent_context, child_context, data_length, &opts, file, line );
 }
-tralloc_error _tralloc_debug_log_new_zero ( tralloc_context * parent_context, tralloc_context ** child_context, size_t length, const char * file, size_t line )
+tralloc_error _tralloc_debug_log_new_zero ( tralloc_context * parent_context, tralloc_context ** child_context, size_t data_length, const char * file, size_t line )
 {
     _tralloc_alloc_options opts;
     opts.zero = true;
-    return _tralloc_debug_log_forward_to_alloc ( parent_context, child_context, length, &opts, file, line );
+    return _tralloc_debug_log_forward_to_alloc ( parent_context, child_context, data_length, &opts, file, line );
 }
 
 #if defined ( TRALLOC_EXTENSIONS )
 static inline
-tralloc_error _tralloc_debug_log_forward_to_alloc_with_extensions ( tralloc_context * parent_context, tralloc_context ** child_context, size_t length, tralloc_extensions extensions, _tralloc_alloc_options * opts, const char * file, size_t line )
+tralloc_error _tralloc_debug_log_forward_to_alloc_with_extensions ( tralloc_context * parent_context, tralloc_context ** child_context, size_t data_length, tralloc_extensions extensions, _tralloc_alloc_options * opts, const char * file, size_t line )
 {
     opts->file = file;
     opts->line = line;
-    return _tralloc_forward_to_alloc_with_extensions ( parent_context, child_context, length, extensions, opts );
+    return _tralloc_forward_to_alloc_with_extensions ( parent_context, child_context, data_length, extensions, opts );
 }
-tralloc_error _tralloc_debug_log_new_with_extensions ( tralloc_context * parent_context, tralloc_context ** child_context, size_t length, tralloc_extensions extensions, const char * file, size_t line )
+tralloc_error _tralloc_debug_log_new_with_extensions ( tralloc_context * parent_context, tralloc_context ** child_context, size_t data_length, tralloc_extensions extensions, const char * file, size_t line )
 {
     _tralloc_alloc_options opts;
     opts.zero = false;
-    return _tralloc_debug_log_forward_to_alloc_with_extensions ( parent_context, child_context, length, extensions, &opts, file, line );
+    return _tralloc_debug_log_forward_to_alloc_with_extensions ( parent_context, child_context, data_length, extensions, &opts, file, line );
 }
-tralloc_error _tralloc_debug_log_new_zero_with_extensions ( tralloc_context * parent_context, tralloc_context ** child_context, size_t length, tralloc_extensions extensions, const char * file, size_t line )
+tralloc_error _tralloc_debug_log_new_zero_with_extensions ( tralloc_context * parent_context, tralloc_context ** child_context, size_t data_length, tralloc_extensions extensions, const char * file, size_t line )
 {
     _tralloc_alloc_options opts;
     opts.zero = true;
-    return _tralloc_debug_log_forward_to_alloc_with_extensions ( parent_context, child_context, length, extensions, &opts, file, line );
+    return _tralloc_debug_log_forward_to_alloc_with_extensions ( parent_context, child_context, data_length, extensions, &opts, file, line );
 }
 #endif
 
 #else
 
-tralloc_error tralloc_new ( tralloc_context * parent_context, tralloc_context ** child_context, size_t length )
+tralloc_error tralloc_new ( tralloc_context * parent_context, tralloc_context ** child_context, size_t data_length )
 {
     _tralloc_alloc_options opts;
     opts.zero = false;
-    return _tralloc_forward_to_alloc ( parent_context, child_context, length, &opts );
+    return _tralloc_forward_to_alloc ( parent_context, child_context, data_length, &opts );
 }
-tralloc_error tralloc_new_zero ( tralloc_context * parent_context, tralloc_context ** child_context, size_t length )
+tralloc_error tralloc_new_zero ( tralloc_context * parent_context, tralloc_context ** child_context, size_t data_length )
 {
     _tralloc_alloc_options opts;
     opts.zero = true;
-    return _tralloc_forward_to_alloc ( parent_context, child_context, length, &opts );
+    return _tralloc_forward_to_alloc ( parent_context, child_context, data_length, &opts );
 }
 
 #if defined ( TRALLOC_EXTENSIONS )
-tralloc_error tralloc_new_with_extensions ( tralloc_context * parent_context, tralloc_context ** child_context, size_t length, tralloc_extensions extensions )
+tralloc_error tralloc_new_with_extensions ( tralloc_context * parent_context, tralloc_context ** child_context, size_t data_length, tralloc_extensions extensions )
 {
     _tralloc_alloc_options opts;
     opts.zero = false;
-    return _tralloc_forward_to_alloc_with_extensions ( parent_context, child_context, length, extensions, &opts );
+    return _tralloc_forward_to_alloc_with_extensions ( parent_context, child_context, data_length, extensions, &opts );
 }
-tralloc_error tralloc_new_zero_with_extensions ( tralloc_context * parent_context, tralloc_context ** child_context, size_t length, tralloc_extensions extensions )
+tralloc_error tralloc_new_zero_with_extensions ( tralloc_context * parent_context, tralloc_context ** child_context, size_t data_length, tralloc_extensions extensions )
 {
     _tralloc_alloc_options opts;
     opts.zero = true;
-    return _tralloc_forward_to_alloc_with_extensions ( parent_context, child_context, length, extensions, &opts );
+    return _tralloc_forward_to_alloc_with_extensions ( parent_context, child_context, data_length, extensions, &opts );
 }
 #endif
 

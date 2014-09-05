@@ -15,11 +15,11 @@ int main ()
         return 1;
     }
     uint8_t * data;
-    size_t length;
+    size_t data_length;
     if (
         tralloc_new_with_extensions ( ctx, ( tralloc_context ** ) &data, sizeof ( uint8_t ) * 10, TRALLOC_EXTENSION_LENGTH ) != 0 ||
-        tralloc_get_length ( data, &length ) != 0 ||
-        length != sizeof ( uint8_t ) * 10
+        tralloc_get_length ( data, &data_length ) != 0 ||
+        data_length != sizeof ( uint8_t ) * 10
     ) {
         tralloc_free ( ctx );
         return 3;
@@ -29,7 +29,8 @@ int main ()
     }
 
 #   if defined(TRALLOC_DEBUG_STATS)
-    if ( tralloc_debug_stats_get_chunks_count ( &length ) != 0 || length != 0 ) {
+    size_t chunks_count;
+    if ( tralloc_debug_stats_get_chunks_count ( &chunks_count ) != 0 || chunks_count != 0 ) {
         return 255;
     }
 #   endif
