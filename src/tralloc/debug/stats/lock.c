@@ -15,17 +15,17 @@
 typedef pthread_rwlock_t _tralloc_debug_stats_lock;
 static _tralloc_debug_stats_lock _tralloc_debug_stats_chunks_count_lock    = PTHREAD_RWLOCK_INITIALIZER;
 static _tralloc_debug_stats_lock _tralloc_debug_stats_overhead_length_lock = PTHREAD_RWLOCK_INITIALIZER;
-static _tralloc_debug_stats_lock _tralloc_debug_stats_data_length_lock     = PTHREAD_RWLOCK_INITIALIZER;
+static _tralloc_debug_stats_lock _tralloc_debug_stats_length_lock          = PTHREAD_RWLOCK_INITIALIZER;
 #elif TRALLOC_DEBUG_STATS_LOCK_TYPE == TRALLOC_THREADS_MUTEX
 typedef pthread_mutex_t _tralloc_debug_stats_lock;
 static _tralloc_debug_stats_lock _tralloc_debug_stats_chunks_count_lock    = PTHREAD_MUTEX_INITIALIZER;
 static _tralloc_debug_stats_lock _tralloc_debug_stats_overhead_length_lock = PTHREAD_MUTEX_INITIALIZER;
-static _tralloc_debug_stats_lock _tralloc_debug_stats_data_length_lock     = PTHREAD_MUTEX_INITIALIZER;
+static _tralloc_debug_stats_lock _tralloc_debug_stats_length_lock          = PTHREAD_MUTEX_INITIALIZER;
 #elif TRALLOC_DEBUG_STATS_LOCK_TYPE == TRALLOC_THREADS_SPINLOCK
 typedef pthread_spinlock_t _tralloc_debug_stats_lock;
 static _tralloc_debug_stats_lock _tralloc_debug_stats_chunks_count_lock;
 static _tralloc_debug_stats_lock _tralloc_debug_stats_overhead_length_lock;
-static _tralloc_debug_stats_lock _tralloc_debug_stats_data_length_lock;
+static _tralloc_debug_stats_lock _tralloc_debug_stats_length_lock;
 
 __attribute__ ( ( constructor ) )
 void _tralloc_debug_stats_lock_constructor ()
@@ -33,7 +33,7 @@ void _tralloc_debug_stats_lock_constructor ()
     if (
         pthread_spin_init ( &_tralloc_debug_stats_chunks_count_lock, 0 )    != 0 ||
         pthread_spin_init ( &_tralloc_debug_stats_overhead_length_lock, 0 ) != 0 ||
-        pthread_spin_init ( &_tralloc_debug_stats_data_length_lock, 0 )     != 0
+        pthread_spin_init ( &_tralloc_debug_stats_length_lock, 0 )          != 0
     ) {
 #       if defined ( TRALLOC_DEBUG_LOG )
         fprintf (
@@ -54,7 +54,7 @@ void _tralloc_debug_stats_lock_destructor ()
     if (
         pthread_spin_destroy ( &_tralloc_debug_stats_chunks_count_lock )    != 0 ||
         pthread_spin_destroy ( &_tralloc_debug_stats_overhead_length_lock ) != 0 ||
-        pthread_spin_destroy ( &_tralloc_debug_stats_data_length_lock )     != 0
+        pthread_spin_destroy ( &_tralloc_debug_stats_length_lock )          != 0
     ) {
 #       if defined ( TRALLOC_DEBUG_LOG )
         fprintf (
@@ -165,17 +165,17 @@ tralloc_error _tralloc_debug_stats_unlock_overhead_length ()
 }
 
 
-tralloc_error _tralloc_debug_stats_rdlock_data_length ()
+tralloc_error _tralloc_debug_stats_rdlock_length ()
 {
-    return _tralloc_rdlock_debug_stats ( &_tralloc_debug_stats_data_length_lock );
+    return _tralloc_rdlock_debug_stats ( &_tralloc_debug_stats_length_lock );
 }
 
-tralloc_error _tralloc_debug_stats_wrlock_data_length ()
+tralloc_error _tralloc_debug_stats_wrlock_length ()
 {
-    return _tralloc_wrlock_debug_stats ( &_tralloc_debug_stats_data_length_lock );
+    return _tralloc_wrlock_debug_stats ( &_tralloc_debug_stats_length_lock );
 }
 
-tralloc_error _tralloc_debug_stats_unlock_data_length ()
+tralloc_error _tralloc_debug_stats_unlock_length ()
 {
-    return _tralloc_unlock_debug_stats ( &_tralloc_debug_stats_data_length_lock );
+    return _tralloc_unlock_debug_stats ( &_tralloc_debug_stats_length_lock );
 }

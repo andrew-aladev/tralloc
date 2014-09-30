@@ -19,8 +19,8 @@
 
 #if defined ( TRALLOC_DEBUG_LOG )
 
-tralloc_error _tralloc_debug_log_new      ( tralloc_context * parent_context, tralloc_context ** child_context, size_t data_length, const char * file, size_t line );
-tralloc_error _tralloc_debug_log_new_zero ( tralloc_context * parent_context, tralloc_context ** child_context, size_t data_length, const char * file, size_t line );
+tralloc_error _tralloc_debug_log_new      ( tralloc_context * parent_context, tralloc_context ** child_context, size_t length, const char * file, size_t line );
+tralloc_error _tralloc_debug_log_new_zero ( tralloc_context * parent_context, tralloc_context ** child_context, size_t length, const char * file, size_t line );
 
 _TRALLOC_INLINE
 tralloc_error _tralloc_debug_log_new_empty ( tralloc_context * parent_context, tralloc_context ** child_context, const char * file, size_t line )
@@ -29,8 +29,8 @@ tralloc_error _tralloc_debug_log_new_empty ( tralloc_context * parent_context, t
 }
 
 #if defined ( TRALLOC_EXTENSIONS )
-tralloc_error _tralloc_debug_log_new_with_extensions      ( tralloc_context * parent_context, tralloc_context ** child_context, size_t data_length, tralloc_extensions extensions, const char * file, size_t line );
-tralloc_error _tralloc_debug_log_new_zero_with_extensions ( tralloc_context * parent_context, tralloc_context ** child_context, size_t data_length, tralloc_extensions extensions, const char * file, size_t line );
+tralloc_error _tralloc_debug_log_new_with_extensions      ( tralloc_context * parent_context, tralloc_context ** child_context, size_t length, tralloc_extensions extensions, const char * file, size_t line );
+tralloc_error _tralloc_debug_log_new_zero_with_extensions ( tralloc_context * parent_context, tralloc_context ** child_context, size_t length, tralloc_extensions extensions, const char * file, size_t line );
 
 _TRALLOC_INLINE
 tralloc_error _tralloc_debug_log_new_empty_with_extensions ( tralloc_context * parent_context, tralloc_context ** child_context, tralloc_extensions extensions, const char * file, size_t line )
@@ -48,8 +48,8 @@ tralloc_error _tralloc_debug_log_new_empty_with_extensions ( tralloc_context * p
 
 #else
 
-tralloc_error tralloc_new      ( tralloc_context * parent_context, tralloc_context ** child_context, size_t data_length );
-tralloc_error tralloc_new_zero ( tralloc_context * parent_context, tralloc_context ** child_context, size_t data_length );
+tralloc_error tralloc_new      ( tralloc_context * parent_context, tralloc_context ** child_context, size_t length );
+tralloc_error tralloc_new_zero ( tralloc_context * parent_context, tralloc_context ** child_context, size_t length );
 
 _TRALLOC_INLINE
 tralloc_error tralloc_new_empty ( tralloc_context * parent_context, tralloc_context ** child_context )
@@ -58,8 +58,8 @@ tralloc_error tralloc_new_empty ( tralloc_context * parent_context, tralloc_cont
 }
 
 #if defined ( TRALLOC_EXTENSIONS )
-tralloc_error tralloc_new_with_extensions      ( tralloc_context * parent_context, tralloc_context ** child_context, size_t data_length, tralloc_extensions extensions );
-tralloc_error tralloc_new_zero_with_extensions ( tralloc_context * parent_context, tralloc_context ** child_context, size_t data_length, tralloc_extensions extensions );
+tralloc_error tralloc_new_with_extensions      ( tralloc_context * parent_context, tralloc_context ** child_context, size_t length, tralloc_extensions extensions );
+tralloc_error tralloc_new_zero_with_extensions ( tralloc_context * parent_context, tralloc_context ** child_context, size_t length, tralloc_extensions extensions );
 
 _TRALLOC_INLINE
 tralloc_error tralloc_new_empty_with_extensions ( tralloc_context * parent_context, tralloc_context ** child_context, tralloc_extensions extensions )

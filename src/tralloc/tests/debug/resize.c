@@ -101,11 +101,11 @@ tralloc_bool test_debug_resize ( tralloc_context * ctx )
     if (
         dynarr_get_length ( history ) != 3 ||
         ( info = dynarr_get ( history, 0 ) ) == NULL ||
-        info->chunk != b_chunk || info->old_data_length != sizeof ( char ) * 3 || info->chunk->data_length != sizeof ( char ) * 8 ||
+        info->chunk != b_chunk || info->old_data_length != sizeof ( char ) * 3 || info->chunk->length != sizeof ( char ) * 8 ||
         ( info = dynarr_get ( history, 1 ) ) == NULL ||
-        info->chunk != a_chunk || info->old_data_length != sizeof ( int ) * 2 || info->chunk->data_length != sizeof ( int ) * 9 ||
+        info->chunk != a_chunk || info->old_data_length != sizeof ( int ) * 2 || info->chunk->length != sizeof ( int ) * 9 ||
         ( info = dynarr_get ( history, 2 ) ) == NULL ||
-        info->chunk != c_chunk || info->old_data_length != sizeof ( float ) * 4 || info->chunk->data_length != sizeof ( float ) * 10 ||
+        info->chunk != c_chunk || info->old_data_length != sizeof ( float ) * 4 || info->chunk->length != sizeof ( float ) * 10 ||
 
         tralloc_free ( a ) != 0 ||
         tralloc_free ( b ) != 0

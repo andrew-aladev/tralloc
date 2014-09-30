@@ -61,7 +61,7 @@ tralloc_error tralloc_debug_callback_set_add_functions ( tralloc_debug_callback_
     return 0;
 }
 
-tralloc_error _tralloc_debug_callback_before_add_chunk ( _tralloc_chunk * parent_chunk, tralloc_extensions extensions, size_t chunk_length, size_t data_length )
+tralloc_error _tralloc_debug_callback_before_add_chunk ( _tralloc_chunk * parent_chunk, tralloc_extensions extensions, size_t length )
 {
 
 #   if defined ( TRALLOC_THREADS )
@@ -82,12 +82,12 @@ tralloc_error _tralloc_debug_callback_before_add_chunk ( _tralloc_chunk * parent
 #   endif
 
     if ( function != NULL ) {
-        return function ( data, parent_chunk, extensions, chunk_length, data_length );
+        return function ( data, parent_chunk, extensions, length );
     }
     return 0;
 }
 
-tralloc_error _tralloc_debug_callback_after_add_chunk ( _tralloc_chunk * chunk, size_t chunk_length, size_t data_length )
+tralloc_error _tralloc_debug_callback_after_add_chunk ( _tralloc_chunk * chunk, size_t length )
 {
 
 #   if defined ( TRALLOC_THREADS )
@@ -108,7 +108,7 @@ tralloc_error _tralloc_debug_callback_after_add_chunk ( _tralloc_chunk * chunk, 
 #   endif
 
     if ( function != NULL ) {
-        return function ( data, chunk, chunk_length, data_length );
+        return function ( data, chunk, length );
     }
     return 0;
 }
@@ -295,7 +295,7 @@ tralloc_error _tralloc_debug_callback_before_resize_chunk ( _tralloc_chunk * chu
     return 0;
 }
 
-tralloc_error _tralloc_debug_callback_after_resize_chunk ( _tralloc_chunk * chunk, size_t old_data_length )
+tralloc_error _tralloc_debug_callback_after_resize_chunk ( _tralloc_chunk * chunk, size_t old_length )
 {
 
 #   if defined ( TRALLOC_THREADS )
@@ -316,7 +316,7 @@ tralloc_error _tralloc_debug_callback_after_resize_chunk ( _tralloc_chunk * chun
 #   endif
 
     if ( function != NULL ) {
-        return function ( data, chunk, old_data_length );
+        return function ( data, chunk, old_length );
     }
     return 0;
 }

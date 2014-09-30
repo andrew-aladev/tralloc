@@ -9,11 +9,11 @@
 #include "../../types.h"
 
 
-typedef tralloc_error ( * tralloc_debug_callback_before_add ) ( void * data, _tralloc_chunk * parent_chunk, tralloc_extensions extensions, size_t chunk_length, size_t data_length );
-typedef tralloc_error ( * tralloc_debug_callback_after_add )  ( void * data, _tralloc_chunk * chunk, size_t chunk_length, size_t data_length );
+typedef tralloc_error ( * tralloc_debug_callback_before_add ) ( void * data, _tralloc_chunk * parent_chunk, tralloc_extensions extensions, size_t length );
+typedef tralloc_error ( * tralloc_debug_callback_after_add )  ( void * data, _tralloc_chunk * chunk, size_t length );
 
 typedef tralloc_error ( * tralloc_debug_callback_before_resize ) ( void * data, _tralloc_chunk * chunk );
-typedef tralloc_error ( * tralloc_debug_callback_after_resize )  ( void * data, _tralloc_chunk * chunk, size_t old_data_length );
+typedef tralloc_error ( * tralloc_debug_callback_after_resize )  ( void * data, _tralloc_chunk * chunk, size_t old_length );
 
 typedef tralloc_error ( * tralloc_debug_callback_before_move ) ( void * data, _tralloc_chunk * chunk );
 typedef tralloc_error ( * tralloc_debug_callback_after_move )  ( void * data, _tralloc_chunk * chunk, _tralloc_chunk * old_parent_chunk );
@@ -27,13 +27,13 @@ typedef tralloc_error ( * tralloc_debug_callback_after_refuse_to_free_chunk )   
 
 tralloc_error tralloc_debug_callback_set_add_data      ( void * before_add, void * after_add );
 tralloc_error tralloc_debug_callback_set_add_functions ( tralloc_debug_callback_before_add before_add, tralloc_debug_callback_after_add after_add );
-tralloc_error _tralloc_debug_callback_before_add_chunk ( _tralloc_chunk * parent_chunk, tralloc_extensions extensions, size_t chunk_length, size_t data_length );
-tralloc_error _tralloc_debug_callback_after_add_chunk  ( _tralloc_chunk * chunk, size_t chunk_length, size_t data_length );
+tralloc_error _tralloc_debug_callback_before_add_chunk ( _tralloc_chunk * parent_chunk, tralloc_extensions extensions, size_t length );
+tralloc_error _tralloc_debug_callback_after_add_chunk  ( _tralloc_chunk * chunk, size_t length );
 
 tralloc_error tralloc_debug_callback_set_resize_data      ( void * before_resize, void * after_resize );
 tralloc_error tralloc_debug_callback_set_resize_functions ( tralloc_debug_callback_before_resize before_resize, tralloc_debug_callback_after_resize after_resize );
 tralloc_error _tralloc_debug_callback_before_resize_chunk ( _tralloc_chunk * chunk );
-tralloc_error _tralloc_debug_callback_after_resize_chunk  ( _tralloc_chunk * chunk, size_t old_data_length );
+tralloc_error _tralloc_debug_callback_after_resize_chunk  ( _tralloc_chunk * chunk, size_t old_length );
 
 tralloc_error tralloc_debug_callback_set_move_data      ( void * before_move, void * after_move );
 tralloc_error tralloc_debug_callback_set_move_functions ( tralloc_debug_callback_before_move before_move, tralloc_debug_callback_after_move after_move );

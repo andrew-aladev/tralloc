@@ -15,11 +15,11 @@ int main ()
     }
 
 #   if defined ( TRALLOC_DEBUG_STATS )
-    size_t chunks_count, overhead_length, data_length;
+    size_t chunks_count, overhead_length, length;
     if (
         tralloc_debug_stats_get_chunks_count    ( &chunks_count )    != 0 || chunks_count    != 0 ||
         tralloc_debug_stats_get_overhead_length ( &overhead_length ) != 0 || overhead_length != 0 ||
-        tralloc_debug_stats_get_data_length     ( &data_length )     != 0 || data_length     != 0
+        tralloc_debug_stats_get_length          ( &length )          != 0 || length          != 0
     ) {
         return 255;
     }

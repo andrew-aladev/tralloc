@@ -9,7 +9,7 @@
 #include "../types.h"
 
 
-tralloc_error tralloc_realloc ( tralloc_context ** chunk_context, size_t data_length );
+tralloc_error tralloc_realloc ( tralloc_context ** chunk_context, size_t length );
 
 
 #endif
