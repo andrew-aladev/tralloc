@@ -42,7 +42,7 @@ function test {
 
         test_arguments="$passed_arguments "
         $test_callback $feature
-        test_arguments+="-DTRALLOC_MAN=0 -DTRALLOC_SHARED=0 -DTRALLOC_COLLECT_SOURCES=1"
+        test_arguments+="-DTRALLOC_MAN=0 -DTRALLOC_COLLECT_SOURCES=1"
         
         execute_test_arguments
     done
@@ -52,31 +52,36 @@ function get_arguments_for_extensions {
     local feature=$1
     
     if [ "${feature:0:1}" == "1" ]; then
+        test_arguments+="-DTRALLOC_FILE=1 "
+    else
+        test_arguments+="-DTRALLOC_FILE=0 "
+    fi
+    if [ "${feature:1:1}" == "1" ]; then
         test_arguments+="-DTRALLOC_THREADS=1 "
     else
         test_arguments+="-DTRALLOC_THREADS=0 "
     fi
-    if [ "${feature:1:1}" == "1" ]; then
+    if [ "${feature:2:1}" == "1" ]; then
         test_arguments+="-DTRALLOC_LENGTH=1 "
     else
         test_arguments+="-DTRALLOC_LENGTH=0 "
     fi
-    if [ "${feature:2:1}" == "1" ]; then
+    if [ "${feature:3:1}" == "1" ]; then
         test_arguments+="-DTRALLOC_DESTRUCTORS=1 "
     else
         test_arguments+="-DTRALLOC_DESTRUCTORS=0 "
     fi
-    if [ "${feature:3:1}" == "1" ]; then
+    if [ "${feature:4:1}" == "1" ]; then
         test_arguments+="-DTRALLOC_REFERENCES=1 "
     else
         test_arguments+="-DTRALLOC_REFERENCES=0 "
     fi
-    if [ "${feature:4:1}" == "1" ]; then
+    if [ "${feature:5:1}" == "1" ]; then
         test_arguments+="-DTRALLOC_POOL=1 "
     else
         test_arguments+="-DTRALLOC_POOL=0 "
     fi
-    if [ "${feature:5:1}" == "1" ]; then
+    if [ "${feature:6:1}" == "1" ]; then
         test_arguments+="-DTRALLOC_UTILS_BUFFER=1 "
     else
         test_arguments+="-DTRALLOC_UTILS_BUFFER=0 "
@@ -84,8 +89,8 @@ function get_arguments_for_extensions {
 }
 function test_extensions {
     test_name="extensions"
-    test_count=$((2 ** 6))
-    test_features=$(echo {0..1}{0..1}{0..1}{0..1}{0..1}{0..1})
+    test_count=$((2 ** 7))
+    test_features=$(echo {0..1}{0..1}{0..1}{0..1}{0..1}{0..1}{0..1})
     test_callback=get_arguments_for_extensions
     test
 }
@@ -183,8 +188,8 @@ function get_arguments_for_all_combinations {
 }
 function test_all_combinations {
     test_name="all combinations"
-    test_count=$(((2 ** 10) * (3 ** 5)))
-    test_features=$(echo {0..1}{0..1}{0..1}{0..1}{0..1}{0..1}{0..1}{0..1}{0..1}{0..1}{0..2}{0..2}{0..2}{0..2}{0..2})
+    test_count=$(((2 ** 11) * (3 ** 5)))
+    test_features=$(echo {0..1}{0..1}{0..1}{0..1}{0..1}{0..1}{0..1}{0..1}{0..1}{0..1}{0..1}{0..2}{0..2}{0..2}{0..2}{0..2})
     test_callback=get_arguments_for_all_combinations
     test
 }
