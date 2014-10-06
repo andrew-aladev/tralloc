@@ -111,7 +111,7 @@ if (${TRALLOC_THREADS})
             (NOT ${TRALLOC_HAVE_PTHREAD_MUTEX}    AND ${LOCK_TYPE} STREQUAL "mutex")  OR
             (NOT ${TRALLOC_HAVE_PTHREAD_SPINLOCK} AND ${LOCK_TYPE} STREQUAL "spinlock")
         )
-            message (WARNING "${LOCK_TYPE} is set to \"${AVAILABLE_LOCK}\", because you have no \"${${LOCK_TYPE}}\".")
+            message (WARNING "${LOCK_TYPE} is set to \"${AVAILABLE_LOCK}\", because \"${${LOCK_TYPE}}\" is not available.")
             set (${LOCK_TYPE} ${AVAILABLE_LOCK})
         elseif (
             NOT ${LOCK_TYPE} STREQUAL "rwlock" AND
