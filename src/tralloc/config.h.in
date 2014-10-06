@@ -9,6 +9,7 @@
 
 #cmakedefine TRALLOC_DEBUG_EXTENSIONS
 #cmakedefine TRALLOC_DEBUG_THREADS
+#cmakedefine TRALLOC_DEBUG_LENGTH
 #cmakedefine TRALLOC_DEBUG_CALLBACKS
 #cmakedefine TRALLOC_DEBUG_STATS
 #cmakedefine TRALLOC_DEBUG_LOG

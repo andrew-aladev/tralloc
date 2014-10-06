@@ -109,16 +109,21 @@ function get_arguments_for_debug {
         test_arguments+="-DTRALLOC_DEBUG_THREADS=0 "
     fi
     if [ "${feature:2:1}" == "1" ]; then
+        test_arguments+="-DTRALLOC_DEBUG_LENGTH=1 "
+    else
+        test_arguments+="-DTRALLOC_DEBUG_LENGTH=0 "
+    fi
+    if [ "${feature:3:1}" == "1" ]; then
         test_arguments+="-DTRALLOC_DEBUG_CALLBACKS=1 "
     else
         test_arguments+="-DTRALLOC_DEBUG_CALLBACKS=0 "
     fi
-    if [ "${feature:3:1}" == "1" ]; then
+    if [ "${feature:4:1}" == "1" ]; then
         test_arguments+="-DTRALLOC_DEBUG_STATS=1 "
     else
         test_arguments+="-DTRALLOC_DEBUG_STATS=0 "
     fi
-    if [ "${feature:4:1}" == "1" ]; then
+    if [ "${feature:5:1}" == "1" ]; then
         test_arguments+="-DTRALLOC_DEBUG_LOG=1 "
     else
         test_arguments+="-DTRALLOC_DEBUG_LOG=0 "
@@ -126,8 +131,8 @@ function get_arguments_for_debug {
 }
 function test_debug {
     test_name="debug"
-    test_count=$((2 ** 5))
-    test_features=$(echo {0..1}{0..1}{0..1}{0..1}{0..1})
+    test_count=$((2 ** 6))
+    test_features=$(echo {0..1}{0..1}{0..1}{0..1}{0..1}{0..1})
     test_callback=get_arguments_for_debug
     test
 }
@@ -182,18 +187,18 @@ function test_locks {
 function get_arguments_for_all_combinations {
     local feature=$1
     
-    local extensions_feature=${feature:0:6}
+    local extensions_feature=${feature:0:7}
     get_arguments_for_extensions $extensions_feature
     
-    local debug_feature=${feature:6:4}
+    local debug_feature=${feature:7:6}
     get_arguments_for_debug $debug_feature
     
-    local locks_feature=${feature:10:5}
+    local locks_feature=${feature:13:5}
     get_arguments_for_locks $locks_feature
 }
 function test_all_combinations {
     test_name="all combinations"
-    test_count=$(((2 ** 12) * (3 ** 5)))
+    test_count=$(((2 ** 13) * (3 ** 5)))
     test_features=$(echo {0..1}{0..1}{0..1}{0..1}{0..1}{0..1}{0..1}{0..1}{0..1}{0..1}{0..1}{0..1}{0..2}{0..2}{0..2}{0..2}{0..2})
     test_callback=get_arguments_for_all_combinations
     test

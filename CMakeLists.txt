@@ -14,6 +14,7 @@ set (TRALLOC_UTILS_BUFFER true CACHE BOOL "buffer util for data streaming")
 
 set (TRALLOC_DEBUG_EXTENSIONS true CACHE BOOL "extended information about extensions")
 set (TRALLOC_DEBUG_THREADS    true CACHE BOOL "debug thread safety")
+set (TRALLOC_DEBUG_LENGTH     true CACHE BOOL "debug length for each chunk")
 set (TRALLOC_DEBUG_CALLBACKS  true CACHE BOOL "callbacks for each operation with chunk")
 set (TRALLOC_DEBUG_STATS      true CACHE BOOL "memory usage statistics")
 set (TRALLOC_DEBUG_LOG        true CACHE BOOL "logging of warnings and errors")
@@ -167,8 +168,13 @@ if (NOT ${TRALLOC_THREADS} AND ${TRALLOC_DEBUG_THREADS})
     set (TRALLOC_DEBUG_THREADS false)
 endif ()
 
-if (NOT ${TRALLOC_LENGTH} AND ${TRALLOC_DEBUG_STATS})
-    message (WARNING "TRALLOC_DEBUG_STATS is disabled, because TRALLOC_LENGTH is disabled.")
+if (NOT ${TRALLOC_LENGTH} AND ${TRALLOC_DEBUG_LENGTH})
+    message (WARNING "TRALLOC_DEBUG_LENGTH is disabled, because TRALLOC_LENGTH is disabled.")
+    set (TRALLOC_DEBUG_LENGTH false)
+endif ()
+
+if (NOT ${TRALLOC_DEBUG_LENGTH} AND ${TRALLOC_DEBUG_STATS})
+    message (WARNING "TRALLOC_DEBUG_STATS is disabled, because TRALLOC_DEBUG_LENGTH is disabled.")
     set (TRALLOC_DEBUG_STATS false)
 endif ()
 
