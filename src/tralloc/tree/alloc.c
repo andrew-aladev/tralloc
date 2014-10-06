@@ -100,7 +100,6 @@ typedef struct _tralloc_alloc_extensions_environment_type {
 
 #   endif
 
-    size_t extensions_length;
 } _tralloc_alloc_extensions_environment;
 
 static
@@ -232,11 +231,9 @@ void _tralloc_alloc_prepare_extensions_environment ( _tralloc_chunk * parent_chu
 
 #   endif
 
-    ext_env->extensions_length = _tralloc_get_extensions_length ( ext_env->extensions );
-
 #   if defined ( TRALLOC_POOL )
     if ( ext_env->have_pool_child ) {
-        if ( !_tralloc_can_alloc_from_pool ( ext_env->parent_pool, total_length + ext_env->extensions_length ) ) {
+        if ( !_tralloc_can_alloc_from_pool ( ext_env->parent_pool, total_length + _tralloc_get_extensions_length ( ext_env->extensions ) ) ) {
             // "parent_pool" can't alloc enough bytes.
             // "TRALLOC_EXTENSION_POOL_CHILD" will be forced disabled.
             ext_env->have_pool_child  = TRALLOC_FALSE;
@@ -246,7 +243,6 @@ void _tralloc_alloc_prepare_extensions_environment ( _tralloc_chunk * parent_chu
             ext_env->forced_extensions ^= TRALLOC_EXTENSION_LOCK_POOL;
 #           endif
 
-            ext_env->extensions_length = _tralloc_get_extensions_length ( ext_env->extensions );
         }
     }
 #   endif
@@ -378,7 +374,8 @@ tralloc_error _tralloc_alloc ( tralloc_context * parent_context, tralloc_context
 #   if defined ( TRALLOC_EXTENSIONS )
     _tralloc_alloc_extensions_environment ext_env;
     _tralloc_alloc_prepare_extensions_environment ( parent_chunk, opts->extensions, total_length, &ext_env );
-    total_length += ext_env.extensions_length;
+    size_t extensions_length = _tralloc_get_extensions_length ( ext_env.extensions );
+    total_length += extensions_length;
 #   endif
 
     tralloc_error result;
@@ -419,7 +416,7 @@ tralloc_error _tralloc_alloc ( tralloc_context * parent_context, tralloc_context
 
     uintptr_t chunk_memory = ( uintptr_t ) memory;
 #   if defined ( TRALLOC_EXTENSIONS )
-    chunk_memory += ext_env.extensions_length;
+    chunk_memory += extensions_length;
 #   endif
 
     _tralloc_chunk * chunk    = ( _tralloc_chunk * ) chunk_memory;
