@@ -7,6 +7,7 @@
 #cmakedefine TRALLOC_POOL
 #cmakedefine TRALLOC_UTILS_BUFFER
 
+#cmakedefine TRALLOC_DEBUG_EXTENSIONS
 #cmakedefine TRALLOC_DEBUG_THREADS
 #cmakedefine TRALLOC_DEBUG_CALLBACKS
 #cmakedefine TRALLOC_DEBUG_STATS

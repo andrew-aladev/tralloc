@@ -64,7 +64,7 @@ typedef struct _tralloc_alloc_options_type {
 typedef struct _tralloc_alloc_extensions_environment_type {
     tralloc_extensions extensions;
 
-#   if defined ( TRALLOC_DEBUG )
+#   if defined ( TRALLOC_DEBUG_EXTENSIONS )
     tralloc_extensions forced_extensions;
 #   endif
 
@@ -107,7 +107,7 @@ void _tralloc_alloc_prepare_extensions_environment ( _tralloc_chunk * parent_chu
 {
     ext_env->extensions = extensions;
 
-#   if defined ( TRALLOC_DEBUG )
+#   if defined ( TRALLOC_DEBUG_EXTENSIONS )
     ext_env->forced_extensions = 0;
     // "forced_extensions ^= EXTENSION" means "toggle forced extension":
     // If "EXTENSION" was not forced - it becomes forced
@@ -124,13 +124,21 @@ void _tralloc_alloc_prepare_extensions_environment ( _tralloc_chunk * parent_chu
         // "TRALLOC_EXTENSION_LOCK_SUBTREE" will be forced enabled.
         ext_env->have_subtree_lock  = TRALLOC_TRUE;
         ext_env->extensions        |= TRALLOC_EXTENSION_LOCK_SUBTREE;
+        
+#       if defined ( TRALLOC_DEBUG_EXTENSIONS )
         ext_env->forced_extensions ^= TRALLOC_EXTENSION_LOCK_SUBTREE;
+#       endif
+        
     }
     if ( !ext_env->have_children_lock ) {
         // "TRALLOC_EXTENSION_LOCK_CHILDREN" will be forced enabled.
         ext_env->have_children_lock  = TRALLOC_TRUE;
         ext_env->extensions         |= TRALLOC_EXTENSION_LOCK_CHILDREN;
+        
+#       if defined ( TRALLOC_DEBUG_EXTENSIONS )
         ext_env->forced_extensions  ^= TRALLOC_EXTENSION_LOCK_CHILDREN;
+#       endif
+        
     }
 #   endif
 
@@ -140,9 +148,13 @@ void _tralloc_alloc_prepare_extensions_environment ( _tralloc_chunk * parent_chu
 #   if defined ( TRALLOC_DEBUG )
     if ( !ext_env->have_length ) {
         // "TRALLOC_EXTENSION_LENGTH" will be forced enabled.
-        ext_env->have_length        = TRALLOC_TRUE;
-        ext_env->extensions        |= TRALLOC_EXTENSION_LENGTH;
+        ext_env->have_length  = TRALLOC_TRUE;
+        ext_env->extensions  |= TRALLOC_EXTENSION_LENGTH;
+        
+#       if defined ( TRALLOC_DEBUG_EXTENSIONS )
         ext_env->forced_extensions ^= TRALLOC_EXTENSION_LENGTH;
+#       endif
+        
     }
 #   endif
 
@@ -168,9 +180,10 @@ void _tralloc_alloc_prepare_extensions_environment ( _tralloc_chunk * parent_chu
             ext_env->have_pool_child  = TRALLOC_FALSE;
             ext_env->extensions      &= ~TRALLOC_EXTENSION_POOL_CHILD;
 
-#           if defined ( TRALLOC_DEBUG )
+#           if defined ( TRALLOC_DEBUG_EXTENSIONS )
             ext_env->forced_extensions ^= TRALLOC_EXTENSION_POOL_CHILD;
 #           endif
+            
         }
         ext_env->parent_pool = NULL;
     } else {
@@ -186,9 +199,10 @@ void _tralloc_alloc_prepare_extensions_environment ( _tralloc_chunk * parent_chu
                 ext_env->have_pool_child  = TRALLOC_FALSE;
                 ext_env->extensions      &= ~TRALLOC_EXTENSION_POOL_CHILD;
 
-#               if defined ( TRALLOC_DEBUG )
+#               if defined ( TRALLOC_DEBUG_EXTENSIONS )
                 ext_env->forced_extensions ^= TRALLOC_EXTENSION_POOL_CHILD;
 #               endif
+                
             }
         } else {
             if ( !ext_env->have_pool_child ) {
@@ -196,9 +210,10 @@ void _tralloc_alloc_prepare_extensions_environment ( _tralloc_chunk * parent_chu
                 ext_env->have_pool_child  = TRALLOC_TRUE;
                 ext_env->extensions      |= TRALLOC_EXTENSION_POOL_CHILD;
 
-#               if defined ( TRALLOC_DEBUG )
+#               if defined ( TRALLOC_DEBUG_EXTENSIONS )
                 ext_env->forced_extensions ^= TRALLOC_EXTENSION_POOL_CHILD;
 #               endif
+                
             }
         }
     }
@@ -211,11 +226,16 @@ void _tralloc_alloc_prepare_extensions_environment ( _tralloc_chunk * parent_chu
 #       if defined ( TRALLOC_DEBUG_THREADS )
         if ( !ext_env->have_pool_lock ) {
             // "TRALLOC_EXTENSION_LOCK_POOL" will be forced enabled.
-            ext_env->have_pool_lock     = TRALLOC_TRUE;
-            ext_env->extensions        |= TRALLOC_EXTENSION_LOCK_POOL;
+            ext_env->have_pool_lock  = TRALLOC_TRUE;
+            ext_env->extensions     |= TRALLOC_EXTENSION_LOCK_POOL;
+            
+#           if defined ( TRALLOC_DEBUG_EXTENSIONS )
             ext_env->forced_extensions ^= TRALLOC_EXTENSION_LOCK_POOL;
+#           endif
+            
         }
 #       endif
+
     } else {
         if ( ext_env->have_pool_lock ) {
             // "TRALLOC_EXTENSION_LOCK_POOL" will be forced disabled.
@@ -424,10 +444,10 @@ tralloc_error _tralloc_alloc ( tralloc_context * parent_context, tralloc_context
 
 #   if defined ( TRALLOC_EXTENSIONS )
     chunk->extensions = ext_env.extensions;
-
-#   if defined ( TRALLOC_DEBUG )
-    chunk->forced_extensions = ext_env.forced_extensions;
 #   endif
+
+#   if defined ( TRALLOC_DEBUG_EXTENSIONS )
+    chunk->forced_extensions = ext_env.forced_extensions;
 #   endif
 
 #   if defined ( TRALLOC_EXTENSIONS )
