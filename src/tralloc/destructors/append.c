@@ -7,7 +7,7 @@
 #include <tralloc/destructors/chunk.h>
 #include <tralloc/common.h>
 
-#if defined ( TRALLOC_DEBUG )
+#if defined ( TRALLOC_DEBUG_STATS )
 #   include <tralloc/debug/stats/main.h>
 #endif
 

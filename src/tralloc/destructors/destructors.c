@@ -6,7 +6,7 @@
 #define _TRALLOC_INCLUDED_FROM_DESTRUCTORS_DESTRUCTORS_C
 #include <tralloc/destructors/destructors.h>
 
-#if defined ( TRALLOC_DEBUG )
+#if defined ( TRALLOC_DEBUG_STATS )
 #   include <tralloc/debug/stats/main.h>
 #endif
 
