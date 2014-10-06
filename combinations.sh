@@ -99,21 +99,26 @@ function get_arguments_for_debug {
     local feature=$1
 
     if [ "${feature:0:1}" == "1" ]; then
+        test_arguments+="-DTRALLOC_DEBUG_EXTENSIONS=1 "
+    else
+        test_arguments+="-DTRALLOC_DEBUG_EXTENSIONS=0 "
+    fi
+    if [ "${feature:1:1}" == "1" ]; then
         test_arguments+="-DTRALLOC_DEBUG_THREADS=1 "
     else
         test_arguments+="-DTRALLOC_DEBUG_THREADS=0 "
     fi
-    if [ "${feature:1:1}" == "1" ]; then
+    if [ "${feature:2:1}" == "1" ]; then
         test_arguments+="-DTRALLOC_DEBUG_CALLBACKS=1 "
     else
         test_arguments+="-DTRALLOC_DEBUG_CALLBACKS=0 "
     fi
-    if [ "${feature:2:1}" == "1" ]; then
+    if [ "${feature:3:1}" == "1" ]; then
         test_arguments+="-DTRALLOC_DEBUG_STATS=1 "
     else
         test_arguments+="-DTRALLOC_DEBUG_STATS=0 "
     fi
-    if [ "${feature:3:1}" == "1" ]; then
+    if [ "${feature:4:1}" == "1" ]; then
         test_arguments+="-DTRALLOC_DEBUG_LOG=1 "
     else
         test_arguments+="-DTRALLOC_DEBUG_LOG=0 "
@@ -121,8 +126,8 @@ function get_arguments_for_debug {
 }
 function test_debug {
     test_name="debug"
-    test_count=$((2 ** 4))
-    test_features=$(echo {0..1}{0..1}{0..1}{0..1})
+    test_count=$((2 ** 5))
+    test_features=$(echo {0..1}{0..1}{0..1}{0..1}{0..1})
     test_callback=get_arguments_for_debug
     test
 }
@@ -188,8 +193,8 @@ function get_arguments_for_all_combinations {
 }
 function test_all_combinations {
     test_name="all combinations"
-    test_count=$(((2 ** 11) * (3 ** 5)))
-    test_features=$(echo {0..1}{0..1}{0..1}{0..1}{0..1}{0..1}{0..1}{0..1}{0..1}{0..1}{0..1}{0..2}{0..2}{0..2}{0..2}{0..2})
+    test_count=$(((2 ** 12) * (3 ** 5)))
+    test_features=$(echo {0..1}{0..1}{0..1}{0..1}{0..1}{0..1}{0..1}{0..1}{0..1}{0..1}{0..1}{0..1}{0..2}{0..2}{0..2}{0..2}{0..2})
     test_callback=get_arguments_for_all_combinations
     test
 }
