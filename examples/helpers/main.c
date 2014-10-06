@@ -65,19 +65,19 @@ int main ()
         return 6;
     }
     int * test_file;
-    
+
     mode_t mode = S_IRUSR | S_IWUSR;
-    
+
 #   if defined(S_IRGRP)
     mode |= S_IRGRP;
 #   endif
-    
+
 #   if defined(S_IROTH)
     mode |= S_IROTH;
 #   endif
-    
+
     // mode should be 0644 in posix systems
-    
+
     if ( tralloc_open_mode ( NULL, &test_file, file_name, O_CREAT | O_WRONLY, mode ) != 0 ) { // 0644
         tralloc_free ( file_name );
         return 7;

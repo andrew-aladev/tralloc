@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 passed_arguments=$@
 make_jobs=$(($(nproc) + 1))

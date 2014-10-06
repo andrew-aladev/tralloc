@@ -1,0 +1,3 @@
+#!/bin/sh
+
+find . -regex ".*\.\(h\|c\)" -exec astyle -n --mode=c --style=kr --pad-oper --pad-paren --pad-header {} \;

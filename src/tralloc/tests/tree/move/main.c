@@ -17,7 +17,7 @@ tralloc_bool test_tree_move_main ( test_tree_data * tr )
     ) {
         return TRALLOC_FALSE;
     }
-    
+
     /*
           tree
            |
@@ -30,7 +30,7 @@ tralloc_bool test_tree_move_main ( test_tree_data * tr )
              trivium
 
     */
-    
+
     _tralloc_chunk * root_chunk    = _tralloc_get_chunk_from_context ( tr );
     _tralloc_chunk * data_1_chunk  = _tralloc_get_chunk_from_context ( tr->data_1 );
     _tralloc_chunk * data_2_chunk  = _tralloc_get_chunk_from_context ( tr->data_2 );

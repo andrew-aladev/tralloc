@@ -52,7 +52,7 @@ tralloc_error _tralloc_debug_after_add_chunk ( _tralloc_chunk * chunk, size_t le
 #endif
 {
     tralloc_error _TRALLOC_UNUSED ( result );
-    
+
     chunk->length = length;
 
 #   if defined ( TRALLOC_DEBUG_LOG )
@@ -126,7 +126,7 @@ tralloc_error _tralloc_debug_before_resize_chunk ( _tralloc_chunk * _TRALLOC_UNU
 tralloc_error _tralloc_debug_after_resize_chunk ( _tralloc_chunk * chunk, size_t old_length, size_t length )
 {
     tralloc_error _TRALLOC_UNUSED ( result );
-    
+
     chunk->length = length;
 
 #   if defined ( TRALLOC_DEBUG_THREADS )

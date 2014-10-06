@@ -134,7 +134,7 @@ tralloc_bool test_references_check_moved_chunks ( test_references_tree * tr )
     ) {
         return TRALLOC_FALSE;
     }
-    
+
     _tralloc_references * common_references  = _tralloc_get_references_from_chunk ( _tralloc_get_chunk_from_context ( tr->common ) );
     _tralloc_references * shared_references  = _tralloc_get_references_from_chunk ( _tralloc_get_chunk_from_context ( tr->shared ) );
     _tralloc_reference  * common_1_reference = _tralloc_get_reference_from_chunk  ( _tralloc_get_chunk_from_context ( tr->common_1 ) );

@@ -85,7 +85,7 @@ tralloc_bool test_tree_alloc_errors ( tralloc_context * _TRALLOC_UNUSED ( ctx ) 
     ) {
         return TRALLOC_FALSE;
     }
-    
+
 #   if defined ( TRALLOC_DEBUG_THREADS )
     if ( !_test_tree_alloc_errors_children ( ctx ) ) {
         return TRALLOC_FALSE;
