@@ -88,7 +88,7 @@ tralloc_error _tralloc_debug_after_add_chunk ( _tralloc_chunk * chunk, size_t le
 #   endif
 
 #   if defined ( TRALLOC_DEBUG_CALLBACKS )
-    result = _tralloc_debug_callback_after_add_chunk ( chunk, length );
+    result = _tralloc_debug_callback_after_add_chunk ( chunk );
     if ( result != 0 ) {
 
 #       if defined ( TRALLOC_DEBUG_LOG )

@@ -10,7 +10,7 @@
 
 
 static
-tralloc_error test_debug_after_add ( void * user_data, _tralloc_chunk * chunk, size_t _TRALLOC_UNUSED ( length ) )
+tralloc_error test_debug_after_add ( void * user_data, _tralloc_chunk * chunk )
 {
     dynarr * history = ( dynarr * ) user_data;
     if ( dynarr_append ( history, chunk ) != 0 ) {
