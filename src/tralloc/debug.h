@@ -7,7 +7,9 @@
 #define TRALLOC_DEBUG_H
 
 
-#include "debug/common.h"
+#if defined ( TRALLOC_DEBUG_LOG )
+#   include "debug/log/main.h"
+#endif
 
 #if defined ( TRALLOC_DEBUG_STATS )
 #   include "debug/stats/main.h"

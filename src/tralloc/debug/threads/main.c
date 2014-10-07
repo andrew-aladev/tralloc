@@ -5,7 +5,6 @@
 
 #include <tralloc/debug/threads/main.h>
 #include <tralloc/debug/threads/lock.h>
-#include <tralloc/debug/common.h>
 #include <tralloc/common.h>
 
 #include <tralloc/tree/chunk.h>
@@ -18,6 +17,7 @@
 #endif
 
 #if defined ( TRALLOC_DEBUG_LOG )
+#   include <tralloc/debug/log/main.h>
 #   include <stdio.h>
 #endif
 
@@ -52,7 +52,7 @@ tralloc_error _tralloc_debug_threads_check_usage_of_extension (
             "%s:%zu error: %s\n",
             chunk->initialized_in_file,
             chunk->initialized_at_line,
-            tralloc_debug_get_string_for_error ( error )
+            tralloc_debug_log_get_string_for_error ( error )
         );
 #       endif
 

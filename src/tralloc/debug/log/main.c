@@ -3,10 +3,8 @@
 // tralloc is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Lesser Public License for more details.
 // You should have received a copy of the GNU General Lesser Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
-#include <tralloc/debug/common.h>
+#include <tralloc/debug/log/main.h>
 
-
-#if defined ( TRALLOC_DEBUG_LOG )
 
 static const char _TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL [] = "required argument is NULL";
 static const char _TRALLOC_ERROR_MALLOC_FAILED             [] = "malloc failed";
@@ -39,7 +37,7 @@ static const char _TRALLOC_ERROR_NO_SUBTREE_LOCK  [] = "chunk should have TRALLO
 static const char _TRALLOC_ERROR_NO_CHILDREN_LOCK [] = "chunk should have TRALLOC_EXTENSION_LOCK_CHILDREN";
 #endif
 
-const char * tralloc_debug_get_string_for_error ( tralloc_error error )
+const char * tralloc_debug_log_get_string_for_error ( tralloc_error error )
 {
     switch ( error ) {
     case TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL:
@@ -93,5 +91,3 @@ const char * tralloc_debug_get_string_for_error ( tralloc_error error )
         return NULL;
     }
 }
-
-#endif
