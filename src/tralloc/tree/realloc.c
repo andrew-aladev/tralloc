@@ -7,10 +7,6 @@
 #include <tralloc/tree/chunk.h>
 #include <tralloc/common.h>
 
-#if defined ( TRALLOC_DEBUG )
-#   include <tralloc/debug/events.h>
-#endif
-
 #if defined ( TRALLOC_LENGTH )
 #   include <tralloc/length/chunk.h>
 #endif
@@ -24,6 +20,10 @@
 #if defined ( TRALLOC_POOL )
 #   include <tralloc/pool/chunk.h>
 #   include <tralloc/pool/pool_child.h>
+#endif
+
+#if defined ( TRALLOC_DEBUG )
+#   include <tralloc/debug/events.h>
 #endif
 
 #include <stdlib.h>

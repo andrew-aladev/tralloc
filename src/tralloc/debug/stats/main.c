@@ -3,8 +3,10 @@
 // tralloc is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Lesser Public License for more details.
 // You should have received a copy of the GNU General Lesser Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
-#include <tralloc/common.h>
+
 #include <tralloc/debug/stats/main.h>
+#include <tralloc/common.h>
+#include <tralloc/length/chunk.h>
 
 #if defined ( TRALLOC_THREADS )
 #   include <tralloc/debug/stats/lock.h>
@@ -221,12 +223,13 @@ tralloc_error tralloc_debug_stats_get_length ( size_t * length )
     return 0;
 }
 
-tralloc_error _tralloc_debug_stats_after_add_chunk ( _tralloc_chunk * chunk, size_t length )
+tralloc_error _tralloc_debug_stats_after_add_chunk ( _tralloc_chunk * chunk )
 {
     tralloc_error result;
+    _tralloc_length * length_ptr = _tralloc_get_length_from_chunk ( chunk );
     if (
-        ( result = _tralloc_debug_stats_add_chunks_count ( 1 ) ) != 0 ||
-        ( result = _tralloc_debug_stats_add_length ( length ) )  != 0 ||
+        ( result = _tralloc_debug_stats_add_chunks_count ( 1 ) )      != 0 ||
+        ( result = _tralloc_debug_stats_add_length ( * length_ptr ) ) != 0 ||
         ( result = _tralloc_debug_stats_add_overhead_length ( tralloc_predict_chunk_length ( chunk->extensions ) ) ) != 0
     ) {
         return result;
@@ -246,22 +249,14 @@ tralloc_error _tralloc_debug_stats_after_resize_chunk ( size_t old_length, size_
 
 tralloc_error _tralloc_debug_stats_before_free_chunk ( _tralloc_chunk * chunk )
 {
-    tralloc_error error = 0, result;
-
-    result = _tralloc_debug_stats_subtract_chunks_count ( 1 );
-    if ( result != 0 ) {
-        error = result;
+    tralloc_error result;
+    _tralloc_length * length_ptr = _tralloc_get_length_from_chunk ( chunk );
+    if (
+        ( result = _tralloc_debug_stats_subtract_chunks_count ( 1 ) )      != 0 ||
+        ( result = _tralloc_debug_stats_subtract_length ( * length_ptr ) ) != 0 ||
+        ( result = _tralloc_debug_stats_subtract_overhead_length ( tralloc_predict_chunk_length ( chunk->extensions ) ) ) != 0
+    ) {
+        return result;
     }
-
-    result = _tralloc_debug_stats_subtract_length ( chunk->length );
-    if ( result != 0 ) {
-        error = result;
-    }
-
-    result = _tralloc_debug_stats_subtract_overhead_length ( tralloc_predict_chunk_length ( chunk->extensions ) );
-    if ( result != 0 ) {
-        error = result;
-    }
-
-    return error;
+    return 0;
 }

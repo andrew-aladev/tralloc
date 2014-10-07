@@ -7,10 +7,6 @@
 #include <tralloc/tree/free.h>
 #include <tralloc/tree/chunk.h>
 
-#if defined ( TRALLOC_DEBUG )
-#   include <tralloc/debug/events.h>
-#endif
-
 #if defined ( TRALLOC_THREADS )
 #   include <tralloc/tree/locks/subtree.h>
 #   include <tralloc/tree/locks/children.h>
@@ -34,6 +30,10 @@
 #   if defined ( TRALLOC_THREADS )
 #       include <tralloc/pool/lock.h>
 #   endif
+#endif
+
+#if defined ( TRALLOC_DEBUG )
+#   include <tralloc/debug/events.h>
 #endif
 
 #include <stdlib.h>
