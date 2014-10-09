@@ -251,7 +251,7 @@ typedef struct _tralloc_chunk_type {
 #   if defined ( TRALLOC_DEBUG_LOG )
     // "initialized_in_file" and "initialized_at_line" should not be locked for thread safety.
     // It will be written only in alloc function. Other functions will read it.
-    
+
     char * initialized_in_file;
     size_t initialized_at_line;
 #   endif
@@ -270,6 +270,26 @@ typedef struct _tralloc_chunk_type {
 #   endif
 
 } _tralloc_chunk;
+
+// It is important to provide all necessary information about chunk when it has been prepaired to be created.
+typedef struct _tralloc_chunk_proto_type {
+    _tralloc_chunk * parent;
+    size_t length;
+
+#   if defined ( TRALLOC_EXTENSIONS )
+    tralloc_extensions extensions;
+#   endif
+
+#   if defined ( TRALLOC_DEBUG_EXTENSIONS )
+    tralloc_extensions forced_extensions;
+#   endif
+
+#   if defined ( TRALLOC_DEBUG_LOG )
+    char * initialized_in_file;
+    size_t initialized_at_line;
+#   endif
+
+} _tralloc_chunk_proto;
 
 
 #endif

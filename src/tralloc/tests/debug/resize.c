@@ -100,7 +100,7 @@ tralloc_bool test_debug_resize ( tralloc_context * ctx )
     _tralloc_chunk * a_chunk = _tralloc_get_chunk_from_context ( a );
     _tralloc_chunk * b_chunk = _tralloc_get_chunk_from_context ( b );
     _tralloc_chunk * c_chunk = _tralloc_get_chunk_from_context ( c );
-    
+
 #   if defined ( TRALLOC_DEBUG_LENGTH )
     size_t length;
     if (
@@ -114,7 +114,7 @@ tralloc_bool test_debug_resize ( tralloc_context * ctx )
         return TRALLOC_FALSE;
     }
 #   endif
-    
+
     test_debug_resize_info * info;
     if (
         dynarr_get_length ( history ) != 3 ||

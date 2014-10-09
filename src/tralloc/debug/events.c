@@ -24,19 +24,19 @@
 #endif
 
 
-tralloc_error _tralloc_debug_before_add_chunk ( _tralloc_debug_before_add_chunk_options * options )
+tralloc_error _tralloc_debug_before_add_chunk ( _tralloc_chunk_proto * proto )
 {
     tralloc_error _TRALLOC_UNUSED ( result );
 
 #   if defined ( TRALLOC_DEBUG_THREADS )
-    result = _tralloc_debug_threads_before_add_chunk ( options->parent_chunk );
+    result = _tralloc_debug_threads_before_add_chunk ( proto->parent );
     if ( result != 0 ) {
         return result;
     }
 #   endif
 
 #   if defined ( TRALLOC_DEBUG_CALLBACKS )
-    result = _tralloc_debug_callback_before_add_chunk ( options->parent_chunk, options->extensions, options->length );
+    result = _tralloc_debug_callback_before_add_chunk ( proto->parent, proto->extensions, proto->length );
     if ( result != 0 ) {
         return result;
     }
