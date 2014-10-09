@@ -106,7 +106,7 @@ tralloc_error _tralloc_debug_threads_check_usage_of_pool ( _tralloc_chunk * chun
            );
 }
 
-tralloc_error _tralloc_debug_threads_before_add_chunk ( _tralloc_chunk * parent_chunk, tralloc_extensions _TRALLOC_UNUSED ( extensions ) )
+tralloc_error _tralloc_debug_threads_before_add_chunk ( _tralloc_chunk * parent_chunk )
 {
     // Add operation can not take part in threads competition, because it runs in single thread and returns pointer to data only after operation.
     // So chunk should not be checked.

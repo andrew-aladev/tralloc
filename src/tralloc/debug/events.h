@@ -9,7 +9,21 @@
 #include "../types.h"
 
 
-tralloc_error _tralloc_debug_before_add_chunk ( _tralloc_chunk * parent_chunk, tralloc_extensions extensions, size_t length );
+typedef struct _tralloc_debug_before_add_chunk_options_type {
+    _tralloc_chunk * parent_chunk;
+    size_t length;
+    
+#   if defined ( TRALLOC_EXTENSIONS )
+    tralloc_extensions extensions;
+#   endif
+
+#   if defined ( TRALLOC_DEBUG_EXTENSIONS )
+    tralloc_extensions forced_extensions;
+#   endif
+
+} _tralloc_debug_before_add_chunk_options;
+
+tralloc_error _tralloc_debug_before_add_chunk ( _tralloc_debug_before_add_chunk_options * options );
 
 #if defined ( TRALLOC_DEBUG_LOG )
 tralloc_error _tralloc_debug_after_add_chunk ( _tralloc_chunk * chunk, const char * file, size_t line );

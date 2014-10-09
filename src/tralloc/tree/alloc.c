@@ -400,7 +400,20 @@ tralloc_error _tralloc_alloc ( tralloc_context * parent_context, tralloc_context
 
 #   if defined ( TRALLOC_DEBUG )
     // Debug should care about thread safety of operations with "parent_chunk" by itself.
-    result = _tralloc_debug_before_add_chunk ( parent_chunk, ext_env.extensions, length );
+
+    _tralloc_debug_before_add_chunk_options options;
+    options.parent_chunk = parent_chunk;
+    options.length       = length;
+
+#   if defined ( TRALLOC_EXTENSIONS )
+    options.extensions = ext_env.extensions;
+#   endif
+
+#   if defined ( TRALLOC_DEBUG_EXTENSIONS )
+    options.forced_extensions = ext_env.forced_extensions;
+#   endif
+
+    result = _tralloc_debug_before_add_chunk ( &options );
     if ( result != 0 ) {
         return result;
     }
