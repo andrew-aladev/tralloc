@@ -9,7 +9,7 @@
 #include "../../types.h"
 
 
-typedef tralloc_error ( * tralloc_debug_callback_before_add ) ( void * data, _tralloc_chunk * parent_chunk, tralloc_extensions extensions, size_t length );
+typedef tralloc_error ( * tralloc_debug_callback_before_add ) ( void * data, _tralloc_chunk_proto * proto );
 typedef tralloc_error ( * tralloc_debug_callback_after_add )  ( void * data, _tralloc_chunk * chunk );
 
 typedef tralloc_error ( * tralloc_debug_callback_before_resize ) ( void * data, _tralloc_chunk * chunk );
@@ -27,7 +27,7 @@ typedef tralloc_error ( * tralloc_debug_callback_after_refuse_to_free_chunk )   
 
 tralloc_error tralloc_debug_callback_set_add_data      ( void * before_add, void * after_add );
 tralloc_error tralloc_debug_callback_set_add_functions ( tralloc_debug_callback_before_add before_add, tralloc_debug_callback_after_add after_add );
-tralloc_error _tralloc_debug_callback_before_add_chunk ( _tralloc_chunk * parent_chunk, tralloc_extensions extensions, size_t length );
+tralloc_error _tralloc_debug_callback_before_add_chunk ( _tralloc_chunk_proto * proto );
 tralloc_error _tralloc_debug_callback_after_add_chunk  ( _tralloc_chunk * chunk );
 
 tralloc_error tralloc_debug_callback_set_resize_data      ( void * before_resize, void * after_resize );
