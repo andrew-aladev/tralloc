@@ -42,6 +42,10 @@
 #   include <tralloc/debug/events.h>
 #endif
 
+#if defined ( TRALLOC_DEBUG_LOG )
+#   include <string.h>
+#endif
+
 #include <stdlib.h>
 
 
@@ -466,10 +470,31 @@ tralloc_error _tralloc_alloc ( tralloc_context * parent_context, tralloc_context
     chunk->forced_extensions = ext_env.forced_extensions;
 #   endif
 
+#   if defined ( TRALLOC_DEBUG_LOG )
+    chunk->initialized_in_file = strdup ( opts->file );
+    if ( chunk->initialized_in_file == NULL ) {
+
+#       if defined ( TRALLOC_POOL )
+        if ( ext_env.have_pool_child ) {
+            _tralloc_free_pool_child ( _tralloc_get_pool_child_from_chunk ( chunk ) );
+            return result;
+        }
+#       endif
+
+        free ( memory );
+        return TRALLOC_ERROR_MALLOC_FAILED;
+    }
+    chunk->initialized_at_line = opts->line;
+#   endif
+
 #   if defined ( TRALLOC_EXTENSIONS )
     result = _tralloc_alloc_initialize_extensions ( chunk, &ext_env, total_length, length );
     if ( result != 0 ) {
 
+#       if defined ( TRALLOC_DEBUG_LOG )
+        free ( chunk->initialized_in_file );
+#       endif
+        
 #       if defined ( TRALLOC_POOL )
         if ( ext_env.have_pool_child ) {
             _tralloc_free_pool_child ( _tralloc_get_pool_child_from_chunk ( chunk ) );
@@ -525,14 +550,8 @@ tralloc_error _tralloc_alloc ( tralloc_context * parent_context, tralloc_context
     }
 
 #   if defined ( TRALLOC_DEBUG )
-
     // Debug should care about thread safety of operations with "chunk" by itself.
-#   if defined ( TRALLOC_DEBUG_LOG )
-    result = _tralloc_debug_after_add_chunk ( chunk, opts->file, opts->line );
-#   else
     result = _tralloc_debug_after_add_chunk ( chunk );
-#   endif
-
     if ( result != 0 ) {
         tralloc_error error = result;
 

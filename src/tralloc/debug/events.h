@@ -10,12 +10,7 @@
 
 
 tralloc_error _tralloc_debug_before_add_chunk ( _tralloc_chunk_proto * proto );
-
-#if defined ( TRALLOC_DEBUG_LOG )
-tralloc_error _tralloc_debug_after_add_chunk ( _tralloc_chunk * chunk, const char * file, size_t line );
-#else
-tralloc_error _tralloc_debug_after_add_chunk ( _tralloc_chunk * chunk );
-#endif
+tralloc_error _tralloc_debug_after_add_chunk  ( _tralloc_chunk * chunk );
 
 tralloc_error _tralloc_debug_before_resize_chunk ( _tralloc_chunk * chunk );
 

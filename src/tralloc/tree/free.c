@@ -142,6 +142,10 @@ tralloc_error _tralloc_free_chunk ( _tralloc_chunk * chunk )
     }
 #   endif
 
+#   if defined ( TRALLOC_DEBUG_LOG )
+    free ( chunk->initialized_in_file );
+#   endif
+
 #   if defined ( TRALLOC_POOL )
     tralloc_bool have_pool_child = chunk->extensions & TRALLOC_EXTENSION_POOL_CHILD;
     if ( have_pool_child ) {
@@ -481,3 +485,6 @@ tralloc_error _tralloc_free_subtree ( _tralloc_chunk * root_chunk )
 
     return error;
 }
+
+
+

@@ -18,11 +18,6 @@
 #   include <tralloc/debug/threads/main.h>
 #endif
 
-#if defined ( TRALLOC_DEBUG_LOG )
-#   include <stdlib.h>
-#   include <string.h>
-#endif
-
 
 tralloc_error _tralloc_debug_before_add_chunk ( _tralloc_chunk_proto * proto )
 {
@@ -45,30 +40,13 @@ tralloc_error _tralloc_debug_before_add_chunk ( _tralloc_chunk_proto * proto )
     return 0;
 }
 
-#if defined ( TRALLOC_DEBUG_LOG )
-tralloc_error _tralloc_debug_after_add_chunk ( _tralloc_chunk * chunk, const char * file, size_t line )
-#else
 tralloc_error _tralloc_debug_after_add_chunk ( _tralloc_chunk * chunk )
-#endif
 {
     tralloc_error _TRALLOC_UNUSED ( result );
-
-#   if defined ( TRALLOC_DEBUG_LOG )
-    chunk->initialized_in_file = strdup ( file );
-    if ( chunk->initialized_in_file == NULL ) {
-        return TRALLOC_ERROR_MALLOC_FAILED;
-    }
-    chunk->initialized_at_line = line;
-#   endif
 
 #   if defined ( TRALLOC_DEBUG_THREADS )
     result = _tralloc_debug_threads_after_add_chunk ( chunk );
     if ( result != 0 ) {
-
-#       if defined ( TRALLOC_DEBUG_LOG )
-        free ( chunk->initialized_in_file );
-#       endif
-
         return result;
     }
 #   endif
@@ -76,11 +54,6 @@ tralloc_error _tralloc_debug_after_add_chunk ( _tralloc_chunk * chunk )
 #   if defined ( TRALLOC_DEBUG_STATS )
     result = _tralloc_debug_stats_after_add_chunk ( chunk );
     if ( result != 0 ) {
-
-#       if defined ( TRALLOC_DEBUG_LOG )
-        free ( chunk->initialized_in_file );
-#       endif
-
         return result;
     }
 #   endif
@@ -88,11 +61,6 @@ tralloc_error _tralloc_debug_after_add_chunk ( _tralloc_chunk * chunk )
 #   if defined ( TRALLOC_DEBUG_CALLBACKS )
     result = _tralloc_debug_callback_after_add_chunk ( chunk );
     if ( result != 0 ) {
-
-#       if defined ( TRALLOC_DEBUG_LOG )
-        free ( chunk->initialized_in_file );
-#       endif
-
         return result;
     }
 #   endif
@@ -238,12 +206,6 @@ tralloc_error _tralloc_debug_before_free_chunk ( _tralloc_chunk * chunk )
     result = _tralloc_debug_callback_before_free_chunk ( chunk );
     if ( result != 0 ) {
         error = result;
-    }
-#   endif
-
-#   if defined ( TRALLOC_DEBUG_LOG )
-    if ( chunk->initialized_in_file != NULL ) {
-        free ( chunk->initialized_in_file );
     }
 #   endif
 
