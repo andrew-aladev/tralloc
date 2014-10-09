@@ -9,6 +9,7 @@
 
 #if defined ( TRALLOC_LENGTH )
 #   include <tralloc/length/chunk.h>
+#   include <tralloc/length/main.h>
 #endif
 
 #if defined ( TRALLOC_REFERENCES )
@@ -129,8 +130,7 @@ tralloc_error tralloc_realloc ( tralloc_context ** chunk_context, size_t length 
 
 #       if defined ( TRALLOC_LENGTH )
         if ( have_length ) {
-            _tralloc_length * length_ptr = _tralloc_get_length_from_chunk ( old_chunk );
-            * length_ptr = length;
+            _tralloc_set_length ( _tralloc_get_length_from_chunk ( old_chunk ), length );
         }
 #       endif
 
@@ -146,8 +146,7 @@ tralloc_error tralloc_realloc ( tralloc_context ** chunk_context, size_t length 
 
 #       if defined ( TRALLOC_LENGTH )
         if ( have_length ) {
-            _tralloc_length * length_ptr = _tralloc_get_length_from_chunk ( new_chunk );
-            * length_ptr = length;
+            _tralloc_set_length ( _tralloc_get_length_from_chunk ( new_chunk ), length );
         }
 #       endif
 

@@ -6,10 +6,41 @@
 #if !defined ( TRALLOC_LENGTH_MAIN_H )
 #define TRALLOC_LENGTH_MAIN_H
 
-#include "../types.h"
+#include "chunk.h"
+
+#undef _TRALLOC_INLINE
+#if defined ( _TRALLOC_INCLUDED_FROM_LENGTH_MAIN_C )
+#    define _TRALLOC_INLINE _TRALLOC_INLINE_IN_OBJECT
+#else
+#    define _TRALLOC_INLINE _TRALLOC_INLINE_IN_HEADER
+#endif
 
 
-tralloc_error tralloc_get_length ( tralloc_context * context, size_t * length_result_ptr );
+_TRALLOC_INLINE
+size_t _tralloc_get_length ( _tralloc_length * length_ptr )
+{
+    return * length_ptr;
+}
+
+_TRALLOC_INLINE
+void _tralloc_set_length ( _tralloc_length * length_ptr, size_t length )
+{
+    * length_ptr = length;
+}
+
+_TRALLOC_INLINE
+tralloc_error tralloc_get_length ( tralloc_context * context, size_t * length_result_ptr )
+{
+    if ( context == NULL ) {
+        return TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL;
+    }
+    _tralloc_chunk * chunk = _tralloc_get_chunk_from_context ( context );
+    if ( ! ( chunk->extensions & TRALLOC_EXTENSION_LENGTH ) ) {
+        return TRALLOC_ERROR_NO_SUCH_EXTENSION;
+    }
+    * length_result_ptr = _tralloc_get_length ( _tralloc_get_length_from_chunk ( chunk ) );
+    return 0;
+}
 
 
 #endif

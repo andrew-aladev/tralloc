@@ -25,6 +25,7 @@
 
 #if defined ( TRALLOC_LENGTH )
 #   define _TRALLOC_INCLUDED_FROM_LENGTH_CHUNK_C
+#   define _TRALLOC_INCLUDED_FROM_LENGTH_MAIN_C
 #endif
 
 #if defined ( TRALLOC_DESTRUCTORS )

@@ -16,6 +16,7 @@
 
 #if defined ( TRALLOC_LENGTH )
 #   include <tralloc/length/chunk.h>
+#   include <tralloc/length/main.h>
 #endif
 
 #if defined ( TRALLOC_DESTRUCTORS )
@@ -324,8 +325,7 @@ tralloc_error _tralloc_alloc_initialize_extensions ( _tralloc_chunk * chunk, _tr
 
 #   if defined ( TRALLOC_LENGTH )
     if ( ext_env->have_length ) {
-        _tralloc_length * length_ptr = _tralloc_get_length_from_chunk ( chunk );
-        * length_ptr = length;
+        _tralloc_set_length ( _tralloc_get_length_from_chunk ( chunk ), length );
     }
 #   endif
 

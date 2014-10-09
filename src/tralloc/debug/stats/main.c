@@ -7,6 +7,7 @@
 #include <tralloc/debug/stats/main.h>
 #include <tralloc/common.h>
 #include <tralloc/length/chunk.h>
+#include <tralloc/length/main.h>
 
 #if defined ( TRALLOC_THREADS )
 #   include <tralloc/debug/stats/lock.h>
@@ -226,10 +227,10 @@ tralloc_error tralloc_debug_stats_get_length ( size_t * length )
 tralloc_error _tralloc_debug_stats_after_add_chunk ( _tralloc_chunk * chunk )
 {
     tralloc_error result;
-    _tralloc_length * length_ptr = _tralloc_get_length_from_chunk ( chunk );
+    size_t length = _tralloc_get_length ( _tralloc_get_length_from_chunk ( chunk ) );
     if (
-        ( result = _tralloc_debug_stats_add_chunks_count ( 1 ) )      != 0 ||
-        ( result = _tralloc_debug_stats_add_length ( * length_ptr ) ) != 0 ||
+        ( result = _tralloc_debug_stats_add_chunks_count ( 1 ) ) != 0 ||
+        ( result = _tralloc_debug_stats_add_length ( length ) )  != 0 ||
         ( result = _tralloc_debug_stats_add_overhead_length ( tralloc_predict_chunk_length ( chunk->extensions ) ) ) != 0
     ) {
         return result;
@@ -250,10 +251,10 @@ tralloc_error _tralloc_debug_stats_after_resize_chunk ( size_t old_length, size_
 tralloc_error _tralloc_debug_stats_before_free_chunk ( _tralloc_chunk * chunk )
 {
     tralloc_error result;
-    _tralloc_length * length_ptr = _tralloc_get_length_from_chunk ( chunk );
+    size_t length = _tralloc_get_length ( _tralloc_get_length_from_chunk ( chunk ) );
     if (
-        ( result = _tralloc_debug_stats_subtract_chunks_count ( 1 ) )      != 0 ||
-        ( result = _tralloc_debug_stats_subtract_length ( * length_ptr ) ) != 0 ||
+        ( result = _tralloc_debug_stats_subtract_chunks_count ( 1 ) ) != 0 ||
+        ( result = _tralloc_debug_stats_subtract_length ( length ) )  != 0 ||
         ( result = _tralloc_debug_stats_subtract_overhead_length ( tralloc_predict_chunk_length ( chunk->extensions ) ) ) != 0
     ) {
         return result;
