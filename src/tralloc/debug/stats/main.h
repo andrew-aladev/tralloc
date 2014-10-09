@@ -10,7 +10,7 @@
 
 
 tralloc_error _tralloc_debug_stats_after_add_chunk    ( _tralloc_chunk * chunk );
-tralloc_error _tralloc_debug_stats_after_resize_chunk ( size_t old_length, size_t length );
+tralloc_error _tralloc_debug_stats_after_resize_chunk ( _tralloc_chunk * chunk, size_t old_length );
 tralloc_error _tralloc_debug_stats_before_free_chunk  ( _tralloc_chunk * chunk );
 
 tralloc_error _tralloc_debug_stats_add_overhead_length      ( size_t overhead_length );

@@ -8,6 +8,10 @@
 #include <tralloc/tree.h>
 #include <tralloc/debug.h>
 
+#if defined ( TRALLOC_DEBUG_LENGTH )
+#   include <tralloc/length/main.h>
+#endif
+
 
 static
 tralloc_error test_debug_after_add ( void * user_data, _tralloc_chunk * chunk )
@@ -74,20 +78,30 @@ tralloc_bool test_debug_add ( tralloc_context * ctx )
         return TRALLOC_FALSE;
     }
 
+#   if defined ( TRALLOC_DEBUG_LENGTH )
+    size_t length;
+    if (
+        tralloc_get_length ( a, &length ) != 0 || length != sizeof ( int ) * 2  ||
+        tralloc_get_length ( b, &length ) != 0 || length != sizeof ( char ) * 3 ||
+        tralloc_get_length ( c, &length ) != 0 || length != sizeof ( float ) * 4
+    ) {
+        tralloc_free ( a );
+        tralloc_free ( b );
+        test_debug_add_free_history ( history );
+        return TRALLOC_FALSE;
+    }
+#   endif
+
     _tralloc_chunk * a_chunk = _tralloc_get_chunk_from_context ( a );
     _tralloc_chunk * b_chunk = _tralloc_get_chunk_from_context ( b );
     _tralloc_chunk * c_chunk = _tralloc_get_chunk_from_context ( c );
 
     _tralloc_chunk * chunk;
     if (
-        dynarr_get_length ( history ) != 3            ||
-        ( chunk = dynarr_get ( history, 0 ) ) == NULL ||
-        chunk != a_chunk || chunk->length != sizeof ( int ) * 2 ||
-        ( chunk = dynarr_get ( history, 1 ) ) == NULL ||
-        chunk != b_chunk || chunk->length != sizeof ( char ) * 3 ||
-        ( chunk = dynarr_get ( history, 2 ) ) == NULL ||
-        chunk != c_chunk || chunk->length != sizeof ( float ) * 4 ||
-
+        dynarr_get_length ( history ) != 3 ||
+        ( chunk = dynarr_get ( history, 0 ) ) == NULL || chunk != a_chunk ||
+        ( chunk = dynarr_get ( history, 1 ) ) == NULL || chunk != b_chunk ||
+        ( chunk = dynarr_get ( history, 2 ) ) == NULL || chunk != c_chunk ||
         tralloc_free ( a ) != 0 ||
         tralloc_free ( b ) != 0
     ) {

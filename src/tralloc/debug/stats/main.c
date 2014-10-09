@@ -6,7 +6,6 @@
 
 #include <tralloc/debug/stats/main.h>
 #include <tralloc/common.h>
-#include <tralloc/length/chunk.h>
 #include <tralloc/length/main.h>
 
 #if defined ( TRALLOC_THREADS )
@@ -238,8 +237,9 @@ tralloc_error _tralloc_debug_stats_after_add_chunk ( _tralloc_chunk * chunk )
     return 0;
 }
 
-tralloc_error _tralloc_debug_stats_after_resize_chunk ( size_t old_length, size_t length )
+tralloc_error _tralloc_debug_stats_after_resize_chunk ( _tralloc_chunk * chunk, size_t old_length )
 {
+    size_t length = _tralloc_get_length ( _tralloc_get_length_from_chunk ( chunk ) );
     if ( length > old_length ) {
         return _tralloc_debug_stats_add_length ( length - old_length );
     } else if ( length < old_length ) {

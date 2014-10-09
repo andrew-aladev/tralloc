@@ -46,14 +46,12 @@ tralloc_error _tralloc_debug_before_add_chunk ( _tralloc_chunk * _TRALLOC_UNUSED
 }
 
 #if defined ( TRALLOC_DEBUG_LOG )
-tralloc_error _tralloc_debug_after_add_chunk ( _tralloc_chunk * chunk, size_t length, const char * file, size_t line )
+tralloc_error _tralloc_debug_after_add_chunk ( _tralloc_chunk * chunk, const char * file, size_t line )
 #else
-tralloc_error _tralloc_debug_after_add_chunk ( _tralloc_chunk * chunk, size_t length )
+tralloc_error _tralloc_debug_after_add_chunk ( _tralloc_chunk * chunk )
 #endif
 {
     tralloc_error _TRALLOC_UNUSED ( result );
-
-    chunk->length = length;
 
 #   if defined ( TRALLOC_DEBUG_LOG )
     chunk->initialized_in_file = strdup ( file );
@@ -123,24 +121,24 @@ tralloc_error _tralloc_debug_before_resize_chunk ( _tralloc_chunk * _TRALLOC_UNU
     return 0;
 }
 
-tralloc_error _tralloc_debug_after_resize_chunk ( _tralloc_chunk * chunk, size_t old_length, size_t length )
+#if defined ( TRALLOC_DEBUG_LENGTH )
+tralloc_error _tralloc_debug_after_resize_chunk ( _tralloc_chunk * chunk, size_t old_length )
+#else
+tralloc_error _tralloc_debug_after_resize_chunk ( _tralloc_chunk * chunk )
+#endif
 {
     tralloc_error _TRALLOC_UNUSED ( result );
-
-    chunk->length = length;
 
 #   if defined ( TRALLOC_DEBUG_THREADS )
     result = _tralloc_debug_threads_after_resize_chunk ( chunk );
     if ( result != 0 ) {
-        chunk->length = old_length;
         return result;
     }
 #   endif
 
 #   if defined ( TRALLOC_DEBUG_STATS )
-    result = _tralloc_debug_stats_after_resize_chunk ( old_length, length );
+    result = _tralloc_debug_stats_after_resize_chunk ( chunk, old_length );
     if ( result != 0 ) {
-        chunk->length = old_length;
         return result;
     }
 #   endif
@@ -148,7 +146,6 @@ tralloc_error _tralloc_debug_after_resize_chunk ( _tralloc_chunk * chunk, size_t
 #   if defined ( TRALLOC_DEBUG_CALLBACKS )
     result = _tralloc_debug_callback_after_resize_chunk ( chunk, old_length );
     if ( result != 0 ) {
-        chunk->length = old_length;
         return result;
     }
 #   endif

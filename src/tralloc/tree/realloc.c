@@ -8,7 +8,6 @@
 #include <tralloc/common.h>
 
 #if defined ( TRALLOC_LENGTH )
-#   include <tralloc/length/chunk.h>
 #   include <tralloc/length/main.h>
 #endif
 
@@ -41,9 +40,11 @@ tralloc_error tralloc_realloc ( tralloc_context ** chunk_context, size_t length 
     _tralloc_chunk * old_chunk = _tralloc_get_chunk_from_context ( context );
     tralloc_error _TRALLOC_UNUSED ( result );
 
-#   if defined ( TRALLOC_DEBUG )
-    size_t old_length = old_chunk->length;
+#   if defined ( TRALLOC_DEBUG_LENGTH )
+    size_t old_length = _tralloc_get_length ( _tralloc_get_length_from_chunk ( old_chunk ) );
+#   endif
 
+#   if defined ( TRALLOC_DEBUG )
     // Debug should care about thread safety of operations with "old_chunk" by itself.
     result = _tralloc_debug_before_resize_chunk ( old_chunk );
     if ( result != 0 ) {
@@ -136,7 +137,13 @@ tralloc_error tralloc_realloc ( tralloc_context ** chunk_context, size_t length 
 
 #       if defined ( TRALLOC_DEBUG )
         // Debug should care about thread safety of operations with "old_chunk" by itself.
-        return _tralloc_debug_after_resize_chunk ( old_chunk, old_length, length );
+
+#       if defined ( TRALLOC_DEBUG_LENGTH )
+        return _tralloc_debug_after_resize_chunk ( old_chunk, old_length );
+#       else
+        return _tralloc_debug_after_resize_chunk ( old_chunk );
+#       endif
+
 #       endif
 
     } else {
@@ -164,8 +171,14 @@ tralloc_error tralloc_realloc ( tralloc_context ** chunk_context, size_t length 
         * chunk_context = _tralloc_get_context_from_chunk ( new_chunk );
 
 #       if defined ( TRALLOC_DEBUG )
-        // Debug should care about thread safety of operations with "old_chunk" by itself.
-        return _tralloc_debug_after_resize_chunk ( new_chunk, old_length, length );
+        // Debug should care about thread safety of operations with "new_chunk" by itself.
+
+#       if defined ( TRALLOC_DEBUG_LENGTH )
+        return _tralloc_debug_after_resize_chunk ( new_chunk, old_length );
+#       else
+        return _tralloc_debug_after_resize_chunk ( new_chunk );
+#       endif
+
 #       endif
 
     }

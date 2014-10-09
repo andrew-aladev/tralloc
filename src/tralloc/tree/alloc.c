@@ -15,7 +15,6 @@
 #endif
 
 #if defined ( TRALLOC_LENGTH )
-#   include <tralloc/length/chunk.h>
 #   include <tralloc/length/main.h>
 #endif
 
@@ -511,9 +510,9 @@ tralloc_error _tralloc_alloc ( tralloc_context * parent_context, tralloc_context
 
     // Debug should care about thread safety of operations with "chunk" by itself.
 #   if defined ( TRALLOC_DEBUG_LOG )
-    result = _tralloc_debug_after_add_chunk ( chunk, length, opts->file, opts->line );
+    result = _tralloc_debug_after_add_chunk ( chunk, opts->file, opts->line );
 #   else
-    result = _tralloc_debug_after_add_chunk ( chunk, length );
+    result = _tralloc_debug_after_add_chunk ( chunk );
 #   endif
 
     if ( result != 0 ) {
