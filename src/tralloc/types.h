@@ -261,10 +261,13 @@ typedef struct _tralloc_chunk_type {
     //      will be locked for thread safety by "thread_usage_lock".
     pthread_t subtree_used_by_thread;
     pthread_t children_used_by_thread;
-    pthread_t pool_used_by_thread;
     _tralloc_thread_usage_status subtree_usage_status;
     _tralloc_thread_usage_status children_usage_status;
+
+#   if defined ( TRALLOC_POOL )
+    pthread_t pool_used_by_thread;
     _tralloc_thread_usage_status pool_usage_status;
+#   endif
 
     _tralloc_debug_threads_lock thread_usage_lock;
 #   endif

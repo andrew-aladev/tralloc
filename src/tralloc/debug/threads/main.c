@@ -137,10 +137,8 @@ tralloc_error _tralloc_debug_threads_before_add_chunk ( _tralloc_chunk * parent_
     return 0;
 }
 
-tralloc_error _tralloc_debug_threads_after_add_chunk ( _tralloc_chunk * chunk )
+tralloc_error _tralloc_debug_threads_after_add_chunk ( _tralloc_chunk * _TRALLOC_UNUSED ( chunk ) )
 {
-    chunk->subtree_usage_status  = _TRALLOC_NOT_USED_BY_THREADS;
-    chunk->children_usage_status = _TRALLOC_NOT_USED_BY_THREADS;
     return 0;
 }
 

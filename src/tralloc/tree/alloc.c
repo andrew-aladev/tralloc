@@ -407,6 +407,16 @@ tralloc_error _tralloc_alloc_initialize_extensions ( _tralloc_chunk * chunk, _tr
     }
 #   endif
 
+#   if defined ( TRALLOC_DEBUG_THREADS )
+    chunk->subtree_usage_status  = _TRALLOC_NOT_USED_BY_THREADS;
+    chunk->children_usage_status = _TRALLOC_NOT_USED_BY_THREADS;
+
+#   if defined ( TRALLOC_POOL )
+    chunk->pool_usage_status = _TRALLOC_NOT_USED_BY_THREADS;
+#   endif
+
+#   endif
+
     return 0;
 }
 
