@@ -332,4 +332,3 @@ tralloc_error _tralloc_debug_threads_before_refuse_to_free_chunk ( _tralloc_chun
     // In this case "chunk" should have subtree lock.
     return _tralloc_debug_threads_check_usage_of_subtree ( chunk, pthread_self() );
 }
-

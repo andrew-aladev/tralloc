@@ -485,6 +485,3 @@ tralloc_error _tralloc_free_subtree ( _tralloc_chunk * root_chunk )
 
     return error;
 }
-
-
-
