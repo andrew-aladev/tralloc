@@ -143,7 +143,9 @@ tralloc_error _tralloc_free_chunk ( _tralloc_chunk * chunk )
 #   endif
 
 #   if defined ( TRALLOC_DEBUG_LOG )
-    free ( chunk->initialized_in_file );
+    if ( chunk->initialized_in_file != NULL ) {
+        free ( chunk->initialized_in_file );
+    }
 #   endif
 
 #   if defined ( TRALLOC_POOL )
