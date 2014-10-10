@@ -61,7 +61,7 @@ tralloc_error tralloc_debug_callback_set_add_functions ( tralloc_debug_callback_
     return 0;
 }
 
-tralloc_error _tralloc_debug_callback_before_add_chunk ( _tralloc_chunk_proto * proto )
+tralloc_error _tralloc_debug_callback_before_add_chunk ( _tralloc_chunk_prototype * prototype )
 {
 
 #   if defined ( TRALLOC_THREADS )
@@ -82,7 +82,7 @@ tralloc_error _tralloc_debug_callback_before_add_chunk ( _tralloc_chunk_proto * 
 #   endif
 
     if ( function != NULL ) {
-        return function ( data, proto );
+        return function ( data, prototype );
     }
     return 0;
 }

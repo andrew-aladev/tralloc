@@ -272,7 +272,7 @@ typedef struct _tralloc_chunk_type {
 } _tralloc_chunk;
 
 // It is important to provide all necessary information about chunk when it has been prepaired to be created.
-typedef struct _tralloc_chunk_proto_type {
+typedef struct _tralloc_chunk_prototype_type {
     _tralloc_chunk * parent;
     size_t length;
 
@@ -289,7 +289,7 @@ typedef struct _tralloc_chunk_proto_type {
     size_t initialized_at_line;
 #   endif
 
-} _tralloc_chunk_proto;
+} _tralloc_chunk_prototype;
 
 
 #endif
