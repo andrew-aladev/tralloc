@@ -36,6 +36,10 @@
 #   include <tralloc/debug/events.h>
 #endif
 
+#if defined ( TRALLOC_DEBUG_THREADS )
+#   include <tralloc/debug/threads/lock.h>
+#endif
+
 #include <stdlib.h>
 
 
@@ -140,6 +144,10 @@ tralloc_error _tralloc_free_chunk ( _tralloc_chunk * chunk )
             error = result;
         }
     }
+#   endif
+
+#   if defined ( TRALLOC_DEBUG_THREADS )
+    _tralloc_free_debug_threads_lock ( &chunk->thread_usage_lock );
 #   endif
 
 #   if defined ( TRALLOC_DEBUG_LOG )

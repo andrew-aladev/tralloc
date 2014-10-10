@@ -46,6 +46,10 @@
 #   include <string.h>
 #endif
 
+#if defined ( TRALLOC_DEBUG_THREADS )
+#   include <tralloc/debug/threads/lock.h>
+#endif
+
 #include <stdlib.h>
 
 
@@ -283,27 +287,12 @@ tralloc_error _tralloc_alloc_initialize_extensions ( _tralloc_chunk * chunk, _tr
     chunk->forced_extensions = extensions_environment->forced_extensions;
 #   endif
 
-#   if defined ( TRALLOC_DEBUG_LOG )
-    chunk->initialized_in_file = strdup ( chunk_prototype->initialized_in_file );
-    if ( chunk->initialized_in_file == NULL ) {
-        return TRALLOC_ERROR_MALLOC_FAILED;
-    }
-    chunk->initialized_at_line = chunk_prototype->initialized_at_line;
-#   endif
-
 #   if defined ( TRALLOC_THREADS )
     _tralloc_subtree_lock * subtree_lock;
     if ( extensions_environment->have_subtree_lock ) {
         subtree_lock = _tralloc_get_subtree_lock_from_chunk ( chunk );
         result = _tralloc_new_subtree_lock ( subtree_lock );
         if ( result != 0 ) {
-
-#           if defined ( TRALLOC_DEBUG_LOG )
-            if ( chunk->initialized_in_file != NULL ) {
-                free ( chunk->initialized_in_file );
-            }
-#           endif
-
             return result;
         }
     }
@@ -316,13 +305,6 @@ tralloc_error _tralloc_alloc_initialize_extensions ( _tralloc_chunk * chunk, _tr
             if ( extensions_environment->have_subtree_lock ) {
                 _tralloc_free_subtree_lock ( subtree_lock );
             }
-
-#           if defined ( TRALLOC_DEBUG_LOG )
-            if ( chunk->initialized_in_file != NULL ) {
-                free ( chunk->initialized_in_file );
-            }
-#           endif
-
             return result;
         }
     }
@@ -339,18 +321,61 @@ tralloc_error _tralloc_alloc_initialize_extensions ( _tralloc_chunk * chunk, _tr
             if ( extensions_environment->have_subtree_lock ) {
                 _tralloc_free_subtree_lock ( subtree_lock );
             }
-
-#           if defined ( TRALLOC_DEBUG_LOG )
-            if ( chunk->initialized_in_file != NULL ) {
-                free ( chunk->initialized_in_file );
-            }
-#           endif
-
             return result;
         }
     }
 #   endif
 
+#   endif
+
+#   if defined ( TRALLOC_DEBUG_THREADS )
+    _tralloc_debug_threads_lock * thread_usage_lock = &chunk->thread_usage_lock;
+    result = _tralloc_new_debug_threads_lock ( thread_usage_lock );
+    if ( result != 0 ) {
+
+#       if defined ( TRALLOC_POOL )
+        if ( extensions_environment->have_pool_lock ) {
+            _tralloc_free_pool_lock ( pool_lock );
+        }
+#       endif
+
+        if ( extensions_environment->have_children_lock ) {
+            _tralloc_free_children_lock ( children_lock );
+        }
+        if ( extensions_environment->have_subtree_lock ) {
+            _tralloc_free_subtree_lock ( subtree_lock );
+        }
+        return result;
+    }
+#   endif
+
+#   if defined ( TRALLOC_DEBUG_LOG )
+    chunk->initialized_in_file = strdup ( chunk_prototype->initialized_in_file );
+    if ( chunk->initialized_in_file == NULL ) {
+
+#       if defined ( TRALLOC_DEBUG_THREADS )
+        _tralloc_free_debug_threads_lock ( thread_usage_lock );
+#       endif
+
+#       if defined ( TRALLOC_THREADS )
+
+#       if defined ( TRALLOC_POOL )
+        if ( extensions_environment->have_pool_lock ) {
+            _tralloc_free_pool_lock ( pool_lock );
+        }
+#       endif
+
+        if ( extensions_environment->have_children_lock ) {
+            _tralloc_free_children_lock ( children_lock );
+        }
+        if ( extensions_environment->have_subtree_lock ) {
+            _tralloc_free_subtree_lock ( subtree_lock );
+        }
+#       endif
+
+        return TRALLOC_ERROR_MALLOC_FAILED;
+    }
+    chunk->initialized_at_line = chunk_prototype->initialized_at_line;
 #   endif
 
 #   if defined ( TRALLOC_POOL )
@@ -377,7 +402,6 @@ tralloc_error _tralloc_alloc_initialize_extensions ( _tralloc_chunk * chunk, _tr
     if ( extensions_environment->have_references ) {
         _tralloc_new_references ( _tralloc_get_references_from_chunk ( chunk ), extensions_environment->extensions );
     }
-
     if ( extensions_environment->have_reference ) {
         _tralloc_new_reference ( _tralloc_get_reference_from_chunk ( chunk ) );
     }

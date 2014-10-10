@@ -141,8 +141,7 @@ tralloc_error _tralloc_debug_threads_after_add_chunk ( _tralloc_chunk * chunk )
 {
     chunk->subtree_usage_status  = _TRALLOC_NOT_USED_BY_THREADS;
     chunk->children_usage_status = _TRALLOC_NOT_USED_BY_THREADS;
-
-    return _tralloc_new_debug_threads_lock ( &chunk->thread_usage_lock );
+    return 0;
 }
 
 tralloc_error _tralloc_debug_threads_before_move_chunk ( _tralloc_chunk * chunk )
@@ -308,9 +307,9 @@ tralloc_error _tralloc_debug_threads_before_free_subtree ( _tralloc_chunk * chun
     return 0;
 }
 
-tralloc_error _tralloc_debug_threads_before_free_chunk ( _tralloc_chunk * chunk )
+tralloc_error _tralloc_debug_threads_before_free_chunk ( _tralloc_chunk * _TRALLOC_UNUSED ( chunk ) )
 {
-    return _tralloc_free_debug_threads_lock ( &chunk->thread_usage_lock );
+    return 0;
 }
 
 tralloc_error _tralloc_debug_threads_before_refuse_to_free_subtree ( _tralloc_chunk * chunk )
