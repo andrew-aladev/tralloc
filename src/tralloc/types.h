@@ -285,7 +285,7 @@ typedef struct _tralloc_chunk_prototype_type {
 #   endif
 
 #   if defined ( TRALLOC_DEBUG_LOG )
-    char * initialized_in_file;
+    const char * initialized_in_file;
     size_t initialized_at_line;
 #   endif
 

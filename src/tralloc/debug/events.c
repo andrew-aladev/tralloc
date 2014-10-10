@@ -19,19 +19,19 @@
 #endif
 
 
-tralloc_error _tralloc_debug_before_add_chunk ( _tralloc_chunk_prototype * prototype )
+tralloc_error _tralloc_debug_before_add_chunk ( _tralloc_chunk_prototype * chunk_prototype )
 {
     tralloc_error _TRALLOC_UNUSED ( result );
 
 #   if defined ( TRALLOC_DEBUG_THREADS )
-    result = _tralloc_debug_threads_before_add_chunk ( prototype->parent );
+    result = _tralloc_debug_threads_before_add_chunk ( chunk_prototype->parent );
     if ( result != 0 ) {
         return result;
     }
 #   endif
 
 #   if defined ( TRALLOC_DEBUG_CALLBACKS )
-    result = _tralloc_debug_callback_before_add_chunk ( prototype );
+    result = _tralloc_debug_callback_before_add_chunk ( chunk_prototype );
     if ( result != 0 ) {
         return result;
     }

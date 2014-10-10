@@ -9,7 +9,7 @@
 #include "../types.h"
 
 
-tralloc_error _tralloc_debug_before_add_chunk ( _tralloc_chunk_prototype * prototype );
+tralloc_error _tralloc_debug_before_add_chunk ( _tralloc_chunk_prototype * chunk_prototype );
 tralloc_error _tralloc_debug_after_add_chunk  ( _tralloc_chunk * chunk );
 
 tralloc_error _tralloc_debug_before_resize_chunk ( _tralloc_chunk * chunk );

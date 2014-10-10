@@ -273,9 +273,23 @@ void _tralloc_alloc_prepare_extensions_environment ( _tralloc_chunk * parent_chu
 }
 
 static
-tralloc_error _tralloc_alloc_initialize_extensions ( _tralloc_chunk * chunk, _tralloc_alloc_extensions_environment * extensions_environment, size_t total_length, size_t length )
+tralloc_error _tralloc_alloc_initialize_extensions ( _tralloc_chunk * chunk, _tralloc_chunk_prototype * chunk_prototype, _tralloc_alloc_extensions_environment * extensions_environment, size_t total_length )
 {
     tralloc_error result;
+
+    chunk->extensions = extensions_environment->extensions;
+
+#   if defined ( TRALLOC_DEBUG_EXTENSIONS )
+    chunk->forced_extensions = extensions_environment->forced_extensions;
+#   endif
+
+#   if defined ( TRALLOC_DEBUG_LOG )
+    chunk->initialized_in_file = strdup ( chunk_prototype->initialized_in_file );
+    if ( chunk->initialized_in_file == NULL ) {
+        return TRALLOC_ERROR_MALLOC_FAILED;
+    }
+    chunk->initialized_at_line = chunk_prototype->initialized_at_line;
+#   endif
 
 #   if defined ( TRALLOC_THREADS )
     _tralloc_subtree_lock * subtree_lock;
@@ -283,6 +297,13 @@ tralloc_error _tralloc_alloc_initialize_extensions ( _tralloc_chunk * chunk, _tr
         subtree_lock = _tralloc_get_subtree_lock_from_chunk ( chunk );
         result = _tralloc_new_subtree_lock ( subtree_lock );
         if ( result != 0 ) {
+
+#           if defined ( TRALLOC_DEBUG_LOG )
+            if ( chunk->initialized_in_file != NULL ) {
+                free ( chunk->initialized_in_file );
+            }
+#           endif
+
             return result;
         }
     }
@@ -295,6 +316,13 @@ tralloc_error _tralloc_alloc_initialize_extensions ( _tralloc_chunk * chunk, _tr
             if ( extensions_environment->have_subtree_lock ) {
                 _tralloc_free_subtree_lock ( subtree_lock );
             }
+
+#           if defined ( TRALLOC_DEBUG_LOG )
+            if ( chunk->initialized_in_file != NULL ) {
+                free ( chunk->initialized_in_file );
+            }
+#           endif
+
             return result;
         }
     }
@@ -305,12 +333,19 @@ tralloc_error _tralloc_alloc_initialize_extensions ( _tralloc_chunk * chunk, _tr
         pool_lock = _tralloc_get_pool_lock_from_chunk ( chunk );
         result = _tralloc_new_pool_lock ( pool_lock );
         if ( result != 0 ) {
-            if ( extensions_environment->have_subtree_lock ) {
-                _tralloc_free_subtree_lock ( subtree_lock );
-            }
             if ( extensions_environment->have_children_lock ) {
                 _tralloc_free_children_lock ( children_lock );
             }
+            if ( extensions_environment->have_subtree_lock ) {
+                _tralloc_free_subtree_lock ( subtree_lock );
+            }
+
+#           if defined ( TRALLOC_DEBUG_LOG )
+            if ( chunk->initialized_in_file != NULL ) {
+                free ( chunk->initialized_in_file );
+            }
+#           endif
+
             return result;
         }
     }
@@ -320,7 +355,7 @@ tralloc_error _tralloc_alloc_initialize_extensions ( _tralloc_chunk * chunk, _tr
 
 #   if defined ( TRALLOC_POOL )
     if ( extensions_environment->have_pool ) {
-        _tralloc_new_pool ( _tralloc_get_pool_from_chunk ( chunk ), _tralloc_get_context_from_chunk ( chunk ), extensions_environment->extensions, length );
+        _tralloc_new_pool ( _tralloc_get_pool_from_chunk ( chunk ), _tralloc_get_context_from_chunk ( chunk ), extensions_environment->extensions, chunk_prototype->length );
     } else if ( extensions_environment->have_pool_child ) {
         _tralloc_new_pool_child ( _tralloc_get_pool_child_from_chunk ( chunk ), extensions_environment->parent_pool, total_length, extensions_environment->prev_pool_child, extensions_environment->next_pool_child );
     }
@@ -328,7 +363,7 @@ tralloc_error _tralloc_alloc_initialize_extensions ( _tralloc_chunk * chunk, _tr
 
 #   if defined ( TRALLOC_LENGTH )
     if ( extensions_environment->have_length ) {
-        _tralloc_set_length ( _tralloc_get_length_from_chunk ( chunk ), length );
+        _tralloc_set_length ( _tralloc_get_length_from_chunk ( chunk ), chunk_prototype->length );
     }
 #   endif
 
@@ -405,24 +440,24 @@ tralloc_error _tralloc_alloc ( tralloc_context * parent_context, tralloc_context
 #   if defined ( TRALLOC_DEBUG )
     // Debug should care about thread safety of operations with "parent_chunk" by itself.
 
-    _tralloc_chunk_prototype prototype;
-    prototype.parent = parent_chunk;
-    prototype.length = length;
+    _tralloc_chunk_prototype chunk_prototype;
+    chunk_prototype.parent = parent_chunk;
+    chunk_prototype.length = length;
 
 #   if defined ( TRALLOC_EXTENSIONS )
-    prototype.extensions = extensions_environment.extensions;
+    chunk_prototype.extensions = extensions_environment.extensions;
 #   endif
 
 #   if defined ( TRALLOC_DEBUG_EXTENSIONS )
-    prototype.forced_extensions = extensions_environment.forced_extensions;
+    chunk_prototype.forced_extensions = extensions_environment.forced_extensions;
 #   endif
 
 #   if defined ( TRALLOC_DEBUG_LOG )
-    prototype.initialized_in_file = ( char * ) options->file;
-    prototype.initialized_at_line = options->line;
+    chunk_prototype.initialized_in_file = options->file;
+    chunk_prototype.initialized_at_line = options->line;
 #   endif
 
-    result = _tralloc_debug_before_add_chunk ( &prototype );
+    result = _tralloc_debug_before_add_chunk ( &chunk_prototype );
     if ( result != 0 ) {
         return result;
     }
@@ -463,37 +498,8 @@ tralloc_error _tralloc_alloc ( tralloc_context * parent_context, tralloc_context
     tralloc_context * context = _tralloc_get_context_from_chunk ( chunk );
 
 #   if defined ( TRALLOC_EXTENSIONS )
-    chunk->extensions = extensions_environment.extensions;
-#   endif
-
-#   if defined ( TRALLOC_DEBUG_EXTENSIONS )
-    chunk->forced_extensions = extensions_environment.forced_extensions;
-#   endif
-
-#   if defined ( TRALLOC_DEBUG_LOG )
-    chunk->initialized_in_file = strdup ( options->file );
-    if ( chunk->initialized_in_file == NULL ) {
-
-#       if defined ( TRALLOC_POOL )
-        if ( extensions_environment.have_pool_child ) {
-            _tralloc_free_pool_child ( _tralloc_get_pool_child_from_chunk ( chunk ) );
-            return result;
-        }
-#       endif
-
-        free ( memory );
-        return TRALLOC_ERROR_MALLOC_FAILED;
-    }
-    chunk->initialized_at_line = options->line;
-#   endif
-
-#   if defined ( TRALLOC_EXTENSIONS )
-    result = _tralloc_alloc_initialize_extensions ( chunk, &extensions_environment, total_length, length );
+    result = _tralloc_alloc_initialize_extensions ( chunk, &chunk_prototype, &extensions_environment, total_length );
     if ( result != 0 ) {
-
-#       if defined ( TRALLOC_DEBUG_LOG )
-        free ( chunk->initialized_in_file );
-#       endif
 
 #       if defined ( TRALLOC_POOL )
         if ( extensions_environment.have_pool_child ) {
