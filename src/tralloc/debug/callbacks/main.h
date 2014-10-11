@@ -9,21 +9,21 @@
 #include "../../types.h"
 
 
-typedef tralloc_error ( * tralloc_debug_callback_before_add ) ( void * data, _tralloc_chunk_prototype * chunk_prototype );
-typedef tralloc_error ( * tralloc_debug_callback_after_add )  ( void * data, _tralloc_chunk * chunk );
+typedef tralloc_error ( * tralloc_debug_callback_before_add ) ( void * user_data, _tralloc_chunk_prototype * chunk_prototype );
+typedef tralloc_error ( * tralloc_debug_callback_after_add )  ( void * user_data, _tralloc_chunk * chunk );
 
-typedef tralloc_error ( * tralloc_debug_callback_before_resize ) ( void * data, _tralloc_chunk * chunk );
-typedef tralloc_error ( * tralloc_debug_callback_after_resize )  ( void * data, _tralloc_chunk * chunk, size_t old_length );
+typedef tralloc_error ( * tralloc_debug_callback_before_resize ) ( void * user_data, _tralloc_chunk * chunk );
+typedef tralloc_error ( * tralloc_debug_callback_after_resize )  ( void * user_data, _tralloc_chunk * chunk, size_t old_length );
 
-typedef tralloc_error ( * tralloc_debug_callback_before_move ) ( void * data, _tralloc_chunk * chunk );
-typedef tralloc_error ( * tralloc_debug_callback_after_move )  ( void * data, _tralloc_chunk * chunk, _tralloc_chunk * old_parent_chunk );
+typedef tralloc_error ( * tralloc_debug_callback_before_move ) ( void * user_data, _tralloc_chunk * chunk );
+typedef tralloc_error ( * tralloc_debug_callback_after_move )  ( void * user_data, _tralloc_chunk * chunk, _tralloc_chunk * old_parent_chunk );
 
-typedef tralloc_error ( * tralloc_debug_callback_before_free_subtree )           ( void * data, _tralloc_chunk * chunk );
-typedef tralloc_error ( * tralloc_debug_callback_before_free_chunk )             ( void * data, _tralloc_chunk * chunk );
-typedef tralloc_error ( * tralloc_debug_callback_before_refuse_to_free_subtree ) ( void * data, _tralloc_chunk * chunk );
-typedef tralloc_error ( * tralloc_debug_callback_after_refuse_to_free_subtree )  ( void * data, _tralloc_chunk * chunk );
-typedef tralloc_error ( * tralloc_debug_callback_before_refuse_to_free_chunk )   ( void * data, _tralloc_chunk * chunk );
-typedef tralloc_error ( * tralloc_debug_callback_after_refuse_to_free_chunk )    ( void * data, _tralloc_chunk * chunk );
+typedef tralloc_error ( * tralloc_debug_callback_before_free_subtree )           ( void * user_data, _tralloc_chunk * chunk );
+typedef tralloc_error ( * tralloc_debug_callback_before_free_chunk )             ( void * user_data, _tralloc_chunk * chunk );
+typedef tralloc_error ( * tralloc_debug_callback_before_refuse_to_free_subtree ) ( void * user_data, _tralloc_chunk * chunk );
+typedef tralloc_error ( * tralloc_debug_callback_after_refuse_to_free_subtree )  ( void * user_data, _tralloc_chunk * chunk );
+typedef tralloc_error ( * tralloc_debug_callback_before_refuse_to_free_chunk )   ( void * user_data, _tralloc_chunk * chunk );
+typedef tralloc_error ( * tralloc_debug_callback_after_refuse_to_free_chunk )    ( void * user_data, _tralloc_chunk * chunk );
 
 tralloc_error tralloc_debug_callback_set_add_data      ( void * before_add, void * after_add );
 tralloc_error tralloc_debug_callback_set_add_functions ( tralloc_debug_callback_before_add before_add, tralloc_debug_callback_after_add after_add );

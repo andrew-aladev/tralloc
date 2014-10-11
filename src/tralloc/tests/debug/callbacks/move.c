@@ -3,7 +3,7 @@
 // tralloc is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
-#include <tralloc/tests/debug/common.h>
+#include <tralloc/tests/debug/callbacks/common.h>
 #include <tralloc/tests/common/dynarr.h>
 #include <tralloc/tree.h>
 #include <tralloc/debug.h>
@@ -11,16 +11,16 @@
 #include <stdlib.h>
 
 
-typedef struct test_debug_move_info_t {
+typedef struct test_debug_callbacks_move_info_t {
     _tralloc_chunk * chunk;
     _tralloc_chunk * old_parent;
-} test_debug_move_info;
+} test_debug_callbacks_move_info;
 
 static
-tralloc_error test_debug_after_move ( void * user_data, _tralloc_chunk * chunk, _tralloc_chunk * old_parent )
+tralloc_error test_debug_callbacks_after_move ( void * user_data, _tralloc_chunk * chunk, _tralloc_chunk * old_parent )
 {
     dynarr * history = ( dynarr * ) user_data;
-    test_debug_move_info * info = malloc ( sizeof ( test_debug_move_info ) );
+    test_debug_callbacks_move_info * info = malloc ( sizeof ( test_debug_callbacks_move_info ) );
     if ( info == NULL ) {
         return TRALLOC_ERROR_MALLOC_FAILED;
     }
@@ -36,7 +36,7 @@ tralloc_error test_debug_after_move ( void * user_data, _tralloc_chunk * chunk, 
 }
 
 static inline
-dynarr * test_debug_move_new_history()
+dynarr * test_debug_callbacks_move_new_history()
 {
     dynarr * history = dynarr_new ( 8 );
     if ( history == NULL ) {
@@ -46,7 +46,7 @@ dynarr * test_debug_move_new_history()
         dynarr_free ( history );
         return NULL;
     }
-    if ( tralloc_debug_callback_set_move_functions ( NULL, test_debug_after_move ) != 0 ) {
+    if ( tralloc_debug_callback_set_move_functions ( NULL, test_debug_callbacks_after_move ) != 0 ) {
         tralloc_debug_callback_set_move_data ( NULL, NULL );
         dynarr_free ( history );
         return NULL;
@@ -55,7 +55,7 @@ dynarr * test_debug_move_new_history()
 }
 
 static inline
-tralloc_error test_debug_move_free_history ( dynarr * history )
+tralloc_error test_debug_callbacks_move_free_history ( dynarr * history )
 {
     tralloc_error error  = 0;
     tralloc_error result = tralloc_debug_callback_set_move_data ( NULL, NULL );
@@ -71,9 +71,9 @@ tralloc_error test_debug_move_free_history ( dynarr * history )
     return error;
 }
 
-tralloc_bool test_debug_move ( tralloc_context * ctx )
+tralloc_bool test_debug_callbacks_move ( tralloc_context * ctx )
 {
-    dynarr * history = test_debug_move_new_history();
+    dynarr * history = test_debug_callbacks_move_new_history();
     if ( history == NULL ) {
         return TRALLOC_FALSE;
     }
@@ -86,7 +86,7 @@ tralloc_bool test_debug_move ( tralloc_context * ctx )
         tralloc_new ( ctx, ( tralloc_context ** ) &b, sizeof ( char ) * 3 )  != 0 ||
         tralloc_new ( a,   ( tralloc_context ** ) &c, sizeof ( float ) * 4 ) != 0
     ) {
-        test_debug_move_free_history ( history );
+        test_debug_callbacks_move_free_history ( history );
         return TRALLOC_FALSE;
     }
 
@@ -98,7 +98,7 @@ tralloc_bool test_debug_move ( tralloc_context * ctx )
     ) {
         tralloc_free ( a );
         tralloc_free ( b );
-        test_debug_move_free_history ( history );
+        test_debug_callbacks_move_free_history ( history );
         return TRALLOC_FALSE;
     }
 
@@ -107,7 +107,7 @@ tralloc_bool test_debug_move ( tralloc_context * ctx )
     _tralloc_chunk * b_chunk    = _tralloc_get_chunk_from_context ( b );
     _tralloc_chunk * c_chunk    = _tralloc_get_chunk_from_context ( c );
 
-    test_debug_move_info * info;
+    test_debug_callbacks_move_info * info;
 
     if (
         dynarr_get_length ( history ) != 4 ||
@@ -122,9 +122,9 @@ tralloc_bool test_debug_move ( tralloc_context * ctx )
 
         tralloc_free ( a ) != 0
     ) {
-        test_debug_move_free_history ( history );
+        test_debug_callbacks_move_free_history ( history );
         return TRALLOC_FALSE;
     }
 
-    return test_debug_move_free_history ( history ) == 0;
+    return test_debug_callbacks_move_free_history ( history ) == 0;
 }

@@ -43,14 +43,14 @@ function test {
         test_arguments="$passed_arguments "
         $test_callback $feature
         test_arguments+="-DTRALLOC_MAN=0 -DTRALLOC_COLLECT_SOURCES=1"
-        
+
         execute_test_arguments
     done
 }
 
 function get_arguments_for_extensions {
     local feature=$1
-    
+
     if [ "${feature:0:1}" == "1" ]; then
         test_arguments+="-DTRALLOC_FILE=1 "
     else
@@ -186,13 +186,13 @@ function test_locks {
 
 function get_arguments_for_all_combinations {
     local feature=$1
-    
+
     local extensions_feature=${feature:0:7}
     get_arguments_for_extensions $extensions_feature
-    
+
     local debug_feature=${feature:7:6}
     get_arguments_for_debug $debug_feature
-    
+
     local locks_feature=${feature:13:5}
     get_arguments_for_locks $locks_feature
 }

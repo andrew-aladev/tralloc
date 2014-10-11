@@ -469,11 +469,6 @@ tralloc_error _tralloc_alloc ( tralloc_context * parent_context, tralloc_context
     total_length += extensions_length;
 #   endif
 
-    tralloc_error result;
-
-#   if defined ( TRALLOC_DEBUG )
-    // Debug should care about thread safety of operations with "parent_chunk" by itself.
-
     _tralloc_chunk_prototype chunk_prototype;
     chunk_prototype.parent = parent_chunk;
     chunk_prototype.length = length;
@@ -491,6 +486,10 @@ tralloc_error _tralloc_alloc ( tralloc_context * parent_context, tralloc_context
     chunk_prototype.initialized_at_line = options->line;
 #   endif
 
+    tralloc_error result;
+
+#   if defined ( TRALLOC_DEBUG )
+    // Debug should care about thread safety of operations with "parent_chunk" by itself.
     result = _tralloc_debug_before_add_chunk ( &chunk_prototype );
     if ( result != 0 ) {
         return result;

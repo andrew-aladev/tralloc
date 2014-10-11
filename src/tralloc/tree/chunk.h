@@ -33,8 +33,6 @@ _tralloc_children_lock * _tralloc_get_children_lock_from_chunk ( _tralloc_chunk 
 #endif
 
 void _tralloc_update_chunk ( _tralloc_chunk * chunk );
-
-// "chunk" can't be NULL, "new_parent_chunk" can be NULL.
 void _tralloc_attach_chunk ( _tralloc_chunk * chunk, _tralloc_chunk * new_parent_chunk );
 
 

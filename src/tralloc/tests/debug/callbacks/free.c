@@ -3,14 +3,14 @@
 // tralloc is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
-#include <tralloc/tests/debug/common.h>
+#include <tralloc/tests/debug/callbacks/common.h>
 #include <tralloc/tests/common/dynarr.h>
 #include <tralloc/tree.h>
 #include <tralloc/debug.h>
 
 
 static
-tralloc_error test_debug_before_free ( void * user_data, _tralloc_chunk * chunk )
+tralloc_error test_debug_callbacks_before_free ( void * user_data, _tralloc_chunk * chunk )
 {
     dynarr * tralloc_history = ( dynarr * ) user_data;
     if ( dynarr_append ( tralloc_history, chunk ) != 0 ) {
@@ -20,7 +20,7 @@ tralloc_error test_debug_before_free ( void * user_data, _tralloc_chunk * chunk 
 }
 
 static inline
-dynarr * test_debug_free_new_history()
+dynarr * test_debug_callbacks_free_new_history()
 {
     dynarr * history = dynarr_new ( 8 );
     if ( history == NULL ) {
@@ -30,7 +30,7 @@ dynarr * test_debug_free_new_history()
         dynarr_free ( history );
         return NULL;
     }
-    if ( tralloc_debug_callback_set_free_functions ( NULL, test_debug_before_free, NULL, NULL, NULL, NULL ) != 0 ) {
+    if ( tralloc_debug_callback_set_free_functions ( NULL, test_debug_callbacks_before_free, NULL, NULL, NULL, NULL ) != 0 ) {
         tralloc_debug_callback_set_free_data ( NULL, NULL, NULL, NULL, NULL, NULL );
         dynarr_free ( history );
         return NULL;
@@ -39,7 +39,7 @@ dynarr * test_debug_free_new_history()
 }
 
 static inline
-tralloc_error test_debug_free_free_history ( dynarr * history )
+tralloc_error test_debug_callbacks_free_free_history ( dynarr * history )
 {
     tralloc_error error  = 0;
     tralloc_error result = tralloc_debug_callback_set_free_data ( NULL, NULL, NULL, NULL, NULL, NULL );
@@ -55,9 +55,9 @@ tralloc_error test_debug_free_free_history ( dynarr * history )
     return error;
 }
 
-tralloc_bool test_debug_free ( tralloc_context * ctx )
+tralloc_bool test_debug_callbacks_free ( tralloc_context * ctx )
 {
-    dynarr * history = test_debug_free_new_history();
+    dynarr * history = test_debug_callbacks_free_new_history();
     if ( history == NULL ) {
         return TRALLOC_FALSE;
     }
@@ -70,7 +70,7 @@ tralloc_bool test_debug_free ( tralloc_context * ctx )
         tralloc_new ( ctx, ( tralloc_context ** ) &b, sizeof ( char ) * 3 )  != 0 ||
         tralloc_new ( a,   ( tralloc_context ** ) &c, sizeof ( float ) * 4 ) != 0
     ) {
-        test_debug_free_free_history ( history );
+        test_debug_callbacks_free_free_history ( history );
         return TRALLOC_FALSE;
     }
 
@@ -91,9 +91,9 @@ tralloc_bool test_debug_free ( tralloc_context * ctx )
         ( chunk = dynarr_get ( history, 2 ) ) == NULL ||
         chunk != b_chunk
     ) {
-        test_debug_free_free_history ( history );
+        test_debug_callbacks_free_free_history ( history );
         return TRALLOC_FALSE;
     }
 
-    return test_debug_free_free_history ( history ) == 0;
+    return test_debug_callbacks_free_free_history ( history ) == 0;
 }

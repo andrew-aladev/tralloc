@@ -19,7 +19,7 @@
 #endif
 
 
-tralloc_error _tralloc_debug_before_add_chunk ( _tralloc_chunk_prototype * chunk_prototype )
+tralloc_error _tralloc_debug_before_add_chunk ( _tralloc_chunk_prototype * _TRALLOC_UNUSED ( chunk_prototype ) )
 {
     tralloc_error _TRALLOC_UNUSED ( result );
 

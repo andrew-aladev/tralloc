@@ -3,7 +3,7 @@
 // tralloc is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
-#include <tralloc/tests/debug/common.h>
+#include <tralloc/tests/debug/callbacks/common.h>
 #include <tralloc/tests/common/dynarr.h>
 #include <tralloc/tree.h>
 #include <tralloc/debug.h>
@@ -15,16 +15,16 @@
 #include <stdlib.h>
 
 
-typedef struct test_debug_resize_info_t {
+typedef struct test_debug_callbacks_resize_info_t {
     _tralloc_chunk * chunk;
     size_t old_data_length;
-} test_debug_resize_info;
+} test_debug_callbacks_resize_info;
 
 static
-tralloc_error test_debug_after_resize ( void * user_data, _tralloc_chunk * chunk, size_t old_data_length )
+tralloc_error test_debug_callbacks_after_resize ( void * user_data, _tralloc_chunk * chunk, size_t old_data_length )
 {
     dynarr * history = ( dynarr * ) user_data;
-    test_debug_resize_info * info = malloc ( sizeof ( test_debug_resize_info ) );
+    test_debug_callbacks_resize_info * info = malloc ( sizeof ( test_debug_callbacks_resize_info ) );
     if ( info == NULL ) {
         return TRALLOC_ERROR_MALLOC_FAILED;
     }
@@ -39,7 +39,7 @@ tralloc_error test_debug_after_resize ( void * user_data, _tralloc_chunk * chunk
 }
 
 static inline
-dynarr * test_debug_resize_new_history()
+dynarr * test_debug_callbacks_resize_new_history()
 {
     dynarr * history = dynarr_new ( 8 );
     if ( history == NULL ) {
@@ -49,7 +49,7 @@ dynarr * test_debug_resize_new_history()
         dynarr_free ( history );
         return NULL;
     }
-    if ( tralloc_debug_callback_set_resize_functions ( NULL, test_debug_after_resize ) != 0 ) {
+    if ( tralloc_debug_callback_set_resize_functions ( NULL, test_debug_callbacks_after_resize ) != 0 ) {
         tralloc_debug_callback_set_resize_data ( NULL, NULL );
         dynarr_free ( history );
         return NULL;
@@ -58,7 +58,7 @@ dynarr * test_debug_resize_new_history()
 }
 
 static inline
-tralloc_error test_debug_resize_free_history ( dynarr * history )
+tralloc_error test_debug_callbacks_resize_free_history ( dynarr * history )
 {
     tralloc_error error  = 0;
     tralloc_error result = tralloc_debug_callback_set_resize_data ( NULL, NULL );
@@ -74,9 +74,9 @@ tralloc_error test_debug_resize_free_history ( dynarr * history )
     return error;
 }
 
-tralloc_bool test_debug_resize ( tralloc_context * ctx )
+tralloc_bool test_debug_callbacks_resize ( tralloc_context * ctx )
 {
-    dynarr * history = test_debug_resize_new_history();
+    dynarr * history = test_debug_callbacks_resize_new_history();
     if ( history == NULL ) {
         return TRALLOC_FALSE;
     }
@@ -93,7 +93,7 @@ tralloc_bool test_debug_resize ( tralloc_context * ctx )
         tralloc_realloc ( ( tralloc_context ** ) &a, sizeof ( int ) * 9 )    != 0 ||
         tralloc_realloc ( ( tralloc_context ** ) &c, sizeof ( float ) * 10 ) != 0
     ) {
-        test_debug_resize_free_history ( history );
+        test_debug_callbacks_resize_free_history ( history );
         return TRALLOC_FALSE;
     }
 
@@ -110,12 +110,12 @@ tralloc_bool test_debug_resize ( tralloc_context * ctx )
     ) {
         tralloc_free ( a );
         tralloc_free ( b );
-        test_debug_resize_free_history ( history );
+        test_debug_callbacks_resize_free_history ( history );
         return TRALLOC_FALSE;
     }
 #   endif
 
-    test_debug_resize_info * info;
+    test_debug_callbacks_resize_info * info;
     if (
         dynarr_get_length ( history ) != 3 ||
         ( info = dynarr_get ( history, 0 ) ) == NULL ||
@@ -128,9 +128,9 @@ tralloc_bool test_debug_resize ( tralloc_context * ctx )
         tralloc_free ( a ) != 0 ||
         tralloc_free ( b ) != 0
     ) {
-        test_debug_resize_free_history ( history );
+        test_debug_callbacks_resize_free_history ( history );
         return TRALLOC_FALSE;
     }
 
-    return test_debug_resize_free_history ( history ) == 0;
+    return test_debug_callbacks_resize_free_history ( history ) == 0;
 }

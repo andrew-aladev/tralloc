@@ -30,11 +30,13 @@ static const char _TRALLOC_ERROR_UTILS_BUFFER_OVERFLOW [] = "overflow of buffer 
 #endif
 
 #if defined ( TRALLOC_THREADS )
+static const char _TRALLOC_ERROR_RWLOCK_FAILED   [] = "rwlock failed";
 static const char _TRALLOC_ERROR_MUTEX_FAILED    [] = "mutex failed";
 static const char _TRALLOC_ERROR_SPINLOCK_FAILED [] = "spinlock failed";
 
 static const char _TRALLOC_ERROR_NO_SUBTREE_LOCK  [] = "chunk should have TRALLOC_EXTENSION_LOCK_SUBTREE";
 static const char _TRALLOC_ERROR_NO_CHILDREN_LOCK [] = "chunk should have TRALLOC_EXTENSION_LOCK_CHILDREN";
+static const char _TRALLOC_ERROR_NO_POOL_LOCK     [] = "chunk should have TRALLOC_EXTENSION_LOCK_POOL";
 #endif
 
 const char * tralloc_debug_log_get_string_for_error ( tralloc_error error )
@@ -76,6 +78,8 @@ const char * tralloc_debug_log_get_string_for_error ( tralloc_error error )
 #   endif
 
 #   if defined ( TRALLOC_THREADS )
+    case TRALLOC_ERROR_RWLOCK_FAILED:
+        return _TRALLOC_ERROR_RWLOCK_FAILED;
     case TRALLOC_ERROR_MUTEX_FAILED:
         return _TRALLOC_ERROR_MUTEX_FAILED;
     case TRALLOC_ERROR_SPINLOCK_FAILED:
@@ -85,6 +89,8 @@ const char * tralloc_debug_log_get_string_for_error ( tralloc_error error )
         return _TRALLOC_ERROR_NO_CHILDREN_LOCK;
     case TRALLOC_ERROR_NO_SUBTREE_LOCK:
         return _TRALLOC_ERROR_NO_SUBTREE_LOCK;
+    case TRALLOC_ERROR_NO_POOL_LOCK:
+        return _TRALLOC_ERROR_NO_POOL_LOCK;
 #   endif
 
     default:

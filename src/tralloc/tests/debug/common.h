@@ -9,11 +9,6 @@
 #include <tralloc/types.h>
 
 
-tralloc_bool test_debug_add    ( tralloc_context * ctx );
-tralloc_bool test_debug_resize ( tralloc_context * ctx );
-tralloc_bool test_debug_move   ( tralloc_context * ctx );
-tralloc_bool test_debug_free   ( tralloc_context * ctx );
-
 int test_debug ( tralloc_context * ctx );
 
 

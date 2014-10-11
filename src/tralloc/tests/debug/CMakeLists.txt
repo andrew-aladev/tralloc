@@ -1,10 +1,10 @@
 set (SOURCES
-    "${CMAKE_CURRENT_SOURCE_DIR}/add.c"
-    "${CMAKE_CURRENT_SOURCE_DIR}/resize.c"
-    "${CMAKE_CURRENT_SOURCE_DIR}/move.c"
-    "${CMAKE_CURRENT_SOURCE_DIR}/free.c"
     "${CMAKE_CURRENT_SOURCE_DIR}/test.c"
 )
+
+if (${TRALLOC_DEBUG_CALLBACKS})
+    add_subdirectory ("callbacks")
+endif ()
 
 if (${TRALLOC_COLLECT_SOURCES})
     join ("${SOURCES}" " " FILES)

@@ -71,7 +71,7 @@ tralloc_error _tralloc_debug_callback_before_add_chunk ( _tralloc_chunk_prototyp
     }
 #   endif
 
-    void * data = _tralloc_debug_callback_before_add_data;
+    void * user_data = _tralloc_debug_callback_before_add_data;
     tralloc_debug_callback_before_add function = _tralloc_debug_callback_before_add_callback;
 
 #   if defined ( TRALLOC_THREADS )
@@ -82,7 +82,7 @@ tralloc_error _tralloc_debug_callback_before_add_chunk ( _tralloc_chunk_prototyp
 #   endif
 
     if ( function != NULL ) {
-        return function ( data, chunk_prototype );
+        return function ( user_data, chunk_prototype );
     }
     return 0;
 }
@@ -97,7 +97,7 @@ tralloc_error _tralloc_debug_callback_after_add_chunk ( _tralloc_chunk * chunk )
     }
 #   endif
 
-    void * data = _tralloc_debug_callback_after_add_data;
+    void * user_data = _tralloc_debug_callback_after_add_data;
     tralloc_debug_callback_after_add function = _tralloc_debug_callback_after_add_callback;
 
 #   if defined ( TRALLOC_THREADS )
@@ -108,7 +108,7 @@ tralloc_error _tralloc_debug_callback_after_add_chunk ( _tralloc_chunk * chunk )
 #   endif
 
     if ( function != NULL ) {
-        return function ( data, chunk );
+        return function ( user_data, chunk );
     }
     return 0;
 }
@@ -175,7 +175,7 @@ tralloc_error _tralloc_debug_callback_before_move_chunk ( _tralloc_chunk * chunk
     }
 #   endif
 
-    void * data = _tralloc_debug_callback_before_move_data;
+    void * user_data = _tralloc_debug_callback_before_move_data;
     tralloc_debug_callback_before_move function = _tralloc_debug_callback_before_move_callback;
 
 #   if defined ( TRALLOC_THREADS )
@@ -186,7 +186,7 @@ tralloc_error _tralloc_debug_callback_before_move_chunk ( _tralloc_chunk * chunk
 #   endif
 
     if ( function != NULL ) {
-        return function ( data, chunk );
+        return function ( user_data, chunk );
     }
     return 0;
 }
@@ -201,7 +201,7 @@ tralloc_error _tralloc_debug_callback_after_move_chunk ( _tralloc_chunk * chunk,
     }
 #   endif
 
-    void * data = _tralloc_debug_callback_after_move_data;
+    void * user_data = _tralloc_debug_callback_after_move_data;
     tralloc_debug_callback_after_move function = _tralloc_debug_callback_after_move_callback;
 
 #   if defined ( TRALLOC_THREADS )
@@ -212,7 +212,7 @@ tralloc_error _tralloc_debug_callback_after_move_chunk ( _tralloc_chunk * chunk,
 #   endif
 
     if ( function != NULL ) {
-        return function ( data, chunk, old_parent_chunk );
+        return function ( user_data, chunk, old_parent_chunk );
     }
     return 0;
 }
@@ -279,7 +279,7 @@ tralloc_error _tralloc_debug_callback_before_resize_chunk ( _tralloc_chunk * chu
     }
 #   endif
 
-    void * data = _tralloc_debug_callback_before_resize_data;
+    void * user_data = _tralloc_debug_callback_before_resize_data;
     tralloc_debug_callback_before_resize function = _tralloc_debug_callback_before_resize_callback;
 
 #   if defined ( TRALLOC_THREADS )
@@ -290,7 +290,7 @@ tralloc_error _tralloc_debug_callback_before_resize_chunk ( _tralloc_chunk * chu
 #   endif
 
     if ( function != NULL ) {
-        return function ( data, chunk );
+        return function ( user_data, chunk );
     }
     return 0;
 }
@@ -305,7 +305,7 @@ tralloc_error _tralloc_debug_callback_after_resize_chunk ( _tralloc_chunk * chun
     }
 #   endif
 
-    void * data = _tralloc_debug_callback_after_resize_data;
+    void * user_data = _tralloc_debug_callback_after_resize_data;
     tralloc_debug_callback_after_resize function = _tralloc_debug_callback_after_resize_callback;
 
 #   if defined ( TRALLOC_THREADS )
@@ -316,7 +316,7 @@ tralloc_error _tralloc_debug_callback_after_resize_chunk ( _tralloc_chunk * chun
 #   endif
 
     if ( function != NULL ) {
-        return function ( data, chunk, old_length );
+        return function ( user_data, chunk, old_length );
     }
     return 0;
 }
@@ -417,7 +417,7 @@ tralloc_error _tralloc_debug_callback_before_free_subtree ( _tralloc_chunk * chu
     }
 #   endif
 
-    void * data = _tralloc_debug_callback_before_free_subtree_data;
+    void * user_data = _tralloc_debug_callback_before_free_subtree_data;
     tralloc_debug_callback_before_free_subtree function = _tralloc_debug_callback_before_free_subtree_function;
 
 #   if defined ( TRALLOC_THREADS )
@@ -428,7 +428,7 @@ tralloc_error _tralloc_debug_callback_before_free_subtree ( _tralloc_chunk * chu
 #   endif
 
     if ( function != NULL ) {
-        result = function ( data, chunk );
+        result = function ( user_data, chunk );
         if ( result != 0 ) {
             error = result;
         }
@@ -447,7 +447,7 @@ tralloc_error _tralloc_debug_callback_before_free_chunk ( _tralloc_chunk * chunk
     }
 #   endif
 
-    void * data = _tralloc_debug_callback_before_free_chunk_data;
+    void * user_data = _tralloc_debug_callback_before_free_chunk_data;
     tralloc_debug_callback_before_free_chunk function = _tralloc_debug_callback_before_free_chunk_function;
 
 #   if defined ( TRALLOC_THREADS )
@@ -458,7 +458,7 @@ tralloc_error _tralloc_debug_callback_before_free_chunk ( _tralloc_chunk * chunk
 #   endif
 
     if ( function != NULL ) {
-        result = function ( data, chunk );
+        result = function ( user_data, chunk );
         if ( result != 0 ) {
             error = result;
         }
@@ -477,7 +477,7 @@ tralloc_error _tralloc_debug_callback_before_refuse_to_free_subtree ( _tralloc_c
     }
 #   endif
 
-    void * data = _tralloc_debug_callback_before_refuse_to_free_subtree_data;
+    void * user_data = _tralloc_debug_callback_before_refuse_to_free_subtree_data;
     tralloc_debug_callback_before_refuse_to_free_subtree function = _tralloc_debug_callback_before_refuse_to_free_subtree_function;
 
 #   if defined ( TRALLOC_THREADS )
@@ -488,7 +488,7 @@ tralloc_error _tralloc_debug_callback_before_refuse_to_free_subtree ( _tralloc_c
 #   endif
 
     if ( function != NULL ) {
-        result = function ( data, chunk );
+        result = function ( user_data, chunk );
         if ( result != 0 ) {
             error = result;
         }
@@ -507,7 +507,7 @@ tralloc_error _tralloc_debug_callback_after_refuse_to_free_subtree ( _tralloc_ch
     }
 #   endif
 
-    void * data = _tralloc_debug_callback_after_refuse_to_free_subtree_data;
+    void * user_data = _tralloc_debug_callback_after_refuse_to_free_subtree_data;
     tralloc_debug_callback_after_refuse_to_free_subtree function = _tralloc_debug_callback_after_refuse_to_free_subtree_function;
 
 #   if defined ( TRALLOC_THREADS )
@@ -518,7 +518,7 @@ tralloc_error _tralloc_debug_callback_after_refuse_to_free_subtree ( _tralloc_ch
 #   endif
 
     if ( function != NULL ) {
-        result = function ( data, chunk );
+        result = function ( user_data, chunk );
         if ( result != 0 ) {
             error = result;
         }
@@ -537,7 +537,7 @@ tralloc_error _tralloc_debug_callback_before_refuse_to_free_chunk ( _tralloc_chu
     }
 #   endif
 
-    void * data = _tralloc_debug_callback_before_refuse_to_free_chunk_data;
+    void * user_data = _tralloc_debug_callback_before_refuse_to_free_chunk_data;
     tralloc_debug_callback_before_refuse_to_free_chunk function = _tralloc_debug_callback_before_refuse_to_free_chunk_function;
 
 #   if defined ( TRALLOC_THREADS )
@@ -548,7 +548,7 @@ tralloc_error _tralloc_debug_callback_before_refuse_to_free_chunk ( _tralloc_chu
 #   endif
 
     if ( function != NULL ) {
-        result = function ( data, chunk );
+        result = function ( user_data, chunk );
         if ( result != 0 ) {
             error = result;
         }
@@ -567,7 +567,7 @@ tralloc_error _tralloc_debug_callback_after_refuse_to_free_chunk ( _tralloc_chun
     }
 #   endif
 
-    void * data = _tralloc_debug_callback_after_refuse_to_free_chunk_data;
+    void * user_data = _tralloc_debug_callback_after_refuse_to_free_chunk_data;
     tralloc_debug_callback_after_refuse_to_free_chunk function = _tralloc_debug_callback_after_refuse_to_free_chunk_function;
 
 #   if defined ( TRALLOC_THREADS )
@@ -578,7 +578,7 @@ tralloc_error _tralloc_debug_callback_after_refuse_to_free_chunk ( _tralloc_chun
 #   endif
 
     if ( function != NULL ) {
-        result = function ( data, chunk );
+        result = function ( user_data, chunk );
         if ( result != 0 ) {
             error = result;
         }
