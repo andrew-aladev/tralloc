@@ -44,13 +44,6 @@ tralloc_error _tralloc_debug_after_add_chunk ( _tralloc_chunk * chunk )
 {
     tralloc_error _TRALLOC_UNUSED ( result );
 
-#   if defined ( TRALLOC_DEBUG_THREADS )
-    result = _tralloc_debug_threads_after_add_chunk ( chunk );
-    if ( result != 0 ) {
-        return result;
-    }
-#   endif
-
 #   if defined ( TRALLOC_DEBUG_STATS )
     result = _tralloc_debug_stats_after_add_chunk ( chunk );
     if ( result != 0 ) {

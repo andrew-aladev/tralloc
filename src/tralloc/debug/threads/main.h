@@ -10,7 +10,6 @@
 
 
 tralloc_error _tralloc_debug_threads_before_add_chunk ( _tralloc_chunk * parent_chunk );
-tralloc_error _tralloc_debug_threads_after_add_chunk  ( _tralloc_chunk * chunk );
 
 tralloc_error _tralloc_debug_threads_before_move_chunk ( _tralloc_chunk * chunk );
 tralloc_error _tralloc_debug_threads_after_move_chunk  ( _tralloc_chunk * chunk );
