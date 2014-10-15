@@ -45,12 +45,12 @@ tralloc_bool test_helpers_str ( tralloc_context * ctx )
     }
 #   endif
 
-    if ( tralloc_asprintf ( ctx, &empty, NULL ) != TRALLOC_ERROR_PRINTF_FAILED ) {
+    if ( tralloc_asprintf ( ctx, &empty, NULL ) != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL ) {
         return TRALLOC_FALSE;
     }
 
 #   if defined ( TRALLOC_EXTENSIONS )
-    if ( tralloc_asprintf_with_extensions ( ctx, &empty, 0, NULL ) != TRALLOC_ERROR_PRINTF_FAILED ) {
+    if ( tralloc_asprintf_with_extensions ( ctx, &empty, 0, NULL ) != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL ) {
         return TRALLOC_FALSE;
     }
 #   endif

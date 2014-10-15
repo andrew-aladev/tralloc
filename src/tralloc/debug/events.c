@@ -40,7 +40,7 @@ tralloc_error _tralloc_debug_before_add_chunk ( _tralloc_chunk_prototype * _TRAL
     return 0;
 }
 
-tralloc_error _tralloc_debug_after_add_chunk ( _tralloc_chunk * chunk )
+tralloc_error _tralloc_debug_after_add_chunk ( _tralloc_chunk * _TRALLOC_UNUSED ( chunk ) )
 {
     tralloc_error _TRALLOC_UNUSED ( result );
 
@@ -83,9 +83,9 @@ tralloc_error _tralloc_debug_before_resize_chunk ( _tralloc_chunk * _TRALLOC_UNU
 }
 
 #if defined ( TRALLOC_DEBUG_LENGTH )
-tralloc_error _tralloc_debug_after_resize_chunk ( _tralloc_chunk * chunk, size_t old_length )
+tralloc_error _tralloc_debug_after_resize_chunk ( _tralloc_chunk * _TRALLOC_UNUSED ( chunk ), size_t _TRALLOC_UNUSED ( old_length ) )
 #else
-tralloc_error _tralloc_debug_after_resize_chunk ( _tralloc_chunk * chunk )
+tralloc_error _tralloc_debug_after_resize_chunk ( _tralloc_chunk * _TRALLOC_UNUSED ( chunk ) )
 #endif
 {
     tralloc_error _TRALLOC_UNUSED ( result );
@@ -177,7 +177,7 @@ tralloc_error _tralloc_debug_before_free_subtree ( _tralloc_chunk * _TRALLOC_UNU
     return error;
 }
 
-tralloc_error _tralloc_debug_before_free_chunk ( _tralloc_chunk * chunk )
+tralloc_error _tralloc_debug_before_free_chunk ( _tralloc_chunk * _TRALLOC_UNUSED ( chunk ) )
 {
     tralloc_error error = 0, _TRALLOC_UNUSED ( result );
 
