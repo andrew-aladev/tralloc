@@ -1,5 +1,6 @@
 #!/bin/sh
 
+test_folder=$(dirname "$0")
 passed_arguments=$@
 make_jobs=$(($(nproc) + 1))
 
@@ -7,7 +8,7 @@ test_arguments=
 function execute_test_arguments {
     local arguments=$1
 
-    local command="cmake .. $test_arguments && make clean && make -j $make_jobs"
+    local command="cmake $test_folder $test_arguments && make clean && make -j $make_jobs"
     echo $command
     eval $command
     if [ ! $? -eq 0 ]; then
