@@ -2,6 +2,8 @@
 
 source_dir=$(readlink -f $(dirname $0))
 build_dir=$(readlink -f "$source_dir/build")
+eval "mkdir -p $build_dir"
+
 passed_arguments=$@
 make_jobs=$(($(nproc) + 1))
 
