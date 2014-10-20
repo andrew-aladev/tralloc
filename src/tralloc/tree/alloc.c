@@ -432,7 +432,7 @@ tralloc_error _tralloc_calloc ( void ** data, size_t total_length )
     }
 }
 
-tralloc_error _tralloc_alloc_internal ( tralloc_context ** child_context, _tralloc_constructor_options * options )
+tralloc_error _tralloc_alloc_internal ( _tralloc_alloc_options * options, tralloc_context ** child_context )
 {
     if ( child_context == NULL ) {
         return TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL;
