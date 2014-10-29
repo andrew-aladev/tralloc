@@ -239,7 +239,7 @@ typedef struct _tralloc_chunk_type {
 #   if defined ( TRALLOC_DEBUG_EXTENSIONS )
     // Some extensions can be forced.
     // If bit is 1 - extension value is forced, otherwise extension equals original extension.
-    // So original extensions can be found by "extensions" ^ "forced_extensions"
+    // So original extensions can be found by "extensions" ^ "forced_extensions".
 
     // If parent is pool or pool child - pool child will be enabled, otherwise it will be disabled.
     // Pool child will be disabled if related pool can't alloc it.
@@ -257,11 +257,15 @@ typedef struct _tralloc_chunk_type {
 #   endif
 
 #   if defined ( TRALLOC_DEBUG_THREADS )
-    // "subtree_used_by_thread", "subtree_usage_status", "children_used_by_thread" and "children_usage_status"
-    //      will be locked for thread safety by "thread_usage_lock".
+    // "subtree_used_by_thread",  "subtree_usage_status",
+    // "children_used_by_thread", "children_usage_status",
+    // "pool_used_by_thread",     "pool_usage_status"
+    // will be locked for thread safety by "thread_usage_lock".
+    
     pthread_t subtree_used_by_thread;
-    pthread_t children_used_by_thread;
     _tralloc_thread_usage_status subtree_usage_status;
+    
+    pthread_t children_used_by_thread;
     _tralloc_thread_usage_status children_usage_status;
 
 #   if defined ( TRALLOC_POOL )

@@ -31,8 +31,6 @@
 #cmakedefine TRALLOC_TESTS
 #cmakedefine TRALLOC_EXAMPLES
 
-#cmakedefine TRALLOC_COLLECT_SOURCES
-
 // from tests
 #cmakedefine TRALLOC_HAVE_C99_INLINE
 #cmakedefine TRALLOC_HAVE_BOOL
@@ -44,3 +42,5 @@
 #cmakedefine TRALLOC_EXTENSIONS
 #cmakedefine TRALLOC_DEBUG
 #cmakedefine TRALLOC_UTILS
+
+#cmakedefine TRALLOC_COLLECT_SOURCES
