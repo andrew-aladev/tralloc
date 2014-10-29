@@ -5,40 +5,13 @@
 
 #define _TRALLOC_INCLUDED_FROM_HELPERS_STRING_C
 #include <tralloc/helpers/string.h>
-#include <tralloc/tree/alloc.h>
 #include <tralloc/tree/free.h>
 
 
-typedef struct _tralloc_str_chunk_environment_type {
-    tralloc_context * parent_context;
-
-#   if defined ( TRALLOC_EXTENSIONS )
-    tralloc_extensions extensions;
-#   endif
-
-} _tralloc_str_chunk_environment;
-
-typedef tralloc_error ( * _tralloc_str_constructor_function ) ( _tralloc_str_chunk_environment * chunk_environment, char ** child_context, size_t length );
-
-#if defined ( TRALLOC_EXTENSIONS )
-static
-tralloc_error _tralloc_str_constructor_with_extensions ( _tralloc_str_chunk_environment * chunk_environment, char ** child_context, size_t length )
+tralloc_error _tralloc_strndup ( _tralloc_alloc_options * options, char ** child_context, const char * str, size_t str_length )
 {
-    return tralloc_new_with_extensions ( chunk_environment->parent_context, ( tralloc_context ** ) child_context, length, chunk_environment->extensions );
-}
-#endif
-
-static
-tralloc_error _tralloc_str_constructor ( _tralloc_str_chunk_environment * chunk_environment, char ** child_context, size_t length )
-{
-    return tralloc_new ( chunk_environment->parent_context, ( tralloc_context ** ) child_context, length );
-}
-
-
-static
-tralloc_error _tralloc_strndup_internal ( _tralloc_str_constructor_function constructor, _tralloc_str_chunk_environment * chunk_environment, char ** child_context, const char * str, size_t str_length )
-{
-    tralloc_error result = constructor ( chunk_environment, child_context, sizeof ( char ) * ( str_length + 1 ) );
+    options->length = sizeof ( char ) * ( str_length + 1 );
+    tralloc_error result = _tralloc_alloc ( options, ( tralloc_context ** ) child_context );
     if ( result != 0 ) {
         return result;
     }
@@ -47,27 +20,12 @@ tralloc_error _tralloc_strndup_internal ( _tralloc_str_constructor_function cons
     return 0;
 }
 
-#if defined ( TRALLOC_EXTENSIONS )
-tralloc_error _tralloc_strndup_with_extensions ( tralloc_context * parent_context, char ** child_context, tralloc_extensions extensions, const char * str, size_t str_length )
+tralloc_error _tralloc_vasprintf ( _tralloc_alloc_options * options, char ** child_context, const char * format, va_list arguments )
 {
-    _tralloc_str_chunk_environment chunk_environment;
-    chunk_environment.parent_context = parent_context;
-    chunk_environment.extensions     = extensions;
-    return _tralloc_strndup_internal ( _tralloc_str_constructor_with_extensions, &chunk_environment, child_context, str, str_length );
-}
-#endif
+    if ( format == NULL ) {
+        return TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL;
+    }
 
-tralloc_error _tralloc_strndup ( tralloc_context * parent_context, char ** child_context, const char * str, size_t str_length )
-{
-    _tralloc_str_chunk_environment chunk_environment;
-    chunk_environment.parent_context = parent_context;
-    return _tralloc_strndup_internal ( _tralloc_str_constructor, &chunk_environment, child_context, str, str_length );
-}
-
-
-static
-tralloc_error _tralloc_vasprintf_internal ( _tralloc_str_constructor_function constructor, _tralloc_str_chunk_environment * chunk_environment, char ** child_context, const char * format, va_list arguments )
-{
     va_list arguments_copy;
     va_copy ( arguments_copy, arguments );
     int predicted_str_length = vsnprintf ( NULL, 0, format, arguments_copy );
@@ -76,7 +34,8 @@ tralloc_error _tralloc_vasprintf_internal ( _tralloc_str_constructor_function co
         return TRALLOC_ERROR_PRINTF_FAILED;
     }
 
-    tralloc_error result = constructor ( chunk_environment, child_context, sizeof ( char ) * ( predicted_str_length + 1 ) );
+    options->length = sizeof ( char ) * ( predicted_str_length + 1 );
+    tralloc_error result = _tralloc_alloc ( options, ( tralloc_context ** ) child_context );
     if ( result != 0 ) {
         return result;
     }
@@ -89,21 +48,4 @@ tralloc_error _tralloc_vasprintf_internal ( _tralloc_str_constructor_function co
         return TRALLOC_ERROR_PRINTF_FAILED;
     }
     return 0;
-}
-
-#if defined ( TRALLOC_EXTENSIONS )
-tralloc_error _tralloc_vasprintf_with_extensions ( tralloc_context * parent_context, char ** child_context, tralloc_extensions extensions, const char * format, va_list arguments )
-{
-    _tralloc_str_chunk_environment chunk_environment;
-    chunk_environment.parent_context = parent_context;
-    chunk_environment.extensions     = extensions;
-    return _tralloc_vasprintf_internal ( _tralloc_str_constructor_with_extensions, &chunk_environment, child_context, format, arguments );
-}
-#endif
-
-tralloc_error _tralloc_vasprintf ( tralloc_context * parent_context, char ** child_context, const char * format, va_list arguments )
-{
-    _tralloc_str_chunk_environment chunk_environment;
-    chunk_environment.parent_context = parent_context;
-    return _tralloc_vasprintf_internal ( _tralloc_str_constructor, &chunk_environment, child_context, format, arguments );
 }
