@@ -7,6 +7,7 @@
 #define TRALLOC_HELPERS_STRING_H
 
 #include "../tree/alloc.h"
+
 #include <string.h>
 #include <stdarg.h>
 #include <stdio.h>
@@ -30,7 +31,6 @@ tralloc_error _tralloc_debug_log_forward_to_strndup ( const char * file, size_t 
     options.file           = file;
     options.line           = line;
     options.parent_context = parent_context;
-    options.zero           = false;
 
 #   if defined ( TRALLOC_EXTENSIONS )
     options.extensions = 0;
@@ -62,7 +62,6 @@ tralloc_error _tralloc_debug_log_vasprintf ( const char * file, size_t line, tra
     options.file           = file;
     options.line           = line;
     options.parent_context = parent_context;
-    options.zero           = false;
 
 #   if defined ( TRALLOC_EXTENSIONS )
     options.extensions = 0;
@@ -93,7 +92,6 @@ tralloc_error _tralloc_debug_log_forward_to_strndup_with_extensions ( const char
     options.file           = file;
     options.line           = line;
     options.parent_context = parent_context;
-    options.zero           = false;
     options.extensions     = extensions;
     return _tralloc_strndup ( &options, child_context, str, str_length );
 }
@@ -121,7 +119,6 @@ tralloc_error _tralloc_debug_log_vasprintf_with_extensions ( const char * file, 
     options.file           = file;
     options.line           = line;
     options.parent_context = parent_context;
-    options.zero           = false;
     options.extensions     = extensions;
     return _tralloc_vasprintf ( &options, child_context, format, arguments );
 }
@@ -149,7 +146,6 @@ tralloc_error _tralloc_forward_to_strndup ( tralloc_context * parent_context, ch
 {
     _tralloc_alloc_options options;
     options.parent_context = parent_context;
-    options.zero           = false;
 
 #   if defined ( TRALLOC_EXTENSIONS )
     options.extensions = 0;
@@ -179,7 +175,6 @@ tralloc_error tralloc_vasprintf ( const char * file, size_t line, tralloc_contex
 {
     _tralloc_alloc_options options;
     options.parent_context = parent_context;
-    options.zero           = false;
 
 #   if defined ( TRALLOC_EXTENSIONS )
     options.extensions = 0;
@@ -203,7 +198,6 @@ tralloc_error _tralloc_forward_to_strndup_with_extensions ( tralloc_context * pa
 {
     _tralloc_alloc_options options;
     options.parent_context = parent_context;
-    options.zero           = false;
     options.extensions     = extensions;
     return _tralloc_strndup ( &options, child_context, str, str_length );
 }
@@ -229,7 +223,6 @@ tralloc_error tralloc_vasprintf_with_extensions ( tralloc_context * parent_conte
 {
     _tralloc_alloc_options options;
     options.parent_context = parent_context;
-    options.zero           = false;
     options.extensions     = extensions;
     return _tralloc_vasprintf ( &options, child_context, format, arguments );
 }

@@ -10,6 +10,7 @@
 
 tralloc_error _tralloc_strndup ( _tralloc_alloc_options * options, char ** child_context, const char * str, size_t str_length )
 {
+    options->zero   = false;
     options->length = sizeof ( char ) * ( str_length + 1 );
     tralloc_error result = _tralloc_alloc ( options, ( tralloc_context ** ) child_context );
     if ( result != 0 ) {
@@ -34,6 +35,7 @@ tralloc_error _tralloc_vasprintf ( _tralloc_alloc_options * options, char ** chi
         return TRALLOC_ERROR_PRINTF_FAILED;
     }
 
+    options->zero   = false;
     options->length = sizeof ( char ) * ( predicted_str_length + 1 );
     tralloc_error result = _tralloc_alloc ( options, ( tralloc_context ** ) child_context );
     if ( result != 0 ) {

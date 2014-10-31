@@ -28,9 +28,9 @@ tralloc_bool test_helpers_file ( tralloc_context * ctx )
 {
     if (
         tralloc_open                      ( NULL, NULL, NULL, 0 )       != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL ||
-        tralloc_open_with_extensions      ( NULL, NULL, 0, NULL, 0 )    != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL ||
+        tralloc_open_with_extensions      ( NULL, 0, NULL, NULL, 0 )    != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL ||
         tralloc_open_mode                 ( NULL, NULL, NULL, 0, 0 )    != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL ||
-        tralloc_open_mode_with_extensions ( NULL, NULL, 0, NULL, 0, 0 ) != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL
+        tralloc_open_mode_with_extensions ( NULL, 0, NULL, NULL, 0, 0 ) != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL
     ) {
         return TRALLOC_FALSE;
     }
@@ -38,9 +38,9 @@ tralloc_bool test_helpers_file ( tralloc_context * ctx )
     int * hosts;
     if (
         tralloc_open                      ( ctx, &hosts, "/tmp/tralloc_file_not_exists", O_RDONLY )       != TRALLOC_ERROR_OPEN_DESCRIPTOR_FAILED ||
-        tralloc_open_with_extensions      ( ctx, &hosts, 0, "/tmp/tralloc_file_not_exists", O_RDONLY )    != TRALLOC_ERROR_OPEN_DESCRIPTOR_FAILED ||
+        tralloc_open_with_extensions      ( ctx, 0, &hosts, "/tmp/tralloc_file_not_exists", O_RDONLY )    != TRALLOC_ERROR_OPEN_DESCRIPTOR_FAILED ||
         tralloc_open_mode                 ( ctx, &hosts, "/tmp/tralloc_file_not_exists", O_RDONLY, 0 )    != TRALLOC_ERROR_OPEN_DESCRIPTOR_FAILED ||
-        tralloc_open_mode_with_extensions ( ctx, &hosts, 0, "/tmp/tralloc_file_not_exists", O_RDONLY, 0 ) != TRALLOC_ERROR_OPEN_DESCRIPTOR_FAILED
+        tralloc_open_mode_with_extensions ( ctx, 0, &hosts, "/tmp/tralloc_file_not_exists", O_RDONLY, 0 ) != TRALLOC_ERROR_OPEN_DESCRIPTOR_FAILED
     ) {
         return TRALLOC_FALSE;
     }

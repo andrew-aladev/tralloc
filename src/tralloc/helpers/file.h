@@ -6,8 +6,7 @@
 #if !defined ( TRALLOC_HELPERS_FILE_H )
 #define TRALLOC_HELPERS_FILE_H
 
-#include "../macro.h"
-#include "../types.h"
+#include "../tree/alloc.h"
 
 #include <fcntl.h>
 
@@ -19,20 +18,66 @@
 #endif
 
 
-tralloc_error tralloc_open_with_extensions      ( tralloc_context * parent_context, int ** descriptor_ptr, tralloc_extensions extensions, const char * path_name, int flags );
-tralloc_error tralloc_open_mode_with_extensions ( tralloc_context * parent_context, int ** descriptor_ptr, tralloc_extensions extensions, const char * path_name, int flags, mode_t mode );
+tralloc_error _tralloc_open_mode ( _tralloc_alloc_options * options, int ** descriptor_ptr, const char * path_name, int flags, mode_t mode );
 
+#if defined ( TRALLOC_DEBUG_LOG )
+_TRALLOC_INLINE
+tralloc_error _tralloc_debug_log_open_mode_with_extensions ( const char * file, size_t line, tralloc_context * parent_context, tralloc_extensions extensions, int ** descriptor_ptr, const char * path_name, int flags, mode_t mode )
+{
+    _tralloc_alloc_options options;
+    options.file           = file;
+    options.line           = line;
+    options.parent_context = parent_context;
+    options.extensions     = extensions;
+    return _tralloc_open_mode ( &options, descriptor_ptr, path_name, flags, mode );
+}
+_TRALLOC_INLINE
+tralloc_error _tralloc_debug_log_open_with_extensions ( const char * file, size_t line, tralloc_context * parent_context, tralloc_extensions extensions, int ** descriptor_ptr, const char * path_name, int flags )
+{
+    return _tralloc_debug_log_open_mode_with_extensions ( file, line, parent_context, extensions, descriptor_ptr, path_name, flags, 0 );
+}
+_TRALLOC_INLINE
+tralloc_error _tralloc_debug_log_open_mode ( const char * file, size_t line, tralloc_context * parent_context, int ** descriptor_ptr, const char * path_name, int flags, mode_t mode )
+{
+    return _tralloc_debug_log_open_mode_with_extensions ( file, line, parent_context, 0, descriptor_ptr, path_name, flags, mode );
+}
+_TRALLOC_INLINE
+tralloc_error _tralloc_debug_log_open ( const char * file, size_t line, tralloc_context * parent_context, int ** descriptor_ptr, const char * path_name, int flags )
+{
+    return _tralloc_debug_log_open_mode ( file, line, parent_context, descriptor_ptr, path_name, flags, 0 );
+}
+
+#define tralloc_open_mode_with_extensions(...) _tralloc_debug_log_open_mode_with_extensions (__FILE__, __LINE__, __VA_ARGS__)
+#define tralloc_open_with_extensions(...)      _tralloc_debug_log_open_with_extensions      (__FILE__, __LINE__, __VA_ARGS__)
+#define tralloc_open_mode(...)                 _tralloc_debug_log_open_mode                 (__FILE__, __LINE__, __VA_ARGS__)
+#define tralloc_open(...)                      _tralloc_debug_log_open                      (__FILE__, __LINE__, __VA_ARGS__)
+
+#else
+
+_TRALLOC_INLINE
+tralloc_error tralloc_open_mode_with_extensions ( tralloc_context * parent_context, tralloc_extensions extensions, int ** descriptor_ptr, const char * path_name, int flags, mode_t mode )
+{
+    _tralloc_alloc_options options;
+    options.parent_context = parent_context;
+    options.extensions     = extensions;
+    return _tralloc_open_mode ( &options, descriptor_ptr, path_name, flags, mode );
+}
+_TRALLOC_INLINE
+tralloc_error tralloc_open_with_extensions ( tralloc_context * parent_context, tralloc_extensions extensions, int ** descriptor_ptr, const char * path_name, int flags )
+{
+    return tralloc_open_mode_with_extensions ( parent_context, extensions, descriptor_ptr, path_name, flags, 0 );
+}
+_TRALLOC_INLINE
+tralloc_error _tralloc_open_mode ( tralloc_context * parent_context, int ** descriptor_ptr, const char * path_name, int flags, mode_t mode )
+{
+    return tralloc_open_mode_with_extensions ( parent_context, 0, descriptor_ptr, path_name, flags, mode );
+}
 _TRALLOC_INLINE
 tralloc_error tralloc_open ( tralloc_context * parent_context, int ** descriptor_ptr, const char * path_name, int flags )
 {
-    return tralloc_open_with_extensions ( parent_context, descriptor_ptr, 0, path_name, flags );
+    return tralloc_open_mode ( parent_context, descriptor_ptr, path_name, flags, 0 );
 }
-
-_TRALLOC_INLINE
-tralloc_error tralloc_open_mode ( tralloc_context * parent_context, int ** descriptor_ptr, const char * path_name, int flags, mode_t mode )
-{
-    return tralloc_open_mode_with_extensions ( parent_context, descriptor_ptr, 0, path_name, flags, mode );
-}
+#endif
 
 
 #endif

@@ -5,7 +5,6 @@
 
 #define _TRALLOC_INCLUDED_FROM_HELPERS_FILE_C
 #include <tralloc/helpers/file.h>
-#include <tralloc/tree/alloc.h>
 #include <tralloc/tree/free.h>
 #include <tralloc/destructors/append.h>
 
@@ -22,37 +21,7 @@ tralloc_error _tralloc_close ( tralloc_context * chunk_context, void * _TRALLOC_
     return 0;
 }
 
-static inline
-tralloc_error _tralloc_process_descriptor ( tralloc_context * parent_context, int ** descriptor_ptr, int descriptor, tralloc_extensions extensions )
-{
-    tralloc_error result = tralloc_new_with_extensions ( parent_context, ( tralloc_context ** ) descriptor_ptr, sizeof ( int ), extensions | TRALLOC_EXTENSION_DESTRUCTORS );
-    if ( result != 0 ) {
-        close ( descriptor );
-        return result;
-    }
-    ** descriptor_ptr = descriptor;
-    result = tralloc_append_destructor ( * descriptor_ptr, _tralloc_close, NULL );
-    if ( result != 0 ) {
-        tralloc_free ( * descriptor_ptr );
-        close ( descriptor );
-        return result;
-    }
-    return 0;
-}
-
-tralloc_error tralloc_open_with_extensions ( tralloc_context * parent_context, int ** descriptor_ptr, tralloc_extensions extensions, const char * path_name, int flags )
-{
-    if ( descriptor_ptr == NULL ) {
-        return TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL;
-    }
-    int descriptor = open ( path_name, flags );
-    if ( descriptor == -1 ) {
-        return TRALLOC_ERROR_OPEN_DESCRIPTOR_FAILED;
-    }
-    return _tralloc_process_descriptor ( parent_context, descriptor_ptr, descriptor, extensions );
-}
-
-tralloc_error tralloc_open_mode_with_extensions ( tralloc_context * parent_context, int ** descriptor_ptr, tralloc_extensions extensions, const char * path_name, int flags, mode_t mode )
+tralloc_error _tralloc_open_mode ( _tralloc_alloc_options * options, int ** descriptor_ptr, const char * path_name, int flags, mode_t mode )
 {
     if ( descriptor_ptr == NULL ) {
         return TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL;
@@ -61,5 +30,23 @@ tralloc_error tralloc_open_mode_with_extensions ( tralloc_context * parent_conte
     if ( descriptor == -1 ) {
         return TRALLOC_ERROR_OPEN_DESCRIPTOR_FAILED;
     }
-    return _tralloc_process_descriptor ( parent_context, descriptor_ptr, descriptor, extensions );
+
+    options->zero       = 0;
+    options->length     = sizeof ( int );
+    options->extensions = options->extensions | TRALLOC_EXTENSION_DESTRUCTORS;
+
+    tralloc_error result = _tralloc_alloc ( options, ( tralloc_context ** ) descriptor_ptr );
+    if ( result != 0 ) {
+        close ( descriptor );
+        return result;
+    }
+
+    ** descriptor_ptr = descriptor;
+    result = tralloc_append_destructor ( * descriptor_ptr, _tralloc_close, NULL );
+    if ( result != 0 ) {
+        tralloc_free ( * descriptor_ptr );
+        close ( descriptor );
+        return result;
+    }
+    return 0;
 }
