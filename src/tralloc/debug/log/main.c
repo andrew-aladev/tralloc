@@ -37,7 +37,11 @@ static const char _TRALLOC_ERROR_SPINLOCK_FAILED [] = "spinlock failed";
 
 static const char _TRALLOC_ERROR_NO_SUBTREE_LOCK  [] = "chunk should have TRALLOC_EXTENSION_LOCK_SUBTREE";
 static const char _TRALLOC_ERROR_NO_CHILDREN_LOCK [] = "chunk should have TRALLOC_EXTENSION_LOCK_CHILDREN";
-static const char _TRALLOC_ERROR_NO_POOL_LOCK     [] = "chunk should have TRALLOC_EXTENSION_LOCK_POOL";
+
+#if defined ( TRALLOC_POOL )
+static const char _TRALLOC_ERROR_NO_POOL_LOCK [] = "chunk should have TRALLOC_EXTENSION_LOCK_POOL";
+#endif
+
 #endif
 
 const char * tralloc_debug_log_get_string_for_error ( tralloc_error error )

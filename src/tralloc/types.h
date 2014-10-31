@@ -62,7 +62,11 @@ enum {
 
     TRALLOC_ERROR_NO_CHILDREN_LOCK,
     TRALLOC_ERROR_NO_SUBTREE_LOCK,
+
+#   if defined ( TRALLOC_POOL )
     TRALLOC_ERROR_NO_POOL_LOCK,
+#   endif
+
 #   endif
 
 };
