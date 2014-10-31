@@ -9,7 +9,7 @@
 
 tralloc_bool test_tree_free_errors ()
 {
-    if ( tralloc_free ( NULL ) != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL ) {
+    if ( tralloc_free ( NULL ) != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_UNDEFINED ) {
         return TRALLOC_FALSE;
     }
     return TRALLOC_TRUE;

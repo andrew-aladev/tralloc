@@ -11,7 +11,7 @@
 tralloc_error tralloc_clear_references ( tralloc_context * context )
 {
     if ( context == NULL ) {
-        return TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL;
+        return TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_UNDEFINED;
     }
     _tralloc_chunk * chunk = _tralloc_get_chunk_from_context ( context );
 

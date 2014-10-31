@@ -435,7 +435,7 @@ tralloc_error _tralloc_calloc ( void ** data, size_t total_length )
 tralloc_error _tralloc_alloc ( _tralloc_alloc_options * options, tralloc_context ** child_context )
 {
     if ( child_context == NULL ) {
-        return TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL;
+        return TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_UNDEFINED;
     }
 
     _tralloc_chunk * parent_chunk;

@@ -34,7 +34,7 @@ tralloc_error tralloc_realloc ( tralloc_context ** chunk_context, size_t length 
 {
     tralloc_context * context;
     if ( chunk_context == NULL || ( context = * chunk_context ) == NULL ) {
-        return TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL;
+        return TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_UNDEFINED;
     }
 
     _tralloc_chunk * old_chunk = _tralloc_get_chunk_from_context ( context );

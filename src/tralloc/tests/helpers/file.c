@@ -27,10 +27,10 @@ tralloc_error test_helpers_file_destructor_unlink_file ( tralloc_context * _TRAL
 tralloc_bool test_helpers_file ( tralloc_context * ctx )
 {
     if (
-        tralloc_open                      ( NULL, NULL, NULL, 0 )       != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL ||
-        tralloc_open_with_extensions      ( NULL, 0, NULL, NULL, 0 )    != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL ||
-        tralloc_open_mode                 ( NULL, NULL, NULL, 0, 0 )    != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL ||
-        tralloc_open_mode_with_extensions ( NULL, 0, NULL, NULL, 0, 0 ) != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL
+        tralloc_open                      ( NULL, NULL, NULL, 0 )       != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_UNDEFINED ||
+        tralloc_open_with_extensions      ( NULL, 0, NULL, NULL, 0 )    != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_UNDEFINED ||
+        tralloc_open_mode                 ( NULL, NULL, NULL, 0, 0 )    != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_UNDEFINED ||
+        tralloc_open_mode_with_extensions ( NULL, 0, NULL, NULL, 0, 0 ) != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_UNDEFINED
     ) {
         return TRALLOC_FALSE;
     }

@@ -24,7 +24,7 @@ tralloc_error _tralloc_close ( tralloc_context * chunk_context, void * _TRALLOC_
 tralloc_error _tralloc_open_mode ( _tralloc_alloc_options * options, int ** descriptor_ptr, const char * path_name, int flags, mode_t mode )
 {
     if ( descriptor_ptr == NULL ) {
-        return TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL;
+        return TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_UNDEFINED;
     }
     int descriptor = open ( path_name, flags, mode );
     if ( descriptor == -1 ) {

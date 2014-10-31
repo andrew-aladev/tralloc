@@ -60,7 +60,7 @@ void _tralloc_attach_reference ( _tralloc_reference * reference, _tralloc_refere
 tralloc_error tralloc_move_reference ( tralloc_context * child_context, tralloc_context * parent_context )
 {
     if ( child_context == NULL ) {
-        return TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL;
+        return TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_UNDEFINED;
     }
     if ( child_context == parent_context ) {
         return TRALLOC_ERROR_CHILD_EQUALS_PARENT;

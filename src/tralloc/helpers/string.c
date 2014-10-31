@@ -24,7 +24,7 @@ tralloc_error _tralloc_strndup ( _tralloc_alloc_options * options, char ** child
 tralloc_error _tralloc_vasprintf ( _tralloc_alloc_options * options, char ** child_context, const char * format, va_list arguments )
 {
     if ( format == NULL ) {
-        return TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL;
+        return TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_UNDEFINED;
     }
 
     va_list arguments_copy;

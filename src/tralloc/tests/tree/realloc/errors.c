@@ -11,8 +11,8 @@ tralloc_bool test_tree_realloc_errors ()
 {
     tralloc_context * empty = NULL;
     if (
-        tralloc_realloc ( NULL, 0 )   != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL ||
-        tralloc_realloc ( &empty, 0 ) != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL
+        tralloc_realloc ( NULL, 0 )   != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_UNDEFINED ||
+        tralloc_realloc ( &empty, 0 ) != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_UNDEFINED
     ) {
         return TRALLOC_FALSE;
     }

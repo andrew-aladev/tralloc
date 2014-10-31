@@ -6,13 +6,14 @@
 #include <tralloc/debug/log/main.h>
 
 
-static const char _TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL [] = "required argument is NULL";
-static const char _TRALLOC_ERROR_MALLOC_FAILED             [] = "malloc failed";
-static const char _TRALLOC_ERROR_CALLOC_FAILED             [] = "calloc failed";
-static const char _TRALLOC_ERROR_REALLOC_FAILED            [] = "realloc failed";
-static const char _TRALLOC_ERROR_OPEN_DESCRIPTOR_FAILED    [] = "open descriptor failed";
-static const char _TRALLOC_ERROR_CLOSE_DESCRIPTOR_FAILED   [] = "close descriptor failed";
-static const char _TRALLOC_ERROR_PRINTF_FAILED             [] = "printf failed";
+static const char _TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_UNDEFINED [] = "required argument is undefined";
+
+static const char _TRALLOC_ERROR_MALLOC_FAILED           [] = "malloc failed";
+static const char _TRALLOC_ERROR_CALLOC_FAILED           [] = "calloc failed";
+static const char _TRALLOC_ERROR_REALLOC_FAILED          [] = "realloc failed";
+static const char _TRALLOC_ERROR_OPEN_DESCRIPTOR_FAILED  [] = "open descriptor failed";
+static const char _TRALLOC_ERROR_CLOSE_DESCRIPTOR_FAILED [] = "close descriptor failed";
+static const char _TRALLOC_ERROR_PRINTF_FAILED           [] = "printf failed";
 
 static const char _TRALLOC_ERROR_CHILD_EQUALS_PARENT   [] = "child equals parent";
 static const char _TRALLOC_ERROR_CHILD_HAS_SAME_PARENT [] = "child has same parent";
@@ -42,8 +43,8 @@ static const char _TRALLOC_ERROR_NO_POOL_LOCK     [] = "chunk should have TRALLO
 const char * tralloc_debug_log_get_string_for_error ( tralloc_error error )
 {
     switch ( error ) {
-    case TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL:
-        return _TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL;
+    case TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_UNDEFINED:
+        return _TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_UNDEFINED;
     case TRALLOC_ERROR_MALLOC_FAILED:
         return _TRALLOC_ERROR_MALLOC_FAILED;
     case TRALLOC_ERROR_CALLOC_FAILED:

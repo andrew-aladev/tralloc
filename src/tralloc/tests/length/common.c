@@ -11,7 +11,7 @@
 tralloc_bool test_length_common ( tralloc_context * ctx )
 {
     size_t length;
-    if ( tralloc_get_length ( NULL, &length ) != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL ) {
+    if ( tralloc_get_length ( NULL, &length ) != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_UNDEFINED ) {
         return TRALLOC_FALSE;
     }
 

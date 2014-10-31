@@ -32,7 +32,7 @@ _TRALLOC_INLINE
 tralloc_error tralloc_get_length ( tralloc_context * context, size_t * length_result_ptr )
 {
     if ( context == NULL ) {
-        return TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL;
+        return TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_UNDEFINED;
     }
     _tralloc_chunk * chunk = _tralloc_get_chunk_from_context ( context );
     if ( ! ( chunk->extensions & TRALLOC_EXTENSION_LENGTH ) ) {

@@ -17,7 +17,7 @@
 tralloc_error tralloc_append_destructor ( tralloc_context * context, tralloc_destructor_function function, void * user_data )
 {
     if ( context == NULL ) {
-        return TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL;
+        return TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_UNDEFINED;
     }
     _tralloc_chunk * chunk = _tralloc_get_chunk_from_context ( context );
 
@@ -58,7 +58,7 @@ tralloc_error tralloc_append_destructor ( tralloc_context * context, tralloc_des
 tralloc_error tralloc_prepend_destructor ( tralloc_context * context, tralloc_destructor_function function, void * user_data )
 {
     if ( context == NULL ) {
-        return TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL;
+        return TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_UNDEFINED;
     }
     _tralloc_chunk * chunk = _tralloc_get_chunk_from_context ( context );
 

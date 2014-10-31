@@ -227,7 +227,7 @@ tralloc_bool _test_tree_move_errors_children ( tralloc_context * ctx )
 tralloc_bool test_tree_move_errors ( tralloc_context * ctx )
 {
     if (
-        tralloc_move ( NULL, NULL ) != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL ||
+        tralloc_move ( NULL, NULL ) != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_UNDEFINED ||
         tralloc_move ( ctx, ctx )   != TRALLOC_ERROR_CHILD_EQUALS_PARENT
     ) {
         return TRALLOC_FALSE;

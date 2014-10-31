@@ -18,7 +18,7 @@
 tralloc_error _tralloc_delete_destructors_by_comparator ( tralloc_context * context, _tralloc_destructor_comparator comparator, tralloc_destructor_function function, void * user_data )
 {
     if ( context == NULL ) {
-        return TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL;
+        return TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_UNDEFINED;
     }
     _tralloc_chunk * chunk = _tralloc_get_chunk_from_context ( context );
 

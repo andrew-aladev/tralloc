@@ -42,7 +42,7 @@ _TRALLOC_INLINE
 tralloc_error _tralloc_debug_log_strndup ( const char * file, size_t line, tralloc_context * parent_context, char ** child_context, const char * str, size_t str_length )
 {
     if ( str == NULL ) {
-        return TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL;
+        return TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_UNDEFINED;
     }
     return _tralloc_debug_log_forward_to_strndup ( file, line, parent_context, child_context, str, str_length );
 }
@@ -50,7 +50,7 @@ _TRALLOC_INLINE
 tralloc_error _tralloc_debug_log_strdup ( const char * file, size_t line, tralloc_context * parent_context, char ** child_context, const char * str )
 {
     if ( str == NULL ) {
-        return TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL;
+        return TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_UNDEFINED;
     }
     return _tralloc_debug_log_forward_to_strndup ( file, line, parent_context, child_context, str, strlen ( str ) );
 }
@@ -99,7 +99,7 @@ _TRALLOC_INLINE
 tralloc_error _tralloc_debug_log_strndup_with_extensions ( const char * file, size_t line, tralloc_context * parent_context, char ** child_context, tralloc_extensions extensions, const char * str, size_t str_length )
 {
     if ( str == NULL ) {
-        return TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL;
+        return TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_UNDEFINED;
     }
     return _tralloc_debug_log_forward_to_strndup_with_extensions ( file, line, parent_context, child_context, extensions, str, str_length );
 }
@@ -107,7 +107,7 @@ _TRALLOC_INLINE
 tralloc_error _tralloc_debug_log_strdup_with_extensions ( const char * file, size_t line, tralloc_context * parent_context, char ** child_context, tralloc_extensions extensions, const char * str )
 {
     if ( str == NULL ) {
-        return TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL;
+        return TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_UNDEFINED;
     }
     return _tralloc_debug_log_forward_to_strndup_with_extensions ( file, line, parent_context, child_context, extensions, str, strlen ( str ) );
 }
@@ -157,7 +157,7 @@ _TRALLOC_INLINE
 tralloc_error tralloc_strndup ( tralloc_context * parent_context, char ** child_context, const char * str, size_t str_length )
 {
     if ( str == NULL ) {
-        return TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL;
+        return TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_UNDEFINED;
     }
     return _tralloc_forward_to_strndup ( parent_context, child_context, str, str_length );
 }
@@ -165,7 +165,7 @@ _TRALLOC_INLINE
 tralloc_error tralloc_strdup ( const char * file, size_t line, tralloc_context * parent_context, char ** child_context, const char * str )
 {
     if ( str == NULL ) {
-        return TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL;
+        return TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_UNDEFINED;
     }
     return _tralloc_forward_to_strndup ( parent_context, child_context, str, strlen ( str ) );
 }
@@ -205,7 +205,7 @@ _TRALLOC_INLINE
 tralloc_error tralloc_strndup_with_extensions ( tralloc_context * parent_context, char ** child_context, tralloc_extensions extensions, const char * str, size_t str_length )
 {
     if ( str == NULL ) {
-        return TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL;
+        return TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_UNDEFINED;
     }
     return _tralloc_forward_to_strndup_with_extensions ( parent_context, child_context, extensions, str, str_length );
 }
@@ -213,7 +213,7 @@ _TRALLOC_INLINE
 tralloc_error tralloc_strdup_with_extensions ( tralloc_context * parent_context, char ** child_context, tralloc_extensions extensions, const char * str )
 {
     if ( str == NULL ) {
-        return TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL;
+        return TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_UNDEFINED;
     }
     return _tralloc_forward_to_strndup_with_extensions ( parent_context, child_context, extensions, str, strlen ( str ) );
 }

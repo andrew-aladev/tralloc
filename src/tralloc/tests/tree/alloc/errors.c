@@ -69,9 +69,9 @@ tralloc_bool _test_tree_alloc_errors_children ( tralloc_context * ctx )
 tralloc_bool test_tree_alloc_errors ( tralloc_context * _TRALLOC_UNUSED ( ctx ) )
 {
     if (
-        tralloc_new       ( NULL, NULL, 0 ) != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL ||
-        tralloc_new_zero  ( NULL, NULL, 0 ) != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL ||
-        tralloc_new_empty ( NULL, NULL )    != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL
+        tralloc_new       ( NULL, NULL, 0 ) != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_UNDEFINED ||
+        tralloc_new_zero  ( NULL, NULL, 0 ) != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_UNDEFINED ||
+        tralloc_new_empty ( NULL, NULL )    != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_UNDEFINED
     ) {
         return TRALLOC_FALSE;
     }
@@ -79,9 +79,9 @@ tralloc_bool test_tree_alloc_errors ( tralloc_context * _TRALLOC_UNUSED ( ctx ) 
 #   if defined ( TRALLOC_EXTENSIONS )
 
     if (
-        tralloc_new_with_extensions       ( NULL, NULL, 0, 0 ) != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL ||
-        tralloc_new_zero_with_extensions  ( NULL, NULL, 0, 0 ) != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL ||
-        tralloc_new_empty_with_extensions ( NULL, NULL, 0 )    != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL
+        tralloc_new_with_extensions       ( NULL, NULL, 0, 0 ) != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_UNDEFINED ||
+        tralloc_new_zero_with_extensions  ( NULL, NULL, 0, 0 ) != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_UNDEFINED ||
+        tralloc_new_empty_with_extensions ( NULL, NULL, 0 )    != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_UNDEFINED
     ) {
         return TRALLOC_FALSE;
     }

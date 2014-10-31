@@ -11,18 +11,18 @@
 tralloc_bool test_helpers_str ( tralloc_context * ctx )
 {
     if (
-        tralloc_strdup   ( NULL, NULL, NULL )    != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL ||
-        tralloc_strndup  ( NULL, NULL, NULL, 0 ) != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL ||
-        tralloc_asprintf ( NULL, NULL, "\n" )    != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL
+        tralloc_strdup   ( NULL, NULL, NULL )    != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_UNDEFINED ||
+        tralloc_strndup  ( NULL, NULL, NULL, 0 ) != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_UNDEFINED ||
+        tralloc_asprintf ( NULL, NULL, "\n" )    != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_UNDEFINED
     ) {
         return TRALLOC_FALSE;
     }
 
 #   if defined ( TRALLOC_EXTENSIONS )
     if (
-        tralloc_strdup_with_extensions   ( NULL, NULL, 0, NULL )    != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL ||
-        tralloc_strndup_with_extensions  ( NULL, NULL, 0, NULL, 0 ) != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL ||
-        tralloc_asprintf_with_extensions ( NULL, NULL, 0, "\n" )    != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL
+        tralloc_strdup_with_extensions   ( NULL, NULL, 0, NULL )    != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_UNDEFINED ||
+        tralloc_strndup_with_extensions  ( NULL, NULL, 0, NULL, 0 ) != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_UNDEFINED ||
+        tralloc_asprintf_with_extensions ( NULL, NULL, 0, "\n" )    != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_UNDEFINED
     ) {
         return TRALLOC_FALSE;
     }
@@ -30,27 +30,27 @@ tralloc_bool test_helpers_str ( tralloc_context * ctx )
 
     char * empty;
     if (
-        tralloc_strdup  ( ctx, &empty, NULL )    != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL ||
-        tralloc_strndup ( ctx, &empty, NULL, 0 ) != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL
+        tralloc_strdup  ( ctx, &empty, NULL )    != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_UNDEFINED ||
+        tralloc_strndup ( ctx, &empty, NULL, 0 ) != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_UNDEFINED
     ) {
         return TRALLOC_FALSE;
     }
 
 #   if defined ( TRALLOC_EXTENSIONS )
     if (
-        tralloc_strdup_with_extensions  ( ctx, &empty, 0, NULL )    != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL ||
-        tralloc_strndup_with_extensions ( ctx, &empty, 0, NULL, 0 ) != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL
+        tralloc_strdup_with_extensions  ( ctx, &empty, 0, NULL )    != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_UNDEFINED ||
+        tralloc_strndup_with_extensions ( ctx, &empty, 0, NULL, 0 ) != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_UNDEFINED
     ) {
         return TRALLOC_FALSE;
     }
 #   endif
 
-    if ( tralloc_asprintf ( ctx, &empty, NULL ) != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL ) {
+    if ( tralloc_asprintf ( ctx, &empty, NULL ) != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_UNDEFINED ) {
         return TRALLOC_FALSE;
     }
 
 #   if defined ( TRALLOC_EXTENSIONS )
-    if ( tralloc_asprintf_with_extensions ( ctx, &empty, 0, NULL ) != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL ) {
+    if ( tralloc_asprintf_with_extensions ( ctx, &empty, 0, NULL ) != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_UNDEFINED ) {
         return TRALLOC_FALSE;
     }
 #   endif

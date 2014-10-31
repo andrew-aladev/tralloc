@@ -11,8 +11,8 @@
 tralloc_bool test_references_errors ( tralloc_context * ctx )
 {
     if (
-        tralloc_move_reference ( NULL, NULL ) != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL ||
-        tralloc_clear_references ( NULL )     != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_NULL ||
+        tralloc_move_reference ( NULL, NULL ) != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_UNDEFINED ||
+        tralloc_clear_references ( NULL )     != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_UNDEFINED ||
         tralloc_move_reference ( ctx, ctx )   != TRALLOC_ERROR_CHILD_EQUALS_PARENT
     ) {
         return TRALLOC_FALSE;
