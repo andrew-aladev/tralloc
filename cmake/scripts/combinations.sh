@@ -1,6 +1,7 @@
 #!/bin/sh
 
-source_dir=$(readlink -f $(dirname $0))
+current_dir=$(dirname $0)
+source_dir=$(readlink -f "$current_dir/../../")
 build_dir=$(readlink -f "$source_dir/build")
 eval "mkdir -p $build_dir"
 
@@ -27,6 +28,14 @@ function execute_test_arguments {
             echo "Failed arguments:"
             echo "  $test_arguments"
             exit 2
+        fi
+        
+        command="rm -r $build_dir/*"
+        echo $command
+        eval $command
+        if [ ! $? -eq 0 ]; then
+            echo "Failed to remove $build_dir/*"
+            exit 3
         fi
     fi
 }
