@@ -11,13 +11,21 @@ test_arguments=
 function execute_test_arguments {
     local arguments=$1
 
-    local command="cd $build_dir && cmake $source_dir $test_arguments && make clean && make -j $make_jobs"
+    local command="rm -r $build_dir/*"
+    echo $command
+    eval $command
+    if [ ! $? -eq 0 ]; then
+        echo "Failed to remove $build_dir/*"
+        exit 1
+    fi
+    
+    command="cd $build_dir && cmake $source_dir $test_arguments && make clean && make -j $make_jobs"
     echo $command
     eval $command
     if [ ! $? -eq 0 ]; then
         echo "Failed arguments:"
         echo "  $test_arguments"
-        exit 1
+        exit 2
     fi
     if [ -z "$NO_TESTS" ]; then
         command="make test"
@@ -26,14 +34,6 @@ function execute_test_arguments {
         if [ ! $? -eq 0 ]; then
             echo "Failed arguments:"
             echo "  $test_arguments"
-            exit 2
-        fi
-        
-        command="rm -r $build_dir/*"
-        echo $command
-        eval $command
-        if [ ! $? -eq 0 ]; then
-            echo "Failed to remove $build_dir/*"
             exit 3
         fi
     fi

@@ -6,8 +6,7 @@
 #if !defined ( TRALLOC_UTILS_BUFFER_H )
 #define TRALLOC_UTILS_BUFFER_H
 
-#include <tralloc/types.h>
-#include <tralloc/macro.h>
+#include "../tree/alloc.h"
 
 #undef _TRALLOC_INLINE
 #if defined ( _TRALLOC_INCLUDED_FROM_UTILS_BUFFER_C )
@@ -38,13 +37,72 @@ typedef struct _tralloc_buffer_type {
     size_t    capacity;
 } tralloc_buffer;
 
-tralloc_error tralloc_buffer_new_with_extensions ( tralloc_context * ctx, tralloc_buffer ** buffer_ptr, size_t capacity, tralloc_extensions extensions );
+
+tralloc_error _tralloc_new_buffer ( _tralloc_alloc_options * options, tralloc_buffer ** buffer_ptr, size_t capacity );
+
+#if defined ( TRALLOC_DEBUG_LOG )
+_TRALLOC_INLINE
+tralloc_error _tralloc_debug_log_new_buffer ( const char * file, size_t line, tralloc_context * parent_context, tralloc_buffer ** buffer_ptr, size_t capacity )
+{
+    _tralloc_alloc_options options;
+    options.file           = file;
+    options.line           = line;
+    options.parent_context = parent_context;
+
+#   if defined ( TRALLOC_EXTENSIONS )
+    options.extensions = 0;
+#   endif
+
+    return _tralloc_new_buffer ( &options, buffer_ptr, capacity );
+}
+
+#define tralloc_new_buffer(...) _tralloc_debug_log_new_buffer (__FILE__, __LINE__, __VA_ARGS__)
+
+#if defined ( TRALLOC_EXTENSIONS )
 
 _TRALLOC_INLINE
-tralloc_error tralloc_buffer_new ( tralloc_context * ctx, tralloc_buffer ** buffer_ptr, size_t capacity )
+tralloc_error _tralloc_debug_log_new_buffer_with_extensions ( const char * file, size_t line, tralloc_context * parent_context, tralloc_buffer ** buffer_ptr, tralloc_extensions extensions, size_t capacity )
 {
-    return tralloc_buffer_new_with_extensions ( ctx, buffer_ptr, capacity, 0 );
+    _tralloc_alloc_options options;
+    options.file           = file;
+    options.line           = line;
+    options.parent_context = parent_context;
+    options.extensions     = extensions;
+    return _tralloc_new_buffer ( &options, buffer_ptr, capacity );
 }
+
+#define tralloc_new_buffer_with_extensions(...) _tralloc_debug_log_new_buffer_with_extensions (__FILE__, __LINE__, __VA_ARGS__)
+
+#endif
+
+#else
+
+_TRALLOC_INLINE
+tralloc_error tralloc_new_buffer ( tralloc_context * parent_context, tralloc_buffer ** buffer_ptr, size_t capacity )
+{
+    _tralloc_alloc_options options;
+    options.parent_context = parent_context;
+
+#   if defined ( TRALLOC_EXTENSIONS )
+    options.extensions = 0;
+#   endif
+
+    return _tralloc_new_buffer ( &options, buffer_ptr, capacity );
+}
+
+#if defined ( TRALLOC_EXTENSIONS )
+_TRALLOC_INLINE
+tralloc_error tralloc_new_buffer_with_extensions ( tralloc_context * parent_context, tralloc_buffer ** buffer_ptr, tralloc_extensions extensions, size_t capacity )
+{
+    _tralloc_alloc_options options;
+    options.parent_context = parent_context;
+    options.extensions     = extensions;
+    return _tralloc_new_buffer ( &options, buffer_ptr, capacity );
+}
+#endif
+
+#endif
+
 
 _TRALLOC_INLINE
 size_t tralloc_buffer_get_read_length ( const tralloc_buffer * buffer )
@@ -91,7 +149,17 @@ uint8_t * tralloc_buffer_get_write_pointer ( const tralloc_buffer * buffer )
     return buffer->data + buffer->offset + buffer->length;
 }
 
-tralloc_error tralloc_buffer_resize ( tralloc_buffer * buffer, size_t new_capacity );
+tralloc_error _tralloc_buffer_resize ( tralloc_buffer * buffer, size_t new_capacity );
+
+_TRALLOC_INLINE
+tralloc_error tralloc_buffer_resize ( tralloc_buffer * buffer, size_t new_capacity )
+{
+    // Current valid data's "length" can't be less than new capacity.
+    if ( buffer->length > new_capacity ) {
+        return TRALLOC_ERROR_UTILS_BUFFER_OVERFLOW;
+    }
+    return _tralloc_buffer_resize ( buffer, new_capacity );
+}
 
 _TRALLOC_INLINE
 tralloc_error tralloc_buffer_prepare_write_length ( tralloc_buffer * buffer, size_t new_write_length )
@@ -109,13 +177,13 @@ tralloc_error tralloc_buffer_left_trim ( tralloc_buffer * buffer );
 _TRALLOC_INLINE
 tralloc_error tralloc_buffer_right_trim ( tralloc_buffer * buffer )
 {
-    return tralloc_buffer_resize ( buffer, buffer->offset + buffer->length );
+    return _tralloc_buffer_resize ( buffer, buffer->offset + buffer->length );
 }
 
 _TRALLOC_INLINE
 tralloc_error tralloc_buffer_trim ( tralloc_buffer * buffer )
 {
-    return tralloc_buffer_resize ( buffer, buffer->length );
+    return _tralloc_buffer_resize ( buffer, buffer->length );
 }
 
 

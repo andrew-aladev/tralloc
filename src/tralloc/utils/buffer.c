@@ -5,16 +5,17 @@
 
 #define _TRALLOC_INCLUDED_FROM_UTILS_BUFFER_C
 #include <tralloc/utils/buffer.h>
-#include <tralloc/tree/alloc.h>
 #include <tralloc/tree/realloc.h>
 #include <tralloc/tree/free.h>
 
 #include <string.h>
 
 
-tralloc_error tralloc_buffer_new_with_extensions ( tralloc_context * ctx, tralloc_buffer ** buffer_ptr, size_t capacity, tralloc_extensions extensions )
+tralloc_error _tralloc_new_buffer ( _tralloc_alloc_options * options, tralloc_buffer ** buffer_ptr, size_t capacity )
 {
-    tralloc_error result = tralloc_new_with_extensions ( ctx, ( tralloc_context ** ) buffer_ptr, extensions, sizeof ( tralloc_buffer ) );
+    options->zero   = false;
+    options->length = sizeof ( tralloc_buffer );
+    tralloc_error result = _tralloc_alloc ( options, ( tralloc_context ** ) buffer_ptr );
     if ( result != 0 ) {
         return result;
     }
@@ -34,30 +35,23 @@ tralloc_error tralloc_buffer_new_with_extensions ( tralloc_context * ctx, trallo
 }
 
 static inline
-void _tralloc_buffer_move_valid_data_to_begin ( tralloc_buffer * buffer )
+void _tralloc_buffer_move_data_to_begin ( tralloc_buffer * buffer )
 {
     memmove ( buffer->data, buffer->data + buffer->offset, buffer->length );
     buffer->offset = 0;
 }
 
-tralloc_error tralloc_buffer_resize ( tralloc_buffer * buffer, size_t new_capacity )
+tralloc_error _tralloc_buffer_resize ( tralloc_buffer * buffer, size_t new_capacity )
 {
-    // Current valid data's "length" can't be less than new capacity.
-    if ( buffer->length > new_capacity ) {
-        return TRALLOC_ERROR_UTILS_BUFFER_OVERFLOW;
-    }
-
     // If resize will affect left offset - valid data should be moved to the beginning of "buffer->data".
     if ( buffer->offset + buffer->length > new_capacity ) {
         if ( buffer->offset != 0 ) {
-            _tralloc_buffer_move_valid_data_to_begin ( buffer );
+            _tralloc_buffer_move_data_to_begin ( buffer );
         }
     }
 
     tralloc_error result = tralloc_realloc ( ( tralloc_context ** ) &buffer->data, sizeof ( uint8_t ) * new_capacity );
     if ( result != 0 ) {
-        // Realloc failed, but valid data could be moved to the beginning of "buffer->data".
-        // Buffer is still valid and it makes no sense to revert previous offset.
         return result;
     }
     buffer->capacity = new_capacity;
@@ -72,12 +66,10 @@ tralloc_error tralloc_buffer_left_trim ( tralloc_buffer * buffer )
     }
     size_t new_capacity = buffer->capacity - buffer->offset;
 
-    _tralloc_buffer_move_valid_data_to_begin ( buffer );
+    _tralloc_buffer_move_data_to_begin ( buffer );
 
     tralloc_error result = tralloc_realloc ( ( tralloc_context ** ) &buffer->data, sizeof ( uint8_t ) * new_capacity );
     if ( result != 0 ) {
-        // Realloc failed, but valid data was moved to the beginning of "buffer->data".
-        // Buffer is still valid and it makes no sense to revert previous offset.
         return result;
     }
     buffer->capacity = new_capacity;
