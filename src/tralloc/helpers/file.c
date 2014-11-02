@@ -31,9 +31,9 @@ tralloc_error _tralloc_open_mode ( _tralloc_alloc_options * options, int ** desc
         return TRALLOC_ERROR_OPEN_DESCRIPTOR_FAILED;
     }
 
-    options->zero       = 0;
-    options->length     = sizeof ( int );
-    options->extensions = options->extensions | TRALLOC_EXTENSION_DESTRUCTORS;
+    options->zero        = 0;
+    options->length      = sizeof ( int );
+    options->extensions |= TRALLOC_EXTENSION_DESTRUCTORS;
 
     tralloc_error result = _tralloc_alloc ( options, ( tralloc_context ** ) descriptor_ptr );
     if ( result != 0 ) {

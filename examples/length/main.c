@@ -17,7 +17,7 @@ int main ()
     uint8_t * data;
     size_t data_length;
     if (
-        tralloc_new_with_extensions ( ctx, ( tralloc_context ** ) &data, sizeof ( uint8_t ) * 10, TRALLOC_EXTENSION_LENGTH ) != 0 ||
+        tralloc_new_with_extensions ( ctx, ( tralloc_context ** ) &data, TRALLOC_EXTENSION_LENGTH, sizeof ( uint8_t ) * 10 ) != 0 ||
         tralloc_get_length ( data, &data_length ) != 0 ||
         data_length != sizeof ( uint8_t ) * 10
     ) {

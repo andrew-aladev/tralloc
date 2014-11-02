@@ -10,13 +10,13 @@
 
 tralloc_bool test_references_add ( test_references_tree * tr )
 {
-    if ( tralloc_new_with_extensions ( NULL, ( tralloc_context ** ) &tr->common, sizeof ( int8_t ) * 2, TRALLOC_EXTENSION_REFERENCES ) != 0 ) {
+    if ( tralloc_new_with_extensions ( NULL, ( tralloc_context ** ) &tr->common, TRALLOC_EXTENSION_REFERENCES, sizeof ( int8_t ) * 2 ) != 0 ) {
         return TRALLOC_FALSE;
     }
     tr->common[0] = -100;
     tr->common[1] = 50;
 
-    if ( tralloc_new_with_extensions ( tr, ( tralloc_context ** ) &tr->shared, sizeof ( float ), TRALLOC_EXTENSION_REFERENCES ) != 0 ) {
+    if ( tralloc_new_with_extensions ( tr, ( tralloc_context ** ) &tr->shared, TRALLOC_EXTENSION_REFERENCES, sizeof ( float ) ) != 0 ) {
         return TRALLOC_FALSE;
     }
     * tr->shared = 0.123456;
@@ -49,7 +49,7 @@ tralloc_bool test_references_add ( test_references_tree * tr )
     }
 
     if (
-        tralloc_new_zero_with_extensions ( tr->data_1, ( tralloc_context ** ) &tr->common_1, sizeof ( int ) * 2, TRALLOC_EXTENSION_REFERENCE ) != 0 ||
+        tralloc_new_zero_with_extensions ( tr->data_1, ( tralloc_context ** ) &tr->common_1, TRALLOC_EXTENSION_REFERENCE, sizeof ( int ) * 2 ) != 0 ||
         tr->common_1[0] != 0 || tr->common_1[1] != 0
     ) {
         return TRALLOC_FALSE;
@@ -61,12 +61,12 @@ tralloc_bool test_references_add ( test_references_tree * tr )
         return TRALLOC_FALSE;
     }
 
-    if ( tralloc_new_with_extensions ( tr->common_2, ( tralloc_context ** ) &tr->shared_2, sizeof ( float ), TRALLOC_EXTENSION_REFERENCE ) != 0 ) {
+    if ( tralloc_new_with_extensions ( tr->common_2, ( tralloc_context ** ) &tr->shared_2, TRALLOC_EXTENSION_REFERENCE, sizeof ( float ) ) != 0 ) {
         return TRALLOC_FALSE;
     }
     * tr->shared_2 = 0.123456;
 
-    if ( tralloc_new_with_extensions ( tr->shared, ( tralloc_context ** ) &tr->common_3, sizeof ( size_t ) * 2, TRALLOC_EXTENSION_REFERENCE ) != 0 ) {
+    if ( tralloc_new_with_extensions ( tr->shared, ( tralloc_context ** ) &tr->common_3, TRALLOC_EXTENSION_REFERENCE, sizeof ( size_t ) * 2 ) != 0 ) {
         return TRALLOC_FALSE;
     }
     tr->common_3[0] = 2;

@@ -1,6 +1,6 @@
 #!/bin/sh
 
-current_dir=$(dirname $0)
+current_dir=$(readlink -f "$(dirname $0)")
 
 $current_dir/combinations.sh -DCMAKE_TOOLCHAIN_FILE="$current_dir/../toolchains/gcc/3.3/default.cmake" -DCMAKE_BUILD_TYPE="RELEASE" &&
 $current_dir/combinations.sh -DCMAKE_TOOLCHAIN_FILE="$current_dir/../toolchains/gcc/3.4/default.cmake" -DCMAKE_BUILD_TYPE="RELEASE" &&

@@ -28,7 +28,7 @@ tralloc_bool test_pool_resize_order ( tralloc_context * ctx )
     uint8_t * data_1, * data_2, * data_3, * data_4;
     tralloc_context * spacer_1, * spacer_2, * spacer_3, * spacer_4;
     if (
-        tralloc_new_with_extensions ( ctx, &pool_data, pool_data_length, TRALLOC_EXTENSION_POOL ) != 0 ||
+        tralloc_new_with_extensions ( ctx, &pool_data, TRALLOC_EXTENSION_POOL, pool_data_length ) != 0 ||
         tralloc_new ( pool_data, ( tralloc_context ** ) &data_1, data_1_user_length ) != 0 ||
         tralloc_new_empty ( pool_data, &spacer_1 ) != 0 ||
         tralloc_new ( pool_data, ( tralloc_context ** ) &data_2, data_2_user_length ) != 0 ||

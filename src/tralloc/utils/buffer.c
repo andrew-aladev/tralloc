@@ -14,7 +14,7 @@
 
 tralloc_error tralloc_buffer_new_with_extensions ( tralloc_context * ctx, tralloc_buffer ** buffer_ptr, size_t capacity, tralloc_extensions extensions )
 {
-    tralloc_error result = tralloc_new_with_extensions ( ctx, ( tralloc_context ** ) buffer_ptr, sizeof ( tralloc_buffer ), extensions );
+    tralloc_error result = tralloc_new_with_extensions ( ctx, ( tralloc_context ** ) buffer_ptr, extensions, sizeof ( tralloc_buffer ) );
     if ( result != 0 ) {
         return result;
     }

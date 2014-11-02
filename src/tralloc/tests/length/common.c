@@ -32,7 +32,7 @@ tralloc_bool test_length_common ( tralloc_context * ctx )
 
     uint8_t * data;
     if (
-        tralloc_new_with_extensions ( ctx, ( tralloc_context ** ) &data, sizeof ( uint8_t ) * 2, TRALLOC_EXTENSION_LENGTH ) != 0 ||
+        tralloc_new_with_extensions ( ctx, ( tralloc_context ** ) &data, TRALLOC_EXTENSION_LENGTH, sizeof ( uint8_t ) * 2 ) != 0 ||
         tralloc_get_length ( data, &length ) != 0 ||
         length != sizeof ( uint8_t ) * 2
     ) {

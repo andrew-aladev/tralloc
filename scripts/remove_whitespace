@@ -1,0 +1,46 @@
+#!/bin/sh
+
+source_dir=$(readlink -f "$(dirname $0)/../")
+files=$(find "$source_dir" -regex ".*\.\(h\|c\)")
+
+for file in $files; do
+    result=($(gawk '
+        BEGIN {
+            lines_count         = 0;
+            empty_lines_in_head = 0;
+            empty_lines_in_tail = 0;
+        }
+        /[^[:space:]]/ {
+            found_not_empty_line = 1;
+            empty_lines_in_tail  = 0;
+        }
+        /^[[:space:]]*?$/ {
+            if ( found_not_empty_line ) {
+                empty_lines_in_tail ++;
+            } else {
+                empty_lines_in_head ++;
+            }
+        }
+        {
+            lines_count ++;
+        }
+        END {
+            print (empty_lines_in_head " " empty_lines_in_tail " " lines_count);
+        }
+    ' "$file"))
+    
+    empty_lines_in_head=${result[0]}
+    empty_lines_in_tail=${result[1]}
+    lines_count=${result[2]}
+    
+    if [ $empty_lines_in_head -gt 0 ] || [ $empty_lines_in_tail -gt 0 ]; then
+        echo "Removing whitespace from \"$file\""
+        eval "gawk -i inplace '
+            {
+                if ( NR > $empty_lines_in_head && NR <= $(($lines_count - $empty_lines_in_tail)) ) {
+                    print
+                }
+            }
+        ' \"$file\""
+    fi
+done

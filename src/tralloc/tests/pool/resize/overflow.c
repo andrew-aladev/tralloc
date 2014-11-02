@@ -17,7 +17,7 @@ tralloc_bool test_pool_resize_overflow_solo ( tralloc_context * ctx )
     tralloc_context * pool_data;
     uint8_t * data_1;
     if (
-        tralloc_new_with_extensions ( ctx, &pool_data, pool_data_length, TRALLOC_EXTENSION_POOL ) != 0 ||
+        tralloc_new_with_extensions ( ctx, &pool_data, TRALLOC_EXTENSION_POOL, pool_data_length ) != 0 ||
         tralloc_new ( pool_data, ( tralloc_context ** ) &data_1, sizeof ( uint8_t ) * 5 ) != 0 ||
         tralloc_realloc ( ( tralloc_context ** ) &data_1, sizeof ( uint8_t ) * 10 ) != 0
     ) {
@@ -70,7 +70,7 @@ tralloc_bool test_pool_resize_overflow_left ( tralloc_context * ctx )
     tralloc_context * pool_data;
     uint8_t * data_1, * data_2, * data_3;
     if (
-        tralloc_new_with_extensions ( ctx, &pool_data, pool_data_length, TRALLOC_EXTENSION_POOL ) != 0 ||
+        tralloc_new_with_extensions ( ctx, &pool_data, TRALLOC_EXTENSION_POOL, pool_data_length ) != 0 ||
         tralloc_new ( pool_data, ( tralloc_context ** ) &data_1, sizeof ( uint8_t ) * 5 ) != 0 ||
         tralloc_new ( pool_data, ( tralloc_context ** ) &data_2, sizeof ( uint8_t ) * 4 ) != 0 ||
         tralloc_new ( pool_data, ( tralloc_context ** ) &data_3, sizeof ( uint8_t ) * 3 ) != 0 ||
@@ -143,7 +143,7 @@ tralloc_bool test_pool_resize_overflow_right ( tralloc_context * ctx )
     tralloc_context * pool_data;
     uint8_t * data_1, * data_2, * data_3;
     if (
-        tralloc_new_with_extensions ( ctx, &pool_data, pool_data_length, TRALLOC_EXTENSION_POOL ) != 0 ||
+        tralloc_new_with_extensions ( ctx, &pool_data, TRALLOC_EXTENSION_POOL, pool_data_length ) != 0 ||
         tralloc_new ( pool_data, ( tralloc_context ** ) &data_1, sizeof ( uint8_t ) * 5 ) != 0 ||
         tralloc_new ( pool_data, ( tralloc_context ** ) &data_2, sizeof ( uint8_t ) * 4 ) != 0 ||
         tralloc_new ( pool_data, ( tralloc_context ** ) &data_3, sizeof ( uint8_t ) * 3 ) != 0 ||
@@ -216,7 +216,7 @@ tralloc_bool test_pool_resize_overflow_center ( tralloc_context * ctx )
     tralloc_context * pool_data;
     uint8_t * data_1, * data_2, * data_3;
     if (
-        tralloc_new_with_extensions ( ctx, &pool_data, pool_data_length, TRALLOC_EXTENSION_POOL ) != 0 ||
+        tralloc_new_with_extensions ( ctx, &pool_data, TRALLOC_EXTENSION_POOL, pool_data_length ) != 0 ||
         tralloc_new ( pool_data, ( tralloc_context ** ) &data_1, sizeof ( uint8_t ) * 5 ) != 0 ||
         tralloc_new ( pool_data, ( tralloc_context ** ) &data_2, sizeof ( uint8_t ) * 4 ) != 0 ||
         tralloc_new ( pool_data, ( tralloc_context ** ) &data_3, sizeof ( uint8_t ) * 3 ) != 0 ||
