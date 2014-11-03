@@ -7,7 +7,7 @@
 #include <tralloc/tree/chunk.h>
 
 
-void _tralloc_attach_chunk ( _tralloc_chunk * chunk, _tralloc_chunk * new_parent_chunk )
+void _tralloc_chunk_attach ( _tralloc_chunk * chunk, _tralloc_chunk * new_parent_chunk )
 {
     _tralloc_chunk * parent = chunk->parent;
     _tralloc_chunk * prev   = chunk->prev;
@@ -39,7 +39,7 @@ void _tralloc_attach_chunk ( _tralloc_chunk * chunk, _tralloc_chunk * new_parent
     }
 }
 
-void _tralloc_update_chunk ( _tralloc_chunk * chunk )
+void _tralloc_chunk_update ( _tralloc_chunk * chunk )
 {
     _tralloc_chunk * prev = chunk->prev;
     if ( prev == NULL ) {

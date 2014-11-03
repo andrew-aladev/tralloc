@@ -40,7 +40,7 @@ tralloc_error _tralloc_free_reference ( _tralloc_reference * reference )
             if ( next == NULL ) {
                 // "reference" is the last reference of "reference->references".
                 if ( references->autofree ) {
-                    return _tralloc_free_subtree ( _tralloc_get_chunk_from_references ( references ) );
+                    return _tralloc_free_subtree ( _tralloc_references_get_chunk ( references ) );
                 }
                 return 0;
             }

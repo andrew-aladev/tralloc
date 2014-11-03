@@ -19,7 +19,7 @@ tralloc_error tralloc_clear_references ( tralloc_context * context )
         return TRALLOC_ERROR_NO_SUCH_EXTENSION;
     }
 
-    _tralloc_references * references = _tralloc_get_references_from_chunk ( chunk );
+    _tralloc_references * references = _tralloc_chunk_get_references ( chunk );
     _tralloc_reference * reference   = references->first_reference;
     _tralloc_reference * next_reference;
 

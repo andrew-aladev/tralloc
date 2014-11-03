@@ -149,7 +149,7 @@ tralloc_error tralloc_realloc ( tralloc_context ** chunk_context, size_t length 
     } else {
         _tralloc_chunk * new_chunk = ( _tralloc_chunk * ) ( ( uintptr_t ) new_memory + extensions_length );
 
-        _tralloc_update_chunk ( new_chunk );
+        _tralloc_chunk_update ( new_chunk );
 
 #       if defined ( TRALLOC_LENGTH )
         if ( have_length ) {
@@ -159,11 +159,11 @@ tralloc_error tralloc_realloc ( tralloc_context ** chunk_context, size_t length 
 
 #       if defined ( TRALLOC_REFERENCES )
         if ( have_references ) {
-            _tralloc_references * references = _tralloc_get_references_from_chunk ( new_chunk );
+            _tralloc_references * references = _tralloc_chunk_get_references ( new_chunk );
             _tralloc_update_references ( references );
         }
         if ( have_reference ) {
-            _tralloc_reference * reference = _tralloc_get_reference_from_chunk ( new_chunk );
+            _tralloc_reference * reference = _tralloc_chunk_get_reference ( new_chunk );
             _tralloc_update_reference ( reference );
         }
 #       endif

@@ -76,10 +76,10 @@ tralloc_bool test_references_free_subtree ( test_references_tree * tr )
         return TRALLOC_FALSE;
     }
 
-    _tralloc_references * common_references  = _tralloc_get_references_from_chunk ( _tralloc_context_get_chunk ( tr->common ) );
-    _tralloc_references * shared_references  = _tralloc_get_references_from_chunk ( _tralloc_context_get_chunk ( tr->shared ) );
-    _tralloc_reference  * common_3_reference = _tralloc_get_reference_from_chunk  ( _tralloc_context_get_chunk ( tr->common_3 ) );
-    _tralloc_reference  * shared_2_reference = _tralloc_get_reference_from_chunk  ( _tralloc_context_get_chunk ( tr->shared_2 ) );
+    _tralloc_references * common_references  = _tralloc_chunk_get_references ( _tralloc_context_get_chunk ( tr->common ) );
+    _tralloc_references * shared_references  = _tralloc_chunk_get_references ( _tralloc_context_get_chunk ( tr->shared ) );
+    _tralloc_reference  * common_3_reference = _tralloc_chunk_get_reference  ( _tralloc_context_get_chunk ( tr->common_3 ) );
+    _tralloc_reference  * shared_2_reference = _tralloc_chunk_get_reference  ( _tralloc_context_get_chunk ( tr->shared_2 ) );
 
     if (
         common_references->first_reference != common_3_reference ||

@@ -18,7 +18,7 @@
 
 
 _TRALLOC_INLINE
-tralloc_error _tralloc_new_children_lock ( _tralloc_children_lock * lock )
+tralloc_error _tralloc_children_lock_new ( _tralloc_children_lock * lock )
 {
 
 #   if TRALLOC_CHILDREN_LOCK_TYPE == TRALLOC_THREADS_RWLOCK
@@ -39,7 +39,7 @@ tralloc_error _tralloc_new_children_lock ( _tralloc_children_lock * lock )
 }
 
 _TRALLOC_INLINE
-tralloc_error _tralloc_rdlock_children ( _tralloc_children_lock * lock )
+tralloc_error _tralloc_children_lock_rdlock ( _tralloc_children_lock * lock )
 {
 
 #   if TRALLOC_CHILDREN_LOCK_TYPE == TRALLOC_THREADS_RWLOCK
@@ -60,7 +60,7 @@ tralloc_error _tralloc_rdlock_children ( _tralloc_children_lock * lock )
 }
 
 _TRALLOC_INLINE
-tralloc_error _tralloc_wrlock_children ( _tralloc_children_lock * lock )
+tralloc_error _tralloc_children_lock_wrlock ( _tralloc_children_lock * lock )
 {
 
 #   if TRALLOC_CHILDREN_LOCK_TYPE == TRALLOC_THREADS_RWLOCK
@@ -81,7 +81,7 @@ tralloc_error _tralloc_wrlock_children ( _tralloc_children_lock * lock )
 }
 
 _TRALLOC_INLINE
-tralloc_error _tralloc_unlock_children ( _tralloc_children_lock * lock )
+tralloc_error _tralloc_children_lock_unlock ( _tralloc_children_lock * lock )
 {
 
 #   if TRALLOC_CHILDREN_LOCK_TYPE == TRALLOC_THREADS_RWLOCK
@@ -102,7 +102,7 @@ tralloc_error _tralloc_unlock_children ( _tralloc_children_lock * lock )
 }
 
 _TRALLOC_INLINE
-tralloc_error _tralloc_free_children_lock ( _tralloc_children_lock * lock )
+tralloc_error _tralloc_children_lock_free ( _tralloc_children_lock * lock )
 {
 
 #   if TRALLOC_CHILDREN_LOCK_TYPE == TRALLOC_THREADS_RWLOCK

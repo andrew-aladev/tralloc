@@ -73,8 +73,8 @@ tralloc_error tralloc_move ( tralloc_context * child_context, tralloc_context * 
     tralloc_bool have_subtree_lock = chunk->extensions & TRALLOC_EXTENSION_LOCK_SUBTREE;
     _tralloc_subtree_lock * subtree_lock;
     if ( have_subtree_lock ) {
-        subtree_lock = _tralloc_get_subtree_lock_from_chunk ( chunk );
-        result = _tralloc_wrlock_subtree ( subtree_lock );
+        subtree_lock = _tralloc_chunk_get_subtree_lock ( chunk );
+        result = _tralloc_subtree_lock_wrlock ( subtree_lock );
         if ( result != 0 ) {
             return result;
         }
@@ -98,7 +98,7 @@ tralloc_error tralloc_move ( tralloc_context * child_context, tralloc_context * 
 
         // Subtree lock of "chunk" is locked, it should be unlocked.
         if ( have_subtree_lock ) {
-            _tralloc_unlock_subtree ( subtree_lock );
+            _tralloc_subtree_lock_unlock ( subtree_lock );
         }
 #       endif
 
@@ -116,80 +116,80 @@ tralloc_error tralloc_move ( tralloc_context * child_context, tralloc_context * 
     if ( old_parent_chunk < new_parent_chunk ) {
         parent_1_have_children_lock = old_parent_chunk != NULL && ( old_parent_chunk->extensions & TRALLOC_EXTENSION_LOCK_CHILDREN );
         if ( parent_1_have_children_lock ) {
-            parent_1_children_lock = _tralloc_get_children_lock_from_chunk ( old_parent_chunk );
+            parent_1_children_lock = _tralloc_chunk_get_children_lock ( old_parent_chunk );
         }
         parent_2_have_children_lock = new_parent_chunk != NULL && ( new_parent_chunk->extensions & TRALLOC_EXTENSION_LOCK_CHILDREN );
         if ( parent_2_have_children_lock ) {
-            parent_2_children_lock = _tralloc_get_children_lock_from_chunk ( new_parent_chunk );
+            parent_2_children_lock = _tralloc_chunk_get_children_lock ( new_parent_chunk );
         }
     } else {
         parent_1_have_children_lock = new_parent_chunk != NULL && ( new_parent_chunk->extensions & TRALLOC_EXTENSION_LOCK_CHILDREN );
         if ( parent_1_have_children_lock ) {
-            parent_1_children_lock = _tralloc_get_children_lock_from_chunk ( new_parent_chunk );
+            parent_1_children_lock = _tralloc_chunk_get_children_lock ( new_parent_chunk );
         }
         parent_2_have_children_lock = old_parent_chunk != NULL && ( old_parent_chunk->extensions & TRALLOC_EXTENSION_LOCK_CHILDREN );
         if ( parent_2_have_children_lock ) {
-            parent_2_children_lock = _tralloc_get_children_lock_from_chunk ( old_parent_chunk );
+            parent_2_children_lock = _tralloc_chunk_get_children_lock ( old_parent_chunk );
         }
     }
 
     if ( parent_1_have_children_lock ) {
-        result = _tralloc_wrlock_children ( parent_1_children_lock );
+        result = _tralloc_children_lock_wrlock ( parent_1_children_lock );
         if ( result != 0 ) {
             // It is time to do emergency exit.
 
             // Subtree lock of "chunk" is locked, it should be unlocked.
             if ( have_subtree_lock ) {
-                _tralloc_unlock_subtree ( subtree_lock );
+                _tralloc_subtree_lock_unlock ( subtree_lock );
             }
             return result;
         }
     }
 
     if ( parent_2_have_children_lock ) {
-        result = _tralloc_wrlock_children ( parent_2_children_lock );
+        result = _tralloc_children_lock_wrlock ( parent_2_children_lock );
         if ( result != 0 ) {
             // It is time to do emergency exit.
 
             // Subtree lock of "chunk" is locked, it should be unlocked.
             if ( have_subtree_lock ) {
-                _tralloc_unlock_subtree ( subtree_lock );
+                _tralloc_subtree_lock_unlock ( subtree_lock );
             }
             // "parent_1_children_lock" is locked, it should be unlocked.
             if ( parent_1_have_children_lock ) {
-                _tralloc_unlock_children ( parent_1_children_lock );
+                _tralloc_children_lock_unlock ( parent_1_children_lock );
             }
             return result;
         }
     }
 #   endif
 
-    _tralloc_attach_chunk ( chunk, new_parent_chunk );
+    _tralloc_chunk_attach ( chunk, new_parent_chunk );
 
 #   if defined ( TRALLOC_THREADS )
     if ( parent_2_have_children_lock ) {
-        result = _tralloc_unlock_children ( parent_2_children_lock );
+        result = _tralloc_children_lock_unlock ( parent_2_children_lock );
         if ( result != 0 ) {
             // It is time to do emergency exit.
             // "parent_2_children_lock" have locked status.
 
             // "chunk->parent" has been changed, old parent should be reverted.
-            _tralloc_attach_chunk ( chunk, old_parent_chunk );
+            _tralloc_chunk_attach ( chunk, old_parent_chunk );
 
             // "parent_1_children_lock" is locked, it should be unlocked.
             if ( parent_1_have_children_lock ) {
-                _tralloc_unlock_children ( parent_1_children_lock );
+                _tralloc_children_lock_unlock ( parent_1_children_lock );
             }
             // Subtree lock of "chunk" is locked, it should be unlocked.
             if ( have_subtree_lock ) {
-                _tralloc_unlock_subtree ( subtree_lock );
+                _tralloc_subtree_lock_unlock ( subtree_lock );
             }
             return result;
         }
     }
 
     if ( parent_1_have_children_lock ) {
-        result = _tralloc_unlock_children ( parent_1_children_lock );
+        result = _tralloc_children_lock_unlock ( parent_1_children_lock );
         if ( result != 0 ) {
             // It is time to do emergency exit.
             // "parent_1_children_lock" have locked status.
@@ -197,28 +197,28 @@ tralloc_error tralloc_move ( tralloc_context * child_context, tralloc_context * 
             tralloc_error error = result;
 
             if ( parent_2_have_children_lock ) {
-                result = _tralloc_wrlock_children ( parent_2_children_lock );
+                result = _tralloc_children_lock_wrlock ( parent_2_children_lock );
                 if ( result != 0 ) {
                     return error;
                 }
             }
 
             // "chunk->parent" has been changed, old parent should be reverted.
-            _tralloc_attach_chunk ( chunk, old_parent_chunk );
+            _tralloc_chunk_attach ( chunk, old_parent_chunk );
 
             if ( parent_2_have_children_lock ) {
-                _tralloc_unlock_children ( parent_2_children_lock );
+                _tralloc_children_lock_unlock ( parent_2_children_lock );
             }
             // Subtree lock of "chunk" is locked, it should be unlocked.
             if ( have_subtree_lock ) {
-                _tralloc_unlock_subtree ( subtree_lock );
+                _tralloc_subtree_lock_unlock ( subtree_lock );
             }
             return error;
         }
     }
 
     if ( have_subtree_lock ) {
-        result = _tralloc_unlock_subtree ( subtree_lock );
+        result = _tralloc_subtree_lock_unlock ( subtree_lock );
         if ( result != 0 ) {
             // It is time to do emergency exit.
             // "subtree_lock" have locked status.
@@ -226,26 +226,26 @@ tralloc_error tralloc_move ( tralloc_context * child_context, tralloc_context * 
             tralloc_error error = result;
 
             if ( parent_1_have_children_lock ) {
-                result = _tralloc_wrlock_children ( parent_1_children_lock );
+                result = _tralloc_children_lock_wrlock ( parent_1_children_lock );
                 if ( result != 0 ) {
                     return error;
                 }
             }
             if ( parent_2_have_children_lock ) {
-                result = _tralloc_wrlock_children ( parent_2_children_lock );
+                result = _tralloc_children_lock_wrlock ( parent_2_children_lock );
                 if ( result != 0 ) {
                     return error;
                 }
             }
 
             // "chunk->parent" has been changed, old parent should be reverted.
-            _tralloc_attach_chunk ( chunk, old_parent_chunk );
+            _tralloc_chunk_attach ( chunk, old_parent_chunk );
 
             if ( parent_2_have_children_lock ) {
-                _tralloc_unlock_children ( parent_2_children_lock );
+                _tralloc_children_lock_unlock ( parent_2_children_lock );
             }
             if ( parent_1_have_children_lock ) {
-                _tralloc_unlock_children ( parent_1_children_lock );
+                _tralloc_children_lock_unlock ( parent_1_children_lock );
             }
 
             return error;
@@ -263,19 +263,19 @@ tralloc_error tralloc_move ( tralloc_context * child_context, tralloc_context * 
 
 #       if defined ( TRALLOC_THREADS )
         if ( have_subtree_lock ) {
-            result = _tralloc_wrlock_subtree ( subtree_lock );
+            result = _tralloc_subtree_lock_wrlock ( subtree_lock );
             if ( result != 0 ) {
                 return error;
             }
         }
         if ( parent_1_have_children_lock ) {
-            result = _tralloc_wrlock_children ( parent_1_children_lock );
+            result = _tralloc_children_lock_wrlock ( parent_1_children_lock );
             if ( result != 0 ) {
                 return error;
             }
         }
         if ( parent_2_have_children_lock ) {
-            result = _tralloc_wrlock_children ( parent_2_children_lock );
+            result = _tralloc_children_lock_wrlock ( parent_2_children_lock );
             if ( result != 0 ) {
                 return error;
             }
@@ -283,17 +283,17 @@ tralloc_error tralloc_move ( tralloc_context * child_context, tralloc_context * 
 #       endif
 
         // "chunk->parent" has been changed, old parent should be reverted.
-        _tralloc_attach_chunk ( chunk, old_parent_chunk );
+        _tralloc_chunk_attach ( chunk, old_parent_chunk );
 
 #       if defined ( TRALLOC_THREADS )
         if ( have_subtree_lock ) {
-            _tralloc_unlock_subtree ( subtree_lock );
+            _tralloc_subtree_lock_unlock ( subtree_lock );
         }
         if ( parent_2_have_children_lock ) {
-            _tralloc_unlock_children ( parent_2_children_lock );
+            _tralloc_children_lock_unlock ( parent_2_children_lock );
         }
         if ( parent_1_have_children_lock ) {
-            _tralloc_unlock_children ( parent_1_children_lock );
+            _tralloc_children_lock_unlock ( parent_1_children_lock );
         }
 #       endif
 

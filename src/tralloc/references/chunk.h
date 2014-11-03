@@ -17,19 +17,19 @@
 
 
 _TRALLOC_INLINE
-_tralloc_references * _tralloc_get_references_from_chunk ( _tralloc_chunk * chunk )
+_tralloc_references * _tralloc_chunk_get_references ( _tralloc_chunk * chunk )
 {
     return ( _tralloc_references * ) ( ( uintptr_t ) chunk - _tralloc_extensions_get_offset_for_extension ( chunk->extensions, TRALLOC_EXTENSION_REFERENCES ) );
 }
 
 _TRALLOC_INLINE
-_tralloc_reference * _tralloc_get_reference_from_chunk ( _tralloc_chunk * chunk )
+_tralloc_reference * _tralloc_chunk_get_reference ( _tralloc_chunk * chunk )
 {
     return ( _tralloc_reference * ) ( ( uintptr_t ) chunk - _tralloc_extensions_get_offset_for_extension ( chunk->extensions, TRALLOC_EXTENSION_REFERENCE ) );
 }
 
 _TRALLOC_INLINE
-_tralloc_chunk * _tralloc_get_chunk_from_references ( _tralloc_references * references )
+_tralloc_chunk * _tralloc_references_get_chunk ( _tralloc_references * references )
 {
     return ( _tralloc_chunk * ) ( ( uintptr_t ) references + _tralloc_extensions_get_offset_for_extension ( references->extensions, TRALLOC_EXTENSION_REFERENCES ) );
 }

@@ -276,8 +276,8 @@ tralloc_error _tralloc_alloc_initialize_extensions ( _tralloc_chunk * chunk, _tr
 #   if defined ( TRALLOC_THREADS )
     _tralloc_subtree_lock * subtree_lock;
     if ( extensions_environment->have_subtree_lock ) {
-        subtree_lock = _tralloc_get_subtree_lock_from_chunk ( chunk );
-        result = _tralloc_new_subtree_lock ( subtree_lock );
+        subtree_lock = _tralloc_chunk_get_subtree_lock ( chunk );
+        result = _tralloc_subtree_lock_new ( subtree_lock );
         if ( result != 0 ) {
             return result;
         }
@@ -285,11 +285,11 @@ tralloc_error _tralloc_alloc_initialize_extensions ( _tralloc_chunk * chunk, _tr
 
     _tralloc_children_lock * children_lock;
     if ( extensions_environment->have_children_lock ) {
-        children_lock = _tralloc_get_children_lock_from_chunk ( chunk );
-        result = _tralloc_new_children_lock ( children_lock );
+        children_lock = _tralloc_chunk_get_children_lock ( chunk );
+        result = _tralloc_children_lock_new ( children_lock );
         if ( result != 0 ) {
             if ( extensions_environment->have_subtree_lock ) {
-                _tralloc_free_subtree_lock ( subtree_lock );
+                _tralloc_subtree_lock_free ( subtree_lock );
             }
             return result;
         }
@@ -302,10 +302,10 @@ tralloc_error _tralloc_alloc_initialize_extensions ( _tralloc_chunk * chunk, _tr
         result = _tralloc_new_pool_lock ( pool_lock );
         if ( result != 0 ) {
             if ( extensions_environment->have_children_lock ) {
-                _tralloc_free_children_lock ( children_lock );
+                _tralloc_children_lock_free ( children_lock );
             }
             if ( extensions_environment->have_subtree_lock ) {
-                _tralloc_free_subtree_lock ( subtree_lock );
+                _tralloc_subtree_lock_free ( subtree_lock );
             }
             return result;
         }
@@ -326,10 +326,10 @@ tralloc_error _tralloc_alloc_initialize_extensions ( _tralloc_chunk * chunk, _tr
 #       endif
 
         if ( extensions_environment->have_children_lock ) {
-            _tralloc_free_children_lock ( children_lock );
+            _tralloc_children_lock_free ( children_lock );
         }
         if ( extensions_environment->have_subtree_lock ) {
-            _tralloc_free_subtree_lock ( subtree_lock );
+            _tralloc_subtree_lock_free ( subtree_lock );
         }
         return result;
     }
@@ -352,10 +352,10 @@ tralloc_error _tralloc_alloc_initialize_extensions ( _tralloc_chunk * chunk, _tr
 #       endif
 
         if ( extensions_environment->have_children_lock ) {
-            _tralloc_free_children_lock ( children_lock );
+            _tralloc_children_lock_free ( children_lock );
         }
         if ( extensions_environment->have_subtree_lock ) {
-            _tralloc_free_subtree_lock ( subtree_lock );
+            _tralloc_subtree_lock_free ( subtree_lock );
         }
 #       endif
 
@@ -386,10 +386,10 @@ tralloc_error _tralloc_alloc_initialize_extensions ( _tralloc_chunk * chunk, _tr
 
 #   if defined ( TRALLOC_REFERENCES )
     if ( extensions_environment->have_references ) {
-        _tralloc_new_references ( _tralloc_get_references_from_chunk ( chunk ), extensions_environment->extensions );
+        _tralloc_new_references ( _tralloc_chunk_get_references ( chunk ), extensions_environment->extensions );
     }
     if ( extensions_environment->have_reference ) {
-        _tralloc_new_reference ( _tralloc_get_reference_from_chunk ( chunk ) );
+        _tralloc_new_reference ( _tralloc_chunk_get_reference ( chunk ) );
     }
 #   endif
 
@@ -549,8 +549,8 @@ tralloc_error _tralloc_alloc ( _tralloc_alloc_options * options, tralloc_context
 #       if defined ( TRALLOC_THREADS )
         parent_have_children_lock = parent_chunk->extensions & TRALLOC_EXTENSION_LOCK_CHILDREN;
         if ( parent_have_children_lock ) {
-            parent_children_lock = _tralloc_get_children_lock_from_chunk ( parent_chunk );
-            result = _tralloc_wrlock_children ( parent_children_lock );
+            parent_children_lock = _tralloc_chunk_get_children_lock ( parent_chunk );
+            result = _tralloc_children_lock_wrlock ( parent_children_lock );
             if ( result != 0 ) {
                 _tralloc_free_chunk ( chunk );
                 return result;
@@ -558,14 +558,14 @@ tralloc_error _tralloc_alloc ( _tralloc_alloc_options * options, tralloc_context
         }
 #       endif
 
-        _tralloc_attach_chunk ( chunk, parent_chunk );
+        _tralloc_chunk_attach ( chunk, parent_chunk );
 
 #       if defined ( TRALLOC_THREADS )
         if ( parent_have_children_lock ) {
-            result = _tralloc_unlock_children ( parent_children_lock );
+            result = _tralloc_children_lock_unlock ( parent_children_lock );
             if ( result != 0 ) {
                 // Chunk should be detached.
-                _tralloc_attach_chunk ( chunk, NULL );
+                _tralloc_chunk_attach ( chunk, NULL );
                 _tralloc_free_chunk ( chunk );
                 return result;
             }
@@ -584,7 +584,7 @@ tralloc_error _tralloc_alloc ( _tralloc_alloc_options * options, tralloc_context
 
 #           if defined ( TRALLOC_THREADS )
             if ( parent_have_children_lock ) {
-                result = _tralloc_wrlock_children ( parent_children_lock );
+                result = _tralloc_children_lock_wrlock ( parent_children_lock );
                 if ( result != 0 ) {
                     // "chunk" is a child of "parent_chunk".
                     // But "parent_children_lock" should be locked before detach operation.
@@ -595,11 +595,11 @@ tralloc_error _tralloc_alloc ( _tralloc_alloc_options * options, tralloc_context
             }
 #           endif
 
-            _tralloc_attach_chunk ( chunk, NULL );
+            _tralloc_chunk_attach ( chunk, NULL );
 
 #           if defined ( TRALLOC_THREADS )
             if ( parent_have_children_lock ) {
-                _tralloc_unlock_children ( parent_children_lock );
+                _tralloc_children_lock_unlock ( parent_children_lock );
             }
 #           endif
         }

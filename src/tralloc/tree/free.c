@@ -49,7 +49,7 @@ tralloc_bool _tralloc_can_free_chunk ( _tralloc_chunk * _TRALLOC_UNUSED ( chunk 
 
 #   if defined ( TRALLOC_REFERENCES )
     if ( chunk->extensions & TRALLOC_EXTENSION_REFERENCES ) {
-        _tralloc_references * references = _tralloc_get_references_from_chunk ( chunk );
+        _tralloc_references * references = _tralloc_chunk_get_references ( chunk );
         if ( ! _tralloc_can_free_references ( references ) ) {
             return TRALLOC_FALSE;
         }
@@ -74,7 +74,7 @@ tralloc_bool _tralloc_can_free_chunk_children ( _tralloc_chunk * _TRALLOC_UNUSED
 
 #   if defined ( TRALLOC_REFERENCES )
     if ( chunk->extensions & TRALLOC_EXTENSION_REFERENCES ) {
-        _tralloc_references * references = _tralloc_get_references_from_chunk ( chunk );
+        _tralloc_references * references = _tralloc_chunk_get_references ( chunk );
         if ( ! _tralloc_references_can_free_children ( references ) ) {
             return TRALLOC_FALSE;
         }
@@ -99,16 +99,16 @@ tralloc_error _tralloc_free_chunk ( _tralloc_chunk * chunk )
 
 #   if defined ( TRALLOC_THREADS )
     if ( chunk->extensions & TRALLOC_EXTENSION_LOCK_SUBTREE ) {
-        _tralloc_subtree_lock * subtree_lock = _tralloc_get_subtree_lock_from_chunk ( chunk );
-        result = _tralloc_free_subtree_lock ( subtree_lock );
+        _tralloc_subtree_lock * subtree_lock = _tralloc_chunk_get_subtree_lock ( chunk );
+        result = _tralloc_subtree_lock_free ( subtree_lock );
         if ( result != 0 ) {
             error = result;
         }
     }
 
     if ( chunk->extensions & TRALLOC_EXTENSION_LOCK_CHILDREN ) {
-        _tralloc_children_lock * children_lock = _tralloc_get_children_lock_from_chunk ( chunk );
-        result = _tralloc_free_children_lock ( children_lock );
+        _tralloc_children_lock * children_lock = _tralloc_chunk_get_children_lock ( chunk );
+        result = _tralloc_children_lock_free ( children_lock );
         if ( result != 0 ) {
             error = result;
         }
@@ -138,7 +138,7 @@ tralloc_error _tralloc_free_chunk ( _tralloc_chunk * chunk )
 
 #   if defined ( TRALLOC_REFERENCES )
     if ( chunk->extensions & TRALLOC_EXTENSION_REFERENCE ) {
-        _tralloc_reference * reference = _tralloc_get_reference_from_chunk ( chunk );
+        _tralloc_reference * reference = _tralloc_chunk_get_reference ( chunk );
         result = _tralloc_free_reference ( reference );
         if ( result != 0 ) {
             error = result;
@@ -474,7 +474,7 @@ tralloc_error _tralloc_free_subtree ( _tralloc_chunk * root_chunk )
     }
 #   endif
 
-    _tralloc_attach_chunk ( root_chunk, NULL );
+    _tralloc_chunk_attach ( root_chunk, NULL );
 
     _tralloc_chunk * prev_chunk, * next_chunk;
     result = _tralloc_subtree_to_vertical_list ( root_chunk, &prev_chunk );
