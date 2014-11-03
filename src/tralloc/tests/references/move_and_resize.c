@@ -10,7 +10,7 @@
 #include <tralloc/references/chunk.h>
 
 
-static inline
+static
 tralloc_bool test_references_check_empty_references ( test_references_tree * tr )
 {
     _tralloc_references * common_references  = _tralloc_chunk_get_references ( _tralloc_context_get_chunk ( tr->common ) );
@@ -62,7 +62,7 @@ shared_1 shared_2
 
 */
 
-static inline
+static
 tralloc_bool test_references_check_moved_chunks ( test_references_tree * tr )
 {
     _tralloc_chunk * root_chunk     = _tralloc_context_get_chunk ( tr );

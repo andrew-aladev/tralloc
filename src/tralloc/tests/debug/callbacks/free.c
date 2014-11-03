@@ -19,7 +19,7 @@ tralloc_error test_debug_callbacks_before_free ( void * user_data, _tralloc_chun
     return 0;
 }
 
-static inline
+static
 dynarr * test_debug_callbacks_free_new_history()
 {
     dynarr * history = dynarr_new ( 8 );
@@ -38,7 +38,7 @@ dynarr * test_debug_callbacks_free_new_history()
     return history;
 }
 
-static inline
+static
 tralloc_error test_debug_callbacks_free_free_history ( dynarr * history )
 {
     tralloc_error error  = 0;

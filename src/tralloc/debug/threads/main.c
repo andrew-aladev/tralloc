@@ -22,7 +22,7 @@
 #endif
 
 
-static inline
+static
 tralloc_error _tralloc_debug_threads_check_usage_of_extension (
     _tralloc_chunk * chunk,
     pthread_t thread_id,
@@ -67,7 +67,7 @@ tralloc_error _tralloc_debug_threads_check_usage_of_extension (
     return 0;
 }
 
-static inline
+static
 tralloc_error _tralloc_debug_threads_check_usage_of_subtree ( _tralloc_chunk * chunk, pthread_t thread_id )
 {
     return _tralloc_debug_threads_check_usage_of_extension (
@@ -80,7 +80,7 @@ tralloc_error _tralloc_debug_threads_check_usage_of_subtree ( _tralloc_chunk * c
            );
 }
 
-static inline
+static
 tralloc_error _tralloc_debug_threads_check_usage_of_children ( _tralloc_chunk * chunk, pthread_t thread_id )
 {
     return _tralloc_debug_threads_check_usage_of_extension (
@@ -93,7 +93,7 @@ tralloc_error _tralloc_debug_threads_check_usage_of_children ( _tralloc_chunk * 
            );
 }
 
-static inline
+static
 tralloc_error _tralloc_debug_threads_check_usage_of_pool ( _tralloc_chunk * chunk, pthread_t thread_id )
 {
     return _tralloc_debug_threads_check_usage_of_extension (

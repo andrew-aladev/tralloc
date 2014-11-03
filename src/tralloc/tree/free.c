@@ -43,7 +43,7 @@
 #include <stdlib.h>
 
 
-static inline
+static
 tralloc_bool _tralloc_can_free_chunk ( _tralloc_chunk * _TRALLOC_UNUSED ( chunk ) )
 {
 
@@ -68,7 +68,7 @@ tralloc_bool _tralloc_can_free_chunk ( _tralloc_chunk * _TRALLOC_UNUSED ( chunk 
     return TRALLOC_TRUE;
 }
 
-static inline
+static
 tralloc_bool _tralloc_can_free_chunk_children ( _tralloc_chunk * _TRALLOC_UNUSED ( chunk ) )
 {
 
@@ -216,7 +216,7 @@ Each subtree, that can't be freed should be detached. (the root chunk of subtree
 #if defined ( TRALLOC_DEBUG )
 
 // Function goes through subtree and call _tralloc_debug_before_free_chunk for each chunk.
-static inline
+static
 tralloc_error _tralloc_before_free_subtree ( _tralloc_chunk * root_chunk )
 {
     tralloc_error error  = 0;
@@ -319,7 +319,7 @@ tralloc_error _tralloc_before_free_subtree ( _tralloc_chunk * root_chunk )
 #endif
 
 // Chunk's neighbor should not know that it has been detached.
-static inline
+static
 void _tralloc_detach_chunk_silent ( _tralloc_chunk * chunk )
 {
     chunk->parent = NULL;
@@ -329,7 +329,7 @@ void _tralloc_detach_chunk_silent ( _tralloc_chunk * chunk )
 
 // Function provides root chunk of vertical list.
 // It can be NULL.
-static inline
+static
 tralloc_error _tralloc_subtree_to_vertical_list ( _tralloc_chunk * root_chunk, _tralloc_chunk ** list_root_chunk )
 {
     tralloc_error error = 0, _TRALLOC_UNUSED ( result );

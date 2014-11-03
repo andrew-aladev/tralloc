@@ -7,7 +7,7 @@
 #include <tralloc/references/chunk.h>
 
 
-static inline
+static
 void _tralloc_reference_detach ( _tralloc_reference * reference )
 {
     _tralloc_references * old_references = reference->references;
@@ -28,7 +28,7 @@ void _tralloc_reference_detach ( _tralloc_reference * reference )
     }
 }
 
-static inline
+static
 void _tralloc_reference_attach ( _tralloc_reference * reference, _tralloc_references * new_references )
 {
     _tralloc_references * old_references = reference->references;

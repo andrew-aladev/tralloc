@@ -408,7 +408,7 @@ tralloc_error _tralloc_alloc_initialize_extensions ( _tralloc_chunk * chunk, _tr
 
 #endif
 
-static inline
+static
 tralloc_error _tralloc_malloc ( void ** data, size_t total_length )
 {
     void * _data = malloc ( total_length );
@@ -420,7 +420,7 @@ tralloc_error _tralloc_malloc ( void ** data, size_t total_length )
     }
 }
 
-static inline
+static
 tralloc_error _tralloc_calloc ( void ** data, size_t total_length )
 {
     void * _data = calloc ( 1, total_length );

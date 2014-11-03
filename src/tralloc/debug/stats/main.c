@@ -15,7 +15,7 @@
 
 static size_t _tralloc_debug_stats_chunks_count = 0;
 
-static inline
+static
 tralloc_error _tralloc_debug_stats_add_chunks_count ( size_t chunks_count )
 {
 
@@ -38,7 +38,7 @@ tralloc_error _tralloc_debug_stats_add_chunks_count ( size_t chunks_count )
     return 0;
 }
 
-static inline
+static
 tralloc_error _tralloc_debug_stats_subtract_chunks_count ( size_t chunks_count )
 {
 
@@ -155,7 +155,7 @@ tralloc_error tralloc_debug_stats_get_overhead_length ( size_t * overhead_length
 
 static size_t _tralloc_debug_stats_length = 0;
 
-static inline
+static
 tralloc_error _tralloc_debug_stats_add_length ( size_t length )
 {
 
@@ -178,7 +178,7 @@ tralloc_error _tralloc_debug_stats_add_length ( size_t length )
     return 0;
 }
 
-static inline
+static
 tralloc_error _tralloc_debug_stats_subtract_length ( size_t length )
 {
 

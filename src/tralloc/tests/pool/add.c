@@ -8,7 +8,7 @@
 #include <tralloc/pool/chunk.h>
 
 
-static inline
+static
 tralloc_bool test_pool_add_overflow ( tralloc_context * ctx )
 {
     tralloc_context * empty_pool_data;
@@ -45,7 +45,7 @@ tralloc_bool test_pool_add_overflow ( tralloc_context * ctx )
     return TRALLOC_TRUE;
 }
 
-static inline
+static
 tralloc_bool test_pool_add_strict ( tralloc_context * ctx )
 {
     size_t pool_data_length = tralloc_predict_chunk_length ( TRALLOC_EXTENSION_POOL_CHILD ) + sizeof ( uint8_t ) * 5;
@@ -106,7 +106,7 @@ tralloc_bool test_pool_add_strict ( tralloc_context * ctx )
     return TRALLOC_TRUE;
 }
 
-static inline
+static
 tralloc_bool test_pool_add_much ( tralloc_context * ctx )
 {
     size_t data_1_length    = tralloc_predict_chunk_length ( TRALLOC_EXTENSION_POOL_CHILD ) + sizeof ( uint8_t ) * 5;
@@ -174,7 +174,7 @@ tralloc_bool test_pool_add_much ( tralloc_context * ctx )
     return TRALLOC_TRUE;
 }
 
-static inline
+static
 tralloc_bool test_pool_add_zero ( tralloc_context * ctx )
 {
     size_t pool_data_length = tralloc_predict_chunk_length ( TRALLOC_EXTENSION_POOL_CHILD ) + sizeof ( uint8_t ) * 3;
@@ -202,7 +202,7 @@ tralloc_bool test_pool_add_zero ( tralloc_context * ctx )
     return TRALLOC_TRUE;
 }
 
-static inline
+static
 tralloc_bool test_pool_add_normal ( tralloc_context * ctx )
 {
     size_t data_1_length    = tralloc_predict_chunk_length ( TRALLOC_EXTENSION_POOL_CHILD ) + sizeof ( uint8_t ) * 5;

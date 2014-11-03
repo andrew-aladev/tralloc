@@ -8,7 +8,7 @@
 #include <tralloc/pool/chunk.h>
 
 
-static inline
+static
 tralloc_bool test_pool_resize_overflow_solo ( tralloc_context * ctx )
 {
     size_t data_1_length    = tralloc_predict_chunk_length ( TRALLOC_EXTENSION_POOL_CHILD ) + sizeof ( uint8_t ) * 5;
@@ -59,7 +59,7 @@ tralloc_bool test_pool_resize_overflow_solo ( tralloc_context * ctx )
     return TRALLOC_TRUE;
 }
 
-static inline
+static
 tralloc_bool test_pool_resize_overflow_left ( tralloc_context * ctx )
 {
     size_t data_1_length    = tralloc_predict_chunk_length ( TRALLOC_EXTENSION_POOL_CHILD ) + sizeof ( uint8_t ) * 5;
@@ -132,7 +132,7 @@ tralloc_bool test_pool_resize_overflow_left ( tralloc_context * ctx )
     return TRALLOC_TRUE;
 }
 
-static inline
+static
 tralloc_bool test_pool_resize_overflow_right ( tralloc_context * ctx )
 {
     size_t data_1_length    = tralloc_predict_chunk_length ( TRALLOC_EXTENSION_POOL_CHILD ) + sizeof ( uint8_t ) * 5;
@@ -205,7 +205,7 @@ tralloc_bool test_pool_resize_overflow_right ( tralloc_context * ctx )
     return TRALLOC_TRUE;
 }
 
-static inline
+static
 tralloc_bool test_pool_resize_overflow_center ( tralloc_context * ctx )
 {
     size_t data_1_length    = tralloc_predict_chunk_length ( TRALLOC_EXTENSION_POOL_CHILD ) + sizeof ( uint8_t ) * 5;

@@ -8,7 +8,7 @@
 #include <tralloc/pool/chunk.h>
 
 
-static inline
+static
 tralloc_bool test_pool_resize_left_fragment_is_remained ( tralloc_context * ctx )
 {
     size_t data_1_user_length = sizeof ( uint8_t ) * 5;
@@ -112,7 +112,7 @@ tralloc_bool test_pool_resize_left_fragment_is_remained ( tralloc_context * ctx 
     return TRALLOC_TRUE;
 }
 
-static inline
+static
 tralloc_bool test_pool_resize_left_space_is_remained ( tralloc_context * ctx )
 {
     size_t data_1_user_length = sizeof ( uint8_t ) * 5;
@@ -208,7 +208,7 @@ tralloc_bool test_pool_resize_left_space_is_remained ( tralloc_context * ctx )
     return TRALLOC_TRUE;
 }
 
-static inline
+static
 tralloc_bool test_pool_resize_left_strict ( tralloc_context * ctx )
 {
     size_t data_1_user_length = sizeof ( uint8_t ) * 5;

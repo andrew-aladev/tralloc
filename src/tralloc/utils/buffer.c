@@ -34,7 +34,7 @@ tralloc_error _tralloc_buffer_new ( _tralloc_alloc_options * options, tralloc_bu
     return 0;
 }
 
-static inline
+static
 void _tralloc_buffer_move_data_to_begin ( tralloc_buffer * buffer )
 {
     memmove ( buffer->data, buffer->data + buffer->offset, buffer->length );

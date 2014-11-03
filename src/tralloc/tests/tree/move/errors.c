@@ -66,7 +66,7 @@ void * _test_tree_move_errors_thread ( void * argument )
     return ( void * ) ( ( uintptr_t ) first_error );
 }
 
-static inline
+static
 tralloc_bool _test_tree_move_errors_subtree ( tralloc_context * ctx )
 {
     tralloc_context * parent_1, * parent_2;
@@ -136,7 +136,7 @@ tralloc_bool _test_tree_move_errors_subtree ( tralloc_context * ctx )
     return TRALLOC_TRUE;
 }
 
-static inline
+static
 tralloc_bool _test_tree_move_errors_children ( tralloc_context * ctx )
 {
     tralloc_context * parent_1, * parent_2;

@@ -70,7 +70,7 @@ void _tralloc_debug_stats_lock_destructor ()
 }
 #endif
 
-static inline
+static
 tralloc_error _tralloc_rdlock_debug_stats ( _tralloc_debug_stats_lock * lock )
 {
 
@@ -91,7 +91,7 @@ tralloc_error _tralloc_rdlock_debug_stats ( _tralloc_debug_stats_lock * lock )
     return 0;
 }
 
-static inline
+static
 tralloc_error _tralloc_wrlock_debug_stats ( _tralloc_debug_stats_lock * lock )
 {
 
@@ -112,7 +112,7 @@ tralloc_error _tralloc_wrlock_debug_stats ( _tralloc_debug_stats_lock * lock )
     return 0;
 }
 
-static inline
+static
 tralloc_error _tralloc_unlock_debug_stats ( _tralloc_debug_stats_lock * lock )
 {
 

@@ -26,7 +26,7 @@ void * _test_tree_alloc_errors_thread ( void * argument )
     return ( void * ) ( ( uintptr_t ) first_error );
 }
 
-static inline
+static
 tralloc_bool _test_tree_alloc_errors_children ( tralloc_context * ctx )
 {
     tralloc_context * parent;
