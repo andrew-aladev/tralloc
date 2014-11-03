@@ -88,10 +88,10 @@ tralloc_bool test_destructors_common ( tralloc_context * ctx )
         return TRALLOC_FALSE;
     }
 
-    _tralloc_chunk * chunk_01 = _tralloc_get_chunk_from_context ( text_01 );
-    _tralloc_chunk * chunk_02 = _tralloc_get_chunk_from_context ( text_02 );
-    _tralloc_chunk * chunk_03 = _tralloc_get_chunk_from_context ( text_03 );
-    _tralloc_chunk * chunk_04 = _tralloc_get_chunk_from_context ( text_04 );
+    _tralloc_chunk * chunk_01 = _tralloc_context_get_chunk ( text_01 );
+    _tralloc_chunk * chunk_02 = _tralloc_context_get_chunk ( text_02 );
+    _tralloc_chunk * chunk_03 = _tralloc_context_get_chunk ( text_03 );
+    _tralloc_chunk * chunk_04 = _tralloc_context_get_chunk ( text_04 );
     _tralloc_destructors * destructors;
     _tralloc_destructor * destructor;
 

@@ -15,7 +15,7 @@ tralloc_bool test_pool_add_overflow ( tralloc_context * ctx )
     if ( tralloc_new_empty_with_extensions ( ctx, &empty_pool_data, TRALLOC_EXTENSION_POOL ) != 0 ) {
         return TRALLOC_FALSE;
     }
-    _tralloc_chunk * empty_pool_chunk = _tralloc_get_chunk_from_context ( empty_pool_data );
+    _tralloc_chunk * empty_pool_chunk = _tralloc_context_get_chunk ( empty_pool_data );
     if ( ! ( empty_pool_chunk->extensions & TRALLOC_EXTENSION_POOL ) ) {
         return TRALLOC_FALSE;
     }
@@ -34,7 +34,7 @@ tralloc_bool test_pool_add_overflow ( tralloc_context * ctx )
     if ( tralloc_new_empty ( empty_pool_data, &empty_data ) != 0 ) {
         return TRALLOC_FALSE;
     }
-    _tralloc_chunk * empty_data_chunk = _tralloc_get_chunk_from_context ( empty_data );
+    _tralloc_chunk * empty_data_chunk = _tralloc_context_get_chunk ( empty_data );
     if ( empty_data_chunk->extensions & TRALLOC_EXTENSION_POOL_CHILD ) {
         return TRALLOC_FALSE;
     }
@@ -54,7 +54,7 @@ tralloc_bool test_pool_add_strict ( tralloc_context * ctx )
     if ( tralloc_new_with_extensions ( ctx, &pool_data, TRALLOC_EXTENSION_POOL, pool_data_length ) != 0 ) {
         return TRALLOC_FALSE;
     }
-    _tralloc_chunk * pool_chunk = _tralloc_get_chunk_from_context ( pool_data );
+    _tralloc_chunk * pool_chunk = _tralloc_context_get_chunk ( pool_data );
     if ( ! ( pool_chunk->extensions & TRALLOC_EXTENSION_POOL ) ) {
         return TRALLOC_FALSE;
     }
@@ -80,7 +80,7 @@ tralloc_bool test_pool_add_strict ( tralloc_context * ctx )
     if ( tralloc_new ( pool_data, ( tralloc_context ** ) &data_1, sizeof ( uint8_t ) * 5 ) != 0 ) {
         return TRALLOC_FALSE;
     }
-    _tralloc_chunk * data_1_chunk = _tralloc_get_chunk_from_context ( data_1 );
+    _tralloc_chunk * data_1_chunk = _tralloc_context_get_chunk ( data_1 );
     if ( ! ( data_1_chunk->extensions & TRALLOC_EXTENSION_POOL_CHILD ) ) {
         return TRALLOC_FALSE;
     }
@@ -116,7 +116,7 @@ tralloc_bool test_pool_add_much ( tralloc_context * ctx )
     if ( tralloc_new_with_extensions ( ctx, &pool_data, TRALLOC_EXTENSION_POOL, pool_data_length ) != 0 ) {
         return TRALLOC_FALSE;
     }
-    _tralloc_chunk * pool_chunk = _tralloc_get_chunk_from_context ( pool_data );
+    _tralloc_chunk * pool_chunk = _tralloc_context_get_chunk ( pool_data );
     if ( ! ( pool_chunk->extensions & TRALLOC_EXTENSION_POOL ) ) {
         return TRALLOC_FALSE;
     }
@@ -142,7 +142,7 @@ tralloc_bool test_pool_add_much ( tralloc_context * ctx )
     if ( tralloc_new ( pool_data, ( tralloc_context ** ) &data_1, sizeof ( uint8_t ) * 5 ) != 0 ) {
         return TRALLOC_FALSE;
     }
-    _tralloc_chunk * data_1_chunk = _tralloc_get_chunk_from_context ( data_1 );
+    _tralloc_chunk * data_1_chunk = _tralloc_context_get_chunk ( data_1 );
     if ( ! ( data_1_chunk->extensions & TRALLOC_EXTENSION_POOL_CHILD ) ) {
         return TRALLOC_FALSE;
     }
@@ -220,14 +220,14 @@ tralloc_bool test_pool_add_normal ( tralloc_context * ctx )
         return TRALLOC_FALSE;
     }
 
-    _tralloc_chunk * pool_chunk = _tralloc_get_chunk_from_context ( pool_data );
+    _tralloc_chunk * pool_chunk = _tralloc_context_get_chunk ( pool_data );
     if ( ! ( pool_chunk->extensions & TRALLOC_EXTENSION_POOL ) ) {
         return TRALLOC_FALSE;
     }
     _tralloc_pool * pool = _tralloc_get_pool_from_chunk ( pool_chunk );
 
-    _tralloc_chunk * data_1_chunk = _tralloc_get_chunk_from_context ( data_1 );
-    _tralloc_chunk * data_2_chunk = _tralloc_get_chunk_from_context ( data_2 );
+    _tralloc_chunk * data_1_chunk = _tralloc_context_get_chunk ( data_1 );
+    _tralloc_chunk * data_2_chunk = _tralloc_context_get_chunk ( data_2 );
     if (
         ! ( data_1_chunk->extensions & TRALLOC_EXTENSION_POOL_CHILD ) ||
         ! ( data_2_chunk->extensions & TRALLOC_EXTENSION_POOL_CHILD )

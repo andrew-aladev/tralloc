@@ -38,11 +38,11 @@ typedef struct _tralloc_buffer_type {
 } tralloc_buffer;
 
 
-tralloc_error _tralloc_new_buffer ( _tralloc_alloc_options * options, tralloc_buffer ** buffer_ptr, size_t capacity );
+tralloc_error _tralloc_buffer_new ( _tralloc_alloc_options * options, tralloc_buffer ** buffer_ptr, size_t capacity );
 
 #if defined ( TRALLOC_DEBUG_LOG )
 _TRALLOC_INLINE
-tralloc_error _tralloc_debug_log_new_buffer ( const char * file, size_t line, tralloc_context * parent_context, tralloc_buffer ** buffer_ptr, size_t capacity )
+tralloc_error _tralloc_debug_log_buffer_new ( const char * file, size_t line, tralloc_context * parent_context, tralloc_buffer ** buffer_ptr, size_t capacity )
 {
     _tralloc_alloc_options options;
     options.file           = file;
@@ -53,32 +53,31 @@ tralloc_error _tralloc_debug_log_new_buffer ( const char * file, size_t line, tr
     options.extensions = 0;
 #   endif
 
-    return _tralloc_new_buffer ( &options, buffer_ptr, capacity );
+    return _tralloc_buffer_new ( &options, buffer_ptr, capacity );
 }
 
-#define tralloc_new_buffer(...) _tralloc_debug_log_new_buffer (__FILE__, __LINE__, __VA_ARGS__)
+#define tralloc_buffer_new(...) _tralloc_debug_log_buffer_new (__FILE__, __LINE__, __VA_ARGS__)
 
 #if defined ( TRALLOC_EXTENSIONS )
-
 _TRALLOC_INLINE
-tralloc_error _tralloc_debug_log_new_buffer_with_extensions ( const char * file, size_t line, tralloc_context * parent_context, tralloc_buffer ** buffer_ptr, tralloc_extensions extensions, size_t capacity )
+tralloc_error _tralloc_debug_log_buffer_new_with_extensions ( const char * file, size_t line, tralloc_context * parent_context, tralloc_buffer ** buffer_ptr, tralloc_extensions extensions, size_t capacity )
 {
     _tralloc_alloc_options options;
     options.file           = file;
     options.line           = line;
     options.parent_context = parent_context;
     options.extensions     = extensions;
-    return _tralloc_new_buffer ( &options, buffer_ptr, capacity );
+    return _tralloc_buffer_new ( &options, buffer_ptr, capacity );
 }
 
-#define tralloc_new_buffer_with_extensions(...) _tralloc_debug_log_new_buffer_with_extensions (__FILE__, __LINE__, __VA_ARGS__)
+#define tralloc_buffer_new_with_extensions(...) _tralloc_debug_log_buffer_new_with_extensions (__FILE__, __LINE__, __VA_ARGS__)
 
 #endif
 
 #else
 
 _TRALLOC_INLINE
-tralloc_error tralloc_new_buffer ( tralloc_context * parent_context, tralloc_buffer ** buffer_ptr, size_t capacity )
+tralloc_error tralloc_buffer_new ( tralloc_context * parent_context, tralloc_buffer ** buffer_ptr, size_t capacity )
 {
     _tralloc_alloc_options options;
     options.parent_context = parent_context;
@@ -87,17 +86,17 @@ tralloc_error tralloc_new_buffer ( tralloc_context * parent_context, tralloc_buf
     options.extensions = 0;
 #   endif
 
-    return _tralloc_new_buffer ( &options, buffer_ptr, capacity );
+    return _tralloc_buffer_new ( &options, buffer_ptr, capacity );
 }
 
 #if defined ( TRALLOC_EXTENSIONS )
 _TRALLOC_INLINE
-tralloc_error tralloc_new_buffer_with_extensions ( tralloc_context * parent_context, tralloc_buffer ** buffer_ptr, tralloc_extensions extensions, size_t capacity )
+tralloc_error tralloc_buffer_new_with_extensions ( tralloc_context * parent_context, tralloc_buffer ** buffer_ptr, tralloc_extensions extensions, size_t capacity )
 {
     _tralloc_alloc_options options;
     options.parent_context = parent_context;
     options.extensions     = extensions;
-    return _tralloc_new_buffer ( &options, buffer_ptr, capacity );
+    return _tralloc_buffer_new ( &options, buffer_ptr, capacity );
 }
 #endif
 

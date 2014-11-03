@@ -44,17 +44,17 @@ tralloc_bool test_pool_resize_order ( tralloc_context * ctx )
         return TRALLOC_FALSE;
     }
 
-    _tralloc_chunk * pool_chunk = _tralloc_get_chunk_from_context ( pool_data );
+    _tralloc_chunk * pool_chunk = _tralloc_context_get_chunk ( pool_data );
     if ( ! ( pool_chunk->extensions & TRALLOC_EXTENSION_POOL ) ) {
         return TRALLOC_FALSE;
     }
     _tralloc_pool * pool = _tralloc_get_pool_from_chunk ( pool_chunk );
 
-    _tralloc_chunk * spacer_1_chunk = _tralloc_get_chunk_from_context ( spacer_1 );
-    _tralloc_chunk * spacer_2_chunk = _tralloc_get_chunk_from_context ( spacer_2 );
-    _tralloc_chunk * data_3_chunk   = _tralloc_get_chunk_from_context ( data_3 );
-    _tralloc_chunk * spacer_3_chunk = _tralloc_get_chunk_from_context ( spacer_3 );
-    _tralloc_chunk * spacer_4_chunk = _tralloc_get_chunk_from_context ( spacer_4 );
+    _tralloc_chunk * spacer_1_chunk = _tralloc_context_get_chunk ( spacer_1 );
+    _tralloc_chunk * spacer_2_chunk = _tralloc_context_get_chunk ( spacer_2 );
+    _tralloc_chunk * data_3_chunk   = _tralloc_context_get_chunk ( data_3 );
+    _tralloc_chunk * spacer_3_chunk = _tralloc_context_get_chunk ( spacer_3 );
+    _tralloc_chunk * spacer_4_chunk = _tralloc_context_get_chunk ( spacer_4 );
     if (
         ! ( spacer_1_chunk->extensions & TRALLOC_EXTENSION_POOL_CHILD ) ||
         ! ( spacer_2_chunk->extensions & TRALLOC_EXTENSION_POOL_CHILD ) ||
@@ -349,7 +349,7 @@ tralloc_bool test_pool_resize_order ( tralloc_context * ctx )
     if ( tralloc_realloc ( ( tralloc_context ** ) &data_3, data_3_user_length + data_2_length + data_1_length + spacer_1_length + spacer_2_length + spacer_3_length ) != 0 ) {
         return TRALLOC_FALSE;
     }
-    data_3_chunk = _tralloc_get_chunk_from_context ( data_3 );
+    data_3_chunk = _tralloc_context_get_chunk ( data_3 );
     data_3_child = _tralloc_get_pool_child_from_chunk ( data_3_chunk );
     fragment_4 = ( _tralloc_pool_fragment * ) ( ( uintptr_t ) data_3_child + data_3_child->length );
 

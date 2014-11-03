@@ -12,8 +12,8 @@
 tralloc_bool test_utils_buffer ( tralloc_context * ctx )
 {
     if (
-        tralloc_new_buffer                 ( NULL, NULL, 0 )    != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_UNDEFINED ||
-        tralloc_new_buffer_with_extensions ( NULL, NULL, 0, 0 ) != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_UNDEFINED
+        tralloc_buffer_new                 ( NULL, NULL, 0 )    != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_UNDEFINED ||
+        tralloc_buffer_new_with_extensions ( NULL, NULL, 0, 0 ) != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_UNDEFINED
     ) {
         return TRALLOC_FALSE;
     }
@@ -21,7 +21,7 @@ tralloc_bool test_utils_buffer ( tralloc_context * ctx )
     tralloc_buffer * buffer;
 
     if (
-        tralloc_new_buffer ( ctx, &buffer, 0 )        != 0 ||
+        tralloc_buffer_new ( ctx, &buffer, 0 )        != 0 ||
         tralloc_buffer_add_write_length ( buffer, 1 ) != TRALLOC_ERROR_UTILS_BUFFER_OVERFLOW
     ) {
         return TRALLOC_FALSE;

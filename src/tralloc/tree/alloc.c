@@ -246,7 +246,7 @@ void _tralloc_alloc_prepare_extensions_environment ( _tralloc_chunk * parent_chu
 
 #   if defined ( TRALLOC_POOL )
     if ( extensions_environment->have_pool_child ) {
-        if ( !_tralloc_can_alloc_from_pool ( extensions_environment->parent_pool, total_length + _tralloc_get_extensions_length ( extensions_environment->extensions ) ) ) {
+        if ( !_tralloc_can_alloc_from_pool ( extensions_environment->parent_pool, total_length + _tralloc_extensions_get_length ( extensions_environment->extensions ) ) ) {
             // "parent_pool" can't alloc enough bytes.
             // "TRALLOC_EXTENSION_POOL_CHILD" will be forced disabled.
             extensions_environment->have_pool_child  = TRALLOC_FALSE;
@@ -366,7 +366,7 @@ tralloc_error _tralloc_alloc_initialize_extensions ( _tralloc_chunk * chunk, _tr
 
 #   if defined ( TRALLOC_POOL )
     if ( extensions_environment->have_pool ) {
-        _tralloc_new_pool ( _tralloc_get_pool_from_chunk ( chunk ), _tralloc_get_context_from_chunk ( chunk ), extensions_environment->extensions, chunk_prototype->length );
+        _tralloc_new_pool ( _tralloc_get_pool_from_chunk ( chunk ), _tralloc_chunk_get_context ( chunk ), extensions_environment->extensions, chunk_prototype->length );
     } else if ( extensions_environment->have_pool_child ) {
         _tralloc_new_pool_child ( _tralloc_get_pool_child_from_chunk ( chunk ), extensions_environment->parent_pool, total_length, extensions_environment->prev_pool_child, extensions_environment->next_pool_child );
     }
@@ -442,7 +442,7 @@ tralloc_error _tralloc_alloc ( _tralloc_alloc_options * options, tralloc_context
     if ( options->parent_context == NULL ) {
         parent_chunk = NULL;
     } else {
-        parent_chunk = _tralloc_get_chunk_from_context ( options->parent_context );
+        parent_chunk = _tralloc_context_get_chunk ( options->parent_context );
     }
 
     size_t total_length = sizeof ( _tralloc_chunk ) + options->length;
@@ -450,7 +450,7 @@ tralloc_error _tralloc_alloc ( _tralloc_alloc_options * options, tralloc_context
 #   if defined ( TRALLOC_EXTENSIONS )
     _tralloc_alloc_extensions_environment extensions_environment;
     _tralloc_alloc_prepare_extensions_environment ( parent_chunk, options->extensions, total_length, &extensions_environment );
-    size_t extensions_length = _tralloc_get_extensions_length ( extensions_environment.extensions );
+    size_t extensions_length = _tralloc_extensions_get_length ( extensions_environment.extensions );
     total_length += extensions_length;
 #   endif
 
@@ -513,7 +513,7 @@ tralloc_error _tralloc_alloc ( _tralloc_alloc_options * options, tralloc_context
 #   endif
 
     _tralloc_chunk * chunk    = ( _tralloc_chunk * ) chunk_memory;
-    tralloc_context * context = _tralloc_get_context_from_chunk ( chunk );
+    tralloc_context * context = _tralloc_chunk_get_context ( chunk );
 
 #   if defined ( TRALLOC_EXTENSIONS )
     result = _tralloc_alloc_initialize_extensions ( chunk, &chunk_prototype, &extensions_environment, total_length );

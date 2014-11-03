@@ -18,26 +18,25 @@
 
 
 #if defined ( TRALLOC_EXTENSIONS )
-size_t _tralloc_get_extensions_length ( tralloc_extensions extensions );
+size_t _tralloc_extensions_get_length               ( tralloc_extensions extensions );
+size_t _tralloc_extensions_get_offset_for_extension ( tralloc_extensions extensions, _tralloc_extension extension );
 
 // Function returns size of extensions and chunk.
 _TRALLOC_INLINE
 size_t tralloc_predict_chunk_length ( tralloc_extensions extensions )
 {
-    return _tralloc_get_extensions_length ( extensions ) + sizeof ( _tralloc_chunk );
+    return _tralloc_extensions_get_length ( extensions ) + sizeof ( _tralloc_chunk );
 }
-
-size_t _tralloc_get_offset_for_extension ( tralloc_extensions extensions, _tralloc_extension extension );
 #endif
 
 _TRALLOC_INLINE
-tralloc_context * _tralloc_get_context_from_chunk ( _tralloc_chunk * chunk )
+tralloc_context * _tralloc_chunk_get_context ( _tralloc_chunk * chunk )
 {
     return ( tralloc_context * ) ( ( uintptr_t ) chunk + sizeof ( _tralloc_chunk ) );
 }
 
 _TRALLOC_INLINE
-_tralloc_chunk * _tralloc_get_chunk_from_context ( tralloc_context * context )
+_tralloc_chunk * _tralloc_context_get_chunk ( tralloc_context * context )
 {
     return ( _tralloc_chunk * ) ( ( uintptr_t ) context - sizeof ( _tralloc_chunk ) );
 }

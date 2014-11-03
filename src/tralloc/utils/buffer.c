@@ -11,7 +11,7 @@
 #include <string.h>
 
 
-tralloc_error _tralloc_new_buffer ( _tralloc_alloc_options * options, tralloc_buffer ** buffer_ptr, size_t capacity )
+tralloc_error _tralloc_buffer_new ( _tralloc_alloc_options * options, tralloc_buffer ** buffer_ptr, size_t capacity )
 {
     options->zero   = false;
     options->length = sizeof ( tralloc_buffer );

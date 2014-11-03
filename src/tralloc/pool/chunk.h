@@ -19,19 +19,19 @@
 _TRALLOC_INLINE
 _tralloc_pool_child * _tralloc_get_pool_child_from_chunk ( _tralloc_chunk * chunk )
 {
-    return ( _tralloc_pool_child * ) ( ( uintptr_t ) chunk - _tralloc_get_offset_for_extension ( chunk->extensions, TRALLOC_EXTENSION_POOL_CHILD ) );
+    return ( _tralloc_pool_child * ) ( ( uintptr_t ) chunk - _tralloc_extensions_get_offset_for_extension ( chunk->extensions, TRALLOC_EXTENSION_POOL_CHILD ) );
 }
 
 _TRALLOC_INLINE
 _tralloc_pool * _tralloc_get_pool_from_chunk ( _tralloc_chunk * chunk )
 {
-    return ( _tralloc_pool * ) ( ( uintptr_t ) chunk - _tralloc_get_offset_for_extension ( chunk->extensions, TRALLOC_EXTENSION_POOL ) );
+    return ( _tralloc_pool * ) ( ( uintptr_t ) chunk - _tralloc_extensions_get_offset_for_extension ( chunk->extensions, TRALLOC_EXTENSION_POOL ) );
 }
 
 _TRALLOC_INLINE
 _tralloc_chunk * _tralloc_get_chunk_from_pool ( _tralloc_pool * pool )
 {
-    return ( _tralloc_chunk * ) ( ( uintptr_t ) pool + _tralloc_get_offset_for_extension ( pool->extensions, TRALLOC_EXTENSION_POOL ) );
+    return ( _tralloc_chunk * ) ( ( uintptr_t ) pool + _tralloc_extensions_get_offset_for_extension ( pool->extensions, TRALLOC_EXTENSION_POOL ) );
 }
 
 _TRALLOC_INLINE
@@ -52,7 +52,7 @@ _tralloc_pool * _tralloc_get_closest_pool_from_chunk ( _tralloc_chunk * chunk )
 _TRALLOC_INLINE
 _tralloc_pool_lock * _tralloc_get_pool_lock_from_chunk ( _tralloc_chunk * chunk )
 {
-    return ( _tralloc_pool_lock * ) ( ( uintptr_t ) chunk - _tralloc_get_offset_for_extension ( chunk->extensions, TRALLOC_EXTENSION_LOCK_POOL ) );
+    return ( _tralloc_pool_lock * ) ( ( uintptr_t ) chunk - _tralloc_extensions_get_offset_for_extension ( chunk->extensions, TRALLOC_EXTENSION_LOCK_POOL ) );
 }
 
 #endif

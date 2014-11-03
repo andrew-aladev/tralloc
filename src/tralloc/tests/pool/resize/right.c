@@ -28,13 +28,13 @@ tralloc_bool test_pool_resize_right_space_is_remained ( tralloc_context * ctx )
         return TRALLOC_FALSE;
     }
 
-    _tralloc_chunk * pool_chunk = _tralloc_get_chunk_from_context ( pool_data );
+    _tralloc_chunk * pool_chunk = _tralloc_context_get_chunk ( pool_data );
     if ( ! ( pool_chunk->extensions & TRALLOC_EXTENSION_POOL ) ) {
         return TRALLOC_FALSE;
     }
     _tralloc_pool * pool = _tralloc_get_pool_from_chunk ( pool_chunk );
 
-    _tralloc_chunk * data_2_chunk = _tralloc_get_chunk_from_context ( data_2 );
+    _tralloc_chunk * data_2_chunk = _tralloc_context_get_chunk ( data_2 );
     if ( ! ( data_2_chunk->extensions & TRALLOC_EXTENSION_POOL_CHILD ) ) {
         return TRALLOC_FALSE;
     }
@@ -110,13 +110,13 @@ tralloc_bool test_pool_resize_right_fragment_is_remained ( tralloc_context * ctx
         return TRALLOC_FALSE;
     }
 
-    _tralloc_chunk * pool_chunk = _tralloc_get_chunk_from_context ( pool_data );
+    _tralloc_chunk * pool_chunk = _tralloc_context_get_chunk ( pool_data );
     if ( ! ( pool_chunk->extensions & TRALLOC_EXTENSION_POOL ) ) {
         return TRALLOC_FALSE;
     }
     _tralloc_pool * pool = _tralloc_get_pool_from_chunk ( pool_chunk );
 
-    _tralloc_chunk * data_2_chunk = _tralloc_get_chunk_from_context ( data_2 );
+    _tralloc_chunk * data_2_chunk = _tralloc_context_get_chunk ( data_2 );
     if ( ! ( data_2_chunk->extensions & TRALLOC_EXTENSION_POOL_CHILD ) ) {
         return TRALLOC_FALSE;
     }
@@ -200,13 +200,13 @@ tralloc_bool test_pool_resize_right_strict ( tralloc_context * ctx )
         return TRALLOC_FALSE;
     }
 
-    _tralloc_chunk * pool_chunk = _tralloc_get_chunk_from_context ( pool_data );
+    _tralloc_chunk * pool_chunk = _tralloc_context_get_chunk ( pool_data );
     if ( ! ( pool_chunk->extensions & TRALLOC_EXTENSION_POOL ) ) {
         return TRALLOC_FALSE;
     }
     _tralloc_pool * pool = _tralloc_get_pool_from_chunk ( pool_chunk );
 
-    _tralloc_chunk * data_2_chunk = _tralloc_get_chunk_from_context ( data_2 );
+    _tralloc_chunk * data_2_chunk = _tralloc_context_get_chunk ( data_2 );
     if ( ! ( data_2_chunk->extensions & TRALLOC_EXTENSION_POOL_CHILD ) ) {
         return TRALLOC_FALSE;
     }

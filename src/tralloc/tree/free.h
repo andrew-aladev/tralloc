@@ -25,7 +25,7 @@ tralloc_error tralloc_free ( tralloc_context * context )
     if ( context == NULL ) {
         return TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_UNDEFINED;
     }
-    return _tralloc_free_subtree ( _tralloc_get_chunk_from_context ( context ) );
+    return _tralloc_free_subtree ( _tralloc_context_get_chunk ( context ) );
 }
 
 

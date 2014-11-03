@@ -19,7 +19,7 @@ int main ()
 #   if defined(TRALLOC_UTILS_BUFFER)
 
     tralloc_buffer * buffer;
-    if ( tralloc_new_buffer ( NULL, &buffer, 3 ) != 0 ) {
+    if ( tralloc_buffer_new ( NULL, &buffer, 3 ) != 0 ) {
         return 1;
     }
     if ( tralloc_buffer_prepare_write_length ( buffer, 7 ) != 0 ) {

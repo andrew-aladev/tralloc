@@ -129,7 +129,7 @@ tralloc_error _tralloc_free_chunk ( _tralloc_chunk * chunk )
 #   if defined ( TRALLOC_DESTRUCTORS )
     if ( chunk->extensions & TRALLOC_EXTENSION_DESTRUCTORS ) {
         _tralloc_destructors * destructors = _tralloc_get_destructors_from_chunk ( chunk );
-        result = _tralloc_free_destructors ( destructors, _tralloc_get_context_from_chunk ( chunk ) );
+        result = _tralloc_free_destructors ( destructors, _tralloc_chunk_get_context ( chunk ) );
         if ( result != 0 ) {
             error = result;
         }
@@ -171,7 +171,7 @@ tralloc_error _tralloc_free_chunk ( _tralloc_chunk * chunk )
 
     uintptr_t memory = ( uintptr_t ) chunk;
 #   if defined ( TRALLOC_EXTENSIONS )
-    memory -= _tralloc_get_extensions_length ( chunk->extensions );
+    memory -= _tralloc_extensions_get_length ( chunk->extensions );
 #   else
 
 #   endif

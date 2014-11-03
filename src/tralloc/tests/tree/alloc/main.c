@@ -79,15 +79,15 @@ tralloc_bool test_tree_alloc_main ( test_tree_data * tr )
 
     */
 
-    _tralloc_chunk * root_chunk    = _tralloc_get_chunk_from_context ( tr );
-    _tralloc_chunk * data_1_chunk  = _tralloc_get_chunk_from_context ( tr->data_1 );
-    _tralloc_chunk * data_2_chunk  = _tralloc_get_chunk_from_context ( tr->data_2 );
-    _tralloc_chunk * data_3_chunk  = _tralloc_get_chunk_from_context ( tr->data_3 );
-    _tralloc_chunk * data_4_chunk  = _tralloc_get_chunk_from_context ( tr->data_4 );
-    _tralloc_chunk * data_5_chunk  = _tralloc_get_chunk_from_context ( tr->data_5 );
-    _tralloc_chunk * data_6_chunk  = _tralloc_get_chunk_from_context ( tr->data_6 );
-    _tralloc_chunk * data_7_chunk  = _tralloc_get_chunk_from_context ( tr->data_7 );
-    _tralloc_chunk * trivium_chunk = _tralloc_get_chunk_from_context ( tr->trivium );
+    _tralloc_chunk * root_chunk    = _tralloc_context_get_chunk ( tr );
+    _tralloc_chunk * data_1_chunk  = _tralloc_context_get_chunk ( tr->data_1 );
+    _tralloc_chunk * data_2_chunk  = _tralloc_context_get_chunk ( tr->data_2 );
+    _tralloc_chunk * data_3_chunk  = _tralloc_context_get_chunk ( tr->data_3 );
+    _tralloc_chunk * data_4_chunk  = _tralloc_context_get_chunk ( tr->data_4 );
+    _tralloc_chunk * data_5_chunk  = _tralloc_context_get_chunk ( tr->data_5 );
+    _tralloc_chunk * data_6_chunk  = _tralloc_context_get_chunk ( tr->data_6 );
+    _tralloc_chunk * data_7_chunk  = _tralloc_context_get_chunk ( tr->data_7 );
+    _tralloc_chunk * trivium_chunk = _tralloc_context_get_chunk ( tr->trivium );
 
     if (
         root_chunk->prev        != NULL         ||

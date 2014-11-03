@@ -21,13 +21,13 @@
 _TRALLOC_INLINE
 _tralloc_subtree_lock * _tralloc_get_subtree_lock_from_chunk ( _tralloc_chunk * chunk )
 {
-    return ( _tralloc_subtree_lock * ) ( ( uintptr_t ) chunk - _tralloc_get_offset_for_extension ( chunk->extensions, TRALLOC_EXTENSION_LOCK_SUBTREE ) );
+    return ( _tralloc_subtree_lock * ) ( ( uintptr_t ) chunk - _tralloc_extensions_get_offset_for_extension ( chunk->extensions, TRALLOC_EXTENSION_LOCK_SUBTREE ) );
 }
 
 _TRALLOC_INLINE
 _tralloc_children_lock * _tralloc_get_children_lock_from_chunk ( _tralloc_chunk * chunk )
 {
-    return ( _tralloc_children_lock * ) ( ( uintptr_t ) chunk - _tralloc_get_offset_for_extension ( chunk->extensions, TRALLOC_EXTENSION_LOCK_CHILDREN ) );
+    return ( _tralloc_children_lock * ) ( ( uintptr_t ) chunk - _tralloc_extensions_get_offset_for_extension ( chunk->extensions, TRALLOC_EXTENSION_LOCK_CHILDREN ) );
 }
 
 #endif

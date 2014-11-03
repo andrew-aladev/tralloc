@@ -20,7 +20,7 @@ tralloc_error _tralloc_delete_destructors_by_comparator ( tralloc_context * cont
     if ( context == NULL ) {
         return TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_UNDEFINED;
     }
-    _tralloc_chunk * chunk = _tralloc_get_chunk_from_context ( context );
+    _tralloc_chunk * chunk = _tralloc_context_get_chunk ( context );
 
     if ( ! ( chunk->extensions & TRALLOC_EXTENSION_DESTRUCTORS ) ) {
         return TRALLOC_ERROR_NO_SUCH_EXTENSION;

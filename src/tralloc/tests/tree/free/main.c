@@ -25,10 +25,10 @@ tralloc_bool test_tree_free_main ( test_tree_data * tr )
 
     */
 
-    _tralloc_chunk * root_chunk    = _tralloc_get_chunk_from_context ( tr );
-    _tralloc_chunk * data_1_chunk  = _tralloc_get_chunk_from_context ( tr->data_1 );
-    _tralloc_chunk * data_2_chunk  = _tralloc_get_chunk_from_context ( tr->data_2 );
-    _tralloc_chunk * data_6_chunk  = _tralloc_get_chunk_from_context ( tr->data_6 );
+    _tralloc_chunk * root_chunk    = _tralloc_context_get_chunk ( tr );
+    _tralloc_chunk * data_1_chunk  = _tralloc_context_get_chunk ( tr->data_1 );
+    _tralloc_chunk * data_2_chunk  = _tralloc_context_get_chunk ( tr->data_2 );
+    _tralloc_chunk * data_6_chunk  = _tralloc_context_get_chunk ( tr->data_6 );
 
     if (
         root_chunk->prev        != NULL         ||

@@ -75,9 +75,9 @@ tralloc_bool test_debug_callbacks_free ( tralloc_context * ctx )
     }
 
     _tralloc_chunk * chunk;
-    _tralloc_chunk * a_chunk = _tralloc_get_chunk_from_context ( a );
-    _tralloc_chunk * b_chunk = _tralloc_get_chunk_from_context ( b );
-    _tralloc_chunk * c_chunk = _tralloc_get_chunk_from_context ( c );
+    _tralloc_chunk * a_chunk = _tralloc_context_get_chunk ( a );
+    _tralloc_chunk * b_chunk = _tralloc_context_get_chunk ( b );
+    _tralloc_chunk * c_chunk = _tralloc_context_get_chunk ( c );
 
     if (
         tralloc_free ( a ) != 0 ||

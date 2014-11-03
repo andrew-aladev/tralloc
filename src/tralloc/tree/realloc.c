@@ -37,7 +37,7 @@ tralloc_error tralloc_realloc ( tralloc_context ** chunk_context, size_t length 
         return TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_UNDEFINED;
     }
 
-    _tralloc_chunk * old_chunk = _tralloc_get_chunk_from_context ( context );
+    _tralloc_chunk * old_chunk = _tralloc_context_get_chunk ( context );
     tralloc_error _TRALLOC_UNUSED ( result );
 
 #   if defined ( TRALLOC_DEBUG_LENGTH )
@@ -71,7 +71,7 @@ tralloc_error tralloc_realloc ( tralloc_context ** chunk_context, size_t length 
 #   endif
 
 #   if defined ( TRALLOC_EXTENSIONS )
-    size_t extensions_length = _tralloc_get_extensions_length ( old_chunk->extensions );
+    size_t extensions_length = _tralloc_extensions_get_length ( old_chunk->extensions );
 #   else
     size_t extensions_length = 0;
 #   endif
@@ -168,7 +168,7 @@ tralloc_error tralloc_realloc ( tralloc_context ** chunk_context, size_t length 
         }
 #       endif
 
-        * chunk_context = _tralloc_get_context_from_chunk ( new_chunk );
+        * chunk_context = _tralloc_chunk_get_context ( new_chunk );
 
 #       if defined ( TRALLOC_DEBUG )
         // Debug should care about thread safety of operations with "new_chunk" by itself.

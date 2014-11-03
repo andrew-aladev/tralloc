@@ -102,10 +102,10 @@ tralloc_bool test_debug_callbacks_move ( tralloc_context * ctx )
         return TRALLOC_FALSE;
     }
 
-    _tralloc_chunk * root_chunk = _tralloc_get_chunk_from_context ( ctx );
-    _tralloc_chunk * a_chunk    = _tralloc_get_chunk_from_context ( a );
-    _tralloc_chunk * b_chunk    = _tralloc_get_chunk_from_context ( b );
-    _tralloc_chunk * c_chunk    = _tralloc_get_chunk_from_context ( c );
+    _tralloc_chunk * root_chunk = _tralloc_context_get_chunk ( ctx );
+    _tralloc_chunk * a_chunk    = _tralloc_context_get_chunk ( a );
+    _tralloc_chunk * b_chunk    = _tralloc_context_get_chunk ( b );
+    _tralloc_chunk * c_chunk    = _tralloc_context_get_chunk ( c );
 
     test_debug_callbacks_move_info * info;
 
