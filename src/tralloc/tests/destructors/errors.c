@@ -11,12 +11,12 @@
 tralloc_bool test_destructors_errors ( tralloc_context * ctx )
 {
     if (
-        tralloc_append_destructor              ( NULL, NULL, NULL ) != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_UNDEFINED ||
-        tralloc_prepend_destructor             ( NULL, NULL, NULL ) != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_UNDEFINED ||
-        tralloc_clear_destructors              ( NULL )             != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_UNDEFINED ||
-        tralloc_delete_destructors             ( NULL, NULL, NULL ) != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_UNDEFINED ||
-        tralloc_delete_destructors_by_function ( NULL, NULL )       != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_UNDEFINED ||
-        tralloc_delete_destructors_by_data     ( NULL, NULL )       != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_UNDEFINED
+        tralloc_destructor_append              ( NULL, NULL, NULL ) != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_UNDEFINED ||
+        tralloc_destructor_prepend             ( NULL, NULL, NULL ) != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_UNDEFINED ||
+        tralloc_destructors_clear              ( NULL )             != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_UNDEFINED ||
+        tralloc_destructors_delete             ( NULL, NULL, NULL ) != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_UNDEFINED ||
+        tralloc_destructors_delete_by_function ( NULL, NULL )       != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_UNDEFINED ||
+        tralloc_destructors_delete_by_data     ( NULL, NULL )       != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_UNDEFINED
     ) {
         return TRALLOC_FALSE;
     }
@@ -27,12 +27,12 @@ tralloc_bool test_destructors_errors ( tralloc_context * ctx )
     }
 
     if (
-        tralloc_append_destructor              ( test, NULL, NULL ) != TRALLOC_ERROR_NO_SUCH_EXTENSION ||
-        tralloc_prepend_destructor             ( test, NULL, NULL ) != TRALLOC_ERROR_NO_SUCH_EXTENSION ||
-        tralloc_clear_destructors              ( test )             != TRALLOC_ERROR_NO_SUCH_EXTENSION ||
-        tralloc_delete_destructors             ( test, NULL, NULL ) != TRALLOC_ERROR_NO_SUCH_EXTENSION ||
-        tralloc_delete_destructors_by_function ( test, NULL )       != TRALLOC_ERROR_NO_SUCH_EXTENSION ||
-        tralloc_delete_destructors_by_data     ( test, NULL )       != TRALLOC_ERROR_NO_SUCH_EXTENSION
+        tralloc_destructor_append              ( test, NULL, NULL ) != TRALLOC_ERROR_NO_SUCH_EXTENSION ||
+        tralloc_destructor_prepend             ( test, NULL, NULL ) != TRALLOC_ERROR_NO_SUCH_EXTENSION ||
+        tralloc_destructors_clear              ( test )             != TRALLOC_ERROR_NO_SUCH_EXTENSION ||
+        tralloc_destructors_delete             ( test, NULL, NULL ) != TRALLOC_ERROR_NO_SUCH_EXTENSION ||
+        tralloc_destructors_delete_by_function ( test, NULL )       != TRALLOC_ERROR_NO_SUCH_EXTENSION ||
+        tralloc_destructors_delete_by_data     ( test, NULL )       != TRALLOC_ERROR_NO_SUCH_EXTENSION
     ) {
         return TRALLOC_FALSE;
     }

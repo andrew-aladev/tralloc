@@ -42,7 +42,7 @@ tralloc_error _tralloc_open_mode ( _tralloc_alloc_options * options, int ** desc
     }
 
     ** descriptor_ptr = descriptor;
-    result = tralloc_append_destructor ( * descriptor_ptr, _tralloc_close, NULL );
+    result = tralloc_destructor_append ( * descriptor_ptr, _tralloc_close, NULL );
     if ( result != 0 ) {
         tralloc_free ( * descriptor_ptr );
         close ( descriptor );

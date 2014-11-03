@@ -316,7 +316,7 @@ tralloc_error _tralloc_alloc_initialize_extensions ( _tralloc_chunk * chunk, _tr
 
 #   if defined ( TRALLOC_DEBUG_THREADS )
     _tralloc_debug_threads_lock * thread_usage_lock = &chunk->thread_usage_lock;
-    result = _tralloc_new_debug_threads_lock ( thread_usage_lock );
+    result = _tralloc_debug_threads_lock_new ( thread_usage_lock );
     if ( result != 0 ) {
 
 #       if defined ( TRALLOC_POOL )
@@ -340,7 +340,7 @@ tralloc_error _tralloc_alloc_initialize_extensions ( _tralloc_chunk * chunk, _tr
     if ( chunk->initialized_in_file == NULL ) {
 
 #       if defined ( TRALLOC_DEBUG_THREADS )
-        _tralloc_free_debug_threads_lock ( thread_usage_lock );
+        _tralloc_debug_threads_lock_free ( thread_usage_lock );
 #       endif
 
 #       if defined ( TRALLOC_THREADS )
@@ -374,13 +374,13 @@ tralloc_error _tralloc_alloc_initialize_extensions ( _tralloc_chunk * chunk, _tr
 
 #   if defined ( TRALLOC_LENGTH )
     if ( extensions_environment->have_length ) {
-        _tralloc_set_length ( _tralloc_get_length_from_chunk ( chunk ), chunk_prototype->length );
+        _tralloc_length_set ( _tralloc_chunk_get_length ( chunk ), chunk_prototype->length );
     }
 #   endif
 
 #   if defined ( TRALLOC_DESTRUCTORS )
     if ( extensions_environment->have_destructors ) {
-        _tralloc_new_destructors ( _tralloc_get_destructors_from_chunk ( chunk ) );
+        _tralloc_destructors_new ( _tralloc_chunk_get_destructors ( chunk ) );
     }
 #   endif
 

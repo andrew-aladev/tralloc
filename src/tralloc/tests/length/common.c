@@ -11,12 +11,12 @@
 tralloc_bool test_length_common ( tralloc_context * ctx )
 {
     size_t length;
-    if ( tralloc_get_length ( NULL, &length ) != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_UNDEFINED ) {
+    if ( tralloc_length_get ( NULL, &length ) != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_UNDEFINED ) {
         return TRALLOC_FALSE;
     }
 
 #   if !defined ( TRALLOC_DEBUG )
-    if ( tralloc_get_length ( ctx,  &length ) != TRALLOC_ERROR_NO_SUCH_EXTENSION ) {
+    if ( tralloc_length_get ( ctx,  &length ) != TRALLOC_ERROR_NO_SUCH_EXTENSION ) {
         return TRALLOC_FALSE;
     }
 #   endif
@@ -24,7 +24,7 @@ tralloc_bool test_length_common ( tralloc_context * ctx )
     tralloc_context * empty;
     if (
         tralloc_new_empty_with_extensions ( ctx, &empty, TRALLOC_EXTENSION_LENGTH ) != 0 ||
-        tralloc_get_length ( empty, &length ) != 0 ||
+        tralloc_length_get ( empty, &length ) != 0 ||
         length != 0
     ) {
         return TRALLOC_FALSE;
@@ -33,7 +33,7 @@ tralloc_bool test_length_common ( tralloc_context * ctx )
     uint8_t * data;
     if (
         tralloc_new_with_extensions ( ctx, ( tralloc_context ** ) &data, TRALLOC_EXTENSION_LENGTH, sizeof ( uint8_t ) * 2 ) != 0 ||
-        tralloc_get_length ( data, &length ) != 0 ||
+        tralloc_length_get ( data, &length ) != 0 ||
         length != sizeof ( uint8_t ) * 2
     ) {
         return TRALLOC_FALSE;
@@ -41,7 +41,7 @@ tralloc_bool test_length_common ( tralloc_context * ctx )
 
     if (
         tralloc_realloc ( ( tralloc_context ** ) &data, sizeof ( uint8_t ) * 20 ) != 0 ||
-        tralloc_get_length ( data, &length ) != 0 ||
+        tralloc_length_get ( data, &length ) != 0 ||
         length != sizeof ( uint8_t ) * 20
     ) {
         return TRALLOC_FALSE;

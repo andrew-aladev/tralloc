@@ -15,7 +15,7 @@
 #include <stdlib.h>
 
 
-tralloc_error _tralloc_delete_destructors_by_comparator ( tralloc_context * context, _tralloc_destructor_comparator comparator, tralloc_destructor_function function, void * user_data )
+tralloc_error _tralloc_destructors_delete_by_comparator ( tralloc_context * context, _tralloc_destructor_comparator comparator, tralloc_destructor_function function, void * user_data )
 {
     if ( context == NULL ) {
         return TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_UNDEFINED;
@@ -26,7 +26,7 @@ tralloc_error _tralloc_delete_destructors_by_comparator ( tralloc_context * cont
         return TRALLOC_ERROR_NO_SUCH_EXTENSION;
     }
 
-    _tralloc_destructors * destructors     = _tralloc_get_destructors_from_chunk ( chunk );
+    _tralloc_destructors * destructors     = _tralloc_chunk_get_destructors ( chunk );
     _tralloc_destructor * first_destructor = destructors->first_destructor;
     if ( first_destructor == NULL ) {
         return 0;

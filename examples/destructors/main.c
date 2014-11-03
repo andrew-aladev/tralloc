@@ -40,18 +40,18 @@ int main ()
     }
     * number = 12345;
     if (
-        tralloc_prepend_destructor ( number, empty_destructor, NULL ) != 0 ||
-        tralloc_append_destructor  ( number, file_destructor,  NULL ) != 0 ||
-        tralloc_append_destructor  ( number, bad_destructor,   NULL ) != 0 ||
-        tralloc_prepend_destructor ( number, empty_destructor, NULL ) != 0
+        tralloc_destructor_prepend ( number, empty_destructor, NULL ) != 0 ||
+        tralloc_destructor_append  ( number, file_destructor,  NULL ) != 0 ||
+        tralloc_destructor_append  ( number, bad_destructor,   NULL ) != 0 ||
+        tralloc_destructor_prepend ( number, empty_destructor, NULL ) != 0
     ) {
         tralloc_free ( ctx );
         return 3;
     }
     if (
-        tralloc_delete_destructors             ( number, empty_destructor, NULL ) != 0 ||
-        tralloc_delete_destructors_by_function ( number, bad_destructor )         != 0 ||
-        tralloc_delete_destructors_by_data     ( number, NULL )                   != 0
+        tralloc_destructors_delete             ( number, empty_destructor, NULL ) != 0 ||
+        tralloc_destructors_delete_by_function ( number, bad_destructor )         != 0 ||
+        tralloc_destructors_delete_by_data     ( number, NULL )                   != 0
     ) {
         tralloc_free ( ctx );
         return 4;

@@ -64,25 +64,25 @@ tralloc_bool test_destructors_common ( tralloc_context * ctx )
     char * text_03;
     char * text_04;
     if (
-        tralloc_new_empty_with_extensions ( ctx,     &strings, TRALLOC_EXTENSION_DESTRUCTORS )              != 0 ||
-        tralloc_strdup_with_extensions ( strings, &text_01, TRALLOC_EXTENSION_DESTRUCTORS, "test text 01" ) != 0 ||
-        tralloc_strdup_with_extensions ( strings, &text_02, TRALLOC_EXTENSION_DESTRUCTORS, "test text 02" ) != 0 ||
-        tralloc_strdup_with_extensions ( strings, &text_03, TRALLOC_EXTENSION_DESTRUCTORS, "test text 03" ) != 0 ||
-        tralloc_strdup_with_extensions ( strings, &text_04, TRALLOC_EXTENSION_DESTRUCTORS, "test text 04" ) != 0
+        tralloc_new_empty_with_extensions ( ctx,     &strings, TRALLOC_EXTENSION_DESTRUCTORS )                 != 0 ||
+        tralloc_strdup_with_extensions    ( strings, &text_01, TRALLOC_EXTENSION_DESTRUCTORS, "test text 01" ) != 0 ||
+        tralloc_strdup_with_extensions    ( strings, &text_02, TRALLOC_EXTENSION_DESTRUCTORS, "test text 02" ) != 0 ||
+        tralloc_strdup_with_extensions    ( strings, &text_03, TRALLOC_EXTENSION_DESTRUCTORS, "test text 03" ) != 0 ||
+        tralloc_strdup_with_extensions    ( strings, &text_04, TRALLOC_EXTENSION_DESTRUCTORS, "test text 04" ) != 0
     ) {
         dynarr_free ( history );
         return TRALLOC_FALSE;
     }
 
     if (
-        tralloc_append_destructor  ( text_01, test_destructors_common_normal_destructor, history ) != 0 ||
-        tralloc_prepend_destructor ( text_02, test_destructors_common_normal_destructor, NULL )    != 0 ||
-        tralloc_prepend_destructor ( text_03, test_destructors_common_normal_destructor, history ) != 0 ||
-        tralloc_append_destructor  ( text_03, test_destructors_common_normal_destructor, history ) != 0 ||
-        tralloc_append_destructor  ( text_04, test_destructors_common_normal_destructor, NULL )    != 0 ||
-        tralloc_prepend_destructor ( text_04, test_destructors_common_normal_destructor, NULL )    != 0 ||
-        tralloc_append_destructor  ( text_04, test_destructors_common_normal_destructor, history ) != 0 ||
-        tralloc_prepend_destructor ( text_04, test_destructors_common_normal_destructor, history ) != 0
+        tralloc_destructor_append  ( text_01, test_destructors_common_normal_destructor, history ) != 0 ||
+        tralloc_destructor_prepend ( text_02, test_destructors_common_normal_destructor, NULL )    != 0 ||
+        tralloc_destructor_prepend ( text_03, test_destructors_common_normal_destructor, history ) != 0 ||
+        tralloc_destructor_append  ( text_03, test_destructors_common_normal_destructor, history ) != 0 ||
+        tralloc_destructor_append  ( text_04, test_destructors_common_normal_destructor, NULL )    != 0 ||
+        tralloc_destructor_prepend ( text_04, test_destructors_common_normal_destructor, NULL )    != 0 ||
+        tralloc_destructor_append  ( text_04, test_destructors_common_normal_destructor, history ) != 0 ||
+        tralloc_destructor_prepend ( text_04, test_destructors_common_normal_destructor, history ) != 0
     ) {
         dynarr_free ( history );
         return TRALLOC_FALSE;
@@ -96,20 +96,20 @@ tralloc_bool test_destructors_common ( tralloc_context * ctx )
     _tralloc_destructor * destructor;
 
     if (
-        ( destructors = _tralloc_get_destructors_from_chunk ( chunk_01 ) ) == NULL || ( destructor = destructors->first_destructor ) == NULL ||
+        ( destructors = _tralloc_chunk_get_destructors ( chunk_01 ) ) == NULL || ( destructor = destructors->first_destructor ) == NULL ||
         destructor->function != test_destructors_common_normal_destructor  || destructor->user_data != history || destructor->next != NULL ||
         destructors->last_destructor != destructor ||
 
-        ( destructors = _tralloc_get_destructors_from_chunk ( chunk_02 ) ) == NULL || ( destructor = destructors->first_destructor ) == NULL ||
+        ( destructors = _tralloc_chunk_get_destructors ( chunk_02 ) ) == NULL || ( destructor = destructors->first_destructor ) == NULL ||
         destructor->function != test_destructors_common_normal_destructor  || destructor->user_data != NULL || destructor->next != NULL ||
         destructors->last_destructor != destructor ||
 
-        ( destructors = _tralloc_get_destructors_from_chunk ( chunk_03 ) ) == NULL || ( destructor = destructors->first_destructor ) == NULL ||
+        ( destructors = _tralloc_chunk_get_destructors ( chunk_03 ) ) == NULL || ( destructor = destructors->first_destructor ) == NULL ||
         destructor->function != test_destructors_common_normal_destructor  || destructor->user_data != history || ( destructor = destructor->next ) == NULL ||
         destructor->function != test_destructors_common_normal_destructor  || destructor->user_data != history || destructor->next                  != NULL ||
         destructors->last_destructor != destructor ||
 
-        ( destructors = _tralloc_get_destructors_from_chunk ( chunk_04 ) ) == NULL || ( destructor = destructors->first_destructor ) == NULL ||
+        ( destructors = _tralloc_chunk_get_destructors ( chunk_04 ) ) == NULL || ( destructor = destructors->first_destructor ) == NULL ||
         destructor->function != test_destructors_common_normal_destructor || destructor->user_data != history || ( destructor = destructor->next ) == NULL ||
         destructor->function != test_destructors_common_normal_destructor || destructor->user_data != NULL    || ( destructor = destructor->next ) == NULL ||
         destructor->function != test_destructors_common_normal_destructor || destructor->user_data != NULL    || ( destructor = destructor->next ) == NULL ||
@@ -121,8 +121,8 @@ tralloc_bool test_destructors_common ( tralloc_context * ctx )
     }
 
     if (
-        tralloc_clear_destructors ( text_03 ) != 0 ||
-        ( destructors = _tralloc_get_destructors_from_chunk ( chunk_03 ) ) == NULL ||
+        tralloc_destructors_clear ( text_03 ) != 0 ||
+        ( destructors = _tralloc_chunk_get_destructors ( chunk_03 ) ) == NULL ||
         destructors->first_destructor != NULL || destructors->last_destructor != NULL
     ) {
         dynarr_free ( history );
@@ -131,19 +131,19 @@ tralloc_bool test_destructors_common ( tralloc_context * ctx )
 
 
     if (
-        tralloc_append_destructor  ( text_03, test_destructors_common_empty_destructor_2, history ) != 0 ||
-        tralloc_append_destructor  ( text_03, test_destructors_common_empty_destructor_1, NULL )    != 0 ||
-        tralloc_prepend_destructor ( text_03, test_destructors_common_empty_destructor_2, NULL )    != 0 ||
-        tralloc_append_destructor  ( text_03, test_destructors_common_empty_destructor_2, history ) != 0 ||
-        tralloc_prepend_destructor ( text_03, test_destructors_common_empty_destructor_1, history ) != 0 ||
-        tralloc_prepend_destructor ( text_03, test_destructors_common_empty_destructor_1, NULL )    != 0
+        tralloc_destructor_append  ( text_03, test_destructors_common_empty_destructor_2, history ) != 0 ||
+        tralloc_destructor_append  ( text_03, test_destructors_common_empty_destructor_1, NULL )    != 0 ||
+        tralloc_destructor_prepend ( text_03, test_destructors_common_empty_destructor_2, NULL )    != 0 ||
+        tralloc_destructor_append  ( text_03, test_destructors_common_empty_destructor_2, history ) != 0 ||
+        tralloc_destructor_prepend ( text_03, test_destructors_common_empty_destructor_1, history ) != 0 ||
+        tralloc_destructor_prepend ( text_03, test_destructors_common_empty_destructor_1, NULL )    != 0
     ) {
         dynarr_free ( history );
         return TRALLOC_FALSE;
     }
 
     if (
-        ( destructors = _tralloc_get_destructors_from_chunk ( chunk_03 ) ) == NULL || ( destructor = destructors->first_destructor ) == NULL ||
+        ( destructors = _tralloc_chunk_get_destructors ( chunk_03 ) ) == NULL || ( destructor = destructors->first_destructor ) == NULL ||
         destructor->function != test_destructors_common_empty_destructor_1 || destructor->user_data != NULL    || ( destructor = destructor->next ) == NULL ||
         destructor->function != test_destructors_common_empty_destructor_1 || destructor->user_data != history || ( destructor = destructor->next ) == NULL ||
         destructor->function != test_destructors_common_empty_destructor_2 || destructor->user_data != NULL    || ( destructor = destructor->next ) == NULL ||
@@ -157,9 +157,9 @@ tralloc_bool test_destructors_common ( tralloc_context * ctx )
     }
 
     if (
-        tralloc_delete_destructors ( text_03, test_destructors_common_empty_destructor_1, NULL ) != 0 ||
+        tralloc_destructors_delete ( text_03, test_destructors_common_empty_destructor_1, NULL ) != 0 ||
 
-        ( destructors = _tralloc_get_destructors_from_chunk ( chunk_03 ) ) == NULL || ( destructor = destructors->first_destructor ) == NULL ||
+        ( destructors = _tralloc_chunk_get_destructors ( chunk_03 ) ) == NULL || ( destructor = destructors->first_destructor ) == NULL ||
         destructor->function != test_destructors_common_empty_destructor_1 || destructor->user_data != history || ( destructor = destructor->next ) == NULL ||
         destructor->function != test_destructors_common_empty_destructor_2 || destructor->user_data != NULL    || ( destructor = destructor->next ) == NULL ||
         destructor->function != test_destructors_common_empty_destructor_2 || destructor->user_data != history || ( destructor = destructor->next ) == NULL ||
@@ -171,9 +171,9 @@ tralloc_bool test_destructors_common ( tralloc_context * ctx )
     }
 
     if (
-        tralloc_delete_destructors_by_function ( text_03, test_destructors_common_empty_destructor_2 ) != 0 ||
+        tralloc_destructors_delete_by_function ( text_03, test_destructors_common_empty_destructor_2 ) != 0 ||
 
-        ( destructors = _tralloc_get_destructors_from_chunk ( chunk_03 ) ) == NULL || ( destructor = destructors->first_destructor ) == NULL ||
+        ( destructors = _tralloc_chunk_get_destructors ( chunk_03 ) ) == NULL || ( destructor = destructors->first_destructor ) == NULL ||
         destructor->function != test_destructors_common_empty_destructor_1 || destructor->user_data != history || destructor->next != NULL ||
         destructors->last_destructor != destructor
     ) {
@@ -182,14 +182,14 @@ tralloc_bool test_destructors_common ( tralloc_context * ctx )
     }
 
     if (
-        tralloc_delete_destructors_by_data ( text_03, NULL ) != 0 ||
+        tralloc_destructors_delete_by_data ( text_03, NULL ) != 0 ||
 
-        ( destructors = _tralloc_get_destructors_from_chunk ( chunk_03 ) ) == NULL || ( destructor = destructors->first_destructor ) == NULL ||
+        ( destructors = _tralloc_chunk_get_destructors ( chunk_03 ) ) == NULL || ( destructor = destructors->first_destructor ) == NULL ||
         destructor->function != test_destructors_common_empty_destructor_1 || destructor->user_data != history || destructor->next != NULL ||
         destructors->last_destructor != destructor ||
 
-        tralloc_delete_destructors_by_data ( text_03, history ) != 0 ||
-        ( destructors = _tralloc_get_destructors_from_chunk ( chunk_03 ) ) == NULL ||
+        tralloc_destructors_delete_by_data ( text_03, history ) != 0 ||
+        ( destructors = _tralloc_chunk_get_destructors ( chunk_03 ) ) == NULL ||
         destructors->first_destructor != NULL || destructors->last_destructor != NULL
     ) {
         dynarr_free ( history );
@@ -217,8 +217,8 @@ tralloc_bool test_destructors_common ( tralloc_context * ctx )
     }
 
     if (
-        tralloc_append_destructor  ( strings, test_destructors_common_bad_destructor_2, NULL ) != 0 ||
-        tralloc_prepend_destructor ( strings, test_destructors_common_bad_destructor_1, NULL ) != 0
+        tralloc_destructor_append  ( strings, test_destructors_common_bad_destructor_2, NULL ) != 0 ||
+        tralloc_destructor_prepend ( strings, test_destructors_common_bad_destructor_1, NULL ) != 0
     ) {
         dynarr_free ( history );
         return TRALLOC_FALSE;

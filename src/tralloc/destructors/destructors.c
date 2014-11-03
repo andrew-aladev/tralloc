@@ -13,7 +13,7 @@
 #include <stdlib.h>
 
 
-tralloc_error _tralloc_free_destructors ( _tralloc_destructors * destructors, tralloc_context * context )
+tralloc_error _tralloc_destructors_free ( _tralloc_destructors * destructors, tralloc_context * context )
 {
     _tralloc_destructor * destructor = destructors->first_destructor;
     if ( destructor == NULL ) {

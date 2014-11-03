@@ -17,19 +17,19 @@
 
 
 _TRALLOC_INLINE
-size_t _tralloc_get_length ( _tralloc_length * length_ptr )
+size_t _tralloc_length_get ( _tralloc_length * length_ptr )
 {
     return * length_ptr;
 }
 
 _TRALLOC_INLINE
-void _tralloc_set_length ( _tralloc_length * length_ptr, size_t length )
+void _tralloc_length_set ( _tralloc_length * length_ptr, size_t length )
 {
     * length_ptr = length;
 }
 
 _TRALLOC_INLINE
-tralloc_error tralloc_get_length ( tralloc_context * context, size_t * length_result_ptr )
+tralloc_error tralloc_length_get ( tralloc_context * context, size_t * length_result_ptr )
 {
     if ( context == NULL ) {
         return TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_UNDEFINED;
@@ -38,7 +38,7 @@ tralloc_error tralloc_get_length ( tralloc_context * context, size_t * length_re
     if ( ! ( chunk->extensions & TRALLOC_EXTENSION_LENGTH ) ) {
         return TRALLOC_ERROR_NO_SUCH_EXTENSION;
     }
-    * length_result_ptr = _tralloc_get_length ( _tralloc_get_length_from_chunk ( chunk ) );
+    * length_result_ptr = _tralloc_length_get ( _tralloc_chunk_get_length ( chunk ) );
     return 0;
 }
 

@@ -17,7 +17,7 @@
 
 
 _TRALLOC_INLINE
-_tralloc_destructors * _tralloc_get_destructors_from_chunk ( _tralloc_chunk * chunk )
+_tralloc_destructors * _tralloc_chunk_get_destructors ( _tralloc_chunk * chunk )
 {
     return ( _tralloc_destructors * ) ( ( uintptr_t ) chunk - _tralloc_extensions_get_offset_for_extension ( chunk->extensions, TRALLOC_EXTENSION_DESTRUCTORS ) );
 }

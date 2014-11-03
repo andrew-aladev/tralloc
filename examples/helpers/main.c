@@ -87,7 +87,7 @@ int main ()
         tralloc_free ( file_name );
         return 8;
     }
-    if ( tralloc_append_destructor ( test_file, destructor_unlink_file, file_name ) != 0 ) {
+    if ( tralloc_destructor_append ( test_file, destructor_unlink_file, file_name ) != 0 ) {
         tralloc_free ( test_file );
         return 9;
     }

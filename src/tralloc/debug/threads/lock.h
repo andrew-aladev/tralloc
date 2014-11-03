@@ -18,7 +18,7 @@
 
 
 _TRALLOC_INLINE
-tralloc_error _tralloc_new_debug_threads_lock ( _tralloc_debug_threads_lock * lock )
+tralloc_error _tralloc_debug_threads_lock_new ( _tralloc_debug_threads_lock * lock )
 {
 
 #   if TRALLOC_DEBUG_THREADS_LOCK_TYPE == TRALLOC_THREADS_RWLOCK
@@ -39,7 +39,7 @@ tralloc_error _tralloc_new_debug_threads_lock ( _tralloc_debug_threads_lock * lo
 }
 
 _TRALLOC_INLINE
-tralloc_error _tralloc_rdlock_debug_threads ( _tralloc_debug_threads_lock * lock )
+tralloc_error _tralloc_debug_threads_lock_rdlock ( _tralloc_debug_threads_lock * lock )
 {
 
 #   if TRALLOC_DEBUG_THREADS_LOCK_TYPE == TRALLOC_THREADS_RWLOCK
@@ -60,7 +60,7 @@ tralloc_error _tralloc_rdlock_debug_threads ( _tralloc_debug_threads_lock * lock
 }
 
 _TRALLOC_INLINE
-tralloc_error _tralloc_wrlock_debug_threads ( _tralloc_debug_threads_lock * lock )
+tralloc_error _tralloc_debug_threads_lock_wrlock ( _tralloc_debug_threads_lock * lock )
 {
 
 #   if TRALLOC_DEBUG_THREADS_LOCK_TYPE == TRALLOC_THREADS_RWLOCK
@@ -81,7 +81,7 @@ tralloc_error _tralloc_wrlock_debug_threads ( _tralloc_debug_threads_lock * lock
 }
 
 _TRALLOC_INLINE
-tralloc_error _tralloc_unlock_debug_threads ( _tralloc_debug_threads_lock * lock )
+tralloc_error _tralloc_debug_threads_lock_unlock ( _tralloc_debug_threads_lock * lock )
 {
 
 #   if TRALLOC_DEBUG_THREADS_LOCK_TYPE == TRALLOC_THREADS_RWLOCK
@@ -102,7 +102,7 @@ tralloc_error _tralloc_unlock_debug_threads ( _tralloc_debug_threads_lock * lock
 }
 
 _TRALLOC_INLINE
-tralloc_error _tralloc_free_debug_threads_lock ( _tralloc_debug_threads_lock * lock )
+tralloc_error _tralloc_debug_threads_lock_free ( _tralloc_debug_threads_lock * lock )
 {
 #   if TRALLOC_DEBUG_THREADS_LOCK_TYPE == TRALLOC_THREADS_RWLOCK
     if ( pthread_rwlock_destroy ( lock ) != 0 ) {

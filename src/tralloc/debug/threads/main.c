@@ -32,7 +32,7 @@ tralloc_error _tralloc_debug_threads_check_usage_of_extension (
     pthread_t * used_by_thread
 )
 {
-    tralloc_error result = _tralloc_wrlock_debug_threads ( &chunk->thread_usage_lock );
+    tralloc_error result = _tralloc_debug_threads_lock_wrlock ( &chunk->thread_usage_lock );
     if ( result != 0 ) {
         return result;
     }
@@ -56,11 +56,11 @@ tralloc_error _tralloc_debug_threads_check_usage_of_extension (
         );
 #       endif
 
-        _tralloc_unlock_debug_threads ( &chunk->thread_usage_lock );
+        _tralloc_debug_threads_lock_unlock ( &chunk->thread_usage_lock );
         return error;
     }
 
-    result = _tralloc_unlock_debug_threads ( &chunk->thread_usage_lock );
+    result = _tralloc_debug_threads_lock_unlock ( &chunk->thread_usage_lock );
     if ( result != 0 ) {
         return result;
     }

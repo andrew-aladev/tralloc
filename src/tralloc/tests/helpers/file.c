@@ -79,7 +79,7 @@ tralloc_bool test_helpers_file ( tralloc_context * ctx )
         tralloc_free ( file_name );
         return TRALLOC_FALSE;
     }
-    if ( tralloc_append_destructor ( test_file, test_helpers_file_destructor_unlink_file, file_name ) != 0 ) {
+    if ( tralloc_destructor_append ( test_file, test_helpers_file_destructor_unlink_file, file_name ) != 0 ) {
         tralloc_free ( test_file );
         return TRALLOC_FALSE;
     }

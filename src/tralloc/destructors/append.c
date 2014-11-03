@@ -14,7 +14,7 @@
 #include <stdlib.h>
 
 
-tralloc_error tralloc_append_destructor ( tralloc_context * context, tralloc_destructor_function function, void * user_data )
+tralloc_error tralloc_destructor_append ( tralloc_context * context, tralloc_destructor_function function, void * user_data )
 {
     if ( context == NULL ) {
         return TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_UNDEFINED;
@@ -42,7 +42,7 @@ tralloc_error tralloc_append_destructor ( tralloc_context * context, tralloc_des
     destructor->user_data = user_data;
     destructor->next      = NULL;
 
-    _tralloc_destructors * destructors    = _tralloc_get_destructors_from_chunk ( chunk );
+    _tralloc_destructors * destructors    = _tralloc_chunk_get_destructors ( chunk );
     _tralloc_destructor * last_destructor = destructors->last_destructor;
     if ( last_destructor == NULL ) {
         destructors->first_destructor = destructor;
@@ -55,7 +55,7 @@ tralloc_error tralloc_append_destructor ( tralloc_context * context, tralloc_des
     return 0;
 }
 
-tralloc_error tralloc_prepend_destructor ( tralloc_context * context, tralloc_destructor_function function, void * user_data )
+tralloc_error tralloc_destructor_prepend ( tralloc_context * context, tralloc_destructor_function function, void * user_data )
 {
     if ( context == NULL ) {
         return TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_UNDEFINED;
@@ -82,7 +82,7 @@ tralloc_error tralloc_prepend_destructor ( tralloc_context * context, tralloc_de
     destructor->function  = function;
     destructor->user_data = user_data;
 
-    _tralloc_destructors * destructors     = _tralloc_get_destructors_from_chunk ( chunk );
+    _tralloc_destructors * destructors     = _tralloc_chunk_get_destructors ( chunk );
     _tralloc_destructor * first_destructor = destructors->first_destructor;
     if ( first_destructor == NULL ) {
         destructor->next              = NULL;

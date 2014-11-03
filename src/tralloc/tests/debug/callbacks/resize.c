@@ -104,9 +104,9 @@ tralloc_bool test_debug_callbacks_resize ( tralloc_context * ctx )
 #   if defined ( TRALLOC_DEBUG_LENGTH )
     size_t length;
     if (
-        tralloc_get_length ( a, &length ) != 0 || length != sizeof ( int ) * 9  ||
-        tralloc_get_length ( b, &length ) != 0 || length != sizeof ( char ) * 8 ||
-        tralloc_get_length ( c, &length ) != 0 || length != sizeof ( float ) * 10
+        tralloc_length_get ( a, &length ) != 0 || length != sizeof ( int ) * 9  ||
+        tralloc_length_get ( b, &length ) != 0 || length != sizeof ( char ) * 8 ||
+        tralloc_length_get ( c, &length ) != 0 || length != sizeof ( float ) * 10
     ) {
         tralloc_free ( a );
         tralloc_free ( b );

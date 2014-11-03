@@ -226,7 +226,7 @@ tralloc_error tralloc_debug_stats_get_length ( size_t * length )
 tralloc_error _tralloc_debug_stats_after_add_chunk ( _tralloc_chunk * chunk )
 {
     tralloc_error result;
-    size_t length = _tralloc_get_length ( _tralloc_get_length_from_chunk ( chunk ) );
+    size_t length = _tralloc_length_get ( _tralloc_chunk_get_length ( chunk ) );
     if (
         ( result = _tralloc_debug_stats_add_chunks_count ( 1 ) ) != 0 ||
         ( result = _tralloc_debug_stats_add_length ( length ) )  != 0 ||
@@ -239,7 +239,7 @@ tralloc_error _tralloc_debug_stats_after_add_chunk ( _tralloc_chunk * chunk )
 
 tralloc_error _tralloc_debug_stats_after_resize_chunk ( _tralloc_chunk * chunk, size_t old_length )
 {
-    size_t length = _tralloc_get_length ( _tralloc_get_length_from_chunk ( chunk ) );
+    size_t length = _tralloc_length_get ( _tralloc_chunk_get_length ( chunk ) );
     if ( length > old_length ) {
         return _tralloc_debug_stats_add_length ( length - old_length );
     } else if ( length < old_length ) {
@@ -251,7 +251,7 @@ tralloc_error _tralloc_debug_stats_after_resize_chunk ( _tralloc_chunk * chunk, 
 tralloc_error _tralloc_debug_stats_before_free_chunk ( _tralloc_chunk * chunk )
 {
     tralloc_error result;
-    size_t length = _tralloc_get_length ( _tralloc_get_length_from_chunk ( chunk ) );
+    size_t length = _tralloc_length_get ( _tralloc_chunk_get_length ( chunk ) );
     if (
         ( result = _tralloc_debug_stats_subtract_chunks_count ( 1 ) ) != 0 ||
         ( result = _tralloc_debug_stats_subtract_length ( length ) )  != 0 ||

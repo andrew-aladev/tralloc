@@ -14,7 +14,7 @@
 #include <stdlib.h>
 
 
-tralloc_error tralloc_clear_destructors ( tralloc_context * context )
+tralloc_error tralloc_destructors_clear ( tralloc_context * context )
 {
     if ( context == NULL ) {
         return TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_UNDEFINED;
@@ -25,7 +25,7 @@ tralloc_error tralloc_clear_destructors ( tralloc_context * context )
         return TRALLOC_ERROR_NO_SUCH_EXTENSION;
     }
 
-    _tralloc_destructors * destructors = _tralloc_get_destructors_from_chunk ( chunk );
+    _tralloc_destructors * destructors = _tralloc_chunk_get_destructors ( chunk );
     _tralloc_destructor * destructor   = destructors->first_destructor;
     if ( destructor == NULL ) {
         return 0;

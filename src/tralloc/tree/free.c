@@ -128,8 +128,8 @@ tralloc_error _tralloc_free_chunk ( _tralloc_chunk * chunk )
 
 #   if defined ( TRALLOC_DESTRUCTORS )
     if ( chunk->extensions & TRALLOC_EXTENSION_DESTRUCTORS ) {
-        _tralloc_destructors * destructors = _tralloc_get_destructors_from_chunk ( chunk );
-        result = _tralloc_free_destructors ( destructors, _tralloc_chunk_get_context ( chunk ) );
+        _tralloc_destructors * destructors = _tralloc_chunk_get_destructors ( chunk );
+        result = _tralloc_destructors_free ( destructors, _tralloc_chunk_get_context ( chunk ) );
         if ( result != 0 ) {
             error = result;
         }
@@ -147,7 +147,7 @@ tralloc_error _tralloc_free_chunk ( _tralloc_chunk * chunk )
 #   endif
 
 #   if defined ( TRALLOC_DEBUG_THREADS )
-    _tralloc_free_debug_threads_lock ( &chunk->thread_usage_lock );
+    _tralloc_debug_threads_lock_free ( &chunk->thread_usage_lock );
 #   endif
 
 #   if defined ( TRALLOC_DEBUG_LOG )

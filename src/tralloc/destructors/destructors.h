@@ -18,13 +18,13 @@
 
 
 _TRALLOC_INLINE
-void _tralloc_new_destructors ( _tralloc_destructors * destructors )
+void _tralloc_destructors_new ( _tralloc_destructors * destructors )
 {
     destructors->first_destructor = NULL;
     destructors->last_destructor  = NULL;
 }
 
-tralloc_error _tralloc_free_destructors ( _tralloc_destructors * destructors, tralloc_context * context );
+tralloc_error _tralloc_destructors_free ( _tralloc_destructors * destructors, tralloc_context * context );
 
 
 #endif
