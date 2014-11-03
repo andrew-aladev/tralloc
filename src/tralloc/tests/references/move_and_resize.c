@@ -180,11 +180,11 @@ tralloc_bool test_references_move_and_resize ( test_references_tree * tr )
     }
 
     if (
-        tralloc_move_reference ( tr->common_1, tr->common ) != 0 ||
-        tralloc_move_reference ( tr->common_2, tr->common ) != 0 ||
-        tralloc_move_reference ( tr->common_3, tr->common ) != 0 ||
-        tralloc_move_reference ( tr->shared_1, tr->shared ) != 0 ||
-        tralloc_move_reference ( tr->shared_2, tr->shared ) != 0
+        tralloc_reference_move ( tr->common_1, tr->common ) != 0 ||
+        tralloc_reference_move ( tr->common_2, tr->common ) != 0 ||
+        tralloc_reference_move ( tr->common_3, tr->common ) != 0 ||
+        tralloc_reference_move ( tr->shared_1, tr->shared ) != 0 ||
+        tralloc_reference_move ( tr->shared_2, tr->shared ) != 0
     ) {
         return TRALLOC_FALSE;
     }
@@ -203,8 +203,8 @@ tralloc_bool test_references_move_and_resize ( test_references_tree * tr )
     }
 
     if (
-        tralloc_clear_references ( tr->common ) != 0 ||
-        tralloc_clear_references ( tr->shared ) != 0
+        tralloc_references_clear ( tr->common ) != 0 ||
+        tralloc_references_clear ( tr->shared ) != 0
     ) {
         return TRALLOC_FALSE;
     }
@@ -214,12 +214,12 @@ tralloc_bool test_references_move_and_resize ( test_references_tree * tr )
     }
 
     if (
-        tralloc_move_reference ( tr->common_1, tr->common ) != 0 ||
-        tralloc_move_reference ( tr->common_2, tr->common ) != 0 ||
-        tralloc_move_reference ( tr->common_3, tr->common ) != 0 ||
+        tralloc_reference_move ( tr->common_1, tr->common ) != 0 ||
+        tralloc_reference_move ( tr->common_2, tr->common ) != 0 ||
+        tralloc_reference_move ( tr->common_3, tr->common ) != 0 ||
         tralloc_free           ( tr->common )               != 0 ||
-        tralloc_move_reference ( tr->shared_1, tr->shared ) != 0 ||
-        tralloc_move_reference ( tr->shared_2, tr->shared ) != 0
+        tralloc_reference_move ( tr->shared_1, tr->shared ) != 0 ||
+        tralloc_reference_move ( tr->shared_2, tr->shared ) != 0
     ) {
         return TRALLOC_FALSE;
     }

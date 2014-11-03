@@ -27,8 +27,8 @@ int main ()
         return 3;
     }
     if (
-        tralloc_move_reference ( common_reference_1, common ) != 0 ||
-        tralloc_move_reference ( common_reference_2, common ) != 0
+        tralloc_reference_move ( common_reference_1, common ) != 0 ||
+        tralloc_reference_move ( common_reference_2, common ) != 0
     ) {
         tralloc_free ( common_reference_1 );
         tralloc_free ( common_reference_2 );

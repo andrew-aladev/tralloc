@@ -18,7 +18,7 @@
 
 
 _TRALLOC_INLINE
-tralloc_error _tralloc_new_pool_lock ( _tralloc_pool_lock * lock )
+tralloc_error _tralloc_pool_lock_new ( _tralloc_pool_lock * lock )
 {
 
 #   if TRALLOC_POOL_LOCK_TYPE == TRALLOC_THREADS_RWLOCK
@@ -39,7 +39,7 @@ tralloc_error _tralloc_new_pool_lock ( _tralloc_pool_lock * lock )
 }
 
 _TRALLOC_INLINE
-tralloc_error _tralloc_rdlock_pool ( _tralloc_pool_lock * lock )
+tralloc_error _tralloc_pool_lock_rdlock ( _tralloc_pool_lock * lock )
 {
 
 #   if TRALLOC_POOL_LOCK_TYPE == TRALLOC_THREADS_RWLOCK
@@ -60,7 +60,7 @@ tralloc_error _tralloc_rdlock_pool ( _tralloc_pool_lock * lock )
 }
 
 _TRALLOC_INLINE
-tralloc_error _tralloc_wrlock_pool ( _tralloc_pool_lock * lock )
+tralloc_error _tralloc_pool_lock_wrlock ( _tralloc_pool_lock * lock )
 {
 
 #   if TRALLOC_POOL_LOCK_TYPE == TRALLOC_THREADS_RWLOCK
@@ -81,7 +81,7 @@ tralloc_error _tralloc_wrlock_pool ( _tralloc_pool_lock * lock )
 }
 
 _TRALLOC_INLINE
-tralloc_error _tralloc_unlock_pool ( _tralloc_pool_lock * lock )
+tralloc_error _tralloc_pool_lock_unlock ( _tralloc_pool_lock * lock )
 {
 
 #   if TRALLOC_POOL_LOCK_TYPE == TRALLOC_THREADS_RWLOCK
@@ -102,7 +102,7 @@ tralloc_error _tralloc_unlock_pool ( _tralloc_pool_lock * lock )
 }
 
 _TRALLOC_INLINE
-tralloc_error _tralloc_free_pool_lock ( _tralloc_pool_lock * lock )
+tralloc_error _tralloc_pool_lock_free ( _tralloc_pool_lock * lock )
 {
 
 #   if TRALLOC_POOL_LOCK_TYPE == TRALLOC_THREADS_RWLOCK

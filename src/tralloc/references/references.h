@@ -18,7 +18,7 @@
 
 
 _TRALLOC_INLINE
-void _tralloc_new_references ( _tralloc_references * references, tralloc_extensions extensions )
+void _tralloc_references_new ( _tralloc_references * references, tralloc_extensions extensions )
 {
     references->first_reference = NULL;
     references->extensions      = extensions;
@@ -26,7 +26,7 @@ void _tralloc_new_references ( _tralloc_references * references, tralloc_extensi
 }
 
 _TRALLOC_INLINE
-void _tralloc_update_references ( _tralloc_references * references )
+void _tralloc_references_update ( _tralloc_references * references )
 {
     _tralloc_reference  * reference = references->first_reference;
     while ( reference != NULL ) {
@@ -36,7 +36,7 @@ void _tralloc_update_references ( _tralloc_references * references )
 }
 
 _TRALLOC_INLINE
-tralloc_bool _tralloc_can_free_references ( _tralloc_references * references )
+tralloc_bool _tralloc_references_can_be_freed ( _tralloc_references * references )
 {
     if ( references->first_reference == NULL ) {
         return TRALLOC_TRUE;

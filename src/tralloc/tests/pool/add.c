@@ -19,7 +19,7 @@ tralloc_bool test_pool_add_overflow ( tralloc_context * ctx )
     if ( ! ( empty_pool_chunk->extensions & TRALLOC_EXTENSION_POOL ) ) {
         return TRALLOC_FALSE;
     }
-    _tralloc_pool * empty_pool = _tralloc_get_pool_from_chunk ( empty_pool_chunk );
+    _tralloc_pool * empty_pool = _tralloc_chunk_get_pool ( empty_pool_chunk );
     if (
         empty_pool->first_child  != NULL            ||
         empty_pool->max_fragment != NULL            ||
@@ -58,7 +58,7 @@ tralloc_bool test_pool_add_strict ( tralloc_context * ctx )
     if ( ! ( pool_chunk->extensions & TRALLOC_EXTENSION_POOL ) ) {
         return TRALLOC_FALSE;
     }
-    _tralloc_pool * pool = _tralloc_get_pool_from_chunk ( pool_chunk );
+    _tralloc_pool * pool = _tralloc_chunk_get_pool ( pool_chunk );
     _tralloc_pool_fragment * fragment = pool_data;
     if (
         pool->first_child  != NULL             ||
@@ -84,7 +84,7 @@ tralloc_bool test_pool_add_strict ( tralloc_context * ctx )
     if ( ! ( data_1_chunk->extensions & TRALLOC_EXTENSION_POOL_CHILD ) ) {
         return TRALLOC_FALSE;
     }
-    _tralloc_pool_child * data_1_child = _tralloc_get_pool_child_from_chunk ( data_1_chunk );
+    _tralloc_pool_child * data_1_child = _tralloc_chunk_get_pool_child ( data_1_chunk );
     if (
         pool->first_child  != data_1_child     ||
         pool->max_fragment != NULL             ||
@@ -120,7 +120,7 @@ tralloc_bool test_pool_add_much ( tralloc_context * ctx )
     if ( ! ( pool_chunk->extensions & TRALLOC_EXTENSION_POOL ) ) {
         return TRALLOC_FALSE;
     }
-    _tralloc_pool * pool = _tralloc_get_pool_from_chunk ( pool_chunk );
+    _tralloc_pool * pool = _tralloc_chunk_get_pool ( pool_chunk );
     _tralloc_pool_fragment * fragment = pool_data;
     if (
         pool->first_child  != NULL             ||
@@ -146,7 +146,7 @@ tralloc_bool test_pool_add_much ( tralloc_context * ctx )
     if ( ! ( data_1_chunk->extensions & TRALLOC_EXTENSION_POOL_CHILD ) ) {
         return TRALLOC_FALSE;
     }
-    _tralloc_pool_child * data_1_child = _tralloc_get_pool_child_from_chunk ( data_1_chunk );
+    _tralloc_pool_child * data_1_child = _tralloc_chunk_get_pool_child ( data_1_chunk );
     if (
         pool->first_child  != data_1_child     ||
         pool->max_fragment != fragment         ||
@@ -224,7 +224,7 @@ tralloc_bool test_pool_add_normal ( tralloc_context * ctx )
     if ( ! ( pool_chunk->extensions & TRALLOC_EXTENSION_POOL ) ) {
         return TRALLOC_FALSE;
     }
-    _tralloc_pool * pool = _tralloc_get_pool_from_chunk ( pool_chunk );
+    _tralloc_pool * pool = _tralloc_chunk_get_pool ( pool_chunk );
 
     _tralloc_chunk * data_1_chunk = _tralloc_context_get_chunk ( data_1 );
     _tralloc_chunk * data_2_chunk = _tralloc_context_get_chunk ( data_2 );
@@ -234,8 +234,8 @@ tralloc_bool test_pool_add_normal ( tralloc_context * ctx )
     ) {
         return TRALLOC_FALSE;
     }
-    _tralloc_pool_child * data_1_child = _tralloc_get_pool_child_from_chunk ( data_1_chunk );
-    _tralloc_pool_child * data_2_child = _tralloc_get_pool_child_from_chunk ( data_2_chunk );
+    _tralloc_pool_child * data_1_child = _tralloc_chunk_get_pool_child ( data_1_chunk );
+    _tralloc_pool_child * data_2_child = _tralloc_chunk_get_pool_child ( data_2_chunk );
 
     if (
         pool->first_child  != data_2_child     ||

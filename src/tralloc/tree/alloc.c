@@ -183,7 +183,7 @@ void _tralloc_alloc_prepare_extensions_environment ( _tralloc_chunk * parent_chu
         if ( parent_chunk == NULL ) {
             extensions_environment->parent_pool = NULL;
         } else {
-            extensions_environment->parent_pool = _tralloc_get_closest_pool_from_chunk ( parent_chunk );
+            extensions_environment->parent_pool = _tralloc_chunk_get_closest_pool ( parent_chunk );
         }
 
         if ( extensions_environment->parent_pool == NULL ) {
@@ -246,7 +246,7 @@ void _tralloc_alloc_prepare_extensions_environment ( _tralloc_chunk * parent_chu
 
 #   if defined ( TRALLOC_POOL )
     if ( extensions_environment->have_pool_child ) {
-        if ( !_tralloc_can_alloc_from_pool ( extensions_environment->parent_pool, total_length + _tralloc_extensions_get_length ( extensions_environment->extensions ) ) ) {
+        if ( !_tralloc_pool_can_alloc ( extensions_environment->parent_pool, total_length + _tralloc_extensions_get_length ( extensions_environment->extensions ) ) ) {
             // "parent_pool" can't alloc enough bytes.
             // "TRALLOC_EXTENSION_POOL_CHILD" will be forced disabled.
             extensions_environment->have_pool_child  = TRALLOC_FALSE;
@@ -298,8 +298,8 @@ tralloc_error _tralloc_alloc_initialize_extensions ( _tralloc_chunk * chunk, _tr
 #   if defined ( TRALLOC_POOL )
     _tralloc_pool_lock * pool_lock;
     if ( extensions_environment->have_pool_lock ) {
-        pool_lock = _tralloc_get_pool_lock_from_chunk ( chunk );
-        result = _tralloc_new_pool_lock ( pool_lock );
+        pool_lock = _tralloc_chunk_get_pool_lock ( chunk );
+        result = _tralloc_pool_lock_new ( pool_lock );
         if ( result != 0 ) {
             if ( extensions_environment->have_children_lock ) {
                 _tralloc_children_lock_free ( children_lock );
@@ -321,7 +321,7 @@ tralloc_error _tralloc_alloc_initialize_extensions ( _tralloc_chunk * chunk, _tr
 
 #       if defined ( TRALLOC_POOL )
         if ( extensions_environment->have_pool_lock ) {
-            _tralloc_free_pool_lock ( pool_lock );
+            _tralloc_pool_lock_free ( pool_lock );
         }
 #       endif
 
@@ -347,7 +347,7 @@ tralloc_error _tralloc_alloc_initialize_extensions ( _tralloc_chunk * chunk, _tr
 
 #       if defined ( TRALLOC_POOL )
         if ( extensions_environment->have_pool_lock ) {
-            _tralloc_free_pool_lock ( pool_lock );
+            _tralloc_pool_lock_free ( pool_lock );
         }
 #       endif
 
@@ -366,9 +366,9 @@ tralloc_error _tralloc_alloc_initialize_extensions ( _tralloc_chunk * chunk, _tr
 
 #   if defined ( TRALLOC_POOL )
     if ( extensions_environment->have_pool ) {
-        _tralloc_new_pool ( _tralloc_get_pool_from_chunk ( chunk ), _tralloc_chunk_get_context ( chunk ), extensions_environment->extensions, chunk_prototype->length );
+        _tralloc_pool_new ( _tralloc_chunk_get_pool ( chunk ), _tralloc_chunk_get_context ( chunk ), extensions_environment->extensions, chunk_prototype->length );
     } else if ( extensions_environment->have_pool_child ) {
-        _tralloc_new_pool_child ( _tralloc_get_pool_child_from_chunk ( chunk ), extensions_environment->parent_pool, total_length, extensions_environment->prev_pool_child, extensions_environment->next_pool_child );
+        _tralloc_pool_child_new ( _tralloc_chunk_get_pool_child ( chunk ), extensions_environment->parent_pool, total_length, extensions_environment->prev_pool_child, extensions_environment->next_pool_child );
     }
 #   endif
 
@@ -386,10 +386,10 @@ tralloc_error _tralloc_alloc_initialize_extensions ( _tralloc_chunk * chunk, _tr
 
 #   if defined ( TRALLOC_REFERENCES )
     if ( extensions_environment->have_references ) {
-        _tralloc_new_references ( _tralloc_chunk_get_references ( chunk ), extensions_environment->extensions );
+        _tralloc_references_new ( _tralloc_chunk_get_references ( chunk ), extensions_environment->extensions );
     }
     if ( extensions_environment->have_reference ) {
-        _tralloc_new_reference ( _tralloc_chunk_get_reference ( chunk ) );
+        _tralloc_reference_new ( _tralloc_chunk_get_reference ( chunk ) );
     }
 #   endif
 
@@ -485,7 +485,7 @@ tralloc_error _tralloc_alloc ( _tralloc_alloc_options * options, tralloc_context
 
 #   if defined ( TRALLOC_POOL )
     if ( extensions_environment.have_pool_child ) {
-        _tralloc_alloc_from_pool ( extensions_environment.parent_pool, &memory, total_length, options->zero, &extensions_environment.prev_pool_child, &extensions_environment.next_pool_child );
+        _tralloc_pool_alloc ( extensions_environment.parent_pool, &memory, total_length, options->zero, &extensions_environment.prev_pool_child, &extensions_environment.next_pool_child );
     } else {
         if ( options->zero ) {
             result = _tralloc_calloc ( &memory, total_length );
@@ -521,7 +521,7 @@ tralloc_error _tralloc_alloc ( _tralloc_alloc_options * options, tralloc_context
 
 #       if defined ( TRALLOC_POOL )
         if ( extensions_environment.have_pool_child ) {
-            _tralloc_free_pool_child ( _tralloc_get_pool_child_from_chunk ( chunk ) );
+            _tralloc_pool_child_free ( _tralloc_chunk_get_pool_child ( chunk ) );
             return result;
         }
 #       endif

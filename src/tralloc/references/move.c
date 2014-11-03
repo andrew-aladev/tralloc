@@ -8,7 +8,7 @@
 
 
 static inline
-void _tralloc_detach_reference ( _tralloc_reference * reference )
+void _tralloc_reference_detach ( _tralloc_reference * reference )
 {
     _tralloc_references * old_references = reference->references;
     _tralloc_reference * prev = reference->prev;
@@ -29,7 +29,7 @@ void _tralloc_detach_reference ( _tralloc_reference * reference )
 }
 
 static inline
-void _tralloc_attach_reference ( _tralloc_reference * reference, _tralloc_references * new_references )
+void _tralloc_reference_attach ( _tralloc_reference * reference, _tralloc_references * new_references )
 {
     _tralloc_references * old_references = reference->references;
     _tralloc_reference * prev = reference->prev;
@@ -57,7 +57,7 @@ void _tralloc_attach_reference ( _tralloc_reference * reference, _tralloc_refere
     new_references->first_reference = reference;
 }
 
-tralloc_error tralloc_move_reference ( tralloc_context * child_context, tralloc_context * parent_context )
+tralloc_error tralloc_reference_move ( tralloc_context * child_context, tralloc_context * parent_context )
 {
     if ( child_context == NULL ) {
         return TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_UNDEFINED;
@@ -71,14 +71,13 @@ tralloc_error tralloc_move_reference ( tralloc_context * child_context, tralloc_
         return TRALLOC_ERROR_NO_SUCH_EXTENSION;
     }
 
+    _tralloc_reference * reference = _tralloc_chunk_get_reference ( child_chunk );
     if ( parent_context == NULL ) {
-        _tralloc_reference * reference = _tralloc_chunk_get_reference ( child_chunk );
         if ( reference->references == NULL ) {
             return TRALLOC_ERROR_CHILD_HAS_SAME_PARENT;
         }
-        _tralloc_detach_reference ( reference );
+        _tralloc_reference_detach ( reference );
     } else {
-        _tralloc_reference * reference        = _tralloc_chunk_get_reference ( child_chunk );
         _tralloc_references * old_references  = reference->references;
         _tralloc_chunk * new_references_chunk = _tralloc_context_get_chunk ( parent_context );
         if ( ! ( new_references_chunk->extensions & TRALLOC_EXTENSION_REFERENCES ) ) {
@@ -88,7 +87,7 @@ tralloc_error tralloc_move_reference ( tralloc_context * child_context, tralloc_
         if ( old_references == new_references ) {
             return TRALLOC_ERROR_CHILD_HAS_SAME_PARENT;
         }
-        _tralloc_attach_reference ( reference, new_references );
+        _tralloc_reference_attach ( reference, new_references );
     }
 
     return 0;

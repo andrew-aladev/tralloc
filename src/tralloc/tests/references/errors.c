@@ -11,18 +11,18 @@
 tralloc_bool test_references_errors ( tralloc_context * ctx )
 {
     if (
-        tralloc_move_reference ( NULL, NULL ) != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_UNDEFINED ||
-        tralloc_clear_references ( NULL )     != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_UNDEFINED ||
-        tralloc_move_reference ( ctx, ctx )   != TRALLOC_ERROR_CHILD_EQUALS_PARENT
+        tralloc_reference_move   ( NULL, NULL ) != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_UNDEFINED ||
+        tralloc_references_clear ( NULL )       != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_UNDEFINED ||
+        tralloc_reference_move   ( ctx, ctx )   != TRALLOC_ERROR_CHILD_EQUALS_PARENT
     ) {
         return TRALLOC_FALSE;
     }
 
     tralloc_context * empty;
     if (
-        tralloc_new_empty            ( ctx, &empty ) != 0 ||
-        tralloc_clear_references ( empty )       != TRALLOC_ERROR_NO_SUCH_EXTENSION ||
-        tralloc_move_reference   ( empty, NULL ) != TRALLOC_ERROR_NO_SUCH_EXTENSION
+        tralloc_new_empty        ( ctx, &empty ) != 0 ||
+        tralloc_references_clear ( empty )       != TRALLOC_ERROR_NO_SUCH_EXTENSION ||
+        tralloc_reference_move   ( empty, NULL ) != TRALLOC_ERROR_NO_SUCH_EXTENSION
     ) {
         return TRALLOC_FALSE;
     }
@@ -31,12 +31,12 @@ tralloc_bool test_references_errors ( tralloc_context * ctx )
     if (
         tralloc_new_empty_with_extensions ( ctx, &references, TRALLOC_EXTENSION_REFERENCES ) != 0 ||
         tralloc_new_empty_with_extensions ( ctx, &reference,  TRALLOC_EXTENSION_REFERENCE )  != 0 ||
-        tralloc_move_reference ( reference, NULL )       != TRALLOC_ERROR_CHILD_HAS_SAME_PARENT ||
-        tralloc_move_reference ( reference, empty )      != TRALLOC_ERROR_NO_SUCH_EXTENSION     ||
-        tralloc_move_reference ( reference, references ) != 0 ||
-        tralloc_move_reference ( reference, references ) != TRALLOC_ERROR_CHILD_HAS_SAME_PARENT ||
-        tralloc_move_reference ( reference, NULL )       != 0 ||
-        tralloc_move_reference ( reference, NULL )       != TRALLOC_ERROR_CHILD_HAS_SAME_PARENT
+        tralloc_reference_move ( reference, NULL )       != TRALLOC_ERROR_CHILD_HAS_SAME_PARENT ||
+        tralloc_reference_move ( reference, empty )      != TRALLOC_ERROR_NO_SUCH_EXTENSION     ||
+        tralloc_reference_move ( reference, references ) != 0 ||
+        tralloc_reference_move ( reference, references ) != TRALLOC_ERROR_CHILD_HAS_SAME_PARENT ||
+        tralloc_reference_move ( reference, NULL )       != 0 ||
+        tralloc_reference_move ( reference, NULL )       != TRALLOC_ERROR_CHILD_HAS_SAME_PARENT
     ) {
         return TRALLOC_FALSE;
     }

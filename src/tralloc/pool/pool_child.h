@@ -9,9 +9,9 @@
 #include "../types.h"
 
 
-void                  _tralloc_new_pool_child    ( _tralloc_pool_child * pool_child, _tralloc_pool * pool, size_t length, _tralloc_pool_child * prev, _tralloc_pool_child * next );
-_tralloc_pool_child * _tralloc_resize_pool_child ( _tralloc_pool_child * pool_child, size_t target_length );
-tralloc_error         _tralloc_free_pool_child   ( _tralloc_pool_child * pool_child );
+void                  _tralloc_pool_child_new    ( _tralloc_pool_child * pool_child, _tralloc_pool * pool, size_t length, _tralloc_pool_child * prev, _tralloc_pool_child * next );
+_tralloc_pool_child * _tralloc_pool_child_resize ( _tralloc_pool_child * pool_child, size_t target_length );
+tralloc_error         _tralloc_pool_child_free   ( _tralloc_pool_child * pool_child );
 
 
 #endif

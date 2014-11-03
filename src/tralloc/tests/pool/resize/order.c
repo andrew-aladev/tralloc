@@ -48,7 +48,7 @@ tralloc_bool test_pool_resize_order ( tralloc_context * ctx )
     if ( ! ( pool_chunk->extensions & TRALLOC_EXTENSION_POOL ) ) {
         return TRALLOC_FALSE;
     }
-    _tralloc_pool * pool = _tralloc_get_pool_from_chunk ( pool_chunk );
+    _tralloc_pool * pool = _tralloc_chunk_get_pool ( pool_chunk );
 
     _tralloc_chunk * spacer_1_chunk = _tralloc_context_get_chunk ( spacer_1 );
     _tralloc_chunk * spacer_2_chunk = _tralloc_context_get_chunk ( spacer_2 );
@@ -64,11 +64,11 @@ tralloc_bool test_pool_resize_order ( tralloc_context * ctx )
     ) {
         return TRALLOC_FALSE;
     }
-    _tralloc_pool_child * spacer_1_child = _tralloc_get_pool_child_from_chunk ( spacer_1_chunk );
-    _tralloc_pool_child * spacer_2_child = _tralloc_get_pool_child_from_chunk ( spacer_2_chunk );
-    _tralloc_pool_child * data_3_child   = _tralloc_get_pool_child_from_chunk ( data_3_chunk );
-    _tralloc_pool_child * spacer_3_child = _tralloc_get_pool_child_from_chunk ( spacer_3_chunk );
-    _tralloc_pool_child * spacer_4_child = _tralloc_get_pool_child_from_chunk ( spacer_4_chunk );
+    _tralloc_pool_child * spacer_1_child = _tralloc_chunk_get_pool_child ( spacer_1_chunk );
+    _tralloc_pool_child * spacer_2_child = _tralloc_chunk_get_pool_child ( spacer_2_chunk );
+    _tralloc_pool_child * data_3_child   = _tralloc_chunk_get_pool_child ( data_3_chunk );
+    _tralloc_pool_child * spacer_3_child = _tralloc_chunk_get_pool_child ( spacer_3_chunk );
+    _tralloc_pool_child * spacer_4_child = _tralloc_chunk_get_pool_child ( spacer_4_chunk );
 
     _tralloc_pool_fragment * fragment_1 = ( _tralloc_pool_fragment * ) ( ( uintptr_t ) spacer_1_child + spacer_1_child->length );
     _tralloc_pool_fragment * fragment_2 = ( _tralloc_pool_fragment * ) ( ( uintptr_t ) spacer_2_child + spacer_2_child->length );
@@ -350,7 +350,7 @@ tralloc_bool test_pool_resize_order ( tralloc_context * ctx )
         return TRALLOC_FALSE;
     }
     data_3_chunk = _tralloc_context_get_chunk ( data_3 );
-    data_3_child = _tralloc_get_pool_child_from_chunk ( data_3_chunk );
+    data_3_child = _tralloc_chunk_get_pool_child ( data_3_chunk );
     fragment_4 = ( _tralloc_pool_fragment * ) ( ( uintptr_t ) data_3_child + data_3_child->length );
 
     // [ data_3 + data_2 + data_1 + spacer_1 + spacer_2 + spacer_3 ] [ fragment of data_4 + spacer_4 ]

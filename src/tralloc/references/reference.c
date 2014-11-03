@@ -9,7 +9,7 @@
 #include <tralloc/tree/free.h>
 
 
-void _tralloc_update_reference ( _tralloc_reference * reference )
+void _tralloc_reference_update ( _tralloc_reference * reference )
 {
     _tralloc_reference * prev = reference->prev;
     _tralloc_reference * next = reference->next;
@@ -28,7 +28,7 @@ void _tralloc_update_reference ( _tralloc_reference * reference )
     }
 }
 
-tralloc_error _tralloc_free_reference ( _tralloc_reference * reference )
+tralloc_error _tralloc_reference_free ( _tralloc_reference * reference )
 {
     _tralloc_reference * prev = reference->prev;
     _tralloc_reference * next = reference->next;

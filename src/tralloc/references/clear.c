@@ -8,7 +8,7 @@
 #include <tralloc/common.h>
 
 
-tralloc_error tralloc_clear_references ( tralloc_context * context )
+tralloc_error tralloc_references_clear ( tralloc_context * context )
 {
     if ( context == NULL ) {
         return TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_UNDEFINED;
