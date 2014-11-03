@@ -9,7 +9,7 @@ passed_arguments=$@
 make_jobs=$(($(nproc) + 1))
 
 test_arguments=
-typeset -A config_hash_table=
+typeset -A config_hash_table=()
 function execute_test_arguments {
     local arguments=$1
     
@@ -57,7 +57,6 @@ test_callback=
 function test {
     local current=0
     local feature
-    config_hash_table=()
     for feature in $test_features; do
         local progress=$(printf "test \"$test_name\", combination %u / %u, progress %05.2f%%\n" $(($current + 1)) $test_count $(awk "BEGIN{print $current / $test_count * 100}"))
         echo -ne "\033]2;$progress\007"
