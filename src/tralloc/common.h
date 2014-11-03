@@ -18,6 +18,12 @@
 
 
 #if defined ( TRALLOC_EXTENSIONS )
+_TRALLOC_INLINE
+tralloc_bool _tralloc_extensions_have_extension ( tralloc_extensions extensions, _tralloc_extension extension )
+{
+    return ( extensions & extension ) == extension;
+}
+
 size_t _tralloc_extensions_get_length               ( tralloc_extensions extensions );
 size_t _tralloc_extensions_get_offset_for_extension ( tralloc_extensions extensions, _tralloc_extension extension );
 

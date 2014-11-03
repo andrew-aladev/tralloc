@@ -13,7 +13,7 @@
 
 tralloc_error _tralloc_buffer_new ( _tralloc_alloc_options * options, tralloc_buffer ** buffer_ptr, size_t capacity )
 {
-    options->zero   = false;
+    options->zero   = TRALLOC_FALSE;
     options->length = sizeof ( tralloc_buffer );
     tralloc_error result = _tralloc_alloc ( options, ( tralloc_context ** ) buffer_ptr );
     if ( result != 0 ) {

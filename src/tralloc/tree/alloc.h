@@ -44,7 +44,7 @@ tralloc_error _tralloc_debug_log_new ( const char * file, size_t line, tralloc_c
     options.line           = line;
     options.parent_context = parent_context;
     options.length         = length;
-    options.zero           = false;
+    options.zero           = TRALLOC_FALSE;
 
 #   if defined ( TRALLOC_EXTENSIONS )
     options.extensions = 0;
@@ -60,7 +60,7 @@ tralloc_error _tralloc_debug_log_new_zero ( const char * file, size_t line, tral
     options.line           = line;
     options.parent_context = parent_context;
     options.length         = length;
-    options.zero           = true;
+    options.zero           = TRALLOC_TRUE;
 
 #   if defined ( TRALLOC_EXTENSIONS )
     options.extensions = 0;
@@ -87,7 +87,7 @@ tralloc_error _tralloc_debug_log_new_with_extensions ( const char * file, size_t
     options.line           = line;
     options.parent_context = parent_context;
     options.length         = length;
-    options.zero           = false;
+    options.zero           = TRALLOC_FALSE;
     options.extensions     = extensions;
     return _tralloc_alloc ( &options, child_context );
 }
@@ -99,7 +99,7 @@ tralloc_error _tralloc_debug_log_new_zero_with_extensions ( const char * file, s
     options.line           = line;
     options.parent_context = parent_context;
     options.length         = length;
-    options.zero           = true;
+    options.zero           = TRALLOC_TRUE;
     options.extensions     = extensions;
     return _tralloc_alloc ( &options, child_context );
 }
@@ -122,7 +122,7 @@ tralloc_error tralloc_new ( tralloc_context * parent_context, tralloc_context **
     _tralloc_alloc_options options;
     options.parent_context = parent_context;
     options.length         = length;
-    options.zero           = false;
+    options.zero           = TRALLOC_FALSE;
 
 #   if defined ( TRALLOC_EXTENSIONS )
     options.extensions = 0;
@@ -136,7 +136,7 @@ tralloc_error tralloc_new_zero ( tralloc_context * parent_context, tralloc_conte
     _tralloc_alloc_options options;
     options.parent_context = parent_context;
     options.length         = length;
-    options.zero           = true;
+    options.zero           = TRALLOC_TRUE;
 
 #   if defined ( TRALLOC_EXTENSIONS )
     options.extensions = 0;
@@ -157,7 +157,7 @@ tralloc_error tralloc_new_with_extensions ( tralloc_context * parent_context, tr
     _tralloc_alloc_options options;
     options.parent_context = parent_context;
     options.length         = length;
-    options.zero           = false;
+    options.zero           = TRALLOC_FALSE;
     options.extensions     = extensions;
     return _tralloc_alloc ( &options, child_context );
 }
@@ -167,7 +167,7 @@ tralloc_error tralloc_new_zero_with_extensions ( tralloc_context * parent_contex
     _tralloc_alloc_options options;
     options.parent_context = parent_context;
     options.length         = length;
-    options.zero           = true;
+    options.zero           = TRALLOC_TRUE;
     options.extensions     = extensions;
     return _tralloc_alloc ( &options, child_context );
 }

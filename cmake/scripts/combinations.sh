@@ -3,29 +3,39 @@
 source_dir=$(readlink -f "$(dirname $0)/../../")
 build_dir=$(readlink -f "$source_dir/build")
 eval "mkdir -p $build_dir"
+eval "rm -rf $build_dir/*"
 
 passed_arguments=$@
 make_jobs=$(($(nproc) + 1))
 
 test_arguments=
+typeset -A config_hash_table=
 function execute_test_arguments {
     local arguments=$1
-
-    local command="rm -r $build_dir/*"
-    echo $command
-    eval $command
-    if [ ! $? -eq 0 ]; then
-        echo "Failed to remove $build_dir/*"
-        exit 1
-    fi
     
-    command="cd $build_dir && cmake $source_dir $test_arguments && make clean && make -j $make_jobs"
+    local command="cd $build_dir && cmake $source_dir $test_arguments"
     echo $command
     eval $command
     if [ ! $? -eq 0 ]; then
         echo "Failed arguments:"
         echo "  $test_arguments"
         exit 2
+    fi
+    
+    config_hash=$(sha256sum "$source_dir/src/tralloc/config.h" | cut -d " " -f 1)
+    if [[ ${config_hash_table[$config_hash]} -eq 1 ]]; then
+        echo "This combination has been already checked"
+        return 0
+    fi
+    config_hash_table[$config_hash]=1
+    
+    command="cd $build_dir && make clean && make -j $make_jobs"
+    echo $command
+    eval $command
+    if [ ! $? -eq 0 ]; then
+        echo "Failed arguments:"
+        echo "  $test_arguments"
+        exit 3
     fi
     if [ -z "$NO_TESTS" ]; then
         command="make test"
@@ -47,6 +57,7 @@ test_callback=
 function test {
     local current=0
     local feature
+    config_hash_table=()
     for feature in $test_features; do
         local progress=$(printf "test \"$test_name\", combination %u / %u, progress %05.2f%%\n" $(($current + 1)) $test_count $(awk "BEGIN{print $current / $test_count * 100}"))
         echo -ne "\033]2;$progress\007"
@@ -54,7 +65,7 @@ function test {
 
         test_arguments="$passed_arguments "
         $test_callback $feature
-        test_arguments+="-DTRALLOC_MAN=0 -DTRALLOC_COLLECT_SOURCES=1"
+        test_arguments+="-DTRALLOC_SHARED=0 -DTRALLOC_STATIC=1 -DTRALLOC_MAN=0 -DTRALLOC_COLLECT_SOURCES=1"
 
         execute_test_arguments
     done

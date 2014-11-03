@@ -63,7 +63,7 @@ size_t _tralloc_extensions_get_length ( tralloc_extensions extensions )
 }
 
 // Function returns offset of the extension's structure from the bottom.
-size_t _tralloc_extensions_get_offset_for_extension ( tralloc_extensions extensions, _tralloc_extension extension )
+size_t _tralloc_extensions_get_offset_for_extension ( tralloc_extensions extensions, _tralloc_extension _TRALLOC_UNUSED ( extension ) )
 {
     size_t offset = 0;
 

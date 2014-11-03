@@ -11,12 +11,15 @@
 
 tralloc_bool test_utils_buffer ( tralloc_context * ctx )
 {
-    if (
-        tralloc_buffer_new                 ( NULL, NULL, 0 )    != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_UNDEFINED ||
-        tralloc_buffer_new_with_extensions ( NULL, NULL, 0, 0 ) != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_UNDEFINED
-    ) {
+    if ( tralloc_buffer_new ( NULL, NULL, 0 ) != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_UNDEFINED ) {
         return TRALLOC_FALSE;
     }
+
+#   if defined ( TRALLOC_EXTENSIONS )
+    if ( tralloc_buffer_new_with_extensions ( NULL, NULL, 0, 0 ) != TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_UNDEFINED ) {
+        return TRALLOC_FALSE;
+    }
+#   endif
 
     tralloc_buffer * buffer;
 

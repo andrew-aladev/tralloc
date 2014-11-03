@@ -21,7 +21,7 @@ tralloc_error tralloc_destructor_append ( tralloc_context * context, tralloc_des
     }
     _tralloc_chunk * chunk = _tralloc_context_get_chunk ( context );
 
-    if ( ! ( chunk->extensions & TRALLOC_EXTENSION_DESTRUCTORS ) ) {
+    if ( ! _tralloc_extensions_have_extension ( chunk->extensions, TRALLOC_EXTENSION_DESTRUCTORS ) ) {
         return TRALLOC_ERROR_NO_SUCH_EXTENSION;
     }
 
@@ -62,7 +62,7 @@ tralloc_error tralloc_destructor_prepend ( tralloc_context * context, tralloc_de
     }
     _tralloc_chunk * chunk = _tralloc_context_get_chunk ( context );
 
-    if ( ! ( chunk->extensions & TRALLOC_EXTENSION_DESTRUCTORS ) ) {
+    if ( ! _tralloc_extensions_have_extension ( chunk->extensions, TRALLOC_EXTENSION_DESTRUCTORS ) ) {
         return TRALLOC_ERROR_NO_SUCH_EXTENSION;
     }
 

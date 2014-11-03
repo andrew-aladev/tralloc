@@ -70,7 +70,7 @@ tralloc_error tralloc_move ( tralloc_context * child_context, tralloc_context * 
 #   endif
 
 #   if defined ( TRALLOC_THREADS )
-    tralloc_bool have_subtree_lock = chunk->extensions & TRALLOC_EXTENSION_LOCK_SUBTREE;
+    tralloc_bool have_subtree_lock = _tralloc_extensions_have_extension ( chunk->extensions, TRALLOC_EXTENSION_LOCK_SUBTREE );
     _tralloc_subtree_lock * subtree_lock;
     if ( have_subtree_lock ) {
         subtree_lock = _tralloc_chunk_get_subtree_lock ( chunk );
@@ -108,29 +108,25 @@ tralloc_error tralloc_move ( tralloc_context * child_context, tralloc_context * 
     // "chunk->parent" is going to be changed.
 
 #   if defined ( TRALLOC_THREADS )
-    tralloc_bool parent_1_have_children_lock;
-    tralloc_bool parent_2_have_children_lock;
-    _tralloc_children_lock * parent_1_children_lock;
-    _tralloc_children_lock * parent_2_children_lock;
-
+    _tralloc_chunk * parent_1_chunk;
+    _tralloc_chunk * parent_2_chunk;
     if ( old_parent_chunk < new_parent_chunk ) {
-        parent_1_have_children_lock = old_parent_chunk != NULL && ( old_parent_chunk->extensions & TRALLOC_EXTENSION_LOCK_CHILDREN );
-        if ( parent_1_have_children_lock ) {
-            parent_1_children_lock = _tralloc_chunk_get_children_lock ( old_parent_chunk );
-        }
-        parent_2_have_children_lock = new_parent_chunk != NULL && ( new_parent_chunk->extensions & TRALLOC_EXTENSION_LOCK_CHILDREN );
-        if ( parent_2_have_children_lock ) {
-            parent_2_children_lock = _tralloc_chunk_get_children_lock ( new_parent_chunk );
-        }
+        parent_1_chunk = old_parent_chunk;
+        parent_2_chunk = new_parent_chunk;
     } else {
-        parent_1_have_children_lock = new_parent_chunk != NULL && ( new_parent_chunk->extensions & TRALLOC_EXTENSION_LOCK_CHILDREN );
-        if ( parent_1_have_children_lock ) {
-            parent_1_children_lock = _tralloc_chunk_get_children_lock ( new_parent_chunk );
-        }
-        parent_2_have_children_lock = old_parent_chunk != NULL && ( old_parent_chunk->extensions & TRALLOC_EXTENSION_LOCK_CHILDREN );
-        if ( parent_2_have_children_lock ) {
-            parent_2_children_lock = _tralloc_chunk_get_children_lock ( old_parent_chunk );
-        }
+        parent_1_chunk = new_parent_chunk;
+        parent_2_chunk = old_parent_chunk;
+    }
+
+    _tralloc_children_lock * parent_1_children_lock;
+    tralloc_bool parent_1_have_children_lock = parent_1_chunk != NULL && _tralloc_extensions_have_extension ( parent_1_chunk->extensions, TRALLOC_EXTENSION_LOCK_CHILDREN );
+    if ( parent_1_have_children_lock ) {
+        parent_1_children_lock = _tralloc_chunk_get_children_lock ( parent_1_chunk );
+    }
+    _tralloc_children_lock * parent_2_children_lock;
+    tralloc_bool parent_2_have_children_lock = parent_2_chunk != NULL && _tralloc_extensions_have_extension ( parent_2_chunk->extensions, TRALLOC_EXTENSION_LOCK_CHILDREN );
+    if ( parent_2_have_children_lock ) {
+        parent_2_children_lock = _tralloc_chunk_get_children_lock ( parent_2_chunk );
     }
 
     if ( parent_1_have_children_lock ) {

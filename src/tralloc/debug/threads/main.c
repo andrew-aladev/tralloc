@@ -93,6 +93,7 @@ tralloc_error _tralloc_debug_threads_check_usage_of_children ( _tralloc_chunk * 
            );
 }
 
+#if defined ( TRALLOC_POOL )
 static
 tralloc_error _tralloc_debug_threads_check_usage_of_pool ( _tralloc_chunk * chunk, pthread_t thread_id )
 {
@@ -105,6 +106,7 @@ tralloc_error _tralloc_debug_threads_check_usage_of_pool ( _tralloc_chunk * chun
                &chunk->pool_used_by_thread
            );
 }
+#endif
 
 tralloc_error _tralloc_debug_threads_before_add_chunk ( _tralloc_chunk * parent_chunk )
 {

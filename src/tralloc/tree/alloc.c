@@ -97,7 +97,7 @@ typedef struct _tralloc_alloc_extensions_environment_type {
 } _tralloc_alloc_extensions_environment;
 
 static
-void _tralloc_alloc_prepare_extensions_environment ( _tralloc_chunk * parent_chunk, tralloc_extensions extensions, size_t total_length, _tralloc_alloc_extensions_environment * extensions_environment )
+void _tralloc_alloc_prepare_extensions_environment ( _tralloc_chunk * _TRALLOC_UNUSED ( parent_chunk ), tralloc_extensions extensions, size_t _TRALLOC_UNUSED ( total_length ), _tralloc_alloc_extensions_environment * extensions_environment )
 {
     extensions_environment->extensions = extensions;
 
@@ -109,8 +109,8 @@ void _tralloc_alloc_prepare_extensions_environment ( _tralloc_chunk * parent_chu
 #   endif
 
 #   if defined ( TRALLOC_THREADS )
-    extensions_environment->have_subtree_lock  = extensions_environment->extensions & TRALLOC_EXTENSION_LOCK_SUBTREE;
-    extensions_environment->have_children_lock = extensions_environment->extensions & TRALLOC_EXTENSION_LOCK_CHILDREN;
+    extensions_environment->have_subtree_lock  = _tralloc_extensions_have_extension ( extensions_environment->extensions, TRALLOC_EXTENSION_LOCK_SUBTREE );
+    extensions_environment->have_children_lock = _tralloc_extensions_have_extension ( extensions_environment->extensions, TRALLOC_EXTENSION_LOCK_CHILDREN );
 #   endif
 
 #   if defined ( TRALLOC_DEBUG_THREADS )
@@ -137,7 +137,7 @@ void _tralloc_alloc_prepare_extensions_environment ( _tralloc_chunk * parent_chu
 #   endif
 
 #   if defined ( TRALLOC_LENGTH )
-    extensions_environment->have_length = extensions_environment->extensions & TRALLOC_EXTENSION_LENGTH;
+    extensions_environment->have_length = _tralloc_extensions_have_extension ( extensions_environment->extensions, TRALLOC_EXTENSION_LENGTH );
 #   endif
 
 #   if defined ( TRALLOC_DEBUG_LENGTH )
@@ -154,18 +154,18 @@ void _tralloc_alloc_prepare_extensions_environment ( _tralloc_chunk * parent_chu
 #   endif
 
 #   if defined ( TRALLOC_DESTRUCTORS )
-    extensions_environment->have_destructors = extensions_environment->extensions & TRALLOC_EXTENSION_DESTRUCTORS;
+    extensions_environment->have_destructors = _tralloc_extensions_have_extension ( extensions_environment->extensions, TRALLOC_EXTENSION_DESTRUCTORS );
 #   endif
 
 #   if defined ( TRALLOC_REFERENCES )
-    extensions_environment->have_references = extensions_environment->extensions & TRALLOC_EXTENSION_REFERENCES;
-    extensions_environment->have_reference  = extensions_environment->extensions & TRALLOC_EXTENSION_REFERENCE;
+    extensions_environment->have_references = _tralloc_extensions_have_extension ( extensions_environment->extensions, TRALLOC_EXTENSION_REFERENCES );
+    extensions_environment->have_reference  = _tralloc_extensions_have_extension ( extensions_environment->extensions, TRALLOC_EXTENSION_REFERENCE );
 #   endif
 
 #   if defined ( TRALLOC_POOL )
     // Chunk can't have both "TRALLOC_EXTENSION_POOL" and "TRALLOC_EXTENSION_POOL_CHILD".
-    extensions_environment->have_pool       = extensions_environment->extensions & TRALLOC_EXTENSION_POOL;
-    extensions_environment->have_pool_child = extensions_environment->extensions & TRALLOC_EXTENSION_POOL_CHILD;
+    extensions_environment->have_pool       = _tralloc_extensions_have_extension ( extensions_environment->extensions, TRALLOC_EXTENSION_POOL );
+    extensions_environment->have_pool_child = _tralloc_extensions_have_extension ( extensions_environment->extensions, TRALLOC_EXTENSION_POOL_CHILD );
 
     if ( extensions_environment->have_pool ) {
         if ( extensions_environment->have_pool_child ) {
@@ -212,7 +212,7 @@ void _tralloc_alloc_prepare_extensions_environment ( _tralloc_chunk * parent_chu
     }
 
 #   if defined ( TRALLOC_THREADS )
-    extensions_environment->have_pool_lock = extensions_environment->extensions & TRALLOC_EXTENSION_LOCK_POOL;
+    extensions_environment->have_pool_lock = _tralloc_extensions_have_extension ( extensions_environment->extensions, TRALLOC_EXTENSION_LOCK_POOL );
 
     if ( extensions_environment->have_pool_lock ) {
 
@@ -235,7 +235,7 @@ void _tralloc_alloc_prepare_extensions_environment ( _tralloc_chunk * parent_chu
             extensions_environment->have_pool_lock  = TRALLOC_FALSE;
             extensions_environment->extensions     &= ~TRALLOC_EXTENSION_LOCK_POOL;
 
-#           if defined ( TRALLOC_DEBUG )
+#           if defined ( TRALLOC_DEBUG_EXTENSIONS )
             extensions_environment->forced_extensions ^= TRALLOC_EXTENSION_LOCK_POOL;
 #           endif
         }
@@ -252,8 +252,8 @@ void _tralloc_alloc_prepare_extensions_environment ( _tralloc_chunk * parent_chu
             extensions_environment->have_pool_child  = TRALLOC_FALSE;
             extensions_environment->extensions      &= ~TRALLOC_EXTENSION_POOL_CHILD;
 
-#           if defined ( TRALLOC_DEBUG )
-            extensions_environment->forced_extensions ^= TRALLOC_EXTENSION_LOCK_POOL;
+#           if defined ( TRALLOC_DEBUG_EXTENSIONS )
+            extensions_environment->forced_extensions ^= TRALLOC_EXTENSION_POOL_CHILD;
 #           endif
 
         }
@@ -263,9 +263,9 @@ void _tralloc_alloc_prepare_extensions_environment ( _tralloc_chunk * parent_chu
 }
 
 static
-tralloc_error _tralloc_alloc_initialize_extensions ( _tralloc_chunk * chunk, _tralloc_chunk_prototype * chunk_prototype, _tralloc_alloc_extensions_environment * extensions_environment, size_t total_length )
+tralloc_error _tralloc_alloc_initialize_extensions ( _tralloc_chunk * chunk, _tralloc_chunk_prototype * chunk_prototype, _tralloc_alloc_extensions_environment * extensions_environment, size_t _TRALLOC_UNUSED ( total_length ) )
 {
-    tralloc_error result;
+    tralloc_error _TRALLOC_UNUSED ( result );
 
     chunk->extensions = extensions_environment->extensions;
 
@@ -547,7 +547,7 @@ tralloc_error _tralloc_alloc ( _tralloc_alloc_options * options, tralloc_context
     if ( parent_chunk != NULL ) {
 
 #       if defined ( TRALLOC_THREADS )
-        parent_have_children_lock = parent_chunk->extensions & TRALLOC_EXTENSION_LOCK_CHILDREN;
+        parent_have_children_lock = _tralloc_extensions_have_extension ( parent_chunk->extensions, TRALLOC_EXTENSION_LOCK_CHILDREN );
         if ( parent_have_children_lock ) {
             parent_children_lock = _tralloc_chunk_get_children_lock ( parent_chunk );
             result = _tralloc_children_lock_wrlock ( parent_children_lock );

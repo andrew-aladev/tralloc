@@ -21,7 +21,7 @@ tralloc_error tralloc_destructors_clear ( tralloc_context * context )
     }
     _tralloc_chunk * chunk = _tralloc_context_get_chunk ( context );
 
-    if ( ! ( chunk->extensions & TRALLOC_EXTENSION_DESTRUCTORS ) ) {
+    if ( ! _tralloc_extensions_have_extension ( chunk->extensions, TRALLOC_EXTENSION_DESTRUCTORS ) ) {
         return TRALLOC_ERROR_NO_SUCH_EXTENSION;
     }
 

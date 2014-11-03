@@ -94,8 +94,12 @@ const char * tralloc_debug_log_get_string_for_error ( tralloc_error error )
         return _TRALLOC_ERROR_NO_CHILDREN_LOCK;
     case TRALLOC_ERROR_NO_SUBTREE_LOCK:
         return _TRALLOC_ERROR_NO_SUBTREE_LOCK;
+
+#   if defined ( TRALLOC_POOL )
     case TRALLOC_ERROR_NO_POOL_LOCK:
         return _TRALLOC_ERROR_NO_POOL_LOCK;
+#   endif
+
 #   endif
 
     default:
