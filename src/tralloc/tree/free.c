@@ -48,7 +48,7 @@ tralloc_bool _tralloc_can_free_chunk ( _tralloc_chunk * _TRALLOC_UNUSED ( chunk 
 {
 
 #   if defined ( TRALLOC_REFERENCES )
-    if ( chunk->extensions & TRALLOC_EXTENSION_REFERENCES ) {
+    if ( _tralloc_extensions_have_extension ( chunk->extensions, TRALLOC_EXTENSION_REFERENCES ) ) {
         _tralloc_references * references = _tralloc_chunk_get_references ( chunk );
         if ( ! _tralloc_references_can_be_freed ( references ) ) {
             return TRALLOC_FALSE;
@@ -57,7 +57,7 @@ tralloc_bool _tralloc_can_free_chunk ( _tralloc_chunk * _TRALLOC_UNUSED ( chunk 
 #   endif
 
 #   if defined ( TRALLOC_POOL )
-    if ( chunk->extensions & TRALLOC_EXTENSION_POOL ) {
+    if ( _tralloc_extensions_have_extension ( chunk->extensions, TRALLOC_EXTENSION_POOL ) ) {
         _tralloc_pool * pool = _tralloc_chunk_get_pool ( chunk );
         if ( ! _tralloc_pool_can_freed ( pool ) ) {
             return TRALLOC_FALSE;
@@ -73,7 +73,7 @@ tralloc_bool _tralloc_can_free_chunk_children ( _tralloc_chunk * _TRALLOC_UNUSED
 {
 
 #   if defined ( TRALLOC_REFERENCES )
-    if ( chunk->extensions & TRALLOC_EXTENSION_REFERENCES ) {
+    if ( _tralloc_extensions_have_extension ( chunk->extensions, TRALLOC_EXTENSION_REFERENCES ) ) {
         _tralloc_references * references = _tralloc_chunk_get_references ( chunk );
         if ( ! _tralloc_references_can_free_children ( references ) ) {
             return TRALLOC_FALSE;
@@ -82,7 +82,7 @@ tralloc_bool _tralloc_can_free_chunk_children ( _tralloc_chunk * _TRALLOC_UNUSED
 #   endif
 
 #   if defined ( TRALLOC_POOL )
-    if ( chunk->extensions & TRALLOC_EXTENSION_POOL ) {
+    if ( _tralloc_extensions_have_extension ( chunk->extensions, TRALLOC_EXTENSION_POOL ) ) {
         _tralloc_pool * pool = _tralloc_chunk_get_pool ( chunk );
         if ( ! _tralloc_pool_can_free_children ( pool ) ) {
             return TRALLOC_FALSE;
@@ -98,7 +98,7 @@ tralloc_error _tralloc_free_chunk ( _tralloc_chunk * chunk )
     tralloc_error error = 0, _TRALLOC_UNUSED ( result );
 
 #   if defined ( TRALLOC_THREADS )
-    if ( chunk->extensions & TRALLOC_EXTENSION_LOCK_SUBTREE ) {
+    if ( _tralloc_extensions_have_extension ( chunk->extensions, TRALLOC_EXTENSION_LOCK_SUBTREE ) ) {
         _tralloc_subtree_lock * subtree_lock = _tralloc_chunk_get_subtree_lock ( chunk );
         result = _tralloc_subtree_lock_free ( subtree_lock );
         if ( result != 0 ) {
@@ -106,7 +106,7 @@ tralloc_error _tralloc_free_chunk ( _tralloc_chunk * chunk )
         }
     }
 
-    if ( chunk->extensions & TRALLOC_EXTENSION_LOCK_CHILDREN ) {
+    if ( _tralloc_extensions_have_extension ( chunk->extensions, TRALLOC_EXTENSION_LOCK_CHILDREN ) ) {
         _tralloc_children_lock * children_lock = _tralloc_chunk_get_children_lock ( chunk );
         result = _tralloc_children_lock_free ( children_lock );
         if ( result != 0 ) {
@@ -115,7 +115,7 @@ tralloc_error _tralloc_free_chunk ( _tralloc_chunk * chunk )
     }
 
 #   if defined ( TRALLOC_POOL )
-    if ( chunk->extensions & TRALLOC_EXTENSION_LOCK_POOL ) {
+    if ( _tralloc_extensions_have_extension ( chunk->extensions, TRALLOC_EXTENSION_LOCK_POOL ) ) {
         _tralloc_pool_lock * pool_lock = _tralloc_chunk_get_pool_lock ( chunk );
         result = _tralloc_pool_lock_free ( pool_lock );
         if ( result != 0 ) {
@@ -127,7 +127,7 @@ tralloc_error _tralloc_free_chunk ( _tralloc_chunk * chunk )
 #   endif
 
 #   if defined ( TRALLOC_DESTRUCTORS )
-    if ( chunk->extensions & TRALLOC_EXTENSION_DESTRUCTORS ) {
+    if ( _tralloc_extensions_have_extension ( chunk->extensions, TRALLOC_EXTENSION_DESTRUCTORS ) ) {
         _tralloc_destructors * destructors = _tralloc_chunk_get_destructors ( chunk );
         result = _tralloc_destructors_free ( destructors, _tralloc_chunk_get_context ( chunk ) );
         if ( result != 0 ) {
@@ -137,7 +137,7 @@ tralloc_error _tralloc_free_chunk ( _tralloc_chunk * chunk )
 #   endif
 
 #   if defined ( TRALLOC_REFERENCES )
-    if ( chunk->extensions & TRALLOC_EXTENSION_REFERENCE ) {
+    if ( _tralloc_extensions_have_extension ( chunk->extensions, TRALLOC_EXTENSION_REFERENCE ) ) {
         _tralloc_reference * reference = _tralloc_chunk_get_reference ( chunk );
         result = _tralloc_reference_free ( reference );
         if ( result != 0 ) {
@@ -157,7 +157,7 @@ tralloc_error _tralloc_free_chunk ( _tralloc_chunk * chunk )
 #   endif
 
 #   if defined ( TRALLOC_POOL )
-    tralloc_bool have_pool_child = chunk->extensions & TRALLOC_EXTENSION_POOL_CHILD;
+    tralloc_bool have_pool_child = _tralloc_extensions_have_extension ( chunk->extensions, TRALLOC_EXTENSION_POOL_CHILD );
     if ( have_pool_child ) {
         _tralloc_pool_child * pool_child = _tralloc_chunk_get_pool_child ( chunk );
         result = _tralloc_pool_child_free ( pool_child );

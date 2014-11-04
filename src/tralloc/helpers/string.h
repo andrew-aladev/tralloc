@@ -162,7 +162,7 @@ tralloc_error tralloc_strndup ( tralloc_context * parent_context, char ** child_
     return _tralloc_forward_to_strndup ( parent_context, child_context, str, str_length );
 }
 _TRALLOC_INLINE
-tralloc_error tralloc_strdup ( const char * file, size_t line, tralloc_context * parent_context, char ** child_context, const char * str )
+tralloc_error tralloc_strdup ( tralloc_context * parent_context, char ** child_context, const char * str )
 {
     if ( str == NULL ) {
         return TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_UNDEFINED;
@@ -171,7 +171,7 @@ tralloc_error tralloc_strdup ( const char * file, size_t line, tralloc_context *
 }
 
 _TRALLOC_INLINE
-tralloc_error tralloc_vasprintf ( const char * file, size_t line, tralloc_context * parent_context, char ** child_context, const char * format, va_list arguments )
+tralloc_error tralloc_vasprintf ( tralloc_context * parent_context, char ** child_context, const char * format, va_list arguments )
 {
     _tralloc_alloc_options options;
     options.parent_context = parent_context;
@@ -183,11 +183,11 @@ tralloc_error tralloc_vasprintf ( const char * file, size_t line, tralloc_contex
     return _tralloc_vasprintf ( &options, child_context, format, arguments );
 }
 _TRALLOC_INLINE
-tralloc_error tralloc_asprintf ( const char * file, size_t line, tralloc_context * parent_context, char ** child_context, const char * format, ... )
+tralloc_error tralloc_asprintf ( tralloc_context * parent_context, char ** child_context, const char * format, ... )
 {
     va_list arguments;
     va_start ( arguments, format );
-    tralloc_error result = tralloc_vasprintf ( file, line, parent_context, child_context, format, arguments );
+    tralloc_error result = tralloc_vasprintf ( parent_context, child_context, format, arguments );
     va_end ( arguments );
     return result;
 }
@@ -219,7 +219,7 @@ tralloc_error tralloc_strdup_with_extensions ( tralloc_context * parent_context,
 }
 
 _TRALLOC_INLINE
-tralloc_error tralloc_vasprintf_with_extensions ( tralloc_context * parent_context, char ** child_context, const char * format, tralloc_extensions extensions, va_list arguments )
+tralloc_error tralloc_vasprintf_with_extensions ( tralloc_context * parent_context, char ** child_context, tralloc_extensions extensions, const char * format, va_list arguments )
 {
     _tralloc_alloc_options options;
     options.parent_context = parent_context;
@@ -227,11 +227,11 @@ tralloc_error tralloc_vasprintf_with_extensions ( tralloc_context * parent_conte
     return _tralloc_vasprintf ( &options, child_context, format, arguments );
 }
 _TRALLOC_INLINE
-tralloc_error tralloc_asprintf_with_extensions ( const char * file, size_t line, tralloc_context * parent_context, char ** child_context, tralloc_extensions extensions, const char * format, ... )
+tralloc_error tralloc_asprintf_with_extensions ( tralloc_context * parent_context, char ** child_context, tralloc_extensions extensions, const char * format, ... )
 {
     va_list arguments;
     va_start ( arguments, format );
-    tralloc_error result = tralloc_vasprintf_with_extensions ( file, line, parent_context, child_context, extensions, format, arguments );
+    tralloc_error result = tralloc_vasprintf_with_extensions ( parent_context, child_context, extensions, format, arguments );
     va_end ( arguments );
     return result;
 }

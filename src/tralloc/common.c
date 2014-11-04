@@ -15,14 +15,14 @@ size_t _tralloc_extensions_get_length ( tralloc_extensions extensions )
     size_t extensions_length = 0;
 
 #   if defined ( TRALLOC_POOL )
-    if ( extensions & TRALLOC_EXTENSION_POOL ) {
+    if ( _tralloc_extensions_have_extension ( extensions, TRALLOC_EXTENSION_POOL ) ) {
         extensions_length += sizeof ( _tralloc_pool );
-    } else if ( extensions & TRALLOC_EXTENSION_POOL_CHILD ) {
+    } else if ( _tralloc_extensions_have_extension ( extensions, TRALLOC_EXTENSION_POOL_CHILD ) ) {
         extensions_length += sizeof ( _tralloc_pool_child );
     }
 
 #   if defined ( TRALLOC_THREADS )
-    if ( extensions & TRALLOC_EXTENSION_LOCK_POOL ) {
+    if ( _tralloc_extensions_have_extension ( extensions, TRALLOC_EXTENSION_LOCK_POOL ) ) {
         extensions_length += sizeof ( _tralloc_pool_lock );
     }
 #   endif
@@ -30,31 +30,31 @@ size_t _tralloc_extensions_get_length ( tralloc_extensions extensions )
 #   endif
 
 #   if defined ( TRALLOC_REFERENCES )
-    if ( extensions & TRALLOC_EXTENSION_REFERENCES ) {
+    if ( _tralloc_extensions_have_extension ( extensions, TRALLOC_EXTENSION_REFERENCES ) ) {
         extensions_length += sizeof ( _tralloc_references );
     }
-    if ( extensions & TRALLOC_EXTENSION_REFERENCE ) {
+    if ( _tralloc_extensions_have_extension ( extensions, TRALLOC_EXTENSION_REFERENCE ) ) {
         extensions_length += sizeof ( _tralloc_reference );
     }
 #   endif
 
 #   if defined ( TRALLOC_DESTRUCTORS )
-    if ( extensions & TRALLOC_EXTENSION_DESTRUCTORS ) {
+    if ( _tralloc_extensions_have_extension ( extensions, TRALLOC_EXTENSION_DESTRUCTORS ) ) {
         extensions_length += sizeof ( _tralloc_destructors );
     }
 #   endif
 
 #   if defined ( TRALLOC_LENGTH )
-    if ( extensions & TRALLOC_EXTENSION_LENGTH ) {
+    if ( _tralloc_extensions_have_extension ( extensions, TRALLOC_EXTENSION_LENGTH ) ) {
         extensions_length += sizeof ( _tralloc_length );
     }
 #   endif
 
 #   if defined ( TRALLOC_THREADS )
-    if ( extensions & TRALLOC_EXTENSION_LOCK_CHILDREN ) {
+    if ( _tralloc_extensions_have_extension ( extensions, TRALLOC_EXTENSION_LOCK_CHILDREN ) ) {
         extensions_length += sizeof ( _tralloc_children_lock );
     }
-    if ( extensions & TRALLOC_EXTENSION_LOCK_SUBTREE ) {
+    if ( _tralloc_extensions_have_extension ( extensions, TRALLOC_EXTENSION_LOCK_SUBTREE ) ) {
         extensions_length += sizeof ( _tralloc_subtree_lock );
     }
 #   endif
@@ -68,15 +68,14 @@ size_t _tralloc_extensions_get_offset_for_extension ( tralloc_extensions extensi
     size_t offset = 0;
 
 #   if defined ( TRALLOC_THREADS )
-    if ( extensions & TRALLOC_EXTENSION_LOCK_SUBTREE ) {
+    if ( _tralloc_extensions_have_extension ( extensions, TRALLOC_EXTENSION_LOCK_SUBTREE ) ) {
         offset += sizeof ( _tralloc_subtree_lock );
-
     }
     if ( extension == TRALLOC_EXTENSION_LOCK_SUBTREE ) {
         return offset;
     }
 
-    if ( extensions & TRALLOC_EXTENSION_LOCK_CHILDREN ) {
+    if ( _tralloc_extensions_have_extension ( extensions, TRALLOC_EXTENSION_LOCK_CHILDREN ) ) {
         offset += sizeof ( _tralloc_children_lock );
     }
     if ( extension == TRALLOC_EXTENSION_LOCK_CHILDREN ) {
@@ -85,7 +84,7 @@ size_t _tralloc_extensions_get_offset_for_extension ( tralloc_extensions extensi
 #   endif
 
 #   if defined ( TRALLOC_LENGTH )
-    if ( extensions & TRALLOC_EXTENSION_LENGTH ) {
+    if ( _tralloc_extensions_have_extension ( extensions, TRALLOC_EXTENSION_LENGTH ) ) {
         offset += sizeof ( _tralloc_length );
     }
     if ( extension == TRALLOC_EXTENSION_LENGTH ) {
@@ -94,7 +93,7 @@ size_t _tralloc_extensions_get_offset_for_extension ( tralloc_extensions extensi
 #   endif
 
 #   if defined ( TRALLOC_DESTRUCTORS )
-    if ( extensions & TRALLOC_EXTENSION_DESTRUCTORS ) {
+    if ( _tralloc_extensions_have_extension ( extensions, TRALLOC_EXTENSION_DESTRUCTORS ) ) {
         offset += sizeof ( _tralloc_destructors );
     }
     if ( extension == TRALLOC_EXTENSION_DESTRUCTORS ) {
@@ -105,14 +104,14 @@ size_t _tralloc_extensions_get_offset_for_extension ( tralloc_extensions extensi
 #   if defined ( TRALLOC_REFERENCES )
     // First is reference, than references. It is important.
 
-    if ( extensions & TRALLOC_EXTENSION_REFERENCE ) {
+    if ( _tralloc_extensions_have_extension ( extensions, TRALLOC_EXTENSION_REFERENCE ) ) {
         offset += sizeof ( _tralloc_reference );
     }
     if ( extension == TRALLOC_EXTENSION_REFERENCE ) {
         return offset;
     }
 
-    if ( extensions & TRALLOC_EXTENSION_REFERENCES ) {
+    if ( _tralloc_extensions_have_extension ( extensions, TRALLOC_EXTENSION_REFERENCES ) ) {
         offset += sizeof ( _tralloc_references );
     }
     if ( extension == TRALLOC_EXTENSION_REFERENCES ) {
@@ -123,7 +122,7 @@ size_t _tralloc_extensions_get_offset_for_extension ( tralloc_extensions extensi
 #   if defined ( TRALLOC_POOL )
 
 #   if defined ( TRALLOC_THREADS )
-    if ( extensions & TRALLOC_EXTENSION_LOCK_POOL ) {
+    if ( _tralloc_extensions_have_extension ( extensions, TRALLOC_EXTENSION_LOCK_POOL ) ) {
         offset += sizeof ( _tralloc_pool_lock );
     }
     if ( extension == TRALLOC_EXTENSION_LOCK_POOL ) {
@@ -131,9 +130,9 @@ size_t _tralloc_extensions_get_offset_for_extension ( tralloc_extensions extensi
     }
 #   endif
 
-    if ( extensions & TRALLOC_EXTENSION_POOL ) {
+    if ( _tralloc_extensions_have_extension ( extensions, TRALLOC_EXTENSION_POOL ) ) {
         offset += sizeof ( _tralloc_pool );
-    } else if ( extensions & TRALLOC_EXTENSION_POOL_CHILD ) {
+    } else if ( _tralloc_extensions_have_extension ( extensions, TRALLOC_EXTENSION_POOL_CHILD ) ) {
         offset += sizeof ( _tralloc_pool_child );
     }
 #   endif

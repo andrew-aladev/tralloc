@@ -15,7 +15,7 @@ tralloc_error tralloc_references_clear ( tralloc_context * context )
     }
     _tralloc_chunk * chunk = _tralloc_context_get_chunk ( context );
 
-    if ( ! ( chunk->extensions & TRALLOC_EXTENSION_REFERENCES ) ) {
+    if ( !_tralloc_extensions_have_extension ( chunk->extensions, TRALLOC_EXTENSION_REFERENCES ) ) {
         return TRALLOC_ERROR_NO_SUCH_EXTENSION;
     }
 

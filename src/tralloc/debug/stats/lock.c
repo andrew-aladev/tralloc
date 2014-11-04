@@ -7,8 +7,9 @@
 
 #if defined ( TRALLOC_DEBUG_LOG )
 #   include <stdio.h>
-#   include <stdlib.h>
 #endif
+
+#include <stdlib.h>
 
 
 #if TRALLOC_DEBUG_STATS_LOCK_TYPE == TRALLOC_THREADS_RWLOCK

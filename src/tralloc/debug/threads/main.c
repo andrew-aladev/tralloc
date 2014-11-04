@@ -45,7 +45,7 @@ tralloc_error _tralloc_debug_threads_check_usage_of_extension (
     }
 
     tralloc_extensions original_extensions = chunk->extensions ^ chunk->forced_extensions;
-    if ( * usage_status == _TRALLOC_USED_BY_MULTIPLE_THREADS && ! ( original_extensions & extension ) ) {
+    if ( * usage_status == _TRALLOC_USED_BY_MULTIPLE_THREADS && !_tralloc_extensions_have_extension ( original_extensions, extension ) ) {
 #       if defined ( TRALLOC_DEBUG_LOG )
         fprintf (
             stderr,
@@ -143,7 +143,7 @@ tralloc_error _tralloc_debug_threads_before_move_chunk ( _tralloc_chunk * chunk 
 {
     tralloc_error result;
 
-    tralloc_bool have_subtree_lock       = chunk->extensions & TRALLOC_EXTENSION_LOCK_SUBTREE;
+    tralloc_bool have_subtree_lock       = _tralloc_extensions_have_extension ( chunk->extensions, TRALLOC_EXTENSION_LOCK_SUBTREE );
     _tralloc_subtree_lock * subtree_lock = _tralloc_chunk_get_subtree_lock ( chunk );
     if ( have_subtree_lock ) {
         result = _tralloc_subtree_lock_rdlock ( subtree_lock );
@@ -184,7 +184,7 @@ tralloc_error _tralloc_debug_threads_after_move_chunk ( _tralloc_chunk * chunk )
 {
     tralloc_error result;
 
-    tralloc_bool have_subtree_lock       = chunk->extensions & TRALLOC_EXTENSION_LOCK_SUBTREE;
+    tralloc_bool have_subtree_lock       = _tralloc_extensions_have_extension ( chunk->extensions, TRALLOC_EXTENSION_LOCK_SUBTREE );
     _tralloc_subtree_lock * subtree_lock = _tralloc_chunk_get_subtree_lock ( chunk );
     if ( have_subtree_lock ) {
         result = _tralloc_subtree_lock_rdlock ( subtree_lock );
@@ -273,7 +273,7 @@ tralloc_error _tralloc_debug_threads_before_free_subtree ( _tralloc_chunk * chun
 
     tralloc_error result;
 
-    tralloc_bool have_subtree_lock       = chunk->extensions & TRALLOC_EXTENSION_LOCK_SUBTREE;
+    tralloc_bool have_subtree_lock       = _tralloc_extensions_have_extension ( chunk->extensions, TRALLOC_EXTENSION_LOCK_SUBTREE );
     _tralloc_subtree_lock * subtree_lock = _tralloc_chunk_get_subtree_lock ( chunk );
     if ( have_subtree_lock ) {
         result = _tralloc_subtree_lock_rdlock ( subtree_lock );

@@ -35,7 +35,7 @@ tralloc_error tralloc_length_get ( tralloc_context * context, size_t * length_re
         return TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_UNDEFINED;
     }
     _tralloc_chunk * chunk = _tralloc_context_get_chunk ( context );
-    if ( ! ( chunk->extensions & TRALLOC_EXTENSION_LENGTH ) ) {
+    if ( !_tralloc_extensions_have_extension ( chunk->extensions, TRALLOC_EXTENSION_LENGTH ) ) {
         return TRALLOC_ERROR_NO_SUCH_EXTENSION;
     }
     * length_result_ptr = _tralloc_length_get ( _tralloc_chunk_get_length ( chunk ) );

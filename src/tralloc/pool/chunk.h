@@ -37,9 +37,9 @@ _tralloc_chunk * _tralloc_pool_get_chunk ( _tralloc_pool * pool )
 _TRALLOC_INLINE
 _tralloc_pool * _tralloc_chunk_get_closest_pool ( _tralloc_chunk * chunk )
 {
-    if ( chunk->extensions & TRALLOC_EXTENSION_POOL ) {
+    if ( _tralloc_extensions_have_extension ( chunk->extensions, TRALLOC_EXTENSION_POOL ) ) {
         return _tralloc_chunk_get_pool ( chunk );
-    } else if ( chunk->extensions & TRALLOC_EXTENSION_POOL_CHILD ) {
+    } else if ( _tralloc_extensions_have_extension ( chunk->extensions, TRALLOC_EXTENSION_POOL_CHILD ) ) {
         _tralloc_pool_child * parent_pool_child = _tralloc_chunk_get_pool_child ( chunk );
         return parent_pool_child->pool;
     } else {

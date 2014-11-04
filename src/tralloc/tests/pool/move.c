@@ -26,7 +26,7 @@ tralloc_bool test_pool_move ( tralloc_context * ctx )
     }
 
     _tralloc_chunk * pool_chunk = _tralloc_context_get_chunk ( pool_data );
-    if ( ! ( pool_chunk->extensions & TRALLOC_EXTENSION_POOL ) ) {
+    if ( !_tralloc_extensions_have_extension ( pool_chunk->extensions, TRALLOC_EXTENSION_POOL ) ) {
         return TRALLOC_FALSE;
     }
     _tralloc_pool * pool = _tralloc_chunk_get_pool ( pool_chunk );
@@ -34,8 +34,8 @@ tralloc_bool test_pool_move ( tralloc_context * ctx )
     _tralloc_chunk * data_1_chunk = _tralloc_context_get_chunk ( data_1 );
     _tralloc_chunk * data_2_chunk = _tralloc_context_get_chunk ( data_2 );
     if (
-        ! ( data_1_chunk->extensions & TRALLOC_EXTENSION_POOL_CHILD ) ||
-        ! ( data_2_chunk->extensions & TRALLOC_EXTENSION_POOL_CHILD )
+        !_tralloc_extensions_have_extension ( data_1_chunk->extensions, TRALLOC_EXTENSION_POOL_CHILD ) ||
+        !_tralloc_extensions_have_extension ( data_2_chunk->extensions, TRALLOC_EXTENSION_POOL_CHILD )
     ) {
         return TRALLOC_FALSE;
     }

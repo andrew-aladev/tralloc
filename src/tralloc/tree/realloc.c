@@ -53,17 +53,18 @@ tralloc_error tralloc_realloc ( tralloc_context ** chunk_context, size_t length 
 #   endif
 
 #   if defined ( TRALLOC_LENGTH )
-    tralloc_bool have_length = old_chunk->extensions & TRALLOC_EXTENSION_LENGTH;
+    tralloc_bool have_length = _tralloc_extensions_have_extension ( old_chunk->extensions, TRALLOC_EXTENSION_LENGTH );
 #   endif
 
 #   if defined ( TRALLOC_REFERENCES )
-    tralloc_bool have_references = old_chunk->extensions & TRALLOC_EXTENSION_REFERENCES;
-    tralloc_bool have_reference  = old_chunk->extensions & TRALLOC_EXTENSION_REFERENCE;
+    tralloc_bool have_references = _tralloc_extensions_have_extension ( old_chunk->extensions, TRALLOC_EXTENSION_REFERENCES );
+    tralloc_bool have_reference  = _tralloc_extensions_have_extension ( old_chunk->extensions, TRALLOC_EXTENSION_REFERENCE );
 #   endif
 
 #   if defined ( TRALLOC_POOL )
-    tralloc_bool have_pool_child = old_chunk->extensions & TRALLOC_EXTENSION_POOL_CHILD;
-    if ( old_chunk->extensions & TRALLOC_EXTENSION_POOL ) {
+    tralloc_bool have_pool_child = _tralloc_extensions_have_extension ( old_chunk->extensions, TRALLOC_EXTENSION_POOL_CHILD );
+    tralloc_bool have_pool       = _tralloc_extensions_have_extension ( old_chunk->extensions, TRALLOC_EXTENSION_POOL );
+    if ( have_pool ) {
         // Realloc function can change pool's pointer, so all pool children's pointers should be updated.
         // But this is not possible, so pool should not be resized.
         return TRALLOC_ERROR_POOL_CANT_BE_REALLOCATED;
