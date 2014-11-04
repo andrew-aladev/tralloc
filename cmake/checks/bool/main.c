@@ -4,5 +4,5 @@ int main()
 {
     bool a = true;
     a = false;
-    return 0;
+    return ( int ) ( a == false );
 }

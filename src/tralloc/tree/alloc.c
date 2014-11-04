@@ -454,7 +454,7 @@ tralloc_error _tralloc_alloc ( _tralloc_alloc_options * options, tralloc_context
     total_length += extensions_length;
 #   endif
 
-    _tralloc_chunk_prototype chunk_prototype;
+    _tralloc_chunk_prototype _TRALLOC_UNUSED ( chunk_prototype );
     chunk_prototype.parent = parent_chunk;
     chunk_prototype.length = options->length;
 
