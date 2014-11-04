@@ -3,12 +3,15 @@ function (check_pipe)
         return ()
     endif ()
     
-    try_compile (
-        CHECK_PIPE_COMPILE_RESULT
-        "${PROJECT_BINARY_DIR}/CMakeTmp/basic"
-        "${PROJECT_SOURCE_DIR}/cmake/checks/basic" "check_basic"
+    set (BINARY_DIR "${PROJECT_BINARY_DIR}/CMakeTmp/basic")
+    set (SOURCE_DIR "${PROJECT_SOURCE_DIR}/cmake/checks/basic")
+    set (NAME "check_basic")
+    
+    try_compile (CHECK_PIPE_COMPILE_RESULT ${BINARY_DIR} ${SOURCE_DIR} ${NAME}
         CMAKE_FLAGS "-DCMAKE_C_FLAGS:STRING = ${CMAKE_C_FLAGS} -pipe"
     )
+    FILE (REMOVE_RECURSE ${BINARY_DIR})
+    
     if (${CHECK_PIPE_COMPILE_RESULT})
         set (TRALLOC_HAVE_PIPE true CACHE STRING "Status of pipe support")
         set (PIPE_CFLAGS "-pipe" CACHE STRING "pipe cflags")

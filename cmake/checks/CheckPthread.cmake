@@ -6,12 +6,15 @@ function (check_pthread)
     include (CheckVerbose)
     check_verbose ()
     
-    try_compile (
-        CHECK_PTHREAD_COMPILE_RESULT
-        "${PROJECT_BINARY_DIR}/CMakeTmp/pthread"
-        "${PROJECT_SOURCE_DIR}/cmake/checks/pthread" "check_pthread"
+    set (BINARY_DIR "${PROJECT_BINARY_DIR}/CMakeTmp/pthread")
+    set (SOURCE_DIR "${PROJECT_SOURCE_DIR}/cmake/checks/pthread")
+    set (NAME "check_pthread")
+    
+    try_compile (CHECK_PTHREAD_COMPILE_RESULT ${BINARY_DIR} ${SOURCE_DIR} ${NAME}
         CMAKE_FLAGS "-DCMAKE_C_FLAGS:STRING = ${CMAKE_C_FLAGS} ${VERBOSE_CFLAGS} -pthread" "-DCMAKE_LD_FLAGS:STRING = ${CMAKE_LD_FLAGS} -pthread"
     )
+    FILE (REMOVE_RECURSE ${BINARY_DIR})
+    
     if (${CHECK_PTHREAD_COMPILE_RESULT})
         set (TRALLOC_HAVE_PTHREAD true CACHE STRING "Status of pthread support")
         set (PTHREAD_CFLAGS "-pthread" CACHE STRING "pthread cflags")

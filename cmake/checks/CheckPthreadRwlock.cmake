@@ -14,12 +14,15 @@ function (check_pthread_rwlock)
         return ()
     endif ()
     
-    try_compile (
-        CHECK_PTHREAD_RWLOCK_COMPILE_RESULT
-        "${PROJECT_BINARY_DIR}/CMakeTmp/pthread_rwlock"
-        "${PROJECT_SOURCE_DIR}/cmake/checks/pthread_rwlock" "check_pthread_rwlock"
+    set (BINARY_DIR "${PROJECT_BINARY_DIR}/CMakeTmp/pthread_rwlock")
+    set (SOURCE_DIR "${PROJECT_SOURCE_DIR}/cmake/checks/pthread_rwlock")
+    set (NAME "check_pthread_rwlock")
+    
+    try_compile (CHECK_PTHREAD_RWLOCK_COMPILE_RESULT ${BINARY_DIR} ${SOURCE_DIR} ${NAME}
         CMAKE_FLAGS "-DCMAKE_C_FLAGS:STRING = ${CMAKE_C_FLAGS} ${VERBOSE_CFLAGS} ${PTHREAD_CFLAGS}" "-DCMAKE_LD_FLAGS:STRING = ${CMAKE_LD_FLAGS} ${PTHREAD_LDLAGS}"
     )
+    FILE (REMOVE_RECURSE ${BINARY_DIR})
+    
     if (${CHECK_PTHREAD_RWLOCK_COMPILE_RESULT})
         set (TRALLOC_HAVE_PTHREAD_RWLOCK true CACHE STRING "Status of pthread_rwlock support")
         message (STATUS "Check for pthread_rwlock support - yes")

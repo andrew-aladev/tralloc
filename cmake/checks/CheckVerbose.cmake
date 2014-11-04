@@ -5,12 +5,15 @@ function (check_verbose)
     
     set (VERBOSE_CFLAGS "")
     
-    try_compile (
-        CHECK_VERBOSE_COMPILE_RESULT
-        "${PROJECT_BINARY_DIR}/CMakeTmp/basic"
-        "${PROJECT_SOURCE_DIR}/cmake/checks/basic" "check_basic"
+    set (BINARY_DIR "${PROJECT_BINARY_DIR}/CMakeTmp/basic")
+    set (SOURCE_DIR "${PROJECT_SOURCE_DIR}/cmake/checks/basic")
+    set (NAME "check_basic")
+    
+    try_compile (CHECK_VERBOSE_COMPILE_RESULT ${BINARY_DIR} ${SOURCE_DIR} ${NAME}
         CMAKE_FLAGS "-DCMAKE_C_FLAGS:STRING = ${CMAKE_C_FLAGS} -pedantic"
     )
+    FILE (REMOVE_RECURSE ${BINARY_DIR})
+    
     if (${CHECK_VERBOSE_COMPILE_RESULT})
         set (VERBOSE_CFLAGS "${VERBOSE_CFLAGS} -pedantic")
         message (STATUS "Check for C compiler -pedantic support - yes")
@@ -18,12 +21,11 @@ function (check_verbose)
         message (STATUS "Check for C compiler -pedantic support - no")
     endif ()
     
-    try_compile (
-        CHECK_VERBOSE_COMPILE_RESULT
-        "${PROJECT_BINARY_DIR}/CMakeTmp/basic"
-        "${PROJECT_SOURCE_DIR}/cmake/checks/basic" "check_basic"
+    try_compile (CHECK_VERBOSE_COMPILE_RESULT ${BINARY_DIR} ${SOURCE_DIR} ${NAME}
         CMAKE_FLAGS "-DCMAKE_C_FLAGS:STRING = ${CMAKE_C_FLAGS} -Wall"
     )
+    FILE (REMOVE_RECURSE ${BINARY_DIR})
+    
     if (${CHECK_VERBOSE_COMPILE_RESULT})
         set (VERBOSE_CFLAGS "${VERBOSE_CFLAGS} -Wall")
         message (STATUS "Check for C compiler -Wall support - yes")
@@ -31,12 +33,11 @@ function (check_verbose)
         message (STATUS "Check for C compiler -Wall support - no")
     endif ()
     
-    try_compile (
-        CHECK_VERBOSE_COMPILE_RESULT
-        "${PROJECT_BINARY_DIR}/CMakeTmp/basic"
-        "${PROJECT_SOURCE_DIR}/cmake/checks/basic" "check_basic"
+    try_compile (CHECK_VERBOSE_COMPILE_RESULT ${BINARY_DIR} ${SOURCE_DIR} ${NAME}
         CMAKE_FLAGS "-DCMAKE_C_FLAGS:STRING = ${CMAKE_C_FLAGS} -Wextra"
     )
+    FILE (REMOVE_RECURSE ${BINARY_DIR})
+    
     if (${CHECK_VERBOSE_COMPILE_RESULT})
         set (VERBOSE_CFLAGS "${VERBOSE_CFLAGS} -Wextra")
         message (STATUS "Check for C compiler -Wextra support - yes")
