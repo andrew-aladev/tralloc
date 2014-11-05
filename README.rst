@@ -125,15 +125,22 @@ Notes about implementation
 1. `inline workaround`_
 
 
+Related bugs
+------------
+
+1. `gcc maybe uninitialized`
+
+
 Language
 --------
 My English is not perfect, my native language is Belarusian. Feel free to ask me about meaning of any comment in code or sentence in documentation.
 
 
-.. _talloc:            http://talloc.samba.org/talloc/doc/html/group__talloc.html
-.. _man:               https://github.com/andrew-aladev/tralloc/blob/master/man/tralloc.txt
-.. _overlay:           https://github.com/andrew-aladev/puchuu-overlay
-.. _gentoo:            https://github.com/andrew-aladev/tralloc/tree/master/gentoo
-.. _format_sources:    https://github.com/andrew-aladev/tralloc/blob/master/format_sources
-.. _test_all:          https://github.com/andrew-aladev/tralloc/blob/threads/test-all.sh
-.. _inline workaround: https://www.puchuu.com/posts/inline-workaround.html
+.. _talloc:                  http://talloc.samba.org/talloc/doc/html/group__talloc.html
+.. _man:                     https://github.com/andrew-aladev/tralloc/blob/master/man/tralloc.txt
+.. _overlay:                 https://github.com/andrew-aladev/puchuu-overlay
+.. _gentoo:                  https://github.com/andrew-aladev/tralloc/tree/master/gentoo
+.. _format_sources:          https://github.com/andrew-aladev/tralloc/blob/master/format_sources
+.. _test_all:                https://github.com/andrew-aladev/tralloc/blob/threads/test-all.sh
+.. _inline workaround:       https://www.puchuu.com/posts/inline-workaround.html
+.. _gcc maybe uninitialized: https://www.puchuu.com/posts/inline-workaround.html
