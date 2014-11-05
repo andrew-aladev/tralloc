@@ -128,7 +128,7 @@ Notes about implementation
 Related bugs
 ------------
 
-1. `gcc maybe uninitialized`
+1. `gcc maybe uninitialized`_
 
 
 Language
