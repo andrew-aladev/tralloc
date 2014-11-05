@@ -4,7 +4,7 @@ current_dir=$(readlink -f "$(dirname $0)")
 
 commands=()
 for version in 3.3 3.4 4.0 4.1 4.2 4.3 4.4 4.5 4.6 4.7 4.8 4.9; do
-    commands+=("$current_dir/combinations.sh -DCMAKE_TOOLCHAIN_FILE=\"$current_dir/../toolchains/gcc/$version/default.cmake\" -DCMAKE_BUILD_TYPE=\"RELEASE\" -DCMAKE_CONFIG_VERBOSE_MAKEFILE=1 -DCMAKE_VERBOSE_MAKEFILE=1")
+    commands+=("NO_TESTS=1 $current_dir/combinations.sh -DCMAKE_TOOLCHAIN_FILE=\"$current_dir/../toolchains/gcc/$version/default.cmake\" -DCMAKE_BUILD_TYPE=\"RELEASE\" -DCMAKE_CONFIG_VERBOSE_MAKEFILE=1 -DCMAKE_VERBOSE_MAKEFILE=1")
 done
 
 function join {
