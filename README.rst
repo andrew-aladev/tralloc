@@ -143,4 +143,4 @@ My English is not perfect, my native language is Belarusian. Feel free to ask me
 .. _format_sources:          https://github.com/andrew-aladev/tralloc/blob/master/format_sources
 .. _test_all:                https://github.com/andrew-aladev/tralloc/blob/threads/test-all.sh
 .. _inline workaround:       https://www.puchuu.com/posts/inline-workaround.html
-.. _gcc maybe uninitialized: https://www.puchuu.com/posts/inline-workaround.html
+.. _gcc maybe uninitialized: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=61428
