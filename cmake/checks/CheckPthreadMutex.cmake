@@ -18,12 +18,18 @@ function (check_pthread_mutex)
     set (SOURCE_DIR "${PROJECT_SOURCE_DIR}/cmake/checks/pthread_mutex")
     set (NAME "check_pthread_mutex")
     
-    try_compile (CHECK_PTHREAD_MUTEX_COMPILE_RESULT ${BINARY_DIR} ${SOURCE_DIR} ${NAME}
-        CMAKE_FLAGS "-DCMAKE_C_FLAGS:STRING = ${CMAKE_C_FLAGS} ${VERBOSE_CFLAGS} ${PTHREAD_CFLAGS}" "-DCMAKE_LD_FLAGS:STRING = ${CMAKE_LD_FLAGS} ${PTHREAD_LDLAGS}"
+    try_compile (CHECK_PTHREAD_MUTEX_RESULT ${BINARY_DIR} ${SOURCE_DIR} ${NAME}
+        CMAKE_FLAGS
+            "-DCMAKE_C_FLAGS=${CMAKE_C_FLAGS} ${VERBOSE_CFLAGS} ${WERROR_CFLAGS} ${PTHREAD_CFLAGS}"
+            "-DCMAKE_LD_FLAGS=${CMAKE_LD_FLAGS} ${PTHREAD_LDLAGS}"
+        OUTPUT_VARIABLE CHECK_PTHREAD_MUTEX_COMPILE_RESULT
     )
+    if (${CMAKE_CONFIG_VERBOSE_MAKEFILE})
+        message (${CHECK_PTHREAD_MUTEX_COMPILE_RESULT})
+    endif ()
     FILE (REMOVE_RECURSE ${BINARY_DIR})
     
-    if (${CHECK_PTHREAD_MUTEX_COMPILE_RESULT})
+    if (${CHECK_PTHREAD_MUTEX_RESULT})
         set (TRALLOC_HAVE_PTHREAD_MUTEX true CACHE STRING "Status of pthread_mutex support")
         message (STATUS "Check for pthread_mutex support - yes")
         return ()

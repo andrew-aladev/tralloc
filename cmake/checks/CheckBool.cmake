@@ -10,12 +10,18 @@ function (check_bool)
     set (SOURCE_DIR "${PROJECT_SOURCE_DIR}/cmake/checks/bool")
     set (NAME "check_bool")
     
-    try_compile (CHECK_BOOL_COMPILE_RESULT ${BINARY_DIR} ${SOURCE_DIR} ${NAME}
-        CMAKE_FLAGS "-DCMAKE_C_FLAGS:STRING = ${CMAKE_C_FLAGS} ${VERBOSE_CFLAGS}"
+    try_compile (CHECK_BOOL_RESULT ${BINARY_DIR} ${SOURCE_DIR} ${NAME}
+        CMAKE_FLAGS
+            "-DCMAKE_C_FLAGS=${CMAKE_C_FLAGS} ${VERBOSE_CFLAGS} ${WERROR_CFLAGS}"
+            "-DCMAKE_VERBOSE_MAKEFILE=${CMAKE_CONFIG_VERBOSE_MAKEFILE}"
+        OUTPUT_VARIABLE CHECK_BOOL_COMPILE_RESULT
     )
+    if (${CMAKE_CONFIG_VERBOSE_MAKEFILE})
+        message (${CHECK_BOOL_COMPILE_RESULT})
+    endif ()
     FILE (REMOVE_RECURSE ${BINARY_DIR})
     
-    if (${CHECK_BOOL_COMPILE_RESULT})
+    if (${CHECK_BOOL_RESULT})
         set (TRALLOC_HAVE_BOOL true CACHE STRING "Status of Bool support")
         message (STATUS "Check for Bool support - yes")
         return ()

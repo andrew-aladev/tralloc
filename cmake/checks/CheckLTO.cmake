@@ -10,12 +10,18 @@ function (check_lto)
     set (SOURCE_DIR "${PROJECT_SOURCE_DIR}/cmake/checks/basic")
     set (NAME "check_basic")
     
-    try_compile (CHECK_LTO_COMPILE_RESULT ${BINARY_DIR} ${SOURCE_DIR} ${NAME}
-        CMAKE_FLAGS "-DCMAKE_C_FLAGS:STRING = ${CMAKE_C_FLAGS} ${VERBOSE_CFLAGS} -flto -fuse-linker-plugin" "-DCMAKE_LD_FLAGS:STRING = ${CMAKE_LD_FLAGS} -flto -fuse-linker-plugin"
+    try_compile (CHECK_LTO_RESULT ${BINARY_DIR} ${SOURCE_DIR} ${NAME}
+        CMAKE_FLAGS
+            "-DCMAKE_C_FLAGS=${CMAKE_C_FLAGS} ${VERBOSE_CFLAGS} ${WERROR_CFLAGS} -flto -fuse-linker-plugin"
+            "-DCMAKE_LD_FLAGS=${CMAKE_LD_FLAGS} -flto -fuse-linker-plugin"
+        OUTPUT_VARIABLE CHECK_LTO_COMPILE_RESULT
     )
+    if (${CMAKE_CONFIG_VERBOSE_MAKEFILE})
+        message (${CHECK_LTO_COMPILE_RESULT})
+    endif ()
     FILE (REMOVE_RECURSE ${BINARY_DIR})
     
-    if (${CHECK_LTO_COMPILE_RESULT})
+    if (${CHECK_LTO_RESULT})
         set (TRALLOC_HAVE_LTO true CACHE STRING "Status of LTO support")
         set (LTO_CFLAGS "-flto -fuse-linker-plugin" CACHE STRING "LTO cflags")
         set (LTO_LDLAGS "-flto -fuse-linker-plugin" CACHE STRING "LTO ldflags")

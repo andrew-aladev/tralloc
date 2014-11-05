@@ -10,12 +10,19 @@ function (check_pthread)
     set (SOURCE_DIR "${PROJECT_SOURCE_DIR}/cmake/checks/pthread")
     set (NAME "check_pthread")
     
-    try_compile (CHECK_PTHREAD_COMPILE_RESULT ${BINARY_DIR} ${SOURCE_DIR} ${NAME}
-        CMAKE_FLAGS "-DCMAKE_C_FLAGS:STRING = ${CMAKE_C_FLAGS} ${VERBOSE_CFLAGS} -pthread" "-DCMAKE_LD_FLAGS:STRING = ${CMAKE_LD_FLAGS} -pthread"
+    try_compile (CHECK_PTHREAD_RESULT ${BINARY_DIR} ${SOURCE_DIR} ${NAME}
+        CMAKE_FLAGS
+            "-DCMAKE_C_FLAGS=${CMAKE_C_FLAGS} ${VERBOSE_CFLAGS} ${WERROR_CFLAGS} -pthread"
+            "-DCMAKE_LD_FLAGS=${CMAKE_LD_FLAGS} -pthread"
+            "-DCMAKE_VERBOSE_MAKEFILE=${CMAKE_CONFIG_VERBOSE_MAKEFILE}"
+        OUTPUT_VARIABLE CHECK_PTHREAD_COMPILE_RESULT
     )
+    if (${CMAKE_CONFIG_VERBOSE_MAKEFILE})
+        message (${CHECK_PTHREAD_COMPILE_RESULT})
+    endif ()
     FILE (REMOVE_RECURSE ${BINARY_DIR})
     
-    if (${CHECK_PTHREAD_COMPILE_RESULT})
+    if (${CHECK_PTHREAD_RESULT})
         set (TRALLOC_HAVE_PTHREAD true CACHE STRING "Status of pthread support")
         set (PTHREAD_CFLAGS "-pthread" CACHE STRING "pthread cflags")
         set (PTHREAD_LDLAGS "-pthread" CACHE STRING "pthread ldflags")

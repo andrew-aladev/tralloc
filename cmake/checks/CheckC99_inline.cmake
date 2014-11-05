@@ -18,12 +18,18 @@ function (check_c99_inline)
     set (SOURCE_DIR "${PROJECT_SOURCE_DIR}/cmake/checks/C99_inline")
     set (NAME "check_C99_inline")
     
-    try_compile (CHECK_C99_INLINE_COMPILE_RESULT ${BINARY_DIR} ${SOURCE_DIR} ${NAME}
-        CMAKE_FLAGS "-DCMAKE_C_FLAGS:STRING = ${CMAKE_C_FLAGS} ${VERBOSE_CFLAGS} ${C99_CFLAGS}"
+    try_compile (CHECK_C99_INLINE_RESULT ${BINARY_DIR} ${SOURCE_DIR} ${NAME}
+        CMAKE_FLAGS
+            "-DCMAKE_C_FLAGS=${CMAKE_C_FLAGS} ${VERBOSE_CFLAGS} ${WERROR_CFLAGS} ${C99_CFLAGS}"
+            "-DCMAKE_VERBOSE_MAKEFILE=${CMAKE_CONFIG_VERBOSE_MAKEFILE}"
+        OUTPUT_VARIABLE CHECK_C99_INLINE_COMPILE_RESULT
     )
+    if (${CMAKE_CONFIG_VERBOSE_MAKEFILE})
+        message (${CHECK_C99_INLINE_COMPILE_RESULT})
+    endif ()
     FILE (REMOVE_RECURSE ${BINARY_DIR})
     
-    if (${CHECK_C99_INLINE_COMPILE_RESULT})
+    if (${CHECK_C99_INLINE_RESULT})
         set (TRALLOC_HAVE_C99_INLINE true CACHE STRING "Status of C99 inline support")
         message (STATUS "Check for C compiler C99 inline support - yes")
         return ()
