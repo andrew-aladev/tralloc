@@ -4,7 +4,9 @@ current_dir=$(readlink -f "$(dirname $0)")
 
 commands=()
 toolchains=("gcc/3.3/default" "gcc/3.4/default")
-toolchains+=("gcc/4.0/default" "gcc/4.1/default" "gcc/4.2/default" "gcc/4.3/default" "gcc/4.4/default" "gcc/4.5/default" "gcc/4.6/default" "gcc/4.7/default" "gcc/4.8/default" "gcc/4.9/default" "gcc/4.9/avr")
+toolchains+=("gcc/4.0/default" "gcc/4.1/default" "gcc/4.2/default" "gcc/4.3/default" "gcc/4.4/default" "gcc/4.5/default" "gcc/4.6/default" "gcc/4.7/default")
+toolchains+=("gcc/4.8/default" "gcc/4.8/address-sanitizer" "gcc/4.8/thread-sanitizer")
+toolchains+=("gcc/4.9/default" "gcc/4.9/avr")
 toolchains+=("clang/default" "clang/ccc-analyzer" "clang/leak-sanitizer" "clang/address-sanitizer" "clang/thread-sanitizer")
 toolchains+=("tcc/default")
 for toolchain in "${toolchains[@]}"; do
