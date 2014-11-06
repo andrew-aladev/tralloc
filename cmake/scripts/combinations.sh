@@ -64,7 +64,7 @@ function test {
 
         test_arguments="$passed_arguments "
         $test_callback $feature
-        test_arguments+="-DTRALLOC_SHARED=0 -DTRALLOC_STATIC=1 -DTRALLOC_MAN=0 -DTRALLOC_COLLECT_SOURCES=1"
+        test_arguments+="-DTRALLOC_MAN=0 -DTRALLOC_COLLECT_SOURCES=1"
 
         execute_test_arguments
     done
