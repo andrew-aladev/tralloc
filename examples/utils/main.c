@@ -17,12 +17,11 @@ int main ()
 {
 
 #   if defined(TRALLOC_UTILS_BUFFER)
-
     tralloc_buffer * buffer;
-    if ( tralloc_buffer_new ( NULL, &buffer, 3 ) != 0 ) {
+    if ( tralloc_buffer_new ( NULL, &buffer, sizeof ( char ) * 3 ) != 0 ) {
         return 1;
     }
-    if ( tralloc_buffer_prepare_write_length ( buffer, 7 ) != 0 ) {
+    if ( tralloc_buffer_prepare_write_length ( buffer, sizeof ( char ) * 7 ) != 0 ) {
         tralloc_free ( buffer );
         return 2;
     }
@@ -32,26 +31,28 @@ int main ()
     data[2] = '2';
     data[3] = '3';
     if (
-        tralloc_buffer_add_write_length ( buffer, 4 ) != 0 ||
-        tralloc_buffer_add_read_length ( buffer, 2 )  != 0
+        tralloc_buffer_add_length_written ( buffer, sizeof ( char ) * 4 ) != 0 ||
+        tralloc_buffer_add_length_readed  ( buffer, sizeof ( char ) * 2 ) != 0
     ) {
         tralloc_free ( buffer );
         return 2;
     }
 
-    data = tralloc_buffer_get_read_pointer ( buffer );
     if (
-        tralloc_buffer_get_read_length ( buffer ) != 2 ||
-        tralloc_buffer_trim ( buffer )            != 0 ||
-        strncmp ( ( char * ) data, "23", 2 )      != 0
+        tralloc_buffer_get_length_to_read ( buffer ) != 2 ||
+        tralloc_buffer_trim ( buffer )               != 0
     ) {
         tralloc_free ( buffer );
         return 3;
     }
-    if ( tralloc_free ( buffer ) != 0 ) {
+    data = tralloc_buffer_get_read_pointer ( buffer );
+    if ( strncmp ( ( char * ) data, "23", sizeof ( char ) * 2 ) != 0 ) {
+        tralloc_free ( buffer );
         return 4;
     }
-
+    if ( tralloc_free ( buffer ) != 0 ) {
+        return 5;
+    }
 #   endif
 
 #   if defined(TRALLOC_DEBUG_STATS)

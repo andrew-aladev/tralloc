@@ -13,7 +13,7 @@ function (check_lto)
     try_compile (CHECK_LTO_RESULT ${BINARY_DIR} ${SOURCE_DIR} ${NAME}
         CMAKE_FLAGS
             "-DCMAKE_C_FLAGS=${CMAKE_C_FLAGS} ${VERBOSE_CFLAGS} ${WERROR_CFLAGS} -flto -fuse-linker-plugin"
-            "-DCMAKE_LD_FLAGS=${CMAKE_LD_FLAGS} -flto -fuse-linker-plugin"
+            "-DCMAKE_EXE_LINKER_FLAGS=${CMAKE_EXE_LINKER_FLAGS} -flto -fuse-linker-plugin"
         OUTPUT_VARIABLE CHECK_LTO_COMPILE_RESULT
     )
     if (${CMAKE_CONFIG_VERBOSE_MAKEFILE})

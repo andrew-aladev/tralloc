@@ -24,8 +24,8 @@ tralloc_bool test_utils_buffer ( tralloc_context * ctx )
     tralloc_buffer * buffer;
 
     if (
-        tralloc_buffer_new ( ctx, &buffer, 0 )        != 0 ||
-        tralloc_buffer_add_write_length ( buffer, 1 ) != TRALLOC_ERROR_UTILS_BUFFER_OVERFLOW
+        tralloc_buffer_new ( ctx, &buffer, 0 )          != 0 ||
+        tralloc_buffer_add_length_written ( buffer, 1 ) != TRALLOC_ERROR_UTILS_BUFFER_OVERFLOW
     ) {
         return TRALLOC_FALSE;
     }
@@ -37,7 +37,7 @@ tralloc_bool test_utils_buffer ( tralloc_context * ctx )
     data[0] = '0';
     data[1] = '1';
     data[2] = '2';
-    if ( tralloc_buffer_add_write_length ( buffer, sizeof ( char ) * 3 ) != 0 ) {
+    if ( tralloc_buffer_add_length_written ( buffer, sizeof ( char ) * 3 ) != 0 ) {
         return TRALLOC_FALSE;
     }
 
@@ -47,7 +47,7 @@ tralloc_bool test_utils_buffer ( tralloc_context * ctx )
     data    = ( char * ) tralloc_buffer_get_write_pointer ( buffer );
     data[0] = '3';
     data[1] = '4';
-    if ( tralloc_buffer_add_write_length ( buffer, sizeof ( char ) * 2 ) != 0 ) {
+    if ( tralloc_buffer_add_length_written ( buffer, sizeof ( char ) * 2 ) != 0 ) {
         return TRALLOC_FALSE;
     }
 
@@ -56,12 +56,12 @@ tralloc_bool test_utils_buffer ( tralloc_context * ctx )
     }
     data    = ( char * ) tralloc_buffer_get_write_pointer ( buffer );
     data[0] = '5';
-    if ( tralloc_buffer_add_write_length ( buffer, sizeof ( char ) ) != 0 ) {
+    if ( tralloc_buffer_add_length_written ( buffer, sizeof ( char ) ) != 0 ) {
         return TRALLOC_FALSE;
     }
 
     if (
-        tralloc_buffer_get_read_length ( buffer ) != sizeof ( char ) * 6 ||
+        tralloc_buffer_get_length_to_read ( buffer ) != sizeof ( char ) * 6 ||
         tralloc_buffer_resize ( buffer, sizeof ( char ) * 5 ) != TRALLOC_ERROR_UTILS_BUFFER_OVERFLOW ||
         buffer->capacity != sizeof ( char ) * 10
     ) {
@@ -76,7 +76,7 @@ tralloc_bool test_utils_buffer ( tralloc_context * ctx )
     data[1] = '7';
     data[2] = '8';
     data[3] = '9';
-    if ( tralloc_buffer_add_write_length ( buffer, sizeof ( char ) * 4 ) != 0 ) {
+    if ( tralloc_buffer_add_length_written ( buffer, sizeof ( char ) * 4 ) != 0 ) {
         return TRALLOC_FALSE;
     }
 
@@ -88,15 +88,15 @@ tralloc_bool test_utils_buffer ( tralloc_context * ctx )
     if (
         buffer->offset   != 0  ||
         buffer->capacity != sizeof ( char ) * 10 ||
-        tralloc_buffer_get_read_length ( buffer ) != sizeof ( char ) * 10 ||
+        tralloc_buffer_get_length_to_read ( buffer ) != sizeof ( char ) * 10 ||
         strncmp ( ( char * ) data, "0123456789", sizeof ( char ) * 10 ) != 0
     ) {
         return TRALLOC_FALSE;
     }
 
     if (
-        tralloc_buffer_add_read_length ( buffer, sizeof ( char ) * 20 ) != TRALLOC_ERROR_UTILS_BUFFER_OVERFLOW ||
-        tralloc_buffer_add_read_length ( buffer, sizeof ( char ) * 4 )  != 0
+        tralloc_buffer_add_length_readed ( buffer, sizeof ( char ) * 20 ) != TRALLOC_ERROR_UTILS_BUFFER_OVERFLOW ||
+        tralloc_buffer_add_length_readed ( buffer, sizeof ( char ) * 4 )  != 0
     ) {
         return TRALLOC_FALSE;
     }
@@ -105,14 +105,14 @@ tralloc_bool test_utils_buffer ( tralloc_context * ctx )
     if (
         buffer->offset   != sizeof ( char ) * 4  ||
         buffer->capacity != sizeof ( char ) * 10 ||
-        tralloc_buffer_get_read_length ( buffer ) != sizeof ( char ) * 6 ||
+        tralloc_buffer_get_length_to_read ( buffer ) != sizeof ( char ) * 6 ||
         strncmp ( ( char * ) data, "456789", sizeof ( char ) * 6 ) != 0
     ) {
         return TRALLOC_FALSE;
     }
 
     if (
-        tralloc_buffer_add_read_length ( buffer, sizeof ( char ) ) != 0 ||
+        tralloc_buffer_add_length_readed ( buffer, sizeof ( char ) ) != 0 ||
         tralloc_buffer_left_trim ( buffer ) != 0
     ) {
         return TRALLOC_FALSE;
@@ -122,19 +122,19 @@ tralloc_bool test_utils_buffer ( tralloc_context * ctx )
     if (
         buffer->offset   != 0 ||
         buffer->capacity != sizeof ( char ) * 5 ||
-        tralloc_buffer_get_read_length ( buffer ) != sizeof ( char ) * 5 ||
+        tralloc_buffer_get_length_to_read ( buffer ) != sizeof ( char ) * 5 ||
         strncmp ( ( char * ) data, "56789", sizeof ( char ) * 5 ) != 0
     ) {
         return TRALLOC_FALSE;
     }
 
     if (
-        tralloc_buffer_add_read_length ( buffer, sizeof ( char ) * 5 ) != 0 ||
+        tralloc_buffer_add_length_readed ( buffer, sizeof ( char ) * 5 ) != 0 ||
         tralloc_buffer_trim ( buffer ) != 0 ||
 
         buffer->offset != 0 ||
         buffer->length != 0 ||
-        tralloc_buffer_get_read_length ( buffer ) != 0
+        tralloc_buffer_get_length_to_read ( buffer ) != 0
     ) {
         return TRALLOC_FALSE;
     }

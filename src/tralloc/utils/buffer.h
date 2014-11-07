@@ -104,19 +104,19 @@ tralloc_error tralloc_buffer_new_with_extensions ( tralloc_context * parent_cont
 
 
 _TRALLOC_INLINE
-size_t tralloc_buffer_get_read_length ( const tralloc_buffer * buffer )
+size_t tralloc_buffer_get_length_to_read ( const tralloc_buffer * buffer )
 {
     return buffer->length;
 }
 
 _TRALLOC_INLINE
-tralloc_error tralloc_buffer_add_read_length ( tralloc_buffer * buffer, size_t read_length )
+tralloc_error tralloc_buffer_add_length_readed ( tralloc_buffer * buffer, size_t readed_length )
 {
-    if ( tralloc_buffer_get_read_length ( buffer ) < read_length ) {
+    if ( tralloc_buffer_get_length_to_read ( buffer ) < readed_length ) {
         return TRALLOC_ERROR_UTILS_BUFFER_OVERFLOW;
     }
-    buffer->offset += read_length;
-    buffer->length -= read_length;
+    buffer->offset += readed_length;
+    buffer->length -= readed_length;
     return 0;
 }
 
@@ -127,18 +127,18 @@ uint8_t * tralloc_buffer_get_read_pointer ( const tralloc_buffer * buffer )
 }
 
 _TRALLOC_INLINE
-size_t tralloc_buffer_get_write_length ( const tralloc_buffer * buffer )
+size_t tralloc_buffer_get_length_to_write ( const tralloc_buffer * buffer )
 {
     return buffer->capacity - buffer->offset - buffer->length;
 }
 
 _TRALLOC_INLINE
-tralloc_error tralloc_buffer_add_write_length ( tralloc_buffer * buffer, size_t write_length )
+tralloc_error tralloc_buffer_add_length_written ( tralloc_buffer * buffer, size_t written_length )
 {
-    if ( tralloc_buffer_get_write_length ( buffer ) < write_length ) {
+    if ( tralloc_buffer_get_length_to_write ( buffer ) < written_length ) {
         return TRALLOC_ERROR_UTILS_BUFFER_OVERFLOW;
     }
-    buffer->length += write_length;
+    buffer->length += written_length;
     return 0;
 }
 
@@ -163,7 +163,7 @@ tralloc_error tralloc_buffer_resize ( tralloc_buffer * buffer, size_t new_capaci
 _TRALLOC_INLINE
 tralloc_error tralloc_buffer_prepare_write_length ( tralloc_buffer * buffer, size_t new_write_length )
 {
-    size_t write_length = tralloc_buffer_get_write_length ( buffer );
+    size_t write_length = tralloc_buffer_get_length_to_write ( buffer );
     if ( write_length < new_write_length ) {
         return tralloc_buffer_resize ( buffer, buffer->capacity + new_write_length - write_length );
     } else {

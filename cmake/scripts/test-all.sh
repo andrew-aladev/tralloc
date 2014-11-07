@@ -10,7 +10,7 @@ toolchains+=("gcc/4.9/default" "gcc/4.9/avr")
 toolchains+=("clang/default" "clang/ccc-analyzer" "clang/leak-sanitizer" "clang/address-sanitizer" "clang/thread-sanitizer")
 toolchains+=("tcc/default")
 for toolchain in "${toolchains[@]}"; do
-    commands+=("NO_TESTS=1 $current_dir/combinations.sh -DCMAKE_TOOLCHAIN_FILE=\"$current_dir/../toolchains/$toolchain.cmake\" -DCMAKE_BUILD_TYPE=\"RELEASE\" -DCMAKE_CONFIG_VERBOSE_MAKEFILE=1 -DCMAKE_VERBOSE_MAKEFILE=1")
+    commands+=("NO_TESTS=1 $current_dir/combinations.sh -DCMAKE_TOOLCHAIN_FILE=\"$current_dir/../toolchains/$toolchain.cmake\" -DCMAKE_BUILD_TYPE=\"RELEASE\"")
 done
 
 function join {

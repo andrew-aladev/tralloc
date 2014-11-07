@@ -64,7 +64,7 @@ function test {
 
         test_arguments="$passed_arguments "
         $test_callback $feature
-        test_arguments+="-DTRALLOC_MAN=0 -DTRALLOC_COLLECT_SOURCES=1"
+        test_arguments+="-DTRALLOC_MAN=0 -DTRALLOC_COLLECT_SOURCES=1 -DCMAKE_CONFIG_VERBOSE_MAKEFILE=1 -DCMAKE_VERBOSE_MAKEFILE=1"
 
         execute_test_arguments
     done
