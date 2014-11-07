@@ -17,7 +17,7 @@ int main ()
     char * string;
     if (
         tralloc_new_zero ( ctx, ( tralloc_context ** ) &numbers, sizeof ( int8_t ) * 5 ) != 0 ||
-        tralloc_new ( ctx, ( tralloc_context ** ) &string, sizeof ( char ) * 10 ) != 0
+        tralloc_new      ( ctx, ( tralloc_context ** ) &string,  sizeof ( char ) * 10 )  != 0
     ) {
         tralloc_free ( ctx );
         return 2;
@@ -28,7 +28,7 @@ int main ()
     }
     if (
         tralloc_realloc ( ( tralloc_context ** ) &numbers, sizeof ( int8_t ) * 3 ) != 0 ||
-        tralloc_realloc ( ( tralloc_context ** ) &string,  sizeof ( char ) * 20 )   != 0
+        tralloc_realloc ( ( tralloc_context ** ) &string,  sizeof ( char ) * 20 )  != 0
     ) {
         tralloc_free ( ctx );
         return 4;

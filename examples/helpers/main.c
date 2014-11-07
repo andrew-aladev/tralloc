@@ -8,7 +8,6 @@
 #include <tralloc/debug.h>
 
 #if defined(TRALLOC_FILE)
-
 #include <tralloc/helpers/file.h>
 #include <tralloc/destructors.h>
 
@@ -25,8 +24,8 @@ tralloc_error destructor_unlink_file ( tralloc_context * _TRALLOC_UNUSED ( chunk
         return 0;
     }
 }
-
 #endif
+
 
 int main ()
 {
@@ -41,7 +40,7 @@ int main ()
     }
     char * text;
     if (
-        tralloc_strndup ( string, &text, string + 10, 4 ) != 0 ||
+        tralloc_strndup ( string, &text, string + sizeof ( char ) * 10, sizeof ( char ) * 4 ) != 0 ||
         strcmp ( text, "text" ) != 0
     ) {
         tralloc_free ( ctx );
@@ -78,7 +77,7 @@ int main ()
 
     // mode should be 0644 in posix systems
 
-    if ( tralloc_open_mode ( NULL, &test_file, file_name, O_CREAT | O_WRONLY, mode ) != 0 ) { // 0644
+    if ( tralloc_open_mode ( NULL, &test_file, file_name, O_CREAT | O_WRONLY, mode ) != 0 ) {
         tralloc_free ( file_name );
         return 7;
     }
