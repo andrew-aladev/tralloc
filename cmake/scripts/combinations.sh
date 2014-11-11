@@ -16,14 +16,14 @@ function execute_test_arguments {
     local command="cd $build_dir && cmake $source_dir $test_arguments"
     echo $command
     eval $command
-    if [ ! $? -eq 0 ]; then
+    if [ "$?" != "0" ]; then
         echo "Failed arguments:"
         echo "  $test_arguments"
         exit 2
     fi
     
     config_hash=$(sha256sum "$source_dir/src/tralloc/config.h" | cut -d " " -f 1)
-    if [[ ${config_hash_table[$config_hash]} -eq 1 ]]; then
+    if [ "${config_hash_table[$config_hash]}" == "1" ]]; then
         echo "This combination has been already checked"
         return 0
     fi
@@ -32,16 +32,16 @@ function execute_test_arguments {
     command="cd $build_dir && make clean && make -j $make_jobs"
     echo $command
     eval $command
-    if [ ! $? -eq 0 ]; then
+    if [ "$?" != "0" ]; then
         echo "Failed arguments:"
         echo "  $test_arguments"
         exit 3
     fi
-    if [ -z "$NO_TESTS" ]; then
+    if [ "$NO_TESTS" != "1" ]; then
         command="make test"
         echo $command
         eval $command
-        if [ ! $? -eq 0 ]; then
+        if [ "$?" != "0" ]; then
             echo "Failed arguments:"
             echo "  $test_arguments"
             exit 3
@@ -58,7 +58,7 @@ function test {
     local current=0
     local feature
     for feature in $test_features; do
-        local progress=$(printf "test \"$test_name\", combination %u / %u, progress %05.2f%%\n" $(($current + 1)) $test_count $(awk "BEGIN{print $current / $test_count * 100}"))
+        local progress=$(printf "$LABEL , test \"$test_name\", combination %u / %u, progress %05.2f%%\n" $(($current + 1)) $test_count $(awk "BEGIN{print $current / $test_count * 100}"))
         echo -ne "\033]2;$progress\007"
         current=$(($current + 1))
 
@@ -226,12 +226,12 @@ function test_all_combinations {
     test
 }
 
-if [ -z "$ALL_COMBINATIONS" ]; then
+if [ "$ALL_COMBINATIONS" == "1" ]; then
+    test_all_combinations
+else
     test_extensions
     test_debug
     test_locks
-else
-    test_all_combinations
 fi
 
 echo "Success"

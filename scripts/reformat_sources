@@ -5,7 +5,7 @@ source_dir=$(readlink -f "$(dirname $0)/../")
 files=$(find "$source_dir" -regex ".*\.\(h\|c\)")
 for file in $files; do
     eval "astyle -n --mode=c --style=kr --pad-oper --pad-paren --pad-header \"$file\""
-    if [ ! $? -eq 0 ]; then
+    if [ "$?" != "0" ]; then
         echo "Failed to format \"$file\""
         exit 1
     fi
