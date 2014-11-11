@@ -263,7 +263,7 @@ void _tralloc_alloc_prepare_extensions_environment ( _tralloc_chunk * _TRALLOC_U
 }
 
 static
-tralloc_error _tralloc_alloc_initialize_extensions ( _tralloc_chunk * chunk, _tralloc_chunk_prototype * chunk_prototype, _tralloc_alloc_extensions_environment * extensions_environment, size_t _TRALLOC_UNUSED ( total_length ) )
+tralloc_error _tralloc_alloc_initialize_extensions ( _tralloc_chunk * chunk, _tralloc_alloc_extensions_environment * extensions_environment, size_t _TRALLOC_UNUSED ( length ), size_t _TRALLOC_UNUSED ( total_length ) )
 {
     tralloc_error _TRALLOC_UNUSED ( result );
 
@@ -335,38 +335,9 @@ tralloc_error _tralloc_alloc_initialize_extensions ( _tralloc_chunk * chunk, _tr
     }
 #   endif
 
-#   if defined ( TRALLOC_DEBUG_LOG )
-    chunk->initialized_in_file = strdup ( chunk_prototype->initialized_in_file );
-    if ( chunk->initialized_in_file == NULL ) {
-
-#       if defined ( TRALLOC_DEBUG_THREADS )
-        _tralloc_debug_threads_lock_free ( thread_usage_lock );
-#       endif
-
-#       if defined ( TRALLOC_THREADS )
-
-#       if defined ( TRALLOC_POOL )
-        if ( extensions_environment->have_pool_lock ) {
-            _tralloc_pool_lock_free ( pool_lock );
-        }
-#       endif
-
-        if ( extensions_environment->have_children_lock ) {
-            _tralloc_children_lock_free ( children_lock );
-        }
-        if ( extensions_environment->have_subtree_lock ) {
-            _tralloc_subtree_lock_free ( subtree_lock );
-        }
-#       endif
-
-        return TRALLOC_ERROR_MALLOC_FAILED;
-    }
-    chunk->initialized_at_line = chunk_prototype->initialized_at_line;
-#   endif
-
 #   if defined ( TRALLOC_POOL )
     if ( extensions_environment->have_pool ) {
-        _tralloc_pool_new ( _tralloc_chunk_get_pool ( chunk ), _tralloc_chunk_get_context ( chunk ), extensions_environment->extensions, chunk_prototype->length );
+        _tralloc_pool_new ( _tralloc_chunk_get_pool ( chunk ), _tralloc_chunk_get_context ( chunk ), extensions_environment->extensions, length );
     } else if ( extensions_environment->have_pool_child ) {
         _tralloc_pool_child_new ( _tralloc_chunk_get_pool_child ( chunk ), extensions_environment->parent_pool, total_length, extensions_environment->prev_pool_child, extensions_environment->next_pool_child );
     }
@@ -374,7 +345,7 @@ tralloc_error _tralloc_alloc_initialize_extensions ( _tralloc_chunk * chunk, _tr
 
 #   if defined ( TRALLOC_LENGTH )
     if ( extensions_environment->have_length ) {
-        _tralloc_length_set ( _tralloc_chunk_get_length ( chunk ), chunk_prototype->length );
+        _tralloc_length_set ( _tralloc_chunk_get_length ( chunk ), length );
     }
 #   endif
 
@@ -515,9 +486,30 @@ tralloc_error _tralloc_alloc ( _tralloc_alloc_options * options, tralloc_context
     _tralloc_chunk * chunk    = ( _tralloc_chunk * ) chunk_memory;
     tralloc_context * context = _tralloc_chunk_get_context ( chunk );
 
+#   if defined ( TRALLOC_DEBUG_LOG )
+    chunk->initialized_in_file = strdup ( chunk_prototype.initialized_in_file );
+    if ( chunk->initialized_in_file == NULL ) {
+#       if defined ( TRALLOC_POOL )
+        if ( extensions_environment.have_pool_child ) {
+            _tralloc_pool_child_free ( _tralloc_chunk_get_pool_child ( chunk ) );
+            return TRALLOC_ERROR_MALLOC_FAILED;
+        }
+#       endif
+
+        free ( memory );
+        return TRALLOC_ERROR_MALLOC_FAILED;
+    }
+    chunk->initialized_at_line = chunk_prototype.initialized_at_line;
+#   endif
+
 #   if defined ( TRALLOC_EXTENSIONS )
-    result = _tralloc_alloc_initialize_extensions ( chunk, &chunk_prototype, &extensions_environment, total_length );
+    result = _tralloc_alloc_initialize_extensions ( chunk, &extensions_environment, chunk_prototype.length, total_length );
     if ( result != 0 ) {
+#       if defined ( TRALLOC_DEBUG_LOG )
+        if ( chunk->initialized_in_file != NULL ) {
+            free ( chunk->initialized_in_file );
+        }
+#       endif
 
 #       if defined ( TRALLOC_POOL )
         if ( extensions_environment.have_pool_child ) {
