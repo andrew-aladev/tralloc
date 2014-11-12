@@ -12,7 +12,7 @@ if (${CMAKE_TRY_RUN})
     add_custom_command(
         TARGET "main"
         POST_BUILD
-        COMMAND "main"
+        COMMAND "./main"
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
         COMMENT "Running main"
     )

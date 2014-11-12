@@ -235,7 +235,7 @@ function(join VALUES GLUE OUTPUT)
   set (${OUTPUT} "${_TMP_STR}" PARENT_SCOPE)
 endfunction()
 
-if (${CMAKE_CAN_RUN_EXE} AND (${TRALLOC_TESTS} OR ${TRALLOC_EXAMPLES}))
+if (${TRALLOC_TESTS} OR ${TRALLOC_EXAMPLES})
     enable_testing()
 endif ()
 
