@@ -17,7 +17,7 @@ function (check_c99)
         OUTPUT_VARIABLE CHECK_C99_COMPILE_RESULT
     )
     if (${CMAKE_CONFIG_VERBOSE_MAKEFILE})
-        message (${CHECK_C99_COMPILE_RESULT})
+        message (STATUS ${CHECK_C99_COMPILE_RESULT})
     endif ()
     FILE (REMOVE_RECURSE ${BINARY_DIR})
     
@@ -35,7 +35,7 @@ function (check_c99)
         OUTPUT_VARIABLE CHECK_C99_COMPILE_RESULT
     )
     if (${CMAKE_CONFIG_VERBOSE_MAKEFILE})
-        message (${CHECK_C99_COMPILE_RESULT})
+        message (STATUS ${CHECK_C99_COMPILE_RESULT})
     endif ()
     FILE (REMOVE_RECURSE ${BINARY_DIR})
     
@@ -53,7 +53,7 @@ function (check_c99)
         OUTPUT_VARIABLE CHECK_C99_COMPILE_RESULT
     )
     if (${CMAKE_CONFIG_VERBOSE_MAKEFILE})
-        message (${CHECK_C99_COMPILE_RESULT})
+        message (STATUS ${CHECK_C99_COMPILE_RESULT})
     endif ()
     FILE (REMOVE_RECURSE ${BINARY_DIR})
     

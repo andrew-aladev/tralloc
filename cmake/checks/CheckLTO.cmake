@@ -17,7 +17,7 @@ function (check_lto)
         OUTPUT_VARIABLE CHECK_LTO_COMPILE_RESULT
     )
     if (${CMAKE_CONFIG_VERBOSE_MAKEFILE})
-        message (${CHECK_LTO_COMPILE_RESULT})
+        message (STATUS ${CHECK_LTO_COMPILE_RESULT})
     endif ()
     FILE (REMOVE_RECURSE ${BINARY_DIR})
     

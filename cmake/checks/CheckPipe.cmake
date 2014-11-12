@@ -17,7 +17,7 @@ function (check_pipe)
         OUTPUT_VARIABLE CHECK_PIPE_COMPILE_RESULT
     )
     if (${CMAKE_CONFIG_VERBOSE_MAKEFILE})
-        message (${CHECK_PIPE_COMPILE_RESULT})
+        message (STATUS ${CHECK_PIPE_COMPILE_RESULT})
     endif ()
     FILE (REMOVE_RECURSE ${BINARY_DIR})
     

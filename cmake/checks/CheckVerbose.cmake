@@ -16,7 +16,7 @@ function (check_verbose)
         OUTPUT_VARIABLE CHECK_VERBOSE_COMPILE_RESULT
     )
     if (${CMAKE_CONFIG_VERBOSE_MAKEFILE})
-        message (${CHECK_VERBOSE_COMPILE_RESULT})
+        message (STATUS ${CHECK_VERBOSE_COMPILE_RESULT})
     endif ()
     FILE (REMOVE_RECURSE ${BINARY_DIR})
     
@@ -35,7 +35,7 @@ function (check_verbose)
         OUTPUT_VARIABLE CHECK_VERBOSE_COMPILE_RESULT
     )
     if (${CMAKE_CONFIG_VERBOSE_MAKEFILE})
-        message (${CHECK_VERBOSE_COMPILE_RESULT})
+        message (STATUS ${CHECK_VERBOSE_COMPILE_RESULT})
     endif ()
     FILE (REMOVE_RECURSE ${BINARY_DIR})
     
@@ -53,7 +53,7 @@ function (check_verbose)
         OUTPUT_VARIABLE CHECK_VERBOSE_COMPILE_RESULT
     )
     if (${CMAKE_CONFIG_VERBOSE_MAKEFILE})
-        message (${CHECK_VERBOSE_COMPILE_RESULT})
+        message (STATUS ${CHECK_VERBOSE_COMPILE_RESULT})
     endif ()
     FILE (REMOVE_RECURSE ${BINARY_DIR})
     
@@ -71,7 +71,7 @@ function (check_verbose)
         OUTPUT_VARIABLE CHECK_VERBOSE_COMPILE_RESULT
     )
     if (${CMAKE_CONFIG_VERBOSE_MAKEFILE})
-        message (${CHECK_VERBOSE_COMPILE_RESULT})
+        message (STATUS ${CHECK_VERBOSE_COMPILE_RESULT})
     endif ()
     FILE (REMOVE_RECURSE ${BINARY_DIR})
     
