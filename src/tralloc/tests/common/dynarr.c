@@ -21,7 +21,7 @@ dynarr * dynarr_new ( size_t capacity )
     }
 
     arr->start_capacity = arr->current_capacity = capacity;
-    void ** data = malloc ( arr->current_capacity * sizeof ( uintptr_t ) );
+    void ** data = malloc ( arr->current_capacity * sizeof ( void * ) );
     if ( data == NULL ) {
         free ( arr );
         return NULL;
@@ -37,7 +37,7 @@ uint8_t dynarr_grow ( dynarr * arr )
 {
     // linear growth
     arr->current_capacity = arr->current_capacity + arr->start_capacity;
-    void ** reallocated_data = realloc ( arr->data, arr->current_capacity * sizeof ( uintptr_t ) );
+    void ** reallocated_data = realloc ( arr->data, arr->current_capacity * sizeof ( void * ) );
     if ( reallocated_data == NULL ) {
         return 1;
     }
@@ -73,7 +73,7 @@ uint8_t dynarr_clear ( dynarr * arr )
     free ( arr->data );
 
     arr->current_capacity = arr->start_capacity;
-    void ** data = malloc ( arr->current_capacity * sizeof ( uintptr_t ) );
+    void ** data = malloc ( arr->current_capacity * sizeof ( void * ) );
     if ( data == NULL ) {
         return 2;
     }
