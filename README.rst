@@ -38,6 +38,7 @@ Extensions and features enable/disable
     ::
     
      $ cmake .. \
+        -DTRALLOC_FILE=0/1         \
         -DTRALLOC_THREADS=0/1      \
         -DTRALLOC_LENGTH=0/1       \
         -DTRALLOC_DESTRUCTORS=0/1  \
@@ -45,10 +46,12 @@ Extensions and features enable/disable
         -DTRALLOC_POOL=0/1         \
         -DTRALLOC_UTILS_BUFFER=0/1 \
         \
-        -DTRALLOC_DEBUG_THREADS=0/1   \
-        -DTRALLOC_DEBUG_CALLBACKS=0/1 \
-        -DTRALLOC_DEBUG_STATS=0/1     \
-        -DTRALLOC_DEBUG_LOG=0/1       \
+        -DTRALLOC_DEBUG_EXTENSIONS=0/1 \
+        -DTRALLOC_DEBUG_THREADS=0/1    \
+        -DTRALLOC_DEBUG_LENGTH=0/1     \
+        -DTRALLOC_DEBUG_CALLBACKS=0/1  \
+        -DTRALLOC_DEBUG_STATS=0/1      \
+        -DTRALLOC_DEBUG_LOG=0/1        \
         \
         -DTRALLOC_SUBTREE_LOCK_TYPE="rwlock/mutex/spinlock"         \
         -DTRALLOC_CHILDREN_LOCK_TYPE="rwlock/mutex/spinlock"        \
@@ -68,24 +71,18 @@ You can test all possible combinations of extensions and features
 
     ::
     
-     $ NO_TESTS=1 ../combinations.sh
-     $ ALL_COMBINATIONS=1 ../combinations.sh
-     $ ../combinations.sh -DCMAKE_BUILD_TYPE="DEBUG"
-     $ ../combinations.sh -DCMAKE_BUILD_TYPE="RELEASE"
-
-
-Multilib
---------
-
-    ::
-    
-     $ CFLAGS="-m32" ../combinations.sh -DCMAKE_BUILD_TYPE="RELEASE"
+     $ ../cmake/scripts/combinations.sh
+     $ ALL_COMBINATIONS=1 ../cmake/scripts/combinations.sh
+     $ ../cmake/scripts/combinations.sh -DCMAKE_BUILD_TYPE="DEBUG"
+     $ ../cmake/scripts/combinations.sh -DCMAKE_BUILD_TYPE="RELEASE"
+     $ ../cmake/scripts/combinations.sh -DCMAKE_TOOLCHAIN_FILE="../cmake/toolchains/gcc/4.8/i686.cmake"
+     $ ../cmake/scripts/test-all-toolchains.sh
      
      
-Supported compilers
+Supported toolchains
 ---------
     
-    Checkout `test_all_`.
+    Checkout `test_all_toolchains_`.
 
 Gentoo
 ------
@@ -141,6 +138,6 @@ My English is not perfect, my native language is Belarusian. Feel free to ask me
 .. _overlay:                 https://github.com/andrew-aladev/puchuu-overlay
 .. _gentoo:                  https://github.com/andrew-aladev/tralloc/tree/master/gentoo
 .. _format_sources:          https://github.com/andrew-aladev/tralloc/blob/master/format_sources
-.. _test_all:                https://github.com/andrew-aladev/tralloc/blob/threads/test-all.sh
+.. _test_all_toolchains:     https://github.com/andrew-aladev/tralloc/blob/threads/test-all-toolchains.sh
 .. _inline workaround:       https://www.puchuu.com/posts/inline-workaround.html
 .. _gcc maybe uninitialized: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=61428
