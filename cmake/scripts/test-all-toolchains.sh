@@ -9,7 +9,7 @@ toolchains+=("gcc/4.9/address-sanitizer" "gcc/4.9/default" "gcc/4.9/leak-sanitiz
 toolchains+=("clang/address-sanitizer" "clang/ccc-analyzer" "clang/default" "clang/leak-sanitizer" "clang/thread-sanitizer" "clang/undefined-sanitizer")
 toolchains+=("tcc/default")
 for toolchain in "${toolchains[@]}"; do
-    command=("LABEL=\"$toolchain\" NO_TESTS=1 ALL_COMBINATIONS=1 $current_dir/combinations.sh -DCMAKE_TOOLCHAIN_FILE=\"$current_dir/../toolchains/$toolchain.cmake\" -DCMAKE_BUILD_TYPE=\"RELEASE\"")
+    command=("LABEL=\"$toolchain\" NO_TESTS=1 $current_dir/combinations.sh -DCMAKE_TOOLCHAIN_FILE=\"$current_dir/../toolchains/$toolchain.cmake\" -DCMAKE_BUILD_TYPE=\"RELEASE\"")
     echo "$command"
     eval "nice -n 19 ionice -c2 -n7 sh -c \"$command\""
     if [ "$?" != "0" ]; then
