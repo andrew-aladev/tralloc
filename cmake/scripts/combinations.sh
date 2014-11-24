@@ -23,7 +23,7 @@ function execute_test_arguments {
     fi
     
     config_hash=$(sha256sum "$source_dir/src/tralloc/config.h" | cut -d " " -f 1)
-    if [ "${config_hash_table[$config_hash]}" == "1" ]]; then
+    if [[ "${config_hash_table[$config_hash]}" == "1" ]]; then
         echo "This combination has been already checked"
         return 0
     fi
