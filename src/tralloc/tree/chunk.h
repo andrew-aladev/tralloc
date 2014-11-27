@@ -6,7 +6,11 @@
 #if !defined ( TRALLOC_TREE_CHUNK_H )
 #define TRALLOC_TREE_CHUNK_H
 
-#include "../extensions.h"
+#include "../types.h"
+
+#if defined ( TRALLOC_EXTENSIONS )
+#   include "../extensions.h"
+#endif
 
 #undef _TRALLOC_INLINE
 #if defined ( _TRALLOC_INCLUDED_FROM_TREE_CHUNK_C )
