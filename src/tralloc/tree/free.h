@@ -6,7 +6,7 @@
 #if !defined ( TRALLOC_TREE_FREE_H )
 #define TRALLOC_TREE_FREE_H
 
-#include "../common.h"
+#include "../context.h"
 
 #undef _TRALLOC_INLINE
 #if defined ( _TRALLOC_INCLUDED_FROM_TREE_FREE_C )

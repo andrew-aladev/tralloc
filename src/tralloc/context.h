@@ -3,37 +3,19 @@
 // tralloc is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Lesser Public License for more details.
 // You should have received a copy of the GNU General Lesser Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
-#if !defined ( TRALLOC_COMMON_H )
-#define TRALLOC_COMMON_H
+#if !defined ( TRALLOC_CONTEXT_H )
+#define TRALLOC_CONTEXT_H
 
 #include "macro.h"
 #include "types.h"
 
 #undef _TRALLOC_INLINE
-#if defined ( _TRALLOC_INCLUDED_FROM_COMMON_C )
+#if defined ( _TRALLOC_INCLUDED_FROM_CONTEXT_C )
 #    define _TRALLOC_INLINE _TRALLOC_INLINE_IN_OBJECT
 #else
 #    define _TRALLOC_INLINE _TRALLOC_INLINE_IN_HEADER
 #endif
 
-
-#if defined ( TRALLOC_EXTENSIONS )
-_TRALLOC_INLINE
-tralloc_bool _tralloc_extensions_have_extension ( tralloc_extensions extensions, _tralloc_extension extension )
-{
-    return ( extensions & extension ) == extension;
-}
-
-size_t _tralloc_extensions_get_length               ( tralloc_extensions extensions );
-size_t _tralloc_extensions_get_offset_for_extension ( tralloc_extensions extensions, _tralloc_extension extension );
-
-// Function returns size of extensions and chunk.
-_TRALLOC_INLINE
-size_t tralloc_predict_chunk_length ( tralloc_extensions extensions )
-{
-    return _tralloc_extensions_get_length ( extensions ) + sizeof ( _tralloc_chunk );
-}
-#endif
 
 _TRALLOC_INLINE
 tralloc_context * _tralloc_chunk_get_context ( _tralloc_chunk * chunk )

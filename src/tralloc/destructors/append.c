@@ -5,7 +5,7 @@
 
 #include <tralloc/destructors/append.h>
 #include <tralloc/destructors/chunk.h>
-#include <tralloc/common.h>
+#include <tralloc/context.h>
 
 #if defined ( TRALLOC_DEBUG_STATS )
 #   include <tralloc/debug/stats/main.h>

@@ -5,7 +5,7 @@
 
 #include <tralloc/tree/realloc.h>
 #include <tralloc/tree/chunk.h>
-#include <tralloc/common.h>
+#include <tralloc/context.h>
 
 #if defined ( TRALLOC_LENGTH )
 #   include <tralloc/length/main.h>
@@ -113,7 +113,7 @@ tralloc_error tralloc_realloc ( tralloc_context ** chunk_context, size_t length 
 
             // TRALLOC_EXTENSION_POOL_CHILD should be disabled in "new_chunk".
             _tralloc_chunk * new_chunk = ( _tralloc_chunk * ) ( ( uintptr_t ) new_memory + extensions_length );
-            new_chunk->extensions &= ~ ( TRALLOC_EXTENSION_POOL_CHILD );
+            _tralloc_extensions_disable_extension ( &new_chunk->extensions, TRALLOC_EXTENSION_POOL_CHILD );
         }
     } else {
         new_memory = realloc ( old_memory, total_length );

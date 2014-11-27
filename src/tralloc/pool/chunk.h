@@ -6,7 +6,7 @@
 #if !defined ( TRALLOC_POOL_CHUNK_H )
 #define TRALLOC_POOL_CHUNK_H
 
-#include "../common.h"
+#include "../extensions.h"
 
 #undef _TRALLOC_INLINE
 #if defined ( _TRALLOC_INCLUDED_FROM_POOL_CHUNK_C )

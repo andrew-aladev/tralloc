@@ -5,7 +5,7 @@
 
 #include <tralloc/tree/move.h>
 #include <tralloc/tree/chunk.h>
-#include <tralloc/common.h>
+#include <tralloc/context.h>
 
 #if defined ( TRALLOC_THREADS )
 #   include <tralloc/tree/locks/subtree.h>

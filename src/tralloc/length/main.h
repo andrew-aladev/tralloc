@@ -7,6 +7,7 @@
 #define TRALLOC_LENGTH_MAIN_H
 
 #include "chunk.h"
+#include "../context.h"
 
 #undef _TRALLOC_INLINE
 #if defined ( _TRALLOC_INCLUDED_FROM_LENGTH_MAIN_C )

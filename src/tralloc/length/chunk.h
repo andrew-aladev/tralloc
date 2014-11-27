@@ -6,7 +6,7 @@
 #if !defined ( TRALLOC_LENGTH_CHUNK_H )
 #define TRALLOC_LENGTH_CHUNK_H
 
-#include "../common.h"
+#include "../extensions.h"
 
 #undef _TRALLOC_INLINE
 #if defined ( _TRALLOC_INCLUDED_FROM_LENGTH_CHUNK_C )

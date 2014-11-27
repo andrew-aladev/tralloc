@@ -5,6 +5,7 @@
 
 #include <tralloc/tree.h>
 #include <tralloc/debug.h>
+#include <tralloc/extensions.h>
 
 
 int main ()

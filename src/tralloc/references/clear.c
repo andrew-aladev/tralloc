@@ -5,7 +5,7 @@
 
 #include <tralloc/references/clear.h>
 #include <tralloc/references/chunk.h>
-#include <tralloc/common.h>
+#include <tralloc/context.h>
 
 
 tralloc_error tralloc_references_clear ( tralloc_context * context )

@@ -5,6 +5,7 @@
 
 #include <tralloc/references/move.h>
 #include <tralloc/references/chunk.h>
+#include <tralloc/context.h>
 
 
 static

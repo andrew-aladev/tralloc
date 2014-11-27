@@ -3,11 +3,10 @@
 // tralloc is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Lesser Public License for more details.
 // You should have received a copy of the GNU General Lesser Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
-#define _TRALLOC_INCLUDED_FROM_COMMON_C
-#include <tralloc/common.h>
+#define _TRALLOC_INCLUDED_FROM_EXTENSIONS_C
+#include <tralloc/extensions.h>
 
 
-#if defined ( TRALLOC_EXTENSIONS )
 // Extension's structures are situated in the memory in the following order :
 //   pool / pool_child, pool lock, references, reference, destructors, length, children_lock, subtree_lock.
 size_t _tralloc_extensions_get_length ( tralloc_extensions extensions )
@@ -139,5 +138,3 @@ size_t _tralloc_extensions_get_offset_for_extension ( tralloc_extensions extensi
 
     return offset;
 }
-
-#endif

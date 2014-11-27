@@ -7,6 +7,7 @@
 #include <tralloc/helpers/file.h>
 #include <tralloc/tree/free.h>
 #include <tralloc/destructors/append.h>
+#include <tralloc/extensions.h>
 
 #include <unistd.h>
 
@@ -31,9 +32,9 @@ tralloc_error _tralloc_open ( _tralloc_alloc_options * options, int ** descripto
         return TRALLOC_ERROR_OPEN_DESCRIPTOR_FAILED;
     }
 
-    options->zero        = 0;
-    options->length      = sizeof ( int );
-    options->extensions |= TRALLOC_EXTENSION_DESTRUCTORS;
+    options->zero   = 0;
+    options->length = sizeof ( int );
+    _tralloc_extensions_enable_extension ( &options->extensions, TRALLOC_EXTENSION_DESTRUCTORS );
 
     tralloc_error result = _tralloc_alloc ( options, ( tralloc_context ** ) descriptor_ptr );
     if ( result != 0 ) {

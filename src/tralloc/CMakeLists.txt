@@ -1,7 +1,14 @@
-set (HEADERS "common.h" "config.h" "macro.h" "tree.h" "types.h")
+set (HEADERS "context.h" "config.h" "macro.h" "tree.h" "types.h")
 set (SOURCES
-    "${CMAKE_CURRENT_SOURCE_DIR}/common.c"
+    "${CMAKE_CURRENT_SOURCE_DIR}/context.c"
 )
+
+if (${TRALLOC_EXTENSIONS})
+    set (HEADERS ${HEADERS} "extensions.h")
+    set (SOURCES ${SOURCES}
+        "${CMAKE_CURRENT_SOURCE_DIR}/extensions.c"
+    )
+endif ()
 
 if (${TRALLOC_DEBUG})
     set (HEADERS ${HEADERS} "debug.h")
