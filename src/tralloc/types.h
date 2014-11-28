@@ -145,25 +145,12 @@ typedef pthread_spinlock_t _tralloc_debug_threads_lock;
 #endif
 
 #if defined ( TRALLOC_LENGTH )
-typedef size_t _tralloc_length;
+typedef struct _tralloc_length_type _tralloc_length;
 #endif
 
 #if defined ( TRALLOC_DESTRUCTORS )
 typedef tralloc_error ( * tralloc_destructor_function ) ( tralloc_context * chunk_context, void * user_data );
-
-typedef struct _tralloc_destructor_type {
-    struct _tralloc_destructor_type * next;
-    tralloc_destructor_function function;
-    void * user_data;
-} _tralloc_destructor;
-
-// Destructors represent single linked.
-// "first_destructor" is the start of this list, "last_destructor" - end.
-// Order of destructors is given by user (append and prepend functions).
-typedef struct _tralloc_destructors_type {
-    _tralloc_destructor * first_destructor;
-    _tralloc_destructor * last_destructor;
-} _tralloc_destructors;
+typedef struct _tralloc_destructors_type _tralloc_destructors;
 #endif
 
 #if defined ( TRALLOC_REFERENCES )

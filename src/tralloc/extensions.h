@@ -51,11 +51,7 @@ size_t _tralloc_extensions_get_length               ( tralloc_extensions extensi
 size_t _tralloc_extensions_get_offset_for_extension ( tralloc_extensions extensions, _tralloc_extension extension );
 
 // Function returns size of extensions and chunk.
-_TRALLOC_INLINE
-size_t tralloc_predict_chunk_length ( tralloc_extensions extensions )
-{
-    return _tralloc_extensions_get_length ( extensions ) + sizeof ( _tralloc_chunk );
-}
+size_t tralloc_predict_chunk_length ( tralloc_extensions extensions );
 
 
 #endif

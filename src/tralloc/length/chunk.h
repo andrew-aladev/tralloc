@@ -16,6 +16,10 @@
 #endif
 
 
+struct _tralloc_length_type {
+    size_t length;
+};
+
 _TRALLOC_INLINE
 _tralloc_length * _tralloc_chunk_get_length ( _tralloc_chunk * chunk )
 {

@@ -5,3 +5,17 @@
 
 #define _TRALLOC_INCLUDED_FROM_LENGTH_MAIN_C
 #include <tralloc/length/main.h>
+
+
+tralloc_error tralloc_length_get ( tralloc_context * context, size_t * length_result_ptr )
+{
+    if ( context == NULL ) {
+        return TRALLOC_ERROR_REQUIRED_ARGUMENT_IS_UNDEFINED;
+    }
+    _tralloc_chunk * chunk = _tralloc_context_get_chunk ( context );
+    if ( !_tralloc_extensions_have_extension ( chunk->extensions, TRALLOC_EXTENSION_LENGTH ) ) {
+        return TRALLOC_ERROR_NO_SUCH_EXTENSION;
+    }
+    * length_result_ptr = _tralloc_length_get ( _tralloc_chunk_get_length ( chunk ) );
+    return 0;
+}

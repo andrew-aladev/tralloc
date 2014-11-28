@@ -6,6 +6,14 @@
 #define _TRALLOC_INCLUDED_FROM_EXTENSIONS_C
 #include <tralloc/extensions.h>
 
+#if defined ( TRALLOC_DESTRUCTORS )
+#   include <tralloc/destructors/chunk.h>
+#endif
+
+#if defined ( TRALLOC_LENGTH )
+#   include <tralloc/length/chunk.h>
+#endif
+
 
 // Extension's structures are situated in the memory in the following order :
 //   pool / pool_child, pool lock, references, reference, destructors, length, children_lock, subtree_lock.
@@ -137,4 +145,9 @@ size_t _tralloc_extensions_get_offset_for_extension ( tralloc_extensions extensi
 #   endif
 
     return offset;
+}
+
+size_t tralloc_predict_chunk_length ( tralloc_extensions extensions )
+{
+    return _tralloc_extensions_get_length ( extensions ) + sizeof ( _tralloc_chunk );
 }
