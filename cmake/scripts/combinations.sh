@@ -44,7 +44,17 @@ function execute_test_arguments {
         if [ "$?" != "0" ]; then
             echo "Failed arguments:"
             echo "  $test_arguments"
-            exit 3
+            exit 4
+        fi
+    fi
+    if [ "$NO_PACKAGE" != "1" ]; then
+        command="make package"
+        echo $command
+        eval $command
+        if [ "$?" != "0" ]; then
+            echo "Failed arguments:"
+            echo "  $test_arguments"
+            exit 5
         fi
     fi
 }
