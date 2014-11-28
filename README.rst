@@ -70,7 +70,9 @@ Extensions and features enable/disable
 You can test all possible combinations of extensions and features
 
     ::
-    
+
+     $ mkdir build && sudo mount -t tmpfs -o size=100M tmpfs build/ && cd build
+     $
      $ ../cmake/scripts/combinations.sh
      $ ALL_COMBINATIONS=1 ../cmake/scripts/combinations.sh
      $ ../cmake/scripts/combinations.sh -DCMAKE_BUILD_TYPE="DEBUG"
