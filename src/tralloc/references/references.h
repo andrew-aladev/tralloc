@@ -6,8 +6,7 @@
 #if !defined ( TRALLOC_REFERENCES_REFERENCES_H )
 #define TRALLOC_REFERENCES_REFERENCES_H
 
-#include "../types.h"
-#include "../macro.h"
+#include "chunk.h"
 
 #undef _TRALLOC_INLINE
 #if defined ( _TRALLOC_INCLUDED_FROM_REFERENCES_REFERENCES_C )

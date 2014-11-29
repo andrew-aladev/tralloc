@@ -5,7 +5,6 @@
 
 #define _TRALLOC_INCLUDED_FROM_REFERENCES_REFERENCE_C
 #include <tralloc/references/reference.h>
-#include <tralloc/references/chunk.h>
 #include <tralloc/tree/free.h>
 
 

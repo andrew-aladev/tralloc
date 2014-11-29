@@ -72,42 +72,6 @@ enum {
 };
 typedef uint8_t tralloc_error;
 
-#if defined ( TRALLOC_EXTENSIONS )
-enum {
-
-#   if defined ( TRALLOC_LENGTH )
-    TRALLOC_EXTENSION_LENGTH = 1,
-#   endif
-
-#   if defined ( TRALLOC_DESTRUCTORS )
-    TRALLOC_EXTENSION_DESTRUCTORS = 1 << 1,
-#   endif
-
-#   if defined ( TRALLOC_REFERENCES )
-    TRALLOC_EXTENSION_REFERENCE  = 1 << 2,
-    TRALLOC_EXTENSION_REFERENCES = 1 << 3,
-#   endif
-
-#   if defined ( TRALLOC_POOL )
-    TRALLOC_EXTENSION_POOL       = 1 << 4,
-    TRALLOC_EXTENSION_POOL_CHILD = 1 << 5,
-#   endif
-
-#   if defined ( TRALLOC_THREADS )
-    TRALLOC_EXTENSION_LOCK_SUBTREE  = 1 << 6,
-    TRALLOC_EXTENSION_LOCK_CHILDREN = 1 << 7,
-
-#   if defined ( TRALLOC_POOL )
-    TRALLOC_EXTENSION_LOCK_POOL = 1 << 8,
-#   endif
-
-#   endif
-
-};
-typedef uint16_t _tralloc_extension;
-typedef uint16_t tralloc_extensions;
-#endif
-
 #if defined ( TRALLOC_THREADS )
 
 #if TRALLOC_SUBTREE_LOCK_TYPE == TRALLOC_THREADS_RWLOCK
@@ -144,75 +108,50 @@ typedef pthread_spinlock_t _tralloc_debug_threads_lock;
 
 #endif
 
-#if defined ( TRALLOC_LENGTH )
-typedef struct _tralloc_length_type _tralloc_length;
-#endif
-
-#if defined ( TRALLOC_DESTRUCTORS )
-typedef tralloc_error ( * tralloc_destructor_function ) ( tralloc_context * chunk_context, void * user_data );
-typedef struct _tralloc_destructors_type _tralloc_destructors;
-#endif
-
-#if defined ( TRALLOC_REFERENCES )
-typedef struct _tralloc_reference_type {
-    struct _tralloc_references_type * references;
-    struct _tralloc_reference_type * prev;
-    struct _tralloc_reference_type * next;
-} _tralloc_reference;
-
-// References represent double linked list.
-// "first_reference" is the start of this list.
-// Order of references is given by user (move_reference function).
-typedef struct _tralloc_references_type {
-    _tralloc_reference * first_reference;
-    tralloc_extensions extensions;
-    tralloc_bool autofree;
-} _tralloc_references;
-#endif
-
-#if defined ( TRALLOC_POOL )
-// "pool_child" should be the first in the stack of extensions.
-// This slight limitation makes fragment's calculation much easier and descreases the total amount of pool's memory overhead.
-typedef struct _tralloc_pool_child_type {
-    struct _tralloc_pool_type * pool;
-    struct _tralloc_pool_child_type * prev;
-    struct _tralloc_pool_child_type * next;
-    size_t length;
-} _tralloc_pool_child;
-
-typedef struct _tralloc_pool_fragment_type {
-    struct _tralloc_pool_fragment_type * prev;
-    struct _tralloc_pool_fragment_type * next;
-    _tralloc_pool_child * prev_child;
-    _tralloc_pool_child * next_child;
-    size_t length;
-} _tralloc_pool_fragment;
-
-// Fragments represent double linked ordered list.
-// "max_fragment" is the start of this list.
-// It is the longest fragment available.
-
-// Pool child represent double linked list.
-// "first_child" is the start of this list.
-// Order of pool childs is given by user (the order of chunks allocation and movement).
-typedef struct _tralloc_pool_type {
-    _tralloc_pool_child    * first_child;
-    _tralloc_pool_fragment * max_fragment;
-    tralloc_extensions extensions;
-    void * memory;
-    size_t length;
-    tralloc_bool autofree;
-} _tralloc_pool;
-#endif
-
 #if defined ( TRALLOC_DEBUG_THREADS )
 enum {
-    _TRALLOC_NOT_USED_BY_THREADS = 0,
-    _TRALLOC_USED_BY_SINGLE_THREAD,
-    _TRALLOC_USED_BY_MULTIPLE_THREADS
+    _TRALLOC_DEBUG_NOT_USED_BY_THREADS = 0,
+    _TRALLOC_DEBUG_USED_BY_SINGLE_THREAD,
+    _TRALLOC_DEBUG_USED_BY_MULTIPLE_THREADS
 };
 
 typedef uint8_t _tralloc_thread_usage_status;
+#endif
+
+#if defined ( TRALLOC_EXTENSIONS )
+enum {
+
+#   if defined ( TRALLOC_LENGTH )
+    TRALLOC_EXTENSION_LENGTH = 1,
+#   endif
+
+#   if defined ( TRALLOC_DESTRUCTORS )
+    TRALLOC_EXTENSION_DESTRUCTORS = 1 << 1,
+#   endif
+
+#   if defined ( TRALLOC_REFERENCES )
+    TRALLOC_EXTENSION_REFERENCE  = 1 << 2,
+    TRALLOC_EXTENSION_REFERENCES = 1 << 3,
+#   endif
+
+#   if defined ( TRALLOC_POOL )
+    TRALLOC_EXTENSION_POOL       = 1 << 4,
+    TRALLOC_EXTENSION_POOL_CHILD = 1 << 5,
+#   endif
+
+#   if defined ( TRALLOC_THREADS )
+    TRALLOC_EXTENSION_LOCK_SUBTREE  = 1 << 6,
+    TRALLOC_EXTENSION_LOCK_CHILDREN = 1 << 7,
+
+#   if defined ( TRALLOC_POOL )
+    TRALLOC_EXTENSION_LOCK_POOL = 1 << 8,
+#   endif
+
+#   endif
+
+};
+typedef uint16_t _tralloc_extension;
+typedef uint16_t tralloc_extensions;
 #endif
 
 typedef struct _tralloc_chunk_type {

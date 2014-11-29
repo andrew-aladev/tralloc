@@ -6,7 +6,7 @@
 #if !defined ( TRALLOC_POOL_POOL_CHILD_H )
 #define TRALLOC_POOL_POOL_CHILD_H
 
-#include "../types.h"
+#include "../extensions.h"
 
 
 void                  _tralloc_pool_child_new    ( _tralloc_pool_child * pool_child, _tralloc_pool * pool, size_t length, _tralloc_pool_child * prev, _tralloc_pool_child * next );

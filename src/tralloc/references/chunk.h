@@ -16,6 +16,21 @@
 #endif
 
 
+// References are represented by double linked list.
+// Order of references is given by user (move_reference function).
+
+struct _tralloc_reference_type {
+    _tralloc_references * references;
+    _tralloc_reference * prev;
+    _tralloc_reference * next;
+};
+
+struct _tralloc_references_type {
+    _tralloc_reference * first_reference;
+    tralloc_extensions extensions;
+    tralloc_bool autofree;
+};
+
 _TRALLOC_INLINE
 _tralloc_references * _tralloc_chunk_get_references ( _tralloc_chunk * chunk )
 {

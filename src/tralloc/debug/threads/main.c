@@ -37,15 +37,15 @@ tralloc_error _tralloc_debug_threads_check_usage_of_extension (
         return result;
     }
 
-    if ( * usage_status == _TRALLOC_NOT_USED_BY_THREADS ) {
-        * usage_status   = _TRALLOC_USED_BY_SINGLE_THREAD;
+    if ( * usage_status == _TRALLOC_DEBUG_NOT_USED_BY_THREADS ) {
+        * usage_status   = _TRALLOC_DEBUG_USED_BY_SINGLE_THREAD;
         * used_by_thread = thread_id;
-    } else if ( * usage_status == _TRALLOC_USED_BY_SINGLE_THREAD && !pthread_equal ( * used_by_thread, thread_id ) ) {
-        * usage_status = _TRALLOC_USED_BY_MULTIPLE_THREADS;
+    } else if ( * usage_status == _TRALLOC_DEBUG_USED_BY_SINGLE_THREAD && !pthread_equal ( * used_by_thread, thread_id ) ) {
+        * usage_status = _TRALLOC_DEBUG_USED_BY_MULTIPLE_THREADS;
     }
 
     tralloc_extensions original_extensions = _tralloc_extensions_get_original_by_forced ( chunk->extensions, chunk->forced_extensions );
-    if ( * usage_status == _TRALLOC_USED_BY_MULTIPLE_THREADS && !_tralloc_extensions_have_extension ( original_extensions, extension ) ) {
+    if ( * usage_status == _TRALLOC_DEBUG_USED_BY_MULTIPLE_THREADS && !_tralloc_extensions_have_extension ( original_extensions, extension ) ) {
 #       if defined ( TRALLOC_DEBUG_LOG )
         fprintf (
             stderr,

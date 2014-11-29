@@ -14,6 +14,14 @@
 #   include <tralloc/length/chunk.h>
 #endif
 
+#if defined ( TRALLOC_REFERENCES )
+#   include <tralloc/references/chunk.h>
+#endif
+
+#if defined ( TRALLOC_POOL )
+#   include <tralloc/pool/chunk.h>
+#endif
+
 
 // Extension's structures are situated in the memory in the following order :
 //   pool / pool_child, pool lock, references, reference, destructors, length, children_lock, subtree_lock.

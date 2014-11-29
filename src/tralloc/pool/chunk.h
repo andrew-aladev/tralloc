@@ -16,6 +16,40 @@
 #endif
 
 
+// "pool_child" should be the first in the stack of extensions.
+// This slight limitation makes fragment's calculation much easier and descreases the total amount of pool's memory overhead.
+
+struct _tralloc_pool_child_type {
+    _tralloc_pool * pool;
+    _tralloc_pool_child * prev;
+    _tralloc_pool_child * next;
+    size_t length;
+};
+
+typedef struct _tralloc_pool_fragment_type {
+    struct _tralloc_pool_fragment_type * prev;
+    struct _tralloc_pool_fragment_type * next;
+    _tralloc_pool_child * prev_child;
+    _tralloc_pool_child * next_child;
+    size_t length;
+} _tralloc_pool_fragment;
+
+// Fragments are represented by double linked ordered list.
+// "max_fragment" is the start of this list.
+// This is the longest fragment available.
+
+// Pool child is represented by double linked list.
+// Order of pool childs is given by user (the order of chunks allocation and movement).
+
+struct _tralloc_pool_type {
+    _tralloc_pool_child    * first_child;
+    _tralloc_pool_fragment * max_fragment;
+    tralloc_extensions extensions;
+    void * memory;
+    size_t length;
+    tralloc_bool autofree;
+};
+
 _TRALLOC_INLINE
 _tralloc_pool_child * _tralloc_chunk_get_pool_child ( _tralloc_chunk * chunk )
 {

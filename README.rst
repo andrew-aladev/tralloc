@@ -71,7 +71,7 @@ You can test all possible combinations of extensions and features
 
     ::
 
-     $ mkdir build && sudo mount -t tmpfs -o size=20M tmpfs build/ && cd build
+     $ cd .. && sudo mount -t tmpfs -o size=50M tmpfs build/ && cd build
      $
      $ ../cmake/scripts/combinations.sh
      $ ALL_COMBINATIONS=1 ../cmake/scripts/combinations.sh

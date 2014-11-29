@@ -6,7 +6,7 @@
 #if !defined ( TRALLOC_DESTRUCTORS_APPEND_H )
 #define TRALLOC_DESTRUCTORS_APPEND_H
 
-#include "../types.h"
+#include "../extensions.h"
 
 
 tralloc_error tralloc_destructor_append  ( tralloc_context * context, tralloc_destructor_function function, void * user_data );

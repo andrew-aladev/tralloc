@@ -6,8 +6,7 @@
 #if !defined ( TRALLOC_POOL_FRAGMENT_H )
 #define TRALLOC_POOL_FRAGMENT_H
 
-#include "../macro.h"
-#include "../types.h"
+#include "chunk.h"
 
 #undef _TRALLOC_INLINE
 #if defined ( _TRALLOC_INCLUDED_FROM_POOL_FRAGMENT_C )
