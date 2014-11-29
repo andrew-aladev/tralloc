@@ -97,7 +97,7 @@ typedef struct _tralloc_alloc_environment_type {
 } _tralloc_alloc_environment;
 
 static
-void _tralloc_alloc_environment_disable_extension ( _tralloc_alloc_environment * environment, _tralloc_extension extension )
+void _TRALLOC_UNUSED_FUNCTION ( _tralloc_alloc_environment_disable_extension ) ( _tralloc_alloc_environment * environment, _tralloc_extension extension )
 {
     _tralloc_extensions_disable_extension ( &environment->extensions, extension );
 
@@ -108,7 +108,7 @@ void _tralloc_alloc_environment_disable_extension ( _tralloc_alloc_environment *
 }
 
 static
-void _tralloc_alloc_environment_enable_extension ( _tralloc_alloc_environment * environment, _tralloc_extension extension )
+void _TRALLOC_UNUSED_FUNCTION ( _tralloc_alloc_environment_enable_extension ) ( _tralloc_alloc_environment * environment, _tralloc_extension extension )
 {
     _tralloc_extensions_enable_extension ( &environment->extensions, extension );
 
@@ -572,3 +572,6 @@ tralloc_error _tralloc_alloc ( _tralloc_alloc_options * options, tralloc_context
     * child_context = context;
     return 0;
 }
+
+
+
