@@ -22,15 +22,15 @@ tralloc_error _tralloc_debug_threads_lock_new ( _tralloc_debug_threads_lock * lo
 {
 
 #   if TRALLOC_DEBUG_THREADS_LOCK_TYPE == TRALLOC_THREADS_RWLOCK
-    if ( pthread_rwlock_init ( lock, NULL ) != 0 ) {
+    if ( pthread_rwlock_init ( &lock->data, NULL ) != 0 ) {
         return TRALLOC_ERROR_RWLOCK_FAILED;
     }
 #   elif TRALLOC_DEBUG_THREADS_LOCK_TYPE == TRALLOC_THREADS_MUTEX
-    if ( pthread_mutex_init ( lock, NULL ) != 0 ) {
+    if ( pthread_mutex_init ( &lock->data, NULL ) != 0 ) {
         return TRALLOC_ERROR_MUTEX_FAILED;
     }
 #   elif TRALLOC_DEBUG_THREADS_LOCK_TYPE == TRALLOC_THREADS_SPINLOCK
-    if ( pthread_spin_init ( lock, 0 ) != 0 ) {
+    if ( pthread_spin_init ( &lock->data, 0 ) != 0 ) {
         return TRALLOC_ERROR_SPINLOCK_FAILED;
     }
 #   endif
@@ -43,15 +43,15 @@ tralloc_error _tralloc_debug_threads_lock_rdlock ( _tralloc_debug_threads_lock *
 {
 
 #   if TRALLOC_DEBUG_THREADS_LOCK_TYPE == TRALLOC_THREADS_RWLOCK
-    if ( pthread_rwlock_rdlock ( lock ) != 0 ) {
+    if ( pthread_rwlock_rdlock ( &lock->data ) != 0 ) {
         return TRALLOC_ERROR_RWLOCK_FAILED;
     }
 #   elif TRALLOC_DEBUG_THREADS_LOCK_TYPE == TRALLOC_THREADS_MUTEX
-    if ( pthread_mutex_lock ( lock ) != 0 ) {
+    if ( pthread_mutex_lock ( &lock->data ) != 0 ) {
         return TRALLOC_ERROR_MUTEX_FAILED;
     }
 #   elif TRALLOC_DEBUG_THREADS_LOCK_TYPE == TRALLOC_THREADS_SPINLOCK
-    if ( pthread_spin_lock ( lock ) != 0 ) {
+    if ( pthread_spin_lock ( &lock->data ) != 0 ) {
         return TRALLOC_ERROR_SPINLOCK_FAILED;
     }
 #   endif
@@ -64,15 +64,15 @@ tralloc_error _tralloc_debug_threads_lock_wrlock ( _tralloc_debug_threads_lock *
 {
 
 #   if TRALLOC_DEBUG_THREADS_LOCK_TYPE == TRALLOC_THREADS_RWLOCK
-    if ( pthread_rwlock_wrlock ( lock ) != 0 ) {
+    if ( pthread_rwlock_wrlock ( &lock->data ) != 0 ) {
         return TRALLOC_ERROR_RWLOCK_FAILED;
     }
 #   elif TRALLOC_DEBUG_THREADS_LOCK_TYPE == TRALLOC_THREADS_MUTEX
-    if ( pthread_mutex_lock ( lock ) != 0 ) {
+    if ( pthread_mutex_lock ( &lock->data ) != 0 ) {
         return TRALLOC_ERROR_MUTEX_FAILED;
     }
 #   elif TRALLOC_DEBUG_THREADS_LOCK_TYPE == TRALLOC_THREADS_SPINLOCK
-    if ( pthread_spin_lock ( lock ) != 0 ) {
+    if ( pthread_spin_lock ( &lock->data ) != 0 ) {
         return TRALLOC_ERROR_SPINLOCK_FAILED;
     }
 #   endif
@@ -85,15 +85,15 @@ tralloc_error _tralloc_debug_threads_lock_unlock ( _tralloc_debug_threads_lock *
 {
 
 #   if TRALLOC_DEBUG_THREADS_LOCK_TYPE == TRALLOC_THREADS_RWLOCK
-    if ( pthread_rwlock_unlock ( lock ) != 0 ) {
+    if ( pthread_rwlock_unlock ( &lock->data ) != 0 ) {
         return TRALLOC_ERROR_RWLOCK_FAILED;
     }
 #   elif TRALLOC_DEBUG_THREADS_LOCK_TYPE == TRALLOC_THREADS_MUTEX
-    if ( pthread_mutex_unlock ( lock ) != 0 ) {
+    if ( pthread_mutex_unlock ( &lock->data ) != 0 ) {
         return TRALLOC_ERROR_MUTEX_FAILED;
     }
 #   elif TRALLOC_DEBUG_THREADS_LOCK_TYPE == TRALLOC_THREADS_SPINLOCK
-    if ( pthread_spin_unlock ( lock ) != 0 ) {
+    if ( pthread_spin_unlock ( &lock->data ) != 0 ) {
         return TRALLOC_ERROR_SPINLOCK_FAILED;
     }
 #   endif
@@ -105,15 +105,15 @@ _TRALLOC_INLINE
 tralloc_error _tralloc_debug_threads_lock_free ( _tralloc_debug_threads_lock * lock )
 {
 #   if TRALLOC_DEBUG_THREADS_LOCK_TYPE == TRALLOC_THREADS_RWLOCK
-    if ( pthread_rwlock_destroy ( lock ) != 0 ) {
+    if ( pthread_rwlock_destroy ( &lock->data ) != 0 ) {
         return TRALLOC_ERROR_RWLOCK_FAILED;
     }
 #   elif TRALLOC_DEBUG_THREADS_LOCK_TYPE == TRALLOC_THREADS_MUTEX
-    if ( pthread_mutex_destroy ( lock ) != 0 ) {
+    if ( pthread_mutex_destroy ( &lock->data ) != 0 ) {
         return TRALLOC_ERROR_MUTEX_FAILED;
     }
 #   elif TRALLOC_DEBUG_THREADS_LOCK_TYPE == TRALLOC_THREADS_SPINLOCK
-    if ( pthread_spin_destroy ( lock ) != 0 ) {
+    if ( pthread_spin_destroy ( &lock->data ) != 0 ) {
         return TRALLOC_ERROR_SPINLOCK_FAILED;
     }
 #   endif

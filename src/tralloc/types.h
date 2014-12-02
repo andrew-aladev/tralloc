@@ -74,37 +74,21 @@ typedef uint8_t tralloc_error;
 
 #if defined ( TRALLOC_THREADS )
 
-#if TRALLOC_SUBTREE_LOCK_TYPE == TRALLOC_THREADS_RWLOCK
-typedef pthread_rwlock_t _tralloc_subtree_lock;
-#elif TRALLOC_SUBTREE_LOCK_TYPE == TRALLOC_THREADS_MUTEX
-typedef pthread_mutex_t _tralloc_subtree_lock;
-#elif TRALLOC_SUBTREE_LOCK_TYPE == TRALLOC_THREADS_SPINLOCK
-typedef pthread_spinlock_t _tralloc_subtree_lock;
-#endif
+typedef struct _tralloc_subtree_lock_type  _tralloc_subtree_lock;
+typedef struct _tralloc_children_lock_type _tralloc_children_lock;
+typedef struct _tralloc_pool_lock_type     _tralloc_pool_lock;
 
-#if TRALLOC_CHILDREN_LOCK_TYPE == TRALLOC_THREADS_RWLOCK
-typedef pthread_rwlock_t _tralloc_children_lock;
-#elif TRALLOC_CHILDREN_LOCK_TYPE == TRALLOC_THREADS_MUTEX
-typedef pthread_mutex_t _tralloc_children_lock;
-#elif TRALLOC_CHILDREN_LOCK_TYPE == TRALLOC_THREADS_SPINLOCK
-typedef pthread_spinlock_t _tralloc_children_lock;
-#endif
-
-#if TRALLOC_POOL_LOCK_TYPE == TRALLOC_THREADS_RWLOCK
-typedef pthread_rwlock_t _tralloc_pool_lock;
-#elif TRALLOC_POOL_LOCK_TYPE == TRALLOC_THREADS_MUTEX
-typedef pthread_mutex_t _tralloc_pool_lock;
-#elif TRALLOC_POOL_LOCK_TYPE == TRALLOC_THREADS_SPINLOCK
-typedef pthread_spinlock_t _tralloc_pool_lock;
-#endif
+typedef struct _tralloc_debug_threads_lock_type {
 
 #if TRALLOC_DEBUG_THREADS_LOCK_TYPE == TRALLOC_THREADS_RWLOCK
-typedef pthread_rwlock_t _tralloc_debug_threads_lock;
+    pthread_rwlock_t data;
 #elif TRALLOC_DEBUG_THREADS_LOCK_TYPE == TRALLOC_THREADS_MUTEX
-typedef pthread_mutex_t _tralloc_debug_threads_lock;
+    pthread_mutex_t data;
 #elif TRALLOC_DEBUG_THREADS_LOCK_TYPE == TRALLOC_THREADS_SPINLOCK
-typedef pthread_spinlock_t _tralloc_debug_threads_lock;
+    pthread_spinlock_t data;
 #endif
+
+} _tralloc_debug_threads_lock;
 
 #endif
 

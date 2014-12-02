@@ -6,6 +6,11 @@
 #define _TRALLOC_INCLUDED_FROM_EXTENSIONS_C
 #include <tralloc/extensions.h>
 
+#if defined ( TRALLOC_THREADS )
+#   include <tralloc/tree/locks/subtree.h>
+#   include <tralloc/tree/locks/children.h>
+#endif
+
 #if defined ( TRALLOC_DESTRUCTORS )
 #   include <tralloc/destructors/chunk.h>
 #endif
@@ -20,6 +25,9 @@
 
 #if defined ( TRALLOC_POOL )
 #   include <tralloc/pool/chunk.h>
+#   if defined ( TRALLOC_THREADS )
+#       include <tralloc/pool/lock.h>
+#   endif
 #endif
 
 
