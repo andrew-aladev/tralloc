@@ -201,7 +201,7 @@ else ()
     set (TRALLOC_DEBUG false)
 endif ()
 
-if (NOT ${ASCIIDOC_A2X_FOUND} AND ${TRALLOC_MAN})
+if (NOT ${TRALLOC_ASCIIDOC_A2X_FOUND} AND ${TRALLOC_MAN})
     message (WARNING "TRALLOC_MAN is disabled, because \"asciidoc\" is not available.")
     set (TRALLOC_MAN false)
 endif ()
