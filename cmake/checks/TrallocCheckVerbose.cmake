@@ -1,4 +1,4 @@
-function (check_verbose)
+function (tralloc_check_verbose)
     if (DEFINED TRALLOC_HAVE_VERBOSE)
         return ()
     endif ()
@@ -7,7 +7,7 @@ function (check_verbose)
     
     set (BINARY_DIR "${PROJECT_BINARY_DIR}/CMakeTmp/basic")
     set (SOURCE_DIR "${PROJECT_SOURCE_DIR}/cmake/checks/basic")
-    set (NAME "check_basic")
+    set (NAME "tralloc_check_basic")
     
     try_compile (CHECK_VERBOSE_RESULT ${BINARY_DIR} ${SOURCE_DIR} ${NAME}
         CMAKE_FLAGS

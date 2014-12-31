@@ -1,5 +1,5 @@
 cmake_minimum_required (VERSION "2.8")
-project ("check_basic" "C")
+project ("tralloc_check_basic" "C")
 
 set (CMAKE_TRY_RUN false CACHE BOOL "try run targets after build")
 

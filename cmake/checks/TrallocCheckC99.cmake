@@ -1,14 +1,14 @@
-function (check_c99)
+function (tralloc_check_c99)
     if (DEFINED TRALLOC_HAVE_C99)
         return ()
     endif ()
     
-    include (CheckVerbose)
-    check_verbose ()
+    include (TrallocCheckVerbose)
+    tralloc_check_verbose ()
     
     set (BINARY_DIR "${PROJECT_BINARY_DIR}/CMakeTmp/C99")
     set (SOURCE_DIR "${PROJECT_SOURCE_DIR}/cmake/checks/C99")
-    set (NAME "check_C99")
+    set (NAME "tralloc_check_C99")
     
     try_compile (CHECK_C99_RESULT ${BINARY_DIR} ${SOURCE_DIR} ${NAME}
         CMAKE_FLAGS

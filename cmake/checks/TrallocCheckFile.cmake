@@ -1,14 +1,14 @@
-function (check_file)
+function (tralloc_check_file)
     if (DEFINED TRALLOC_HAVE_FILE)
         return ()
     endif ()
     
-    include (CheckVerbose)
-    check_verbose ()
+    include (TrallocCheckVerbose)
+    tralloc_check_verbose ()
     
     set (BINARY_DIR "${PROJECT_BINARY_DIR}/CMakeTmp/file")
     set (SOURCE_DIR "${PROJECT_SOURCE_DIR}/cmake/checks/file")
-    set (NAME "check_file")
+    set (NAME "tralloc_check_file")
     
     try_compile (CHECK_FILE_RESULT ${BINARY_DIR} ${SOURCE_DIR} ${NAME}
         CMAKE_FLAGS

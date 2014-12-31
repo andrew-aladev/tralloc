@@ -1,5 +1,5 @@
 cmake_minimum_required (VERSION "2.8")
-project ("check_pthread_rwlock" "C")
+project ("tralloc_check_pthread_rwlock" "C")
 
 add_executable (
     "main"

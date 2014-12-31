@@ -1,8 +1,8 @@
 #!/bin/sh
 
 source_dir=$(readlink -f "$(dirname $0)/../")
+files=$(find "$source_dir/cmake" "$source_dir/examples" "$source_dir/src" -regex ".*\.\(h\|c\)")
 
-files=$(find "$source_dir" -regex ".*\.\(h\|c\)")
 for file in $files; do
     eval "astyle -n --mode=c --style=kr --pad-oper --pad-paren --pad-header \"$file\""
     if [ "$?" != "0" ]; then

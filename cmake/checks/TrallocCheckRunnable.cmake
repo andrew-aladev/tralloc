@@ -1,14 +1,14 @@
-function (check_runnable)
+function (tralloc_check_runnable)
     if (DEFINED CMAKE_CAN_RUN_EXE)
         return ()
     endif ()
     
-    include (CheckVerbose)
-    check_verbose ()
+    include (TrallocCheckVerbose)
+    tralloc_check_verbose ()
     
     set (BINARY_DIR "${PROJECT_BINARY_DIR}/CMakeTmp/basic")
     set (SOURCE_DIR "${PROJECT_SOURCE_DIR}/cmake/checks/basic")
-    set (NAME "check_basic")
+    set (NAME "tralloc_check_basic")
     
     try_compile (CHECK_RUNNABLE_RESULT ${BINARY_DIR} ${SOURCE_DIR} ${NAME}
         CMAKE_FLAGS

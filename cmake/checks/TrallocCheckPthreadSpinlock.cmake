@@ -1,12 +1,12 @@
-function (check_pthread_spinlock)
+function (tralloc_check_pthread_spinlock)
     if (DEFINED TRALLOC_HAVE_PTHREAD_SPINLOCK)
         return ()
     endif ()
     
-    include (CheckVerbose)
-    include (CheckPthread)
-    check_verbose ()
-    check_pthread ()
+    include (TrallocCheckVerbose)
+    include (TrallocCheckPthread)
+    tralloc_check_verbose ()
+    tralloc_check_pthread ()
     
     if (NOT ${TRALLOC_HAVE_PTHREAD})
         set (TRALLOC_HAVE_PTHREAD_SPINLOCK false CACHE STRING "Status of pthread_spinlock support")
@@ -16,7 +16,7 @@ function (check_pthread_spinlock)
     
     set (BINARY_DIR "${PROJECT_BINARY_DIR}/CMakeTmp/pthread_spinlock")
     set (SOURCE_DIR "${PROJECT_SOURCE_DIR}/cmake/checks/pthread_spinlock")
-    set (NAME "check_pthread_spinlock")
+    set (NAME "tralloc_check_pthread_spinlock")
     
     try_compile (CHECK_PTHREAD_SPINLOCK_RESULT ${BINARY_DIR} ${SOURCE_DIR} ${NAME}
         CMAKE_FLAGS

@@ -1,12 +1,12 @@
-function (check_c99_inline)
+function (tralloc_check_c99_inline)
     if (DEFINED TRALLOC_HAVE_C99_INLINE)
         return ()
     endif ()
     
-    include (CheckVerbose)
-    include (CheckC99)
-    check_verbose ()
-    check_c99 ()
+    include (TrallocCheckVerbose)
+    include (TrallocCheckC99)
+    tralloc_check_verbose ()
+    tralloc_check_c99 ()
 
     if (NOT ${TRALLOC_HAVE_C99})
         set (TRALLOC_HAVE_C99_INLINE false CACHE STRING "Status of C99 inline support")
@@ -16,7 +16,7 @@ function (check_c99_inline)
     
     set (BINARY_DIR "${PROJECT_BINARY_DIR}/CMakeTmp/C99_inline")
     set (SOURCE_DIR "${PROJECT_SOURCE_DIR}/cmake/checks/C99_inline")
-    set (NAME "check_C99_inline")
+    set (NAME "tralloc_check_C99_inline")
     
     try_compile (CHECK_C99_INLINE_RESULT ${BINARY_DIR} ${SOURCE_DIR} ${NAME}
         CMAKE_FLAGS

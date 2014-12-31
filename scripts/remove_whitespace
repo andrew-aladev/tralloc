@@ -1,7 +1,7 @@
 #!/bin/sh
 
 source_dir=$(readlink -f "$(dirname $0)/../")
-files=$(find "$source_dir" -regex ".*\.\(h\|c\)")
+files=$(find "$source_dir/cmake" "$source_dir/examples" "$source_dir/src" -regex ".*\.\(h\|c\)")
 
 for file in $files; do
     result=($(gawk '

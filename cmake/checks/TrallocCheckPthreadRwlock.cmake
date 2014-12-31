@@ -1,12 +1,12 @@
-function (check_pthread_rwlock)
+function (tralloc_check_pthread_rwlock)
     if (DEFINED TRALLOC_HAVE_PTHREAD_RWLOCK)
         return ()
     endif ()
     
-    include (CheckVerbose)
-    include (CheckPthread)
-    check_verbose ()
-    check_pthread ()
+    include (TrallocCheckVerbose)
+    include (TrallocCheckPthread)
+    tralloc_check_verbose ()
+    tralloc_check_pthread ()
     
     if (NOT ${TRALLOC_HAVE_PTHREAD})
         set (TRALLOC_HAVE_PTHREAD_RWLOCK false CACHE STRING "Status of pthread_rwlock support")
@@ -16,7 +16,7 @@ function (check_pthread_rwlock)
     
     set (BINARY_DIR "${PROJECT_BINARY_DIR}/CMakeTmp/pthread_rwlock")
     set (SOURCE_DIR "${PROJECT_SOURCE_DIR}/cmake/checks/pthread_rwlock")
-    set (NAME "check_pthread_rwlock")
+    set (NAME "tralloc_check_pthread_rwlock")
     
     try_compile (CHECK_PTHREAD_RWLOCK_RESULT ${BINARY_DIR} ${SOURCE_DIR} ${NAME}
         CMAKE_FLAGS

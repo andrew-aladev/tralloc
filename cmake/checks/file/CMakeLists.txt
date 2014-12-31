@@ -1,5 +1,5 @@
 cmake_minimum_required (VERSION "2.8")
-project ("check_file" "C")
+project ("tralloc_check_file" "C")
 
 add_executable (
     "main"

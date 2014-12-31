@@ -1,14 +1,14 @@
-function (check_pipe)
+function (tralloc_check_pipe)
     if (DEFINED TRALLOC_HAVE_PIPE)
         return ()
     endif ()
     
-    include (CheckVerbose)
-    check_verbose ()
+    include (TrallocCheckVerbose)
+    tralloc_check_verbose ()
     
     set (BINARY_DIR "${PROJECT_BINARY_DIR}/CMakeTmp/basic")
     set (SOURCE_DIR "${PROJECT_SOURCE_DIR}/cmake/checks/basic")
-    set (NAME "check_basic")
+    set (NAME "tralloc_check_basic")
     
     try_compile (CHECK_PIPE_RESULT ${BINARY_DIR} ${SOURCE_DIR} ${NAME}
         CMAKE_FLAGS
