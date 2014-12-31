@@ -3,7 +3,7 @@ function (tralloc_check_verbose)
         return ()
     endif ()
     
-    set (VERBOSE_CFLAGS "")
+    set (TRALLOC_VERBOSE_CFLAGS "")
     
     set (BINARY_DIR "${PROJECT_BINARY_DIR}/CMakeTmp/basic")
     set (SOURCE_DIR "${PROJECT_SOURCE_DIR}/cmake/checks/basic")
@@ -21,16 +21,16 @@ function (tralloc_check_verbose)
     FILE (REMOVE_RECURSE ${BINARY_DIR})
     
     if (${CHECK_VERBOSE_RESULT})
-        set (WERROR_CFLAGS "-Werror" CACHE STRING "Werror cflags")
+        set (TRALLOC_WERROR_CFLAGS "-Werror" CACHE STRING "Werror cflags")
         message (STATUS "Check for C compiler -Werror support - yes")
     else ()
-        set (WERROR_CFLAGS "" CACHE STRING "Werror cflags")
+        set (TRALLOC_WERROR_CFLAGS "" CACHE STRING "Werror cflags")
         message (STATUS "Check for C compiler -Werror support - no")
     endif ()
     
     try_compile (CHECK_VERBOSE_RESULT ${BINARY_DIR} ${SOURCE_DIR} ${NAME}
         CMAKE_FLAGS
-            "-DCMAKE_C_FLAGS=${CMAKE_C_FLAGS} ${WERROR_CFLAGS} -pedantic"
+            "-DCMAKE_C_FLAGS=${CMAKE_C_FLAGS} ${TRALLOC_WERROR_CFLAGS} -pedantic"
             "-DCMAKE_VERBOSE_MAKEFILE=${CMAKE_CONFIG_VERBOSE_MAKEFILE}"
         OUTPUT_VARIABLE CHECK_VERBOSE_COMPILE_RESULT
     )
@@ -40,7 +40,7 @@ function (tralloc_check_verbose)
     FILE (REMOVE_RECURSE ${BINARY_DIR})
     
     if (${CHECK_VERBOSE_RESULT})
-        set (VERBOSE_CFLAGS "${VERBOSE_CFLAGS} -pedantic")
+        set (TRALLOC_VERBOSE_CFLAGS "${TRALLOC_VERBOSE_CFLAGS} -pedantic")
         message (STATUS "Check for C compiler -pedantic support - yes")
     else ()
         message (STATUS "Check for C compiler -pedantic support - no")
@@ -48,7 +48,7 @@ function (tralloc_check_verbose)
     
     try_compile (CHECK_VERBOSE_RESULT ${BINARY_DIR} ${SOURCE_DIR} ${NAME}
         CMAKE_FLAGS
-            "-DCMAKE_C_FLAGS=${CMAKE_C_FLAGS} ${WERROR_CFLAGS} -Wall"
+            "-DCMAKE_C_FLAGS=${CMAKE_C_FLAGS} ${TRALLOC_WERROR_CFLAGS} -Wall"
             "-DCMAKE_VERBOSE_MAKEFILE=${CMAKE_CONFIG_VERBOSE_MAKEFILE}"
         OUTPUT_VARIABLE CHECK_VERBOSE_COMPILE_RESULT
     )
@@ -58,7 +58,7 @@ function (tralloc_check_verbose)
     FILE (REMOVE_RECURSE ${BINARY_DIR})
     
     if (${CHECK_VERBOSE_RESULT})
-        set (VERBOSE_CFLAGS "${VERBOSE_CFLAGS} -Wall")
+        set (TRALLOC_VERBOSE_CFLAGS "${TRALLOC_VERBOSE_CFLAGS} -Wall")
         message (STATUS "Check for C compiler -Wall support - yes")
     else ()
         message (STATUS "Check for C compiler -Wall support - no")
@@ -66,7 +66,7 @@ function (tralloc_check_verbose)
     
     try_compile (CHECK_VERBOSE_RESULT ${BINARY_DIR} ${SOURCE_DIR} ${NAME}
         CMAKE_FLAGS
-            "-DCMAKE_C_FLAGS=${CMAKE_C_FLAGS} ${WERROR_CFLAGS} -Wextra"
+            "-DCMAKE_C_FLAGS=${CMAKE_C_FLAGS} ${TRALLOC_WERROR_CFLAGS} -Wextra"
             "-DCMAKE_VERBOSE_MAKEFILE=${CMAKE_CONFIG_VERBOSE_MAKEFILE}"
         OUTPUT_VARIABLE CHECK_VERBOSE_COMPILE_RESULT
     )
@@ -76,12 +76,12 @@ function (tralloc_check_verbose)
     FILE (REMOVE_RECURSE ${BINARY_DIR})
     
     if (${CHECK_VERBOSE_RESULT})
-        set (VERBOSE_CFLAGS "${VERBOSE_CFLAGS} -Wextra")
+        set (TRALLOC_VERBOSE_CFLAGS "${TRALLOC_VERBOSE_CFLAGS} -Wextra")
         message (STATUS "Check for C compiler -Wextra support - yes")
     else ()
         message (STATUS "Check for C compiler -Wextra support - no")
     endif ()
     
-    set (VERBOSE_CFLAGS ${VERBOSE_CFLAGS} CACHE STRING "verbose cflags")
+    set (TRALLOC_VERBOSE_CFLAGS ${TRALLOC_VERBOSE_CFLAGS} CACHE STRING "verbose cflags")
     set (TRALLOC_HAVE_VERBOSE true CACHE STRING "Status of verbose support")
 endfunction ()

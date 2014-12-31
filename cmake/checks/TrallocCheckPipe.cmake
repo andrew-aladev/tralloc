@@ -12,7 +12,7 @@ function (tralloc_check_pipe)
     
     try_compile (CHECK_PIPE_RESULT ${BINARY_DIR} ${SOURCE_DIR} ${NAME}
         CMAKE_FLAGS
-            "-DCMAKE_C_FLAGS=${CMAKE_C_FLAGS} ${VERBOSE_CFLAGS} ${WERROR_CFLAGS} -pipe"
+            "-DCMAKE_C_FLAGS=${CMAKE_C_FLAGS} ${TRALLOC_VERBOSE_CFLAGS} ${TRALLOC_WERROR_CFLAGS} -pipe"
             "-DCMAKE_VERBOSE_MAKEFILE=${CMAKE_CONFIG_VERBOSE_MAKEFILE}"
         OUTPUT_VARIABLE CHECK_PIPE_COMPILE_RESULT
     )
@@ -23,11 +23,12 @@ function (tralloc_check_pipe)
     
     if (${CHECK_PIPE_RESULT})
         set (TRALLOC_HAVE_PIPE true CACHE STRING "Status of pipe support")
-        set (PIPE_CFLAGS "-pipe" CACHE STRING "pipe cflags")
+        set (TRALLOC_PIPE_CFLAGS "-pipe" CACHE STRING "pipe cflags")
         message (STATUS "Check for C compiler -pipe support - yes")
         return ()
     endif ()
     
     set (TRALLOC_HAVE_PIPE false CACHE STRING "Status of pipe support")
+    set (TRALLOC_PIPE_CFLAGS "" CACHE STRING "pipe cflags")
     message (STATUS "Check for C compiler -pipe support - no")
 endfunction ()

@@ -12,7 +12,7 @@ function (tralloc_check_runnable)
     
     try_compile (CHECK_RUNNABLE_RESULT ${BINARY_DIR} ${SOURCE_DIR} ${NAME}
         CMAKE_FLAGS
-            "-DCMAKE_C_FLAGS=${CMAKE_C_FLAGS} ${VERBOSE_CFLAGS} ${WERROR_CFLAGS}"
+            "-DCMAKE_C_FLAGS=${CMAKE_C_FLAGS} ${TRALLOC_VERBOSE_CFLAGS} ${TRALLOC_WERROR_CFLAGS}"
             "-DCMAKE_VERBOSE_MAKEFILE=${CMAKE_CONFIG_VERBOSE_MAKEFILE}"
             "-DCMAKE_TRY_RUN=1"
         OUTPUT_VARIABLE CHECK_RUNNABLE_COMPILE_RESULT
@@ -23,11 +23,11 @@ function (tralloc_check_runnable)
     FILE (REMOVE_RECURSE ${BINARY_DIR})
     
     if (${CHECK_RUNNABLE_RESULT})
-        set (CMAKE_CAN_RUN_EXE true CACHE STRING "Cmake can run exe")
+        set (TRALLOC_CAN_RUN_EXE true CACHE STRING "Cmake can run exe")
         message (STATUS "Cmake can run exe - yes")
         return ()
     endif ()
     
-    set (CMAKE_CAN_RUN_EXE false CACHE STRING "Cmake can run exe")
+    set (TRALLOC_CAN_RUN_EXE false CACHE STRING "Cmake can run exe")
     message (STATUS "Cmake can run exe - no")
 endfunction ()

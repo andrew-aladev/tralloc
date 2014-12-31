@@ -12,7 +12,7 @@ function (tralloc_check_c99)
     
     try_compile (CHECK_C99_RESULT ${BINARY_DIR} ${SOURCE_DIR} ${NAME}
         CMAKE_FLAGS
-            "-DCMAKE_C_FLAGS=${CMAKE_C_FLAGS} ${VERBOSE_CFLAGS} ${WERROR_CFLAGS} -std=gnu99"
+            "-DCMAKE_C_FLAGS=${CMAKE_C_FLAGS} ${TRALLOC_VERBOSE_CFLAGS} ${TRALLOC_WERROR_CFLAGS} -std=gnu99"
             "-DCMAKE_VERBOSE_MAKEFILE=${CMAKE_CONFIG_VERBOSE_MAKEFILE}"
         OUTPUT_VARIABLE CHECK_C99_COMPILE_RESULT
     )
@@ -23,14 +23,14 @@ function (tralloc_check_c99)
     
     if (${CHECK_C99_RESULT})
         set (TRALLOC_HAVE_C99 true CACHE STRING "Status of C99 support")
-        set (C99_CFLAGS "-std=gnu99" CACHE STRING "c99 cflags")
+        set (TRALLOC_C99_CFLAGS "-std=gnu99" CACHE STRING "c99 cflags")
         message (STATUS "Check for C compiler C99 support - gnu99")
         return ()
     endif ()
     
     try_compile (CHECK_C99_RESULT ${BINARY_DIR} ${SOURCE_DIR} ${NAME}
         CMAKE_FLAGS
-            "-DCMAKE_C_FLAGS=${CMAKE_C_FLAGS} ${VERBOSE_CFLAGS} ${WERROR_CFLAGS} -std=c99"
+            "-DCMAKE_C_FLAGS=${CMAKE_C_FLAGS} ${TRALLOC_VERBOSE_CFLAGS} ${TRALLOC_WERROR_CFLAGS} -std=c99"
             "-DCMAKE_VERBOSE_MAKEFILE=${CMAKE_CONFIG_VERBOSE_MAKEFILE}"
         OUTPUT_VARIABLE CHECK_C99_COMPILE_RESULT
     )
@@ -41,14 +41,14 @@ function (tralloc_check_c99)
     
     if (${CHECK_C99_RESULT})
         set (TRALLOC_HAVE_C99 true CACHE STRING "Status of C99 support")
-        set (C99_CFLAGS "-std=c99" CACHE STRING "c99 cflags")
+        set (TRALLOC_C99_CFLAGS "-std=c99" CACHE STRING "c99 cflags")
         message (STATUS "Check for C compiler C99 support - c99")
         return ()
     endif ()
     
     try_compile (CHECK_C99_RESULT ${BINARY_DIR} ${SOURCE_DIR} ${NAME}
         CMAKE_FLAGS
-            "-DCMAKE_C_FLAGS=${CMAKE_C_FLAGS} ${VERBOSE_CFLAGS} ${WERROR_CFLAGS}"
+            "-DCMAKE_C_FLAGS=${CMAKE_C_FLAGS} ${TRALLOC_VERBOSE_CFLAGS} ${TRALLOC_WERROR_CFLAGS}"
             "-DCMAKE_VERBOSE_MAKEFILE=${CMAKE_CONFIG_VERBOSE_MAKEFILE}"
         OUTPUT_VARIABLE CHECK_C99_COMPILE_RESULT
     )
@@ -59,12 +59,12 @@ function (tralloc_check_c99)
     
     if (${CHECK_C99_RESULT})
         set (TRALLOC_HAVE_C99 true CACHE STRING "Status of C99 support")
-        set (C99_CFLAGS "" CACHE STRING "c99 cflags")
+        set (TRALLOC_C99_CFLAGS "" CACHE STRING "c99 cflags")
         message (STATUS "Check for C compiler C99 support - vanilla")
         return ()
     endif ()
     
     set (TRALLOC_HAVE_C99 false CACHE STRING "Status of C99 support")
-    set (C99_CFLAGS "" CACHE STRING "c99 cflags")
+    set (TRALLOC_C99_CFLAGS "" CACHE STRING "c99 cflags")
     message (STATUS "Check for C compiler C99 support - no")
 endfunction ()
