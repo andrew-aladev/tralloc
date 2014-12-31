@@ -29,7 +29,7 @@ if (${TRALLOC_SHARED})
     
     target_link_libraries (${NAME} ${LIBS})
     
-    if (${CMAKE_CAN_RUN_EXE})
+    if (${TRALLOC_CAN_RUN_EXE})
         add_test (${NAME} ${NAME})
     endif ()
 endif ()
@@ -61,7 +61,7 @@ if (${TRALLOC_STATIC})
     
     target_link_libraries (${NAME} ${LIBS})
     
-    if (${CMAKE_CAN_RUN_EXE})
+    if (${TRALLOC_CAN_RUN_EXE})
         add_test (${NAME} ${NAME})
     endif ()
 endif ()

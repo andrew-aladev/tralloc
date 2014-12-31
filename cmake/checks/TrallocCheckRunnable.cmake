@@ -1,5 +1,5 @@
 function (tralloc_check_runnable)
-    if (DEFINED CMAKE_CAN_RUN_EXE)
+    if (DEFINED TRALLOC_CAN_RUN_EXE)
         return ()
     endif ()
     
