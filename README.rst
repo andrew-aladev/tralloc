@@ -33,7 +33,7 @@ Please read `man`_.
      
      
 Extensions and features enable/disable
--------------------------
+--------------------------------------
     
     ::
     
@@ -82,7 +82,7 @@ You can test all possible combinations of extensions and features
      
      
 Supported toolchains
----------
+--------------------
     
     Checkout `test_all_toolchains_`.
 
