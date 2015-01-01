@@ -67,7 +67,7 @@ Extensions and features enable/disable
         \
         -DTRALLOC_COLLECT_SOURCES=0/1
 
-You can test all possible combinations of extensions and features
+You can test all possible combinations of extensions and features.
 
     ::
 
@@ -103,7 +103,7 @@ DEB and RPM
 
 LICENSE
 -------
-LGPL v3+ + SLE ( static link exception )
+LGPL v3+ + SLE ( static link exception ).
 
 
 
@@ -121,13 +121,13 @@ Source tree includes `format_sources`_ file for Kdevelop IDE.
 Notes about implementation
 --------------------------
 
-1. `inline workaround`_
+1. `inline workaround`_.
 
 
 Related bugs
 ------------
 
-1. `gcc maybe uninitialized`_
+1. `gcc maybe uninitialized`_.
 
 
 Language
