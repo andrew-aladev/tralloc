@@ -17,12 +17,12 @@
 #    define _TRALLOC_INLINE_IN_OBJECT
 #endif
 
-#ifdef __GNUC__
-#  define _TRALLOC_UNUSED(x) x __attribute__((__unused__))
-#  define _TRALLOC_UNUSED_FUNCTION(x) __attribute__((__unused__)) x
+#if defined ( __GNUC__ )
+#    define _TRALLOC_UNUSED(x) x __attribute__((__unused__))
+#    define _TRALLOC_UNUSED_FUNCTION(x) __attribute__((__unused__)) x
 #else
-#  define _TRALLOC_UNUSED(x) x
-#  define _TRALLOC_UNUSED_FUNCTION(x) x
+#    define _TRALLOC_UNUSED(x) x
+#    define _TRALLOC_UNUSED_FUNCTION(x) x
 #endif
 
 
