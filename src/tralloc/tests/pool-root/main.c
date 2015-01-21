@@ -27,7 +27,8 @@
 #   include <tralloc/tests/utils/common.h>
 #endif
 
-#include <tralloc/tree.h>
+#include <tralloc/tree/alloc.h>
+#include <tralloc/tree/free.h>
 #include <tralloc/debug.h>
 
 

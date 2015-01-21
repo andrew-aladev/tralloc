@@ -5,7 +5,10 @@
 
 #include <tralloc/tests/references/common.h>
 #include <tralloc/tests/common/main.h>
-#include <tralloc/tree.h>
+#include <tralloc/tree/alloc.h>
+#include <tralloc/tree/realloc.h>
+#include <tralloc/tree/move.h>
+#include <tralloc/tree/free.h>
 #include <tralloc/references.h>
 #include <tralloc/references/chunk.h>
 

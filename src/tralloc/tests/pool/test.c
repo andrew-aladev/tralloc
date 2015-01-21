@@ -5,7 +5,8 @@
 
 #include <tralloc/tests/pool/common.h>
 #include <tralloc/tests/pool/resize/common.h>
-#include <tralloc/tree.h>
+#include <tralloc/tree/alloc.h>
+#include <tralloc/tree/free.h>
 
 
 int test_pool ( tralloc_context * ctx )

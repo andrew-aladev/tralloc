@@ -4,7 +4,8 @@
 // You should have received a copy of the GNU General Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
 #include <tralloc/tests/debug/common.h>
-#include <tralloc/tree.h>
+#include <tralloc/tree/alloc.h>
+#include <tralloc/tree/free.h>
 
 #if defined ( TRALLOC_DEBUG_CALLBACKS )
 #   include <tralloc/tests/debug/callbacks/common.h>

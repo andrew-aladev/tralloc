@@ -1,4 +1,4 @@
-set (HEADERS "context.h" "config.h" "macro.h" "tree.h" "types.h")
+set (HEADERS "context.h" "config.h" "macro.h" "types.h")
 set (SOURCES
     "${CMAKE_CURRENT_SOURCE_DIR}/context.c"
 )

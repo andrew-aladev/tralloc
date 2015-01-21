@@ -27,13 +27,13 @@ typedef struct _tralloc_destructors_type _tralloc_destructors;
 #endif
 
 #if defined ( TRALLOC_REFERENCES )
-typedef struct _tralloc_reference_type _tralloc_reference;
+typedef struct _tralloc_reference_type  _tralloc_reference;
 typedef struct _tralloc_references_type _tralloc_references;
 #endif
 
 #if defined ( TRALLOC_POOL )
 typedef struct _tralloc_pool_child_type _tralloc_pool_child;
-typedef struct _tralloc_pool_type _tralloc_pool;
+typedef struct _tralloc_pool_type       _tralloc_pool;
 #endif
 
 _TRALLOC_INLINE

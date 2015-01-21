@@ -4,7 +4,9 @@
 // You should have received a copy of the GNU General Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
 #include <tralloc/tests/pool/common.h>
-#include <tralloc/tree.h>
+#include <tralloc/tree/alloc.h>
+#include <tralloc/tree/move.h>
+#include <tralloc/tree/free.h>
 #include <tralloc/pool/chunk.h>
 
 

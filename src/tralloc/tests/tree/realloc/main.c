@@ -5,7 +5,7 @@
 
 #include <tralloc/tests/tree/realloc/common.h>
 #include <tralloc/tests/common/main.h>
-#include <tralloc/tree.h>
+#include <tralloc/tree/realloc.h>
 
 
 tralloc_bool test_tree_realloc_main ( test_tree_data * tr )
