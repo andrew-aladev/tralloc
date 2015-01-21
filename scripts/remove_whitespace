@@ -1,11 +1,13 @@
-#!/bin/sh
+#!/bin/bash
 
 source_dir=$(readlink -f "$(dirname $0)/../")
-files=$(find "$source_dir/cmake" "$source_dir/examples" "$source_dir/src" -regex ".*\.\(h\|c\)" -type f)
+files=()
+while IFS= read -r -u3 -d $'\0' file; do
+    files+=("$file")
+done 3< <(find "$source_dir/cmake" "$source_dir/examples" "$source_dir/src" -regex ".*\.\(h\|c\)" -type f -print0)
 
-IFS=$'\n'
-for file in $files; do
-    result=($(gawk '
+for file in "${files[@]}"; do
+    result=$(gawk '
         BEGIN {
             lines_count         = 0;
             empty_lines_in_head = 0;
@@ -28,22 +30,22 @@ for file in $files; do
         END {
             print (empty_lines_in_head " " empty_lines_in_tail " " lines_count);
         }
-    ' "$file"))
+    ' "$file")
     
     IFS=' ' read -ra result <<< "$result"
 
     empty_lines_in_head=${result[0]}
     empty_lines_in_tail=${result[1]}
     lines_count=${result[2]}
-
+    
     if [ $empty_lines_in_head -gt 0 ] || [ $empty_lines_in_tail -gt 0 ]; then
         echo "Removing whitespace from \"$file\""
-        eval "gawk -i inplace '
+        (gawk -i inplace "
             {
                 if ( NR > $empty_lines_in_head && NR <= $(($lines_count - $empty_lines_in_tail)) ) {
                     print
                 }
             }
-        ' \"$file\""
+        " "$file")
     fi
 done

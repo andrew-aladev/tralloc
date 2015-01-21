@@ -1,11 +1,13 @@
-#!/bin/sh
+#!/bin/bash
 
 source_dir=$(readlink -f "$(dirname $0)/../")
-files=$(find "$source_dir/cmake" "$source_dir/examples" "$source_dir/src" -regex ".*\.\(h\|c\)" -type f)
+files=()
+while IFS= read -r -u3 -d $'\0' file; do
+    files+=("$file")
+done 3< <(find "$source_dir/cmake" "$source_dir/examples" "$source_dir/src" -regex ".*\.\(h\|c\)" -type f -print0)
 
-IFS=$'\n'
-for file in $files; do
-    eval "astyle -n --mode=c --style=kr --pad-oper --pad-paren --pad-header \"$file\""
+for file in "${files[@]}"; do
+    (astyle -n --mode=c --style=kr --pad-oper --pad-paren --pad-header "$file")
     if [ "$?" != "0" ]; then
         echo "Failed to format \"$file\""
         exit 1
