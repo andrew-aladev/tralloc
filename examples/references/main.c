@@ -6,7 +6,7 @@
 #include <tralloc/tree/free.h>
 #include <tralloc/helpers/string.h>
 #include <tralloc/references/move.h>
-#include <tralloc/debug.h>
+#include <tralloc/debug/stats/main.h>
 
 
 int main ()

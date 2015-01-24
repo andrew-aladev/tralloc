@@ -7,7 +7,7 @@
 #include <tralloc/tree/realloc.h>
 #include <tralloc/tree/move.h>
 #include <tralloc/tree/free.h>
-#include <tralloc/debug.h>
+#include <tralloc/debug/stats/main.h>
 
 
 int main ()

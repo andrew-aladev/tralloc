@@ -4,7 +4,7 @@
 // You should have received a copy of the GNU General Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
 #include <tralloc/tests/destructors/common.h>
-#include <tralloc/debug.h>
+#include <tralloc/debug/stats/main.h>
 
 
 int main ()

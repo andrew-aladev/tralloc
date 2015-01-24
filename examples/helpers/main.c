@@ -6,7 +6,7 @@
 #include <tralloc/tree/move.h>
 #include <tralloc/tree/free.h>
 #include <tralloc/helpers/string.h>
-#include <tralloc/debug.h>
+#include <tralloc/debug/stats/main.h>
 
 #if defined(TRALLOC_FILE)
 #include <tralloc/helpers/file.h>

@@ -29,7 +29,7 @@
 
 #include <tralloc/tree/alloc.h>
 #include <tralloc/tree/free.h>
-#include <tralloc/debug.h>
+#include <tralloc/debug/stats/main.h>
 
 
 int main ()

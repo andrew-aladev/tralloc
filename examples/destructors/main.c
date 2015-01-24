@@ -6,7 +6,7 @@
 #include <tralloc/tree/alloc.h>
 #include <tralloc/tree/free.h>
 #include <tralloc/destructors.h>
-#include <tralloc/debug.h>
+#include <tralloc/debug/stats/main.h>
 
 
 tralloc_error empty_destructor ( tralloc_context * _TRALLOC_UNUSED ( context ), void * _TRALLOC_UNUSED ( user_data ) )

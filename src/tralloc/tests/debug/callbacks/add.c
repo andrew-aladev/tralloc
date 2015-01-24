@@ -7,7 +7,7 @@
 #include <tralloc/tests/common/dynarr.h>
 #include <tralloc/tree/alloc.h>
 #include <tralloc/tree/free.h>
-#include <tralloc/debug.h>
+#include <tralloc/debug/callbacks/main.h>
 
 #if defined ( TRALLOC_DEBUG_LENGTH )
 #   include <tralloc/length/main.h>
