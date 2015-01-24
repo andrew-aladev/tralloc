@@ -13,6 +13,8 @@
 #endif
 
 
+typedef struct _tralloc_length_type _tralloc_length;
+
 tralloc_error tralloc_length_get ( tralloc_context * context, size_t * length_result_ptr );
 
 

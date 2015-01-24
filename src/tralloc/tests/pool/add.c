@@ -6,7 +6,7 @@
 #include <tralloc/tests/pool/common.h>
 #include <tralloc/tree/alloc.h>
 #include <tralloc/tree/free.h>
-#include <tralloc/pool/chunk.h>
+#include <tralloc/pool/pool_data.h>
 
 
 static

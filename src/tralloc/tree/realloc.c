@@ -12,14 +12,11 @@
 #endif
 
 #if defined ( TRALLOC_REFERENCES )
-#   include <tralloc/references/chunk.h>
-#   include <tralloc/references/references.h>
-#   include <tralloc/references/reference.h>
+#   include <tralloc/references/references_data.h>
 #endif
 
 #if defined ( TRALLOC_POOL )
-#   include <tralloc/pool/chunk.h>
-#   include <tralloc/pool/pool_child.h>
+#   include <tralloc/pool/pool_data.h>
 #endif
 
 #if defined ( TRALLOC_DEBUG )

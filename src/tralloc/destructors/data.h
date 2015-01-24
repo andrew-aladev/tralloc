@@ -6,7 +6,8 @@
 #if !defined ( TRALLOC_DESTRUCTORS_DATA_H )
 #define TRALLOC_DESTRUCTORS_DATA_H
 
-#include "chunk.h"
+#include "../destructors.h"
+#include "../extensions.h"
 
 #undef _TRALLOC_INLINE
 #if defined ( _TRALLOC_INCLUDED_FROM_DESTRUCTORS_DATA_C )
@@ -16,6 +17,20 @@
 #endif
 
 
+// Destructors are represented by single linked list of destructors.
+// Order of destructors is given by user (append and prepend functions).
+
+typedef struct _tralloc_destructor_type {
+    struct _tralloc_destructor_type * next;
+    tralloc_destructor_function function;
+    void * user_data;
+} _tralloc_destructor;
+
+struct _tralloc_destructors_type {
+    _tralloc_destructor * first_destructor;
+    _tralloc_destructor * last_destructor;
+};
+
 _TRALLOC_INLINE
 void _tralloc_destructors_new ( _tralloc_destructors * destructors )
 {
@@ -24,6 +39,12 @@ void _tralloc_destructors_new ( _tralloc_destructors * destructors )
 }
 
 tralloc_error _tralloc_destructors_free ( _tralloc_destructors * destructors, tralloc_context * context );
+
+_TRALLOC_INLINE
+_tralloc_destructors * _tralloc_chunk_get_destructors ( _tralloc_chunk * chunk )
+{
+    return ( _tralloc_destructors * ) ( ( uintptr_t ) chunk - _tralloc_extensions_get_offset_for_extension ( chunk->extensions, TRALLOC_EXTENSION_DESTRUCTORS ) );
+}
 
 
 #endif

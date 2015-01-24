@@ -8,7 +8,7 @@
 #include <tralloc/tree/alloc.h>
 #include <tralloc/tree/free.h>
 #include <tralloc/helpers/string.h>
-#include <tralloc/destructors/chunk.h>
+#include <tralloc/destructors/data.h>
 
 
 static

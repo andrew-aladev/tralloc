@@ -6,8 +6,8 @@
 #if !defined ( TRALLOC_EXTENSIONS_H )
 #define TRALLOC_EXTENSIONS_H
 
-#include "macro.h"
 #include "types.h"
+#include "macro.h"
 
 #undef _TRALLOC_INLINE
 #if defined ( _TRALLOC_INCLUDED_FROM_EXTENSIONS_C )
@@ -16,24 +16,6 @@
 #    define _TRALLOC_INLINE _TRALLOC_INLINE_IN_HEADER
 #endif
 
-
-#if defined ( TRALLOC_LENGTH )
-typedef struct _tralloc_length_type _tralloc_length;
-#endif
-
-#if defined ( TRALLOC_DESTRUCTORS )
-typedef struct _tralloc_destructors_type _tralloc_destructors;
-#endif
-
-#if defined ( TRALLOC_REFERENCES )
-typedef struct _tralloc_reference_type  _tralloc_reference;
-typedef struct _tralloc_references_type _tralloc_references;
-#endif
-
-#if defined ( TRALLOC_POOL )
-typedef struct _tralloc_pool_child_type _tralloc_pool_child;
-typedef struct _tralloc_pool_type       _tralloc_pool;
-#endif
 
 _TRALLOC_INLINE
 void _tralloc_extensions_enable_extension ( tralloc_extensions * extensions, _tralloc_extension extension )

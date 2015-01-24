@@ -6,6 +6,7 @@
 #if !defined ( TRALLOC_LENGTH_DATA_H )
 #define TRALLOC_LENGTH_DATA_H
 
+#include "../length.h"
 #include "../extensions.h"
 
 #undef _TRALLOC_INLINE

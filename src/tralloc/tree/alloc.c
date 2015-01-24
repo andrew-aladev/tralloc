@@ -19,20 +19,15 @@
 #endif
 
 #if defined ( TRALLOC_DESTRUCTORS )
-#   include <tralloc/destructors/chunk.h>
 #   include <tralloc/destructors/data.h>
 #endif
 
 #if defined ( TRALLOC_REFERENCES )
-#   include <tralloc/references/chunk.h>
-#   include <tralloc/references/references.h>
-#   include <tralloc/references/reference.h>
+#   include <tralloc/references/references_data.h>
 #endif
 
 #if defined ( TRALLOC_POOL )
-#   include <tralloc/pool/chunk.h>
-#   include <tralloc/pool/pool.h>
-#   include <tralloc/pool/pool_child.h>
+#   include <tralloc/pool/pool_data.h>
 #   if defined ( TRALLOC_THREADS )
 #       include <tralloc/pool/lock.h>
 #   endif

@@ -3,9 +3,8 @@
 // tralloc is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Lesser Public License for more details.
 // You should have received a copy of the GNU General Lesser Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
-#define _TRALLOC_INCLUDED_FROM_POOL_POOL_C
-#include <tralloc/pool/pool.h>
-#include <tralloc/pool/fragment.h>
+#define _TRALLOC_INCLUDED_FROM_POOL_POOL_DATA_C
+#include <tralloc/pool/pool_data.h>
 
 #include <string.h>
 
@@ -30,5 +29,17 @@ void _tralloc_pool_alloc ( _tralloc_pool * pool, void ** memory, size_t length, 
 
     if ( zero ) {
         memset ( * memory, 0, length );
+    }
+}
+
+_tralloc_pool * _tralloc_chunk_get_closest_pool ( _tralloc_chunk * chunk )
+{
+    if ( _tralloc_extensions_have_extension ( chunk->extensions, TRALLOC_EXTENSION_POOL ) ) {
+        return _tralloc_chunk_get_pool ( chunk );
+    } else if ( _tralloc_extensions_have_extension ( chunk->extensions, TRALLOC_EXTENSION_POOL_CHILD ) ) {
+        _tralloc_pool_child * parent_pool_child = _tralloc_chunk_get_pool_child ( chunk );
+        return parent_pool_child->pool;
+    } else {
+        return NULL;
     }
 }

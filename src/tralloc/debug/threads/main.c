@@ -12,8 +12,7 @@
 #include <tralloc/tree/locks/children.h>
 
 #if defined ( TRALLOC_POOL )
-#   include <tralloc/pool/chunk.h>
-#   include <tralloc/pool/lock.h>
+#   include <tralloc/pool/pool_data.h>
 #endif
 
 #if defined ( TRALLOC_DEBUG_LOG )

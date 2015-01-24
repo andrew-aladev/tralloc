@@ -3,10 +3,10 @@
 // tralloc is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Lesser Public License for more details.
 // You should have received a copy of the GNU General Lesser Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
-#include <tralloc/pool/pool_child.h>
-#include <tralloc/pool/pool.h>
+#define _TRALLOC_INCLUDED_FROM_POOL_POOL_CHILD_DATA_C
+#include <tralloc/pool/pool_child_data.h>
+#include <tralloc/pool/pool_data.h>
 #include <tralloc/pool/fragment.h>
-#include <tralloc/pool/chunk.h>
 #include <tralloc/tree/free.h>
 
 #include <string.h>

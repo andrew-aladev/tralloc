@@ -3,5 +3,22 @@
 // tralloc is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Lesser Public License for more details.
 // You should have received a copy of the GNU General Lesser Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
-#define _TRALLOC_INCLUDED_FROM_POOL_CHUNK_C
-#include <tralloc/pool/chunk.h>
+#if !defined ( TRALLOC_REFERENCES_H )
+#define TRALLOC_REFERENCES_H
+
+#include "types.h"
+
+#if !defined ( TRALLOC_REFERENCES )
+#   error TRALLOC_REFERENCES is required
+#endif
+
+
+typedef struct _tralloc_reference_type  _tralloc_reference;
+typedef struct _tralloc_references_type _tralloc_references;
+
+tralloc_error tralloc_reference_move ( tralloc_context * child_context, tralloc_context * parent_context );
+
+tralloc_error tralloc_references_clear ( tralloc_context * context );
+
+
+#endif

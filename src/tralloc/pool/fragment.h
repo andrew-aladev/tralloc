@@ -6,7 +6,7 @@
 #if !defined ( TRALLOC_POOL_FRAGMENT_H )
 #define TRALLOC_POOL_FRAGMENT_H
 
-#include "chunk.h"
+#include "pool_child_data.h"
 
 #undef _TRALLOC_INLINE
 #if defined ( _TRALLOC_INCLUDED_FROM_POOL_FRAGMENT_C )
@@ -15,6 +15,18 @@
 #    define _TRALLOC_INLINE _TRALLOC_INLINE_IN_HEADER
 #endif
 
+
+// Fragments are represented by double linked ordered list.
+// "max_fragment" is the start of this list.
+// This is the longest fragment available.
+
+typedef struct _tralloc_pool_fragment_type {
+    struct _tralloc_pool_fragment_type * prev;
+    struct _tralloc_pool_fragment_type * next;
+    _tralloc_pool_child * prev_child;
+    _tralloc_pool_child * next_child;
+    size_t length;
+} _tralloc_pool_fragment;
 
 _TRALLOC_INLINE
 _tralloc_pool_fragment * _tralloc_pool_fragment_new ( void * memory, size_t length )

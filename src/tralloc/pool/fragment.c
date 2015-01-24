@@ -5,6 +5,7 @@
 
 #define _TRALLOC_INCLUDED_FROM_POOL_FRAGMENT_C
 #include <tralloc/pool/fragment.h>
+#include <tralloc/pool/pool_data.h>
 
 #include <string.h>
 

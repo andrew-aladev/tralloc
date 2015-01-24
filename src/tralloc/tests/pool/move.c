@@ -7,7 +7,7 @@
 #include <tralloc/tree/alloc.h>
 #include <tralloc/tree/move.h>
 #include <tralloc/tree/free.h>
-#include <tralloc/pool/chunk.h>
+#include <tralloc/pool/pool_data.h>
 
 
 tralloc_bool test_pool_move ( tralloc_context * ctx )

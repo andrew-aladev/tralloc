@@ -7,7 +7,7 @@
 #include <tralloc/tree/alloc.h>
 #include <tralloc/tree/realloc.h>
 #include <tralloc/tree/free.h>
-#include <tralloc/pool/chunk.h>
+#include <tralloc/pool/pool_data.h>
 
 
 tralloc_bool test_pool_resize_order ( tralloc_context * ctx )
