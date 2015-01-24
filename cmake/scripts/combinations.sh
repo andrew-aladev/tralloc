@@ -22,7 +22,7 @@ function execute_test_arguments {
         exit 2
     fi
     
-    config_hash=$(sha256sum "$source_dir/src/tralloc/config.h" | cut -d " " -f 1)
+    config_hash=$(openssl dgst "-sha512" "$source_dir/src/tralloc/config.h" | cut -d " " -f 2)
     if [[ "${config_hash_table[$config_hash]}" == "1" ]]; then
         echo "This combination has been already checked"
         return 0
