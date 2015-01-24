@@ -14,7 +14,7 @@
 
 #if defined ( TRALLOC_DESTRUCTORS )
 #   include <tralloc/destructors/chunk.h>
-#   include <tralloc/destructors/destructors.h>
+#   include <tralloc/destructors/data.h>
 #endif
 
 #if defined ( TRALLOC_REFERENCES )

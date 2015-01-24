@@ -3,5 +3,17 @@
 // tralloc is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Lesser Public License for more details.
 // You should have received a copy of the GNU General Lesser Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
-#define _TRALLOC_INCLUDED_FROM_LENGTH_CHUNK_C
-#include <tralloc/length/chunk.h>
+#if !defined ( TRALLOC_LENGTH_H )
+#define TRALLOC_LENGTH_H
+
+#include "types.h"
+
+#if !defined ( TRALLOC_LENGTH )
+#   error TRALLOC_LENGTH is required
+#endif
+
+
+tralloc_error tralloc_length_get ( tralloc_context * context, size_t * length_result_ptr );
+
+
+#endif

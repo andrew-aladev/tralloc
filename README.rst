@@ -71,6 +71,7 @@ You can test all possible combinations of extensions and features.
 
     ::
 
+     $ export GIT_DISCOVERY_ACROSS_FILESYSTEM=1
      $ cd .. && sudo mount -t tmpfs -o size=50M tmpfs build/ && cd build
      $
      $ ../cmake/scripts/combinations.sh

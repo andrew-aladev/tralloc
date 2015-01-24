@@ -10,7 +10,7 @@
 
 #if defined(TRALLOC_FILE)
 #include <tralloc/helpers/file.h>
-#include <tralloc/destructors/append.h>
+#include <tralloc/destructors.h>
 
 #include <sys/stat.h>
 #include <unistd.h>

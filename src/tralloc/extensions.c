@@ -16,7 +16,7 @@
 #endif
 
 #if defined ( TRALLOC_LENGTH )
-#   include <tralloc/length/chunk.h>
+#   include <tralloc/length/data.h>
 #endif
 
 #if defined ( TRALLOC_REFERENCES )

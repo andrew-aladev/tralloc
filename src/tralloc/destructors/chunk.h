@@ -6,6 +6,7 @@
 #if !defined ( TRALLOC_DESTRUCTORS_CHUNK_H )
 #define TRALLOC_DESTRUCTORS_CHUNK_H
 
+#include "../destructors.h"
 #include "../extensions.h"
 
 #undef _TRALLOC_INLINE

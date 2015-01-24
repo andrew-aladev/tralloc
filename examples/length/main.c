@@ -5,7 +5,7 @@
 
 #include <tralloc/tree/alloc.h>
 #include <tralloc/tree/free.h>
-#include <tralloc/length/main.h>
+#include <tralloc/length.h>
 #include <tralloc/debug/stats/main.h>
 
 

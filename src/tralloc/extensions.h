@@ -22,7 +22,6 @@ typedef struct _tralloc_length_type _tralloc_length;
 #endif
 
 #if defined ( TRALLOC_DESTRUCTORS )
-typedef tralloc_error ( * tralloc_destructor_function ) ( tralloc_context * chunk_context, void * user_data );
 typedef struct _tralloc_destructors_type _tralloc_destructors;
 #endif
 

@@ -3,8 +3,8 @@
 // tralloc is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Lesser Public License for more details.
 // You should have received a copy of the GNU General Lesser Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
-#define _TRALLOC_INCLUDED_FROM_DESTRUCTORS_DESTRUCTORS_C
-#include <tralloc/destructors/destructors.h>
+#define _TRALLOC_INCLUDED_FROM_DESTRUCTORS_DATA_C
+#include <tralloc/destructors/data.h>
 
 #if defined ( TRALLOC_DEBUG_STATS )
 #   include <tralloc/debug/stats/main.h>

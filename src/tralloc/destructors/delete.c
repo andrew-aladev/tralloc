@@ -3,8 +3,6 @@
 // tralloc is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Lesser Public License for more details.
 // You should have received a copy of the GNU General Lesser Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
-#define _TRALLOC_INCLUDED_FROM_DESTRUCTORS_DELETE_C
-#include <tralloc/destructors/delete.h>
 #include <tralloc/destructors/chunk.h>
 #include <tralloc/context.h>
 
@@ -15,6 +13,27 @@
 #include <stdlib.h>
 
 
+static
+tralloc_bool _tralloc_destructor_comparator_by_function ( _tralloc_destructor * destructor, tralloc_destructor_function function, void * _TRALLOC_UNUSED ( user_data ) )
+{
+    return destructor->function == function;
+}
+
+static
+tralloc_bool _tralloc_destructor_comparator_by_data ( _tralloc_destructor * destructor, tralloc_destructor_function _TRALLOC_UNUSED ( function ), void * user_data )
+{
+    return destructor->user_data == user_data;
+}
+
+static
+tralloc_bool _tralloc_destructor_comparator_strict ( _tralloc_destructor * destructor, tralloc_destructor_function function, void * user_data )
+{
+    return destructor->function == function && destructor->user_data == user_data;
+}
+
+typedef tralloc_bool ( * _tralloc_destructor_comparator ) ( _tralloc_destructor * destructor, tralloc_destructor_function function, void * user_data );
+
+static
 tralloc_error _tralloc_destructors_delete_by_comparator ( tralloc_context * context, _tralloc_destructor_comparator comparator, tralloc_destructor_function function, void * user_data )
 {
     if ( context == NULL ) {
@@ -74,4 +93,19 @@ tralloc_error _tralloc_destructors_delete_by_comparator ( tralloc_context * cont
 #   endif
 
     return 0;
+}
+
+tralloc_error tralloc_destructors_delete ( tralloc_context * context, tralloc_destructor_function function, void * user_data )
+{
+    return _tralloc_destructors_delete_by_comparator ( context, _tralloc_destructor_comparator_strict, function, user_data );
+}
+
+tralloc_error tralloc_destructors_delete_by_function ( tralloc_context * context, tralloc_destructor_function function )
+{
+    return _tralloc_destructors_delete_by_comparator ( context, _tralloc_destructor_comparator_by_function, function, NULL );
+}
+
+tralloc_error tralloc_destructors_delete_by_data ( tralloc_context * context, void * user_data )
+{
+    return _tralloc_destructors_delete_by_comparator ( context, _tralloc_destructor_comparator_by_data, NULL, user_data );
 }

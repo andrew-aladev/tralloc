@@ -6,7 +6,7 @@
 #define _TRALLOC_INCLUDED_FROM_HELPERS_FILE_C
 #include <tralloc/helpers/file.h>
 #include <tralloc/tree/free.h>
-#include <tralloc/destructors/append.h>
+#include <tralloc/destructors.h>
 #include <tralloc/extensions.h>
 
 #include <unistd.h>

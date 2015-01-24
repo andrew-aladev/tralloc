@@ -8,7 +8,7 @@
 #include <tralloc/context.h>
 
 #if defined ( TRALLOC_LENGTH )
-#   include <tralloc/length/main.h>
+#   include <tralloc/length/data.h>
 #endif
 
 #if defined ( TRALLOC_REFERENCES )

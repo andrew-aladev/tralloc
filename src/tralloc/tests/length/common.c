@@ -6,7 +6,7 @@
 #include <tralloc/tests/length/common.h>
 #include <tralloc/tree/alloc.h>
 #include <tralloc/tree/realloc.h>
-#include <tralloc/length/main.h>
+#include <tralloc/length.h>
 
 
 tralloc_bool test_length_common ( tralloc_context * ctx )

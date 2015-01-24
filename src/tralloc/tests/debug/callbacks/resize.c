@@ -11,7 +11,7 @@
 #include <tralloc/debug/callbacks/main.h>
 
 #if defined ( TRALLOC_DEBUG_LENGTH )
-#   include <tralloc/length/main.h>
+#   include <tralloc/length.h>
 #endif
 
 #include <stdlib.h>

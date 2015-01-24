@@ -10,6 +10,13 @@ if (${TRALLOC_EXTENSIONS})
     )
 endif ()
 
+if (${TRALLOC_DESTRUCTORS})
+    set (HEADERS ${HEADERS} "destructors.h")
+endif ()
+if (${TRALLOC_LENGTH})
+    set (HEADERS ${HEADERS} "length.h")
+endif ()
+
 install (FILES ${HEADERS} DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/${CURRENT_INCLUDEDIR}")
 
 set (INCLUDEDIR ${CURRENT_INCLUDEDIR})

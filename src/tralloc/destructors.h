@@ -3,14 +3,26 @@
 // tralloc is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Lesser Public License for more details.
 // You should have received a copy of the GNU General Lesser Public License along with tralloc. If not, see <http://www.gnu.org/licenses/>.
 
-#if !defined ( TRALLOC_DESTRUCTORS_APPEND_H )
-#define TRALLOC_DESTRUCTORS_APPEND_H
+#if !defined ( TRALLOC_DESTRUCTORS_H )
+#define TRALLOC_DESTRUCTORS_H
 
-#include "../extensions.h"
+#include "types.h"
 
+#if !defined ( TRALLOC_DESTRUCTORS )
+#   error TRALLOC_DESTRUCTORS is required
+#endif
+
+
+typedef tralloc_error ( * tralloc_destructor_function ) ( tralloc_context * chunk_context, void * user_data );
 
 tralloc_error tralloc_destructor_append  ( tralloc_context * context, tralloc_destructor_function function, void * user_data );
 tralloc_error tralloc_destructor_prepend ( tralloc_context * context, tralloc_destructor_function function, void * user_data );
+
+tralloc_error tralloc_destructors_clear ( tralloc_context * context );
+
+tralloc_error tralloc_destructors_delete             ( tralloc_context * context, tralloc_destructor_function function, void * user_data );
+tralloc_error tralloc_destructors_delete_by_function ( tralloc_context * context, tralloc_destructor_function function );
+tralloc_error tralloc_destructors_delete_by_data     ( tralloc_context * context, void * user_data );
 
 
 #endif

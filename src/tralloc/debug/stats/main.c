@@ -5,7 +5,7 @@
 
 
 #include <tralloc/debug/stats/main.h>
-#include <tralloc/length/main.h>
+#include <tralloc/length/data.h>
 #include <tralloc/context.h>
 
 #if defined ( TRALLOC_THREADS )
