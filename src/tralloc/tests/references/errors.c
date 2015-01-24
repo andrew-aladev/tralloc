@@ -6,7 +6,8 @@
 #include <tralloc/tests/references/common.h>
 #include <tralloc/tree/alloc.h>
 #include <tralloc/tree/free.h>
-#include <tralloc/references.h>
+#include <tralloc/references/move.h>
+#include <tralloc/references/clear.h>
 
 
 tralloc_bool test_references_errors ( tralloc_context * ctx )

@@ -5,7 +5,6 @@
 
 #include <tralloc/tests/references/common.h>
 #include <tralloc/tree/free.h>
-#include <tralloc/references.h>
 #include <tralloc/references/chunk.h>
 
 

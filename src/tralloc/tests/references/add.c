@@ -6,7 +6,6 @@
 #include <tralloc/tests/references/common.h>
 #include <tralloc/tree/alloc.h>
 #include <tralloc/tree/free.h>
-#include <tralloc/references.h>
 
 
 tralloc_bool test_references_add ( test_references_tree * tr )

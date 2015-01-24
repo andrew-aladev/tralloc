@@ -19,9 +19,6 @@ endif()
 if (${TRALLOC_DESTRUCTORS})
     set (HEADERS ${HEADERS} "destructors.h")
 endif()
-if (${TRALLOC_REFERENCES})
-    set (HEADERS ${HEADERS} "references.h")
-endif ()
 
 install (FILES ${HEADERS} DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/${CURRENT_INCLUDEDIR}")
 
