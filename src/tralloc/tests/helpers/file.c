@@ -8,7 +8,7 @@
 #include <tralloc/tree/move.h>
 #include <tralloc/helpers/string.h>
 #include <tralloc/helpers/file.h>
-#include <tralloc/destructors.h>
+#include <tralloc/destructors/append.h>
 
 #include <sys/stat.h>
 #include <unistd.h>

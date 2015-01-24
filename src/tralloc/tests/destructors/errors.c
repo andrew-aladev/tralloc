@@ -6,7 +6,9 @@
 #include <tralloc/tests/destructors/common.h>
 #include <tralloc/tree/alloc.h>
 #include <tralloc/tree/free.h>
-#include <tralloc/destructors.h>
+#include <tralloc/destructors/append.h>
+#include <tralloc/destructors/clear.h>
+#include <tralloc/destructors/delete.h>
 
 
 tralloc_bool test_destructors_errors ( tralloc_context * ctx )

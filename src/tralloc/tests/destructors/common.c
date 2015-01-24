@@ -8,7 +8,9 @@
 #include <tralloc/tree/alloc.h>
 #include <tralloc/tree/free.h>
 #include <tralloc/helpers/string.h>
-#include <tralloc/destructors.h>
+#include <tralloc/destructors/append.h>
+#include <tralloc/destructors/clear.h>
+#include <tralloc/destructors/delete.h>
 #include <tralloc/destructors/chunk.h>
 
 
