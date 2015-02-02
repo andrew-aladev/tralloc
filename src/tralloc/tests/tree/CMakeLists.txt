@@ -8,9 +8,9 @@ add_subdirectory ("realloc")
 add_subdirectory ("free")
 
 if (${TRALLOC_COLLECT_SOURCES})
-    join ("${SOURCES}" " " FILES)
+    join_path ("${SOURCES}" " " FILES)
     set (SOURCES "${CMAKE_CURRENT_BINARY_DIR}/sources.c")
-    execute_process (COMMAND sh -c "cat ${FILES} > ${SOURCES}")
+    execute_process (COMMAND sh -c "cat ${FILES} > '${SOURCES}'")
 endif ()
 
 if (${TRALLOC_SHARED})

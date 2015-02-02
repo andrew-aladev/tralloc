@@ -229,11 +229,13 @@ set (CMAKE_C_FLAGS_RELEASE_EMBED "-Os ${TRALLOC_LTO_CFLAGS}")
 set (CMAKE_EXE_LINKER_FLAGS_RELEASE_EMBED    "${CMAKE_EXE_LINKER_FLAGS}    ${TRALLOC_LTO_LDLAGS}")
 set (CMAKE_SHARED_LINKER_FLAGS_RELEASE_EMBED "${CMAKE_SHARED_LINKER_FLAGS} ${TRALLOC_LTO_LDLAGS}")
 
-function(join VALUES GLUE OUTPUT)
-  string (REGEX REPLACE "([^\\]|^);" "\\1${GLUE}" _TMP_STR "${VALUES}")
-  string (REGEX REPLACE "[\\](.)" "\\1" _TMP_STR "${_TMP_STR}") #fixes escaping
+function (join_path VALUES GLUE OUTPUT)
+  set (_TMP_STR "")
+  foreach (VALUE ${VALUES})
+    set (_TMP_STR "${_TMP_STR}${GLUE}'${VALUE}'")
+  endforeach ()
   set (${OUTPUT} "${_TMP_STR}" PARENT_SCOPE)
-endfunction()
+endfunction ()
 
 if (${TRALLOC_TESTS} OR ${TRALLOC_EXAMPLES})
     enable_testing()
