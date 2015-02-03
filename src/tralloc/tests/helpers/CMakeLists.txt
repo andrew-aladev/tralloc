@@ -10,7 +10,7 @@ if (${TRALLOC_FILE})
 endif ()
 
 if (${TRALLOC_COLLECT_SOURCES})
-    join_path ("${SOURCES}" " " FILES)
+    tralloc_join_path ("${SOURCES}" " " FILES)
     set (SOURCES "${CMAKE_CURRENT_BINARY_DIR}/sources.c")
     execute_process (COMMAND sh -c "cat ${FILES} > '${SOURCES}'")
 endif ()
