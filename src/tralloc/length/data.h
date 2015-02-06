@@ -6,7 +6,6 @@
 #if !defined ( TRALLOC_LENGTH_DATA_H )
 #define TRALLOC_LENGTH_DATA_H
 
-#include "../length.h"
 #include "../extensions.h"
 
 #undef _TRALLOC_INLINE
@@ -17,9 +16,9 @@
 #endif
 
 
-struct _tralloc_length_type {
+typedef struct _tralloc_length_type {
     size_t length;
-};
+} _tralloc_length;
 
 _TRALLOC_INLINE
 size_t _tralloc_length_get ( _tralloc_length * length_ptr )

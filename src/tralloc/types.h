@@ -74,10 +74,6 @@ typedef uint8_t tralloc_error;
 
 #if defined ( TRALLOC_THREADS )
 
-typedef struct _tralloc_subtree_lock_type  _tralloc_subtree_lock;
-typedef struct _tralloc_children_lock_type _tralloc_children_lock;
-typedef struct _tralloc_pool_lock_type     _tralloc_pool_lock;
-
 typedef struct _tralloc_debug_threads_lock_type {
 
 #if TRALLOC_DEBUG_THREADS_LOCK_TYPE == TRALLOC_THREADS_RWLOCK

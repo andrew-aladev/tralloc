@@ -17,7 +17,7 @@
 #endif
 
 
-struct _tralloc_children_lock_type {
+typedef struct _tralloc_children_lock_type {
 
 #if TRALLOC_CHILDREN_LOCK_TYPE == TRALLOC_THREADS_RWLOCK
     pthread_rwlock_t data;
@@ -27,7 +27,7 @@ struct _tralloc_children_lock_type {
     pthread_spinlock_t data;
 #endif
 
-};
+} _tralloc_children_lock;
 
 _TRALLOC_INLINE
 tralloc_error _tralloc_children_lock_new ( _tralloc_children_lock * lock )

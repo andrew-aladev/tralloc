@@ -20,11 +20,14 @@
 // Destructors are represented by single linked list of destructors.
 // Order of destructors is given by user (append and prepend functions).
 
-typedef struct _tralloc_destructor_type {
-    struct _tralloc_destructor_type * next;
+typedef struct _tralloc_destructor_type  _tralloc_destructor;
+typedef struct _tralloc_destructors_type _tralloc_destructors;
+
+struct _tralloc_destructor_type {
+    _tralloc_destructor * next;
     tralloc_destructor_function function;
     void * user_data;
-} _tralloc_destructor;
+};
 
 struct _tralloc_destructors_type {
     _tralloc_destructor * first_destructor;

@@ -9,6 +9,7 @@
 #include <tralloc/tree/realloc.h>
 #include <tralloc/tree/move.h>
 #include <tralloc/tree/free.h>
+#include <tralloc/references.h>
 #include <tralloc/references/references_data.h>
 
 

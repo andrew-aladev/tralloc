@@ -8,6 +8,10 @@
 
 #include "fragment.h"
 
+#if defined ( TRALLOC_THREADS )
+#   include "lock.h"
+#endif
+
 #undef _TRALLOC_INLINE
 #if defined ( _TRALLOC_INCLUDED_FROM_POOL_POOL_DATA_C )
 #    define _TRALLOC_INLINE _TRALLOC_INLINE_IN_OBJECT

@@ -13,7 +13,6 @@
 #endif
 
 
-typedef struct _tralloc_destructors_type _tralloc_destructors;
 typedef tralloc_error ( * tralloc_destructor_function ) ( tralloc_context * chunk_context, void * user_data );
 
 tralloc_error tralloc_destructor_append  ( tralloc_context * context, tralloc_destructor_function function, void * user_data );

@@ -6,7 +6,6 @@
 #if !defined ( TRALLOC_POOL_POOL_CHILD_DATA_H )
 #define TRALLOC_POOL_POOL_CHILD_DATA_H
 
-#include "../pool.h"
 #include "../extensions.h"
 
 #undef _TRALLOC_INLINE
@@ -19,6 +18,9 @@
 
 // "pool_child" should be the first in the stack of extensions.
 // This slight limitation makes fragment's calculation much easier and descreases the total amount of pool's memory overhead.
+
+typedef struct _tralloc_pool_type       _tralloc_pool;
+typedef struct _tralloc_pool_child_type _tralloc_pool_child;
 
 struct _tralloc_pool_child_type {
     _tralloc_pool * pool;

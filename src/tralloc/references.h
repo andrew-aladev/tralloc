@@ -13,9 +13,6 @@
 #endif
 
 
-typedef struct _tralloc_reference_type  _tralloc_reference;
-typedef struct _tralloc_references_type _tralloc_references;
-
 tralloc_error tralloc_reference_move ( tralloc_context * child_context, tralloc_context * parent_context );
 
 tralloc_error tralloc_references_clear ( tralloc_context * context );

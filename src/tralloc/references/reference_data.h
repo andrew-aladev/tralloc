@@ -6,7 +6,6 @@
 #if !defined ( TRALLOC_REFERENCES_REFERENCE_DATA_H )
 #define TRALLOC_REFERENCES_REFERENCE_DATA_H
 
-#include "../references.h"
 #include "../extensions.h"
 
 #undef _TRALLOC_INLINE
@@ -16,6 +15,9 @@
 #    define _TRALLOC_INLINE _TRALLOC_INLINE_IN_HEADER
 #endif
 
+
+typedef struct _tralloc_references_type _tralloc_references;
+typedef struct _tralloc_reference_type  _tralloc_reference;
 
 struct _tralloc_reference_type {
     _tralloc_references * references;

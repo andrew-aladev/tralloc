@@ -125,7 +125,7 @@ size_t _tralloc_extensions_get_offset_for_extension ( tralloc_extensions extensi
 #   endif
 
 #   if defined ( TRALLOC_REFERENCES )
-    // First is reference, than references. It is important.
+    // Chunk can be both reference and references.
 
     if ( _tralloc_extensions_have_extension ( extensions, TRALLOC_EXTENSION_REFERENCE ) ) {
         offset += sizeof ( _tralloc_reference );
